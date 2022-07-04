@@ -9,6 +9,7 @@ Como executar o aplicativo em meu celular?
 Em seu celular faça:
 
 Instalar da Play Store ou Apple Store o aplicativo Expo;
+
 Link para Play Store: https://play.google.com/store/apps/details?id=host.exp.exponent&hl=pt_BR&gl=US;
 
 2º Passo) 
