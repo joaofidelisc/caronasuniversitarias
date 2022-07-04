@@ -1,9 +1,10 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/types';
 import * as AuthSession from 'expo-auth-session';
+
 
 type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 type AuthResponse = {
@@ -59,8 +60,15 @@ const Login: React.FC<LoginScreenProps> = (props) =>{
       <TouchableOpacity 
         style={styles.btnContinuar}
         onPress={handleSignIn}
-      >
-        <Text style={styles.txtBtnContinuar}>Continuar com Google</Text>
+      > 
+      <Text style={styles.txtBtnContinuar}>Continuar com Google</Text>
+      </TouchableOpacity>
+      <Image 
+        source = {{uri:'https://cdn-icons-png.flaticon.com/512/300/300221.png'}}
+        style = {{ width: 31, height: 31, position: 'absolute', left: 53, top: 403}}
+      />
+      <TouchableOpacity style={{position: 'absolute', width: 291, height: 47, left: 34, top: 492, backgroundColor: '#FF5F55', borderRadius:15, justifyContent: 'center', alignItems: 'center'}}>
+        <Text style={{fontWeight:'600', fontSize: 20, lineHeight: 24, color: 'white'}}>Continuar</Text>
       </TouchableOpacity>
     </View>
   );
@@ -106,16 +114,19 @@ const styles = StyleSheet.create({
     width: 291,
     height: 47,
     left: 34,
-    top: 492,
-    backgroundColor: "#FF5F55",
+    top: 395,
+    backgroundColor: "#C4C4C4",
     borderRadius: 15,
     justifyContent: 'center',
   },
   txtBtnContinuar:{
     textAlign: 'center',
-    lineHeight: 24,
-    fontSize: 20,
-    color: 'white',
+    fontWeight: '400',
+    fontSize: 16,
+    lineHeight: 20,
+    display: 'flex',
+    alignItems: 'center',
+    color: 'white',    
   },
   btnContinuarGoogle:{
     width: 291,
