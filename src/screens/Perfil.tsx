@@ -11,7 +11,8 @@ type Profile = {
   picture: string;
 }
 
-export default function Perfil({route}) {
+//corrigir depois a tipagem (fiz do jeito não recomendado)
+export default function Perfil({route}:{route:any}) {
   const {token} = route.params;
   const [profile, setProfile] = useState({} as Profile);
   
@@ -24,6 +25,7 @@ export default function Perfil({route}) {
     loadProfile();
   },[]);
 
+    //CORRIGIR ESTILOS
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <View style={styles.retangulo}>
