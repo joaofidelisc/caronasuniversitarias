@@ -80,7 +80,7 @@ export default function Perfil({route}:{route:any}) {
     </View>
   );
 }
-
+ //
 const styles= StyleSheet.create({
   retangulo:{
     position: 'absolute',
