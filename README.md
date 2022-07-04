@@ -32,6 +32,6 @@ Acessar a pasta do projeto pelo terminal (prompt, terminal ou Windows PowerShell
 
 Aguardar o QR CODE ser gerado;
 
-6º) 
+6º Passo) 
 
 Em seu celular, abra o aplicativo Expo e use o leitor de QR CODE para ler o gerado e o aplicativo será carregado logo em seguida.
