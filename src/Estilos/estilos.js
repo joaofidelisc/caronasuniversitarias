@@ -269,5 +269,19 @@ export default StyleSheet.create({
       alignItems: 'center',
       color: '#FF5F55',
     },
+    TextInput1:{
+      borderWidth:1, 
+      borderColor:'#000', 
+      alignItems:'center', 
+      padding:18,
+      borderTopRightRadius:20, 
+      borderTopLeftRadius:20,
+      borderBottomRightRadius:20,
+      borderBottomLeftRadius:20,
+      borderBottomStartRadius:20,
+      borderBottomEndRadius:20,
+      marginHorizontal:20,
+      marginStart:20,
+    }
 
 })
