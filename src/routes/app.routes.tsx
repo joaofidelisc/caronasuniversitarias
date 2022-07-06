@@ -10,6 +10,8 @@ import Oferecer from '../screens/Oferecer';
 import Suas_Viagens from '../screens/Suas_Viagens';
 import Mensagens from '../screens/Mensagens';
 import Perfil from '../screens/Perfil';
+import Rotas_Procurar from './Rotas_Procurar';
+
 import { LogBox } from "react-native";
 
 LogBox.ignoreLogs(["EventEmitter.removeListener"]);

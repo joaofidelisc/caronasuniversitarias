@@ -36,7 +36,7 @@ export default function Perfil({route}:{route:any}) {
         <Text style={estilos.textoUsuario}>{profile.name}</Text>
       </View>
       <Text style={estilos.Text1}>
-        Detalhes 
+        Detalhess 
       </Text>
       <Text style={estilos.Text2}>
         Conta

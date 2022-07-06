@@ -21,8 +21,6 @@ function Rotas() {
         <Stack.Screen name="Cadastro_1" component={Cadastro_1} options={{headerShown:false}}/>
         <Stack.Screen name="Login" component={Login} options={{headerShown:false}}/>
         <Stack.Screen name="MenuPrincipal" component={AppRoutes} options={{headerShown:false}}/>
-        <Stack.Screen name="Procurar" component={Procurar} options={{headerShown:false}}/>
-        <Stack.Screen name="Buscando_Carona" component={Buscando_Carona} options={{headerShown:false}}/>
       </Stack.Navigator>
     </NavigationContainer>
   )
