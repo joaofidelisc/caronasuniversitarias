@@ -4,6 +4,7 @@ import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image } from 'reac
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/types';
 import * as AuthSession from 'expo-auth-session';
+import estilos from '../Estilos/estilos'
 
 
 type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
@@ -31,25 +32,25 @@ const Login: React.FC<LoginScreenProps> = (props) =>{
   }
 
   return (
-    <View style={styles.container}>
+    <View style={estilos.container}>
        <TouchableOpacity 
-          style={styles.btnFechar}
+          style={estilos.btnFechar}
           onPress={()=>props.navigation.push('Entrada')}
           >
-            <Text style={styles.txtBtnFechar}>X</Text>
+            <Text style={estilos.txtBtnFechar}>X</Text>
         </TouchableOpacity>
-      <Text style={styles.txtGeral}>
+      <Text style={estilos.txtGeral}>
         Nos informe o seu e-mail{'\n'} e senha de cadastro
       </Text>
       <TextInput
-        style={styles.input}
+        style={estilos.input}
         // onChangeText={onChangeNumber}
         // value={number}
         placeholder="E-mail"
         keyboardType="email-address"
       />
       <TextInput
-        style={[styles.input, {top: 238}]}
+        style={[estilos.input, {top: 238}]}
         // onChangeText={onChangeNumber}
         // value={number}
         placeholder="Senha"
@@ -58,16 +59,19 @@ const Login: React.FC<LoginScreenProps> = (props) =>{
       />
       <StatusBar style="auto"/>
       <TouchableOpacity 
-        style={styles.btnContinuar}
+        style={estilos.btnContinuar}
         onPress={handleSignIn}
       > 
-      <Text style={styles.txtBtnContinuar}>Continuar com Google</Text>
+      <Text style={estilos.txtBtnContinuar}>Continuar com Google</Text>
       </TouchableOpacity>
       <Image 
         source = {{uri:'https://cdn-icons-png.flaticon.com/512/300/300221.png'}}
         style = {{ width: 31, height: 31, position: 'absolute', left: 53, top: 403}}
       />
-      <TouchableOpacity style={{position: 'absolute', width: 291, height: 47, left: 34, top: 492, backgroundColor: '#FF5F55', borderRadius:15, justifyContent: 'center', alignItems: 'center'}}>
+      <TouchableOpacity 
+        style={{position: 'absolute', width: 291, height: 47, left: 34, top: 492, backgroundColor: '#FF5F55', borderRadius:15, justifyContent: 'center', alignItems: 'center'}}
+        // onPress={()=>props.navigation.push('MenuPrincipal')} 
+      >
         <Text style={{fontWeight:'600', fontSize: 20, lineHeight: 24, color: 'white'}}>Continuar</Text>
       </TouchableOpacity>
     </View>
@@ -76,82 +80,3 @@ const Login: React.FC<LoginScreenProps> = (props) =>{
 
 export default Login;
 
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  txtGeral: {
-    position: 'absolute',
-    width: 303,
-    height: 51,
-    left: 34,
-    top: 65,
-    fontSize: 24,
-    lineHeight: 29,
-    display: 'flex',
-    alignItems: 'center',
-    textAlign: 'center',
-    color: '#06444C',
-    fontWeight: '700',
-  },
-  input:{
-    backgroundColor: '#C4C4C4',
-    position: 'absolute',
-    width: 291,
-    height: 47,
-    left: 34,
-    top: 167,
-    borderRadius: 15,
-    color: 'white',
-    textAlign:'center',
-  },
-  btnContinuar:{
-    position: 'absolute',
-    width: 291,
-    height: 47,
-    left: 34,
-    top: 395,
-    backgroundColor: "#C4C4C4",
-    borderRadius: 15,
-    justifyContent: 'center',
-  },
-  txtBtnContinuar:{
-    textAlign: 'center',
-    fontWeight: '400',
-    fontSize: 16,
-    lineHeight: 20,
-    display: 'flex',
-    alignItems: 'center',
-    color: 'white',    
-  },
-  btnContinuarGoogle:{
-    width: 291,
-    height: 47,
-    backgroundColor: '#C4C4C4',
-    justifyContent: 'center',
-    alignSelf: 'center'
-  },
-  txtBtnContinuarGoogle:{
-    textAlign: 'center',
-    fontSize: 16,
-    lineHeight: 20,
-  },
-  btnFechar:{
-    position: 'absolute',
-    width: 14,
-    height: 29,
-    left: 22,
-    top: 20,
-  },
-  txtBtnFechar:{
-    fontWeight: '600',
-    fontSize: 24,
-    lineHeight: 29,
-    alignItems: 'center',
-    color: '#FF5F55',
-  },
-});

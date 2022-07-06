@@ -6,4 +6,6 @@ export type RootStackParamList = {
     Login: undefined;
     MenuPrincipal: undefined;
     Perfil: undefined;
+    Buscando_Carona: undefined;
+    Procurar: undefined;
 };
