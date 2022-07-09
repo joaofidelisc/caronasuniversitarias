@@ -73,6 +73,7 @@ function Login({navigation}){
       >
         <Text style={{fontWeight:'600', fontSize: 20, lineHeight: 24, color: 'white'}}>Continuar</Text>
       </TouchableOpacity>
+      <StatusBar style="auto"/>
     </View>
   );
 };

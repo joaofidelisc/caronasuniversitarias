@@ -69,7 +69,7 @@ function Perfil({navigation}){
       <TouchableOpacity style={estilos.TouchbleOpct1}>
         <Text style={estilos.Text14}>Adicionar carro +</Text>
       </TouchableOpacity>
-      <StatusBar style="light" />
+      <StatusBar style="auto"/>
     </View>
   );
 }
