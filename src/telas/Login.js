@@ -69,8 +69,7 @@ function Login({navigation}){
       />
       <TouchableOpacity 
         style={{position: 'absolute', width: 291, height: 47, left: 34, top: 492, backgroundColor: '#FF5F55', borderRadius:15, justifyContent: 'center', alignItems: 'center'}}
-        onPress={()=>navigation.navigate('MenuPrincipal')}
-        // onPress={()=>props.navigation.push('MenuPrincipal')} 
+        // onPress={()=>navigation.navigate('MenuPrincipal')}
       >
         <Text style={{fontWeight:'600', fontSize: 20, lineHeight: 24, color: 'white'}}>Continuar</Text>
       </TouchableOpacity>

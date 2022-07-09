@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Text, View } from 'react-native';
-import Rotas from './src/rotas/public';
 
 import RotasPublicas from './src/rotas/public';
+import RotasPrivadas from './src/rotas/private_logado';
 
 export default function App() {
   return (
-    <RotasPublicas/>
+    <RotasPrivadas/>
   );
 }
