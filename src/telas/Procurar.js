@@ -66,7 +66,7 @@ function Procurar({navigation}){
       /> */}
       <TouchableOpacity 
         style={{position: 'absolute', width: 315, height: 39, left: 23, top: 453, backgroundColor: '#FF5F55', borderRadius: 12, alignItems: 'center', justifyContent: 'center'}}
-        // onPress={()=>props.navigation.push('Buscando_Carona')}
+        onPress={()=>navigation.navigate('Buscando_Carona')}
         // onPress={async () => {
         //   await schedulePushNotification();
         // }}

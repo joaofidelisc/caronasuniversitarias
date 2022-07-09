@@ -3,18 +3,20 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {MaterialIcons} from '@expo/vector-icons';
 
+import Procurar from '../../telas/Procurar';
+import Oferecer from '../../telas/Oferecer';
+import Suas_Viagens from '../../telas/Suas_Viagens';
+import Mensagens from '../../telas/Mensagens';
+import Perfil from '../../telas/Perfil';
 
-import Procurar from '../telas/Procurar';
-import Oferecer from '../telas/Oferecer';
-import Suas_Viagens from '../telas/Suas_Viagens';
-import Mensagens from '../telas/Mensagens';
-import Perfil from '../telas/Perfil';
+import Rota_buscando_carona from '../buscandocarona/Rota_buscando_carona';
+
 
 const Tab = createBottomTabNavigator();
 
 export default function RotasPrivadas() {
   return (
-    <NavigationContainer>
+    // <NavigationContainer>
       <Tab.Navigator
        screenOptions={{
         headerShown: false,
@@ -23,8 +25,8 @@ export default function RotasPrivadas() {
     }}
       >
         <Tab.Screen 
-            name="Procurar"
-            component={Procurar}
+            name="Buscar"
+            component={Rota_buscando_carona}
             options={{
                 tabBarIcon:(({size, color})=>
                     <MaterialIcons
@@ -49,7 +51,7 @@ export default function RotasPrivadas() {
             }}
         />
         <Tab.Screen
-            name="Suas_Viagens"
+            name="Suas Viagens"
             component={Suas_Viagens}
             options={{
                 tabBarIcon:(({size, color})=>
@@ -89,6 +91,6 @@ export default function RotasPrivadas() {
             }}
         />
       </Tab.Navigator>
-    </NavigationContainer>
+    // </NavigationContainer>
   );
 }

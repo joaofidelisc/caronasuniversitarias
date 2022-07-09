@@ -1,10 +1,9 @@
 import * as React from 'react';
 
-import RotasPublicas from './src/rotas/public';
-import RotasPrivadas from './src/rotas/private_logado';
+import RotaEntrada from './src/rotas/fluxoentrada/Rota_fluxo_entrada';
 
 export default function App() {
   return (
-    <RotasPrivadas/>
+    <RotaEntrada/>
   );
 }
