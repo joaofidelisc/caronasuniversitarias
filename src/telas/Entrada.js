@@ -1,12 +1,16 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 
 function Entrada({navigation}){
   return (
     <View style={styles.container}>
-      <View style={styles.retangulo}>
-      </View>
+      <Image source={
+        require('../../assets/driver-car.png')} 
+        style={{height:357, width: '100%', marginTop: -175}}  
+      />
+      {/* <View style={styles.retangulo}> */}
+      {/* </View> */}
       <Text style={styles.txtCaronas}>
         Caronas Universitárias, o{'\n'}
         seu app universitário!
