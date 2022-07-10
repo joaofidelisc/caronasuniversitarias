@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { addDoc, collection, doc } from 'firebase/firestore';
+import { addDoc, collection, query, where, getDocs } from 'firebase/firestore';
+
 import { db } from '../../config';
 
 export default function Dados() {
@@ -15,6 +16,11 @@ export default function Dados() {
             password: password
         })
     }
+
+    function consultar(){
+      //??
+    }
+
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text style={{fontWeight: 'bold', fontSize: 25, marginBottom: 15}}>Cadastre-se</Text>
@@ -34,6 +40,12 @@ export default function Dados() {
             style={{marginTop: 15, backgroundColor: 'red', borderRadius: 15, width: '30%', height: '8%', alignItems:'center', justifyContent: 'center'}}
         >
             <Text style={{color:'white', fontWeight: 'bold', fontSize: 18}}>Cadastrar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+            onPress={consultar}
+            style={{marginTop: 15, backgroundColor: 'red', borderRadius: 15, width: '30%', height: '8%', alignItems:'center', justifyContent: 'center'}}
+        >
+            <Text style={{color:'white', fontWeight: 'bold', fontSize: 18}}>Consultar</Text>
         </TouchableOpacity>
         <StatusBar style="auto"/>
       </View>
