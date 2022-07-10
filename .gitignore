@@ -1,3 +1,4 @@
+config.jsx
 node_modules/
 .expo/
 dist/
@@ -12,5 +13,3 @@ web-build/
 
 # macOS
 .DS_Store
-
-config.jsx
