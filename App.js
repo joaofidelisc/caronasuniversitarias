@@ -5,6 +5,6 @@ import Dados from './src/telas/Dados';
 
 export default function App() {
   return (
-    <RotaEntrada/>
+    <Dados/>
   );
 }

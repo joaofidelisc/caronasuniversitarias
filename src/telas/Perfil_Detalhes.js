@@ -5,7 +5,7 @@ import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'r
 import estilos from '../estilos/estilos';
 
 
-function Perfil({navigation}){
+function Perfil_Detalhes({navigation}){
   // const {token} = route.params;
   // const [profile, setProfile] = useState({} as Profile);
   
@@ -27,12 +27,6 @@ function Perfil({navigation}){
         {/* style={estilos.imgPerfil}/> */}
         {/* <Text style={estilos.textoUsuario}>{profile.name}</Text> */}
       </View>
-      <Text style={estilos.Text1}>
-        Detalhes
-      </Text>
-      <Text style={estilos.Text2}>
-        Conta
-      </Text>
       <Text style={estilos.Text3}>
         Confirme seus dados
       </Text>
@@ -74,4 +68,4 @@ function Perfil({navigation}){
   );
 }
 
-export default Perfil;
+export default Perfil_Detalhes;

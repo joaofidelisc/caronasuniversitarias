@@ -1,15 +1,14 @@
-import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {MaterialIcons} from '@expo/vector-icons';
 
-import Procurar from '../../telas/Procurar';
 import Oferecer from '../../telas/Oferecer';
 import Suas_Viagens from '../../telas/Suas_Viagens';
 import Mensagens from '../../telas/Mensagens';
-import Perfil from '../../telas/Perfil';
 
+import PrivatePerfil from '../perfil/Private.perfil';
 import Rota_buscando_carona from '../buscandocarona/Rota_buscando_carona';
+
 
 
 const Tab = createBottomTabNavigator();
@@ -78,7 +77,7 @@ export default function RotasPrivadas() {
         />
         <Tab.Screen
             name="Perfil"
-            component={Perfil}
+            component={PrivatePerfil}
             // initialParams={route.params}
             options={{
                 tabBarIcon:(({size, color})=>

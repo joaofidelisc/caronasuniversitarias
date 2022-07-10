@@ -124,22 +124,22 @@ export default StyleSheet.create({
       position: 'absolute', top: 24, left: 26, fontWeight: '700', fontSize: 12, lineHeight: 15, color:'#06444C'
     },
     Text1:{
-      position: 'absolute', left: 61, top: 141, fontWeight: '800', fontSize: 12, lineHeight: 15, color:'#F9FEFF'
+      position: 'absolute', left: 61, top: 166, fontWeight: '800', fontSize: 12, lineHeight: 15, color:'#F9FEFF'
     },
     Text2:{
       position: 'absolute', left: 252, top: 141, fontWeight: '800', fontSize: 12, lineHeight: 15, color:'#F9FEFF'
     },
     Text3:{
-      position: 'absolute', left: 25, top: 175, fontWeight: '700', fontSize: 15, lineHeight: 18, color: '#06444C'
+      position: 'absolute', left: 25, top: 200, fontWeight: '700', fontSize: 15, lineHeight: 18, color: '#06444C'
     },
     Text4:{
-      position: 'absolute', left: 40, top: 205, fontWeight: '600', fontSize: 12, lineHeight: 15, color:'#06444C'
+      position: 'absolute', left: 40, top: 230, fontWeight: '600', fontSize: 12, lineHeight: 15, color:'#06444C'
     },
     Text5:{
-      position: 'absolute', left: 60, top: 235, fontWeight: '600', fontSize: 12, lineHeight: 15, color:'#FF5F55'
+      position: 'absolute', left: 60, top: 260, fontWeight: '600', fontSize: 12, lineHeight: 15, color:'#FF5F55'
     },
     Text6:{
-      position: 'absolute', left: 40, top: 265, fontWeight: '600', fontSize: 12, lineHeight: 15, color:'#06444C'
+      position: 'absolute', left: 40, top: 290, fontWeight: '600', fontSize: 12, lineHeight: 15, color:'#06444C'
     },
     Text7:{
       position: 'absolute', left: 60, top: 295, fontWeight: '600', fontSize: 12, lineHeight: 15, color:'#FF5F55'
