@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "97527742455",
+    "project_id": "caronasuniversitarias-c98eb",
+    "storage_bucket": "caronasuniversitarias-c98eb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:97527742455:android:0a20e83e30f66d110138f2",
+        "android_client_info": {
+          "package_name": "com.caronasuniversitarias"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "97527742455-078q54m2qvkgk0lu4t1r9bl0bns9dnus.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.caronasuniversitarias",
+            "certificate_hash": "9b10402f3177a1ad2dbdccd471993bbc1fb6ec13"
+          }
+        },
+        {
+          "client_id": "97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrquiKfuxtaWl10-_g0EsAApbc0ic42OY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
