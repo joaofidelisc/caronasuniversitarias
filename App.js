@@ -22,6 +22,9 @@ import {
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth'
 
+// incluir aqui dominios permitidos (válido para email e autenticação com Google)
+const dominios_permitidos = ["gmail.com", "estudante.ufscar.br", "unesp.com.br"]
+
 GoogleSignin.configure({
   webClientId: '97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com',
 });
@@ -51,8 +54,9 @@ function App(){
 
   const InsertUserWithEmail = async() =>{
     const dominio = email.split("@")
-    if (dominio != "gmail.com"){
-      alert('DOMINIO NAO PERMITIDO')
+    if (dominios_permitidos.includes(dominio[1]) == false){
+      console.log(dominios_permitidos.includes(dominio))
+      alert('Apenas dominínios universitários são permitidos')
     }
     auth()
     .createUserWithEmailAndPassword(email, password)
