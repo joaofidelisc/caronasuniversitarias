@@ -18,12 +18,12 @@ function RotaEntrada() {
         independent={true}
       >
         <Stack.Navigator initialRouteName="Entrada">
-          <Stack.Screen name="Entrada" component={Entrada} />
-          <Stack.Screen name="Cadastro_1" component={Cadastro_1} />
-          <Stack.Screen name="Cadastro_2" component={Cadastro_2} />
-          <Stack.Screen name="Cadastro_3" component={Cadastro_3} />
-          <Stack.Screen name="Login" component={Login}/>
-          <Stack.Screen name="MenuPrincipal" component={MenuPrincipal} />
+          <Stack.Screen name="Entrada" component={Entrada} options={{headerShown:false}} />
+          <Stack.Screen name="Cadastro_1" component={Cadastro_1} options={{headerShown:false}} />
+          <Stack.Screen name="Cadastro_2" component={Cadastro_2} options={{headerShown:false}} />
+          <Stack.Screen name="Cadastro_3" component={Cadastro_3} options={{headerShown:false}} />
+          <Stack.Screen name="Login" component={Login} options={{headerShown:false}}/>
+          <Stack.Screen name="MenuPrincipal" component={MenuPrincipal}/>
         </Stack.Navigator>
       </NavigationContainer>
     );

@@ -1,11 +1,14 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar} from 'react-native';
 
 function Oferecer() {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Settings!</Text>
-      </View>
+      <SafeAreaView>
+        <StatusBar barStyle={'light-content'} />
+        <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
+          <Text style={{color:'black'}}>Oferecer</Text>
+        </View>
+      </SafeAreaView>
     );
 }
 

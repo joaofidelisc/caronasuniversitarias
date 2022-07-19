@@ -14,14 +14,14 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth'
 
 // incluir aqui dominios permitidos (válido para email e autenticação com Google)
-const dominios_permitidos = ["estudante.ufscar.br", "unesp.com.br"]
+const dominios_permitidos = ["estudante.ufscar.br", "unesp.com.br", "yahoo.com.br"]
 
 GoogleSignin.configure({
   webClientId: '97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com',
 });
 
 
-function App() {
+function App({navigation}) {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -92,6 +92,12 @@ function App() {
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
         <View style={{backgroundColor: '#FFF', height: '100%'}}>
+          <TouchableOpacity 
+              style={styles.btnFechar}
+              onPress={()=>navigation.navigate('Entrada')}
+              >
+                <Text style={styles.txtBtnFechar}>X</Text>
+          </TouchableOpacity>
           <Text style={{color: '#06444C', position: 'absolute', top: 65, fontWeight: '700', fontSize: 24, lineHeight: 29, alignSelf: 'center', textAlign: 'center'}}>Nos informe seu e-mail{'\n'} e senha de cadastro</Text>
           <TextInput
             style={{backgroundColor: '#C4C4C4', width: 291, height: 47, top: 167, alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: 18, lineHeight: 22}}
@@ -161,6 +167,20 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     textAlign: "center"
+  },
+  btnFechar:{
+    position: 'absolute',
+    width: 14,
+    height: 29,
+    left: 22,
+    top: 20,
+  },
+  txtBtnFechar:{
+    fontWeight: '600',
+    fontSize: 24,
+    lineHeight: 29,
+    alignItems: 'center',
+    color: '#FF5F55',
   },
 });
 

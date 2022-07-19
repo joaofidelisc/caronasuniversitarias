@@ -4,7 +4,7 @@ import {View, Text} from 'react-native';
 function Cadastro_3() {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Settings!</Text>
+        <Text>Cadastro_3</Text>
       </View>
     );
 }
