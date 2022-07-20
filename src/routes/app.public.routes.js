@@ -9,6 +9,7 @@ import Cadastro_2 from '../screens/Cadastro/Cadastro_2';
 import Cadastro_3 from '../screens/Cadastro/Cadastro_3';
 import Login from '../screens/Login/Login';
 import MenuPrincipal from '../routes/app.private.routes';
+import Options from '../screens/Buscar/Options';
 
 const Stack = createNativeStackNavigator();
 

@@ -23,7 +23,8 @@ export default StyleSheet.create({
     modal:{
       backgroundColor:`#cd5c5c`,
       margin:0,
-      marginTop:130,
+      marginTop:250,
+      marginVertical:50,
       padding:10,
       borderRadius:20,
       elevation:10
