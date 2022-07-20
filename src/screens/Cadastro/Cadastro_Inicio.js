@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, StatusBar, StyleSheet, TouchableOpacity, SafeAreaView} from 'react-native';
 
-function Cadastro_1({navigation}) {
+function Cadastro_Inicio({navigation}) {
     return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -26,7 +26,10 @@ function Cadastro_1({navigation}) {
                 top: 266.5}}>
                 <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
             </View>
-            <TouchableOpacity style={[styles.btnContinuarComRedes, {width:228, top:279}]}>
+            <TouchableOpacity 
+              style={[styles.btnContinuarComRedes, {width:228, top:279}]}
+              onPress={()=>navigation.navigate('Cadastro_Email')}  
+            >
                 <Text style={styles.txtBtnContinuarComRedes}>Continuar com e-mail</Text>
             </TouchableOpacity>
             <Text style={styles.txtCadastrar}>Já está cadastrado?</Text>
@@ -51,7 +54,7 @@ function Cadastro_1({navigation}) {
     );
 }
 
-export default Cadastro_1;
+export default Cadastro_Inicio;
 
 
 const styles = StyleSheet.create({

@@ -77,7 +77,7 @@ function AppRoutes() {
         <Tab.Screen name="Oferecer" component={Oferecer} />
         <Tab.Screen name="Suas Viagens" component={Suas_Viagens} />
         <Tab.Screen name="Mensagens" component={Mensagens} />
-        <Tab.Screen name="Perfil" component={Perfil_Conta} />
+        <Tab.Screen name="Perfil" component={Perfil_Detalhes} />
       </Tab.Navigator>
     </NavigationContainer>
   );

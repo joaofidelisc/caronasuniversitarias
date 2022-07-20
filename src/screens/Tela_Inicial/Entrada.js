@@ -16,7 +16,7 @@ function Entrada({navigation}){
         </Text>
         <TouchableOpacity 
             style={styles.btnCadastrar}
-            onPress={()=>navigation.navigate('Cadastro_1')}
+            onPress={()=>navigation.navigate('Cadastro_Inicio')}
             >
             <Text style={styles.txtBtnCadastrar}>Cadastre-se</Text>
         </TouchableOpacity>
