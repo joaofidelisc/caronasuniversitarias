@@ -2,6 +2,11 @@ import React, {useEffect} from 'react';
 import {View, Text, SafeAreaView, StatusBar, TouchableOpacity, Alert, BackHandler} from 'react-native';
 
 function Como_Comecar({navigation, route}) {
+  const descartarAlteracoes = async() =>{
+    auth().currentUser.delete();
+    navigation.navigate('Entrada');
+  }
+
   useEffect(() => {
       const backAction = () => {
         Alert.alert("Descartar alterações", "Tem certeza que deseja voltar e cancelar o cadastro?", [
@@ -10,7 +15,7 @@ function Como_Comecar({navigation, route}) {
             onPress: () => null,
             style: "cancel"
           },
-          { text: "Sim", onPress: () => navigation.navigate('Entrada')}
+          { text: "Sim", onPress: () => descartarAlteracoes()}
         ]);
         return true;
       };
