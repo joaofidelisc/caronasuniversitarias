@@ -29,6 +29,7 @@ function Cadastro_Email({navigation}) {
   const [password, setPassword] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [warning, setWarning] = useState('');
+  const [emailCadastro, setEmailCadastro] = useState('randomRandomrandomRR');
   const [tokenEmailEnviado, setTokenEmailEnviado] = useState(false);
 
   const descartarAlteracoes = async() =>{
@@ -79,6 +80,7 @@ function Cadastro_Email({navigation}) {
         }
         else{
           auth().createUserWithEmailAndPassword(email, password).then((result) => {
+            setEmailCadastro(email);
             result.user.sendEmailVerification();
             setTokenEmailEnviado(true);
             setWarning('Confirme seu e-mail\n para prosseguir com o cadastro!')
