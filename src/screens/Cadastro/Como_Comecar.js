@@ -1,7 +1,28 @@
-import React from 'react';
-import {View, Text, SafeAreaView, StatusBar, TouchableOpacity} from 'react-native';
+import React, {useEffect} from 'react';
+import {View, Text, SafeAreaView, StatusBar, TouchableOpacity, Alert, BackHandler} from 'react-native';
 
 function Como_Comecar({navigation, route}) {
+  useEffect(() => {
+      const backAction = () => {
+        Alert.alert("Descartar alterações", "Tem certeza que deseja voltar e cancelar o cadastro?", [
+          {
+            text: "Cancelar",
+            onPress: () => null,
+            style: "cancel"
+          },
+          { text: "Sim", onPress: () => BackHandler.exitApp() }
+        ]);
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+
+      return () => backHandler.remove();
+    }, []);
+  
     return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
