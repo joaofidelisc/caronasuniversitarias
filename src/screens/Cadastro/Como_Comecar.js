@@ -10,7 +10,7 @@ function Como_Comecar({navigation, route}) {
             onPress: () => null,
             style: "cancel"
           },
-          { text: "Sim", onPress: () => BackHandler.exitApp() }
+          { text: "Sim", onPress: () => navigation.navigate('Entrada')}
         ]);
         return true;
       };

@@ -71,6 +71,9 @@ function Cadastro_Email({navigation}) {
   }
 
   const userVerified = async()=>{
+    // email.emailVerified == true
+    auth().currentUser.reload();
+    auth().currentUser.getIdToken(true);
     if (auth().currentUser.emailVerified == true){
       console.log('Email verificado!');
     }
