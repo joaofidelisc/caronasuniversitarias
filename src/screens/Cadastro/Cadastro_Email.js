@@ -54,7 +54,7 @@ function Cadastro_Email({navigation}) {
           // setWarning('Siga as próximas etapas\n para concluir seu cadastro!')
           // setWarning('Siga as próximas etapas\n para concluir seu cadastro!')
           navigation.navigate('Como_Comecar', {email: email, senha: password});
-          setModalVisible(true);
+          // setModalVisible(true);
         }).catch(error => {
           if (error.code === 'auth/email-already-in-use') {
             setWarning('Este email já está em uso, escolha outro!')
