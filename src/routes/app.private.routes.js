@@ -60,7 +60,7 @@ function RotaPerfil(){
     </Tab.Navigator>
 }
 
-function AppRoutes() {
+function AppRoutes({route}) {
   return (
     <NavigationContainer
       independent={true}

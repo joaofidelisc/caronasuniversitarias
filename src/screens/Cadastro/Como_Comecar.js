@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, SafeAreaView, StatusBar, TouchableOpacity} from 'react-native';
 
-function Como_Comecar({navigation}) {
+function Como_Comecar({navigation, route}) {
     return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -9,7 +9,7 @@ function Como_Comecar({navigation}) {
             <Text style={{position:'absolute', top: 78, fontWeight: '700', fontSize: 24, lineHeight: 29, color:'#06444C', textAlign:'center'}}>Como você quer{'\n'}começar?</Text>
             <TouchableOpacity 
               style={{position: 'absolute', width: 315, height: 39, top: 222, backgroundColor: '#FF5F55', borderRadius: 12, justifyContent: 'center'}}
-              onPress={()=>navigation.navigate('Forms_Passageiro')}  
+              onPress={()=>navigation.navigate('Forms_Passageiro', {email: route.params?.email, senha: route.params?.senha})}  
             >
               <Text style={{textAlign: 'center', fontWeight: '700', fontSize: 16, lineHeight: 20, color:'white'}}>Sou passageiro</Text>
             </TouchableOpacity>

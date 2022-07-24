@@ -1,17 +1,26 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-function Forms_Passageiro() {
+function Forms_Passageiro({route, navigation}) {
+    const [nome, setNome] = useState('');
+    const [CPF, setCPF] = useState('');
+    const [data_nasc, setDataNasc] = useState('');
+    const [num_cel, setNumCel] = useState('');
+    const [universidade, setUniversidade] = useState('');
+    
     const insertDataNewUser = async() => {
-        const userCollection = firestore().collection('Users').get();
-        console.log(userCollection)
-        // firestore().collection('Users').add({
-        //     name: 'Ada Lovelace',
-        //     age: 30,
-        // }).then(() => {
-        // console.log('User added!');
-        // });
+        firestore().collection('Passageiro').add({
+            email: route.params?.email,
+            senha: route.params?.senha,
+            nome: nome,
+            CPF: CPF,
+            data_nasc: data_nasc,
+            num_cel: num_cel,
+            universidade: universidade
+        }).then(()=>{
+            navigation.navigate('MenuPrincipal', {email: route.params?.email})
+        });
     }
     return (
     <SafeAreaView>
@@ -29,34 +38,41 @@ function Forms_Passageiro() {
                     style={{position:'absolute', width: 315, height: 39, top: 222, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
                     placeholderTextColor='white'
                     placeholder='Nome'
-                />
+                    onChangeText={(nome)=>setNome(nome)}
+                    />
                 <TextInput
                     style={{position:'absolute', width: 139, height: 39, top: 280, left:34, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
                     placeholderTextColor='white'
                     placeholder='CPF'
                     keyboardType='numeric'
-                />
+                    onChangeText={(CPF)=>setCPF(CPF)}
+                    />
                 <TextInput
                     style={{position:'absolute', width: 139, height: 39, top: 280, left:210, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
                     placeholderTextColor='white'
                     placeholder='Nascimento'
+                    onChangeText={(data_nasc)=>setDataNasc(data_nasc)}
                     // keyboardType='numbers-and-punctuation'
-                />
+                    />
                 <TextInput
                     style={{position:'absolute', width: 315, height: 39, top: 344, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
                     placeholderTextColor='white'
                     placeholder='Número de celular'
-                />
+                    onChangeText={(num_cel)=>setNumCel(num_cel)}
+                    />
                 <TextInput
                     style={{position:'absolute', width: 315, height: 39, top: 405, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
                     placeholderTextColor='white'
                     placeholder='Universidade'
-                />
+                    onChangeText={(universidade)=>setUniversidade(universidade)}
+                    />
                 <TextInput
                     style={{position:'absolute', width: 315, height: 39, top: 470, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
                     placeholderTextColor='white'
                     placeholder='E-mail'
                     keyboardType='email-address'
+                    value= {route.params?.email}
+                    editable={false}
                 />
                 <TouchableOpacity 
                     style={{position: 'absolute', top: 542}}
@@ -64,8 +80,6 @@ function Forms_Passageiro() {
                 >
                     <Text style={{fontWeight: '700', fontSize: 16, color: '#06444C'}}>Salvar</Text>
                 </TouchableOpacity>
-            
-            
             </View>
     </SafeAreaView>
     );

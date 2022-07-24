@@ -3,8 +3,10 @@ import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBa
 
 import estilos from '../../estilos/estilos';
 
+import firestore from '@react-native-firebase/firestore';
 
-function Perfil_Detalhes({navigation}){
+
+function Perfil_Detalhes({navigation, route}){
   // const {token} = route.params;
   // const [profile, setProfile] = useState({} as Profile);
   
@@ -18,6 +20,15 @@ function Perfil_Detalhes({navigation}){
   // },[]);
 
   //   //CORRIGIR ESTILOS
+  const RecuperarDados = async()=>{
+    console.log('teste');
+    firestore().collection('Passageiro').where('email', '==', 'joao.fidelis@estudante.ufscar.br').get().then(querySnapshot => {
+      console.log('Total users: ', querySnapshot.size);
+      querySnapshot.forEach(documentSnapshot =>{
+        console.log('User ID', documentSnapshot.id, documentSnapshot.data());
+      });
+    });
+  }
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
@@ -56,12 +67,15 @@ function Perfil_Detalhes({navigation}){
           Preferências
         </Text>
         <Text style={estilos.Text12}>
-          Sem preferências
+          {/* {route.params?.email} */}
         </Text>
         <Text style={estilos.Text13}>
           Carros
         </Text>
-        <TouchableOpacity style={estilos.TouchbleOpct1}>
+        <TouchableOpacity 
+          style={estilos.TouchbleOpct1}
+          onPress={RecuperarDados}  
+        >
           <Text style={estilos.Text14}>Adicionar carro +</Text>
         </TouchableOpacity>
       </View>
