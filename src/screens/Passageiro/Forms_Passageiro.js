@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import { TextInputMask } from 'react-native-masked-text'
+
 
 function Forms_Passageiro({route, navigation}) {
     const [nome, setNome] = useState('');
@@ -8,6 +10,7 @@ function Forms_Passageiro({route, navigation}) {
     const [data_nasc, setDataNasc] = useState('');
     const [num_cel, setNumCel] = useState('');
     const [universidade, setUniversidade] = useState('');
+
     
     const insertDataNewUser = async() => {
         firestore().collection('Passageiro').add({
@@ -39,27 +42,36 @@ function Forms_Passageiro({route, navigation}) {
                     placeholderTextColor='white'
                     placeholder='Nome'
                     onChangeText={(nome)=>setNome(nome)}
-                    />
-                <TextInput
+                />
+                <TextInputMask 
                     style={{position:'absolute', width: 139, height: 39, top: 280, left:34, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
-                    placeholderTextColor='white'
-                    placeholder='CPF'
-                    keyboardType='numeric'
+                    type="cpf"
                     onChangeText={(CPF)=>setCPF(CPF)}
-                    />
-                <TextInput
+                    placeholder='CPF'
+                    placeholderTextColor='white'
+                />
+                <TextInputMask
                     style={{position:'absolute', width: 139, height: 39, top: 280, left:210, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
-                    placeholderTextColor='white'
+                    type="datetime"
+                    options={{
+                        format: 'DD/MM/YYYY'
+                    }}
                     placeholder='Nascimento'
-                    onChangeText={(data_nasc)=>setDataNasc(data_nasc)}
-                    // keyboardType='numbers-and-punctuation'
-                    />
-                <TextInput
-                    style={{position:'absolute', width: 315, height: 39, top: 344, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
                     placeholderTextColor='white'
+                    onChangeText={(data_nasc)=>setDataNasc(data_nasc)}
+                />
+                <TextInputMask
+                    style={{position:'absolute', width: 315, height: 39, top: 344, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
+                    type="cel-phone"
+                    options={{
+                        maskType: 'BRL',
+                        withDDD: true,
+                        dddMask: '(99)'
+                    }}
                     placeholder='Número de celular'
+                    placeholderTextColor='white'
                     onChangeText={(num_cel)=>setNumCel(num_cel)}
-                    />
+                />
                 <TextInput
                     style={{position:'absolute', width: 315, height: 39, top: 405, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
                     placeholderTextColor='white'

@@ -7,19 +7,6 @@ import firestore from '@react-native-firebase/firestore';
 
 
 function Perfil_Detalhes({navigation, route}){
-  // const {token} = route.params;
-  // const [profile, setProfile] = useState({} as Profile);
-  
-  // async function loadProfile() {
-  //   const response = await fetch(`https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=${token}`);
-  //   const userInfo = await response.json();
-  //   setProfile(userInfo);
-  // }
-  // useEffect(()=>{
-  //   loadProfile();
-  // },[]);
-
-  //   //CORRIGIR ESTILOS
   const RecuperarDados = async()=>{
     console.log('teste');
     firestore().collection('Passageiro').where('email', '==', 'joao.fidelis@estudante.ufscar.br').get().then(querySnapshot => {

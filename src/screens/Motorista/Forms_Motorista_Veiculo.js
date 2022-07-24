@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image} from 'react-native';
 
-function Forms_Motorista_Veiculo() {
+function Forms_Motorista_Veiculo({navigation}) {
     return (
     <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -24,17 +24,20 @@ function Forms_Motorista_Veiculo() {
                     placeholderTextColor='white'
                     placeholder='Ano'
                     keyboardType='numeric'
+                    maxLength={4}
                 />
                 <TextInput
                     style={{position:'absolute', width: 139, height: 39, top: 280, left:210, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
                     placeholderTextColor='white'
                     placeholder='Cor'
+                    maxLength={15}
                     // keyboardType='numbers-and-punctuation'
-                />
+                    />
                 <TextInput
                     style={{position:'absolute', width: 315, height: 39, top: 344, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
                     placeholderTextColor='white'
                     placeholder='Placa'
+                    maxLength={15}
                 />
                 <TouchableOpacity style={{position: 'absolute', top: 403}}>
                     <Text style={{fontWeight: '700', fontSize: 16, color: '#06444C'}}>Anexar foto</Text>
@@ -43,7 +46,10 @@ function Forms_Motorista_Veiculo() {
                     require('../../assets/icons/anexar.png')} 
                     style={{height:55, width: 54, position: 'absolute', top:442}}  
                 />
-                <TouchableOpacity style={{position: 'absolute', top: 542}}>
+                <TouchableOpacity 
+                    style={{position: 'absolute', top: 542}}
+                    onPress={()=>navigation.navigate('MenuPrincipal')}    
+                >
                     <Text style={{fontWeight: '700', fontSize: 16, color: '#06444C'}}>Avançar</Text>
                 </TouchableOpacity>
             

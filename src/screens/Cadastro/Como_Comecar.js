@@ -15,7 +15,7 @@ function Como_Comecar({navigation, route}) {
             </TouchableOpacity>
             <TouchableOpacity 
               style={{position: 'absolute', width: 315, height: 39, top: 300, backgroundColor: '#FF5F55', borderRadius: 12, justifyContent: 'center'}}
-              onPress={()=>navigation.navigate('Forms_Motorista')}  
+              onPress={()=>navigation.navigate('Forms_Motorista', {email: route.params?.email, senha: route.params?.senha})}  
             >
               <Text style={{textAlign: 'center', fontWeight: '700', fontSize: 16, lineHeight: 20, color:'white'}}>Sou motorista</Text>
             </TouchableOpacity>

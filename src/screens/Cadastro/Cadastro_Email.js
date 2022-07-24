@@ -14,7 +14,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth'
 
 // incluir aqui dominios permitidos (válido para email e autenticação com Google)
-const dominios_permitidos = ["estudante.ufscar.br", "unesp.com.br", "yahoo.com.br"]
+const dominios_permitidos = ["estudante.ufscar.br", "unesp.com.br", "yahoo.com.br", "gmail.com"]
 
 GoogleSignin.configure({
   webClientId: '97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com',
@@ -50,6 +50,7 @@ function Cadastro_Email({navigation}) {
       else{
         auth().createUserWithEmailAndPassword(email, password).then((result) => {
           result.user.sendEmailVerification();
+          setModalVisible(false);
           // setWarning('Siga as próximas etapas\n para concluir seu cadastro!')
           // setWarning('Siga as próximas etapas\n para concluir seu cadastro!')
           navigation.navigate('Como_Comecar', {email: email, senha: password});
