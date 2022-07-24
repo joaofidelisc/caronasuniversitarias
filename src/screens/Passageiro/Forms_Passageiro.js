@@ -1,7 +1,18 @@
 import React from 'react';
 import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image} from 'react-native';
+import firestore from '@react-native-firebase/firestore';
 
 function Forms_Passageiro() {
+    const insertDataNewUser = async() => {
+        const userCollection = firestore().collection('Users').get();
+        console.log(userCollection)
+        // firestore().collection('Users').add({
+        //     name: 'Ada Lovelace',
+        //     age: 30,
+        // }).then(() => {
+        // console.log('User added!');
+        // });
+    }
     return (
     <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -47,7 +58,10 @@ function Forms_Passageiro() {
                     placeholder='E-mail'
                     keyboardType='email-address'
                 />
-                <TouchableOpacity style={{position: 'absolute', top: 542}}>
+                <TouchableOpacity 
+                    style={{position: 'absolute', top: 542}}
+                    onPress={insertDataNewUser}
+                >
                     <Text style={{fontWeight: '700', fontSize: 16, color: '#06444C'}}>Salvar</Text>
                 </TouchableOpacity>
             

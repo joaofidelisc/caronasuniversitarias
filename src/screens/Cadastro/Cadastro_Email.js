@@ -48,10 +48,12 @@ function Cadastro_Email({navigation}) {
         setModalVisible(true);
       }
       else{
-        auth().createUserWithEmailAndPassword(email, password).then(() => {
-          setWarning('Siga as próximas etapas\n para concluir seu cadastro!')
-          setModalVisible(true);
+        auth().createUserWithEmailAndPassword(email, password).then((result) => {
+          result.user.sendEmailVerification();
+          // setWarning('Siga as próximas etapas\n para concluir seu cadastro!')
+          // setWarning('Siga as próximas etapas\n para concluir seu cadastro!')
           navigation.navigate('Como_Comecar');
+          setModalVisible(true);
         }).catch(error => {
           if (error.code === 'auth/email-already-in-use') {
             setWarning('Este email já está em uso, escolha outro!')
@@ -66,6 +68,17 @@ function Cadastro_Email({navigation}) {
       }
     }
   }
+
+  const userVerified = async()=>{
+    if (auth().currentUser.emailVerified == true){
+      console.log('Email verificado!');
+    }
+    else{
+      console.log('Currentuser:', auth().currentUser)
+      console.log('Email não verificado');
+    }
+  }
+
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
@@ -94,6 +107,12 @@ function Cadastro_Email({navigation}) {
             onPress={InsertUserWithEmail}
             >
             <Text style={{color: 'white', fontWeight: '600', fontSize: 20, lineHeight: 24, textAlign: 'center'}}>Continuar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={{position: 'absolute', width: 291, height: 47, top: 400, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
+            onPress={userVerified}
+            >
+            <Text style={{color: 'white', fontWeight: '600', fontSize: 20, lineHeight: 24, textAlign: 'center'}}>Verificação</Text>
           </TouchableOpacity>
           <Modal
               animationType="fade"
