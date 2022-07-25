@@ -48,11 +48,29 @@ function Login({navigation}) {
     console.log(res);
   }
 
-  // const esqueciMinhaSenha = async()=>{
-  //   auth().sendPasswordResetEmail(email);
-  //   setWarning(`O link de redefinição de senha foi enviado para ${email}`);
-  //   setModalVisible(true);
-  // }
+  const esqueciMinhaSenha = async()=>{
+    if (email == ''){
+      setWarning('Preencha o e-mail para recuperar a senha.');
+      setModalVisible(true);
+    }else{
+      auth().sendPasswordResetEmail(email).then(()=>{
+      setWarning(`O link de redefinição de senha foi enviado para ${email}`);
+      setModalVisible(true);
+      }).catch(error =>{
+        if (error.code == 'auth/invalid-email'){
+          setWarning('Digite um e-mail válido para recuperar a senha.');
+          setModalVisible(true);
+        }
+        else if(error.code == 'auth/user-not-found'){
+          setWarning('Usuário não encontrado.');
+          setModalVisible(true);
+        }
+        else{
+          console.log(error.code);
+        }
+      })
+    }
+  }
   //https://blog.logrocket.com/email-authentication-react-native-react-navigation-firebase/
   //tratar e-mails e contexto
   const SignInWithEmail = async() =>{
@@ -142,15 +160,13 @@ function Login({navigation}) {
           </TouchableOpacity>
           <TouchableOpacity 
             style={{position: 'absolute', width: 291, height: 47, top: 492, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
-            // onPress={SignInWithEmail}
-            // onPress={()=>{navigation.navigate('MenuPrincipal')}}
             onPress={SignInWithEmail}
             >
             <Text style={{color: 'white', fontWeight: '600', fontSize: 20, lineHeight: 24, textAlign: 'center'}}>Continuar</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={{position: 'absolute', width: 291, height: 47, top: 590, alignSelf: 'center', justifyContent: 'center'}}
-            // onPress={esqueciMinhaSenha}
+            onPress={esqueciMinhaSenha}
             >
             <Text style={{color: '#FF5F55', fontWeight: '600', fontSize: 15, lineHeight: 24, textAlign: 'center'}}>Esqueci minha senha</Text>
           </TouchableOpacity>
