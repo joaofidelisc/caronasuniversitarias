@@ -22,7 +22,6 @@ GoogleSignin.configure({
   webClientId: '97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com',
 });
 
-
 function Cadastro_Email({navigation}) {
 
   const [email, setEmail] = useState('');
@@ -108,6 +107,9 @@ function Cadastro_Email({navigation}) {
       else{
         auth().currentUser.reload();
         auth().currentUser.getIdToken(true);
+        // setTimeout(InsertUserWithEmail, 3000);
+        // auth().currentUser.reload();
+        // auth().currentUser.getIdToken(true);
         if (auth().currentUser.emailVerified == true){
           navigation.navigate('Como_Comecar', {email: email, senha: password});
         }
@@ -118,20 +120,6 @@ function Cadastro_Email({navigation}) {
       }
     }
   }
-
-  // const userVerified = async()=>{
-  //   // email.emailVerified == true
-  //   auth().currentUser.reload();
-  //   auth().currentUser.getIdToken(true);
-  //   if (auth().currentUser.emailVerified == true){
-  //     console.log('Email verificado!');
-  //   }
-  //   else{
-  //     console.log('Currentuser:', auth().currentUser)
-  //     console.log('Email não verificado');
-  //   }
-  // }
-
 
   return (
     <SafeAreaView>

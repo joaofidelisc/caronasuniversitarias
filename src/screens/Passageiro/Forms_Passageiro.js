@@ -1,8 +1,7 @@
-import React, {useState} from 'react';
-import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image} from 'react-native';
+import React, {useState, useEffect, useContext} from 'react';
+import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image, BackHandler, Alert} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { TextInputMask } from 'react-native-masked-text'
-
 
 function Forms_Passageiro({route, navigation}) {
     const [nome, setNome] = useState('');
@@ -10,6 +9,34 @@ function Forms_Passageiro({route, navigation}) {
     const [data_nasc, setDataNasc] = useState('');
     const [num_cel, setNumCel] = useState('');
     const [universidade, setUniversidade] = useState('');
+
+
+    const descartarAlteracoes = async() =>{
+        // auth().currentUser.delete();
+        navigation.navigate('Como_Comecar', {email: route.params?.email});
+      }
+    
+        useEffect(() => {
+            const backAction = () => {
+            Alert.alert("Descartar informações de passageiro", "Tem certeza que deseja voltar?\nSuas informações serão descartadas!", [
+                {
+                text: "Cancelar",
+                onPress: () => null,
+                style: "cancel"
+                },
+                { text: "Sim", onPress: () => descartarAlteracoes()}
+            ]);
+            return true;
+            };
+    
+            const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            backAction
+            );
+    
+            return () => backHandler.remove();
+        }, []);
+        
 
     
     const insertDataNewUser = async() => {

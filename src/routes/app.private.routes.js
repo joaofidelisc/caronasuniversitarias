@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import { BackHandler } from 'react-native';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -60,7 +61,11 @@ function RotaPerfil(){
     </Tab.Navigator>
 }
 
-function AppRoutes({route}) {
+function AppRoutes({route, navigation}) {
+  useEffect(() => {
+    BackHandler.addEventListener('backPress', () => true)
+    return () => BackHandler.removeEventListener('backPress', () => true)
+  }, [])
   return (
     <NavigationContainer
       independent={true}
