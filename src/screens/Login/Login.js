@@ -36,20 +36,39 @@ function Login({navigation}) {
     console.log(res);
   }
 
-  const SignOutGoogle = async() =>{
-    try {
-      await GoogleSignin.signOut();
-    } catch (error) {
-      console.error(error);
-    }
-  }
   //https://blog.logrocket.com/email-authentication-react-native-react-navigation-firebase/
   //tratar e-mails e contexto
   const SignInWithEmail = async() =>{
-    try{
-      auth().signInWithEmailAndPassword(email, password);
-    }catch (error){
-      console.error(error);
+    if (email == '' && password == ''){
+      setWarning('Preencha os campos de e-mail e senha!');
+      setModalVisible(true);
+    }
+    else if (email == ''){
+      setWarning('O campo e-mail não pode estar vazio.');
+      setModalVisible(true);
+    }
+    else if (password == ''){
+      setWarning('O campo senha não pode estar vazio.');
+      setModalVisible(true);
+    }
+    else{
+      auth().signInWithEmailAndPassword(email, password).then((result)=>{
+        navigation.navigate("MenuPrincipal");
+      }).catch(error => {
+        if (error.code == 'auth/user-not-found'){
+          setWarning('Usuário não cadastrado!');
+          setModalVisible(true);
+        }else if (error.code == 'auth/wrong-password'){
+          setWarning('Senha Incorreta!');
+          setModalVisible(true);
+        }else if (error.code == 'auth/too-many-requests'){
+          setWarning('Você tentou muitas vezes, tente novamente\n daqui a 20 segundos.');
+          setModalVisible(true);
+        }else{
+          setWarning('Algo deu errado, tente novamente mais tarde.');
+          setModalVisible(true);
+        }
+      })
     }
   }
 
@@ -86,7 +105,8 @@ function Login({navigation}) {
           <TouchableOpacity 
             style={{position: 'absolute', width: 291, height: 47, top: 492, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
             // onPress={SignInWithEmail}
-            onPress={()=>{navigation.navigate('MenuPrincipal')}}
+            // onPress={()=>{navigation.navigate('MenuPrincipal')}}
+            onPress={SignInWithEmail}
             >
             <Text style={{color: 'white', fontWeight: '600', fontSize: 20, lineHeight: 24, textAlign: 'center'}}>Continuar</Text>
           </TouchableOpacity>
