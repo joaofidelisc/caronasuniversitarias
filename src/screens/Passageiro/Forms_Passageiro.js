@@ -41,15 +41,13 @@ function Forms_Passageiro({route, navigation}) {
     
     const insertDataNewUser = async() => {
         firestore().collection('Passageiro').add({
-            email: route.params?.email,
-            senha: route.params?.senha,
             nome: nome,
             CPF: CPF,
             data_nasc: data_nasc,
             num_cel: num_cel,
             universidade: universidade
         }).then(()=>{
-            navigation.navigate('MenuPrincipal', {email: route.params?.email})
+            navigation.navigate('MenuPrincipal');
         });
     }
     return (

@@ -11,7 +11,6 @@ function Forms_Motorista({route, navigation}) {
     const [universidade, setUniversidade] = useState('');
     
   const descartarAlteracoes = async() =>{
-    // auth().currentUser.delete();
     navigation.navigate('Como_Comecar', {email: route.params?.email});
   }
 
@@ -40,8 +39,6 @@ function Forms_Motorista({route, navigation}) {
     
     const insertDataNewUser = async() => {
         firestore().collection('Motorista').add({
-            email: route.params?.email,
-            senha: route.params?.senha,
             nome: nome,
             CPF: CPF,
             data_nasc: data_nasc,
@@ -110,7 +107,6 @@ function Forms_Motorista({route, navigation}) {
                     placeholder='E-mail'
                     keyboardType='email-address'
                     value= {route.params?.email}
-                    // value= {email}
                     editable={false}
                 />
                 <TouchableOpacity 
