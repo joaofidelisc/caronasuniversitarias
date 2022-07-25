@@ -14,7 +14,8 @@ function Entrada({navigation}){
   // }
 
   // useEffect(()=>{
-  //   AsyncStorage.getItem("TOKEN").then((token)=>{
+  //   // auth().
+  //   // AsyncStorage.getItem("TOKEN").then((token)=>{
   //     // SignInToken();
   //   })
   // })

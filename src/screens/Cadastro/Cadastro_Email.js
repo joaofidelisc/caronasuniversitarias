@@ -14,6 +14,7 @@ import {
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // incluir aqui dominios permitidos (válido para email e autenticação com Google)
 const dominios_permitidos = ["estudante.ufscar.br", "unesp.com.br", "yahoo.com.br", "gmail.com"]
@@ -31,34 +32,24 @@ function Cadastro_Email({navigation}) {
   const [emailCadastro, setEmailCadastro] = useState('randomRandomrandomRR');
   const [tokenEmailEnviado, setTokenEmailEnviado] = useState(false);
 
-  const descartarAlteracoes = async() =>{
-    // auth().currentUser.delete();
-    navigation.navigate('Entrada');
-    // if (auth().currentUser.emailVerified == true){
-      // navigation.navigate('Como_Comecar', {email: email, senha: password});
+  const VerificationCode = async() =>{
+    if (email == ''){
+      setWarning('O campo e-mail \nnão pode estar vazio!');
+      modalVisible(true);
+    }
+    else{
+      console.log('implementar aqui código de verificação');
+    }
+    // else{
+    //   auth().sendEmailVerification(email).then(()=>{
+    //     setWarning('Um novo código de verificação foi enviado para');
+    //     modalVisible(true);
+    //   }).catch(error =>{
+    //     console.log(error.code);
+    //   })
     // }
   }
 
-  // useEffect(() => {
-  //   const backAction = () => {
-  //     Alert.alert("Descartar alterações", "Tem certeza que deseja voltar e cancelar o cadastro?", [
-  //       {
-  //         text: "Cancelar",
-  //         onPress: () => null,
-  //         style: "cancel"
-  //       },
-  //       { text: "Sim", onPress: () => descartarAlteracoes()}
-  //     ]);
-  //     return true;
-  //   };
-
-  //   const backHandler = BackHandler.addEventListener(
-  //     "hardwareBackPress",
-  //     backAction
-  //   );
-
-  //   return () => backHandler.remove();
-  // }, []);
   
   const InsertUserWithEmail = async() =>{
     if (email == '' && password == ''){
@@ -85,15 +76,8 @@ function Cadastro_Email({navigation}) {
             setEmailCadastro(email);
             result.user.sendEmailVerification();
             setTokenEmailEnviado(true);
-            setWarning('Confirme seu e-mail\n para prosseguir com o cadastro!')
+            setWarning('Verifique seu e-mail para prosseguir.\nApós confirmar, faça login para continuar.');
             setModalVisible(true);
-            // if (tokenEmailEnviado == true){
-            //   // setWarning('Confirme seu e-mail\n para prosseguir com o cadastro!')
-  
-            // }
-            // setWarning('Siga as próximas etapas\n para concluir seu cadastro!')
-            // navigation.navigate('Como_Comecar', {email: email, senha: password});
-            // setModalVisible(true);
           }).catch(error => {
             if (error.code === 'auth/email-already-in-use') {
               setWarning('Este email já está em uso, escolha outro!')
@@ -103,21 +87,12 @@ function Cadastro_Email({navigation}) {
               setWarning('E-mail inválido!')
               setModalVisible(true);
             }
-            // console.error(error);
           });
         }
       }
       else{
-        auth().currentUser.reload();
-        auth().currentUser.getIdToken(true);
-        // setTimeout(InsertUserWithEmail, 3000);
-        // auth().currentUser.reload();
-        // auth().currentUser.getIdToken(true);
-        if (auth().currentUser.emailVerified == true){
-          navigation.navigate('Como_Comecar', {email: email, senha: password});
-        }
-        else{
-          setWarning('Verifique seu e-mail antes de prosseguir!');
+        if (auth().currentUser.emailVerified == false){
+          setWarning('Link de verificação enviado.\nVerifique e faça login para continuar.');
           setModalVisible(true);
         }
       }
@@ -153,12 +128,13 @@ function Cadastro_Email({navigation}) {
             >
             <Text style={{color: 'white', fontWeight: '600', fontSize: 20, lineHeight: 24, textAlign: 'center'}}>Continuar</Text>
           </TouchableOpacity>
-          {/* <TouchableOpacity 
-            style={{position: 'absolute', width: 291, height: 47, top: 400, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
-            onPress={userVerified}
+          <Text style={{color:'#FF5F55', position: 'absolute', top: 460, alignSelf:'center', fontWeight: '600', fontSize: 15}}>Perdeu o código de autenticação?</Text>
+          <TouchableOpacity 
+            style={{position: 'absolute', width: 210, height: 45, top: 500, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
+            onPress={VerificationCode}
             >
-            <Text style={{color: 'white', fontWeight: '600', fontSize: 20, lineHeight: 24, textAlign: 'center'}}>Verificação</Text>
-          </TouchableOpacity> */}
+            <Text style={{color: 'white', fontWeight: '600', fontSize: 15, lineHeight: 24, textAlign: 'center'}}>Obter novo código</Text>
+          </TouchableOpacity>
           <Modal
               animationType="fade"
               transparent={true}

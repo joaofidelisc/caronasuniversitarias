@@ -87,25 +87,22 @@ function Login({navigation}) {
       setModalVisible(true);
     }
     else{
-      if (auth().currentUser.emailVerified==false){
-        console.log('primeira',partesEmail[0],'segunda', partesEmail[1]);
-        if (partesEmail[0] == undefined || partesEmail[1] == undefined || partesEmail[0] == "" || partesEmail[1] == ""){
-          setWarning('E-mail inválido.');
-          setModalVisible(true);
-        }
-        else{
-          setWarning('Verifique seu e-mail antes de prosseguir!');
-          setModalVisible(true);
-        }
+      if (partesEmail[0] == undefined || partesEmail[1] == undefined || partesEmail[0] == "" || partesEmail[1] == ""){
+        setWarning('E-mail inválido.');
+        setModalVisible(true);
       }
       //testar se o usuário já verificou o e-mail mas ainda não preencheu o formulário de motorista e/ou passageiro;
-      // else if(){
-
-      // }
       else{
         auth().signInWithEmailAndPassword(email, password).then((result)=>{
-          // AsyncStorage.setItem("TOKEN", auth().currentUser.uid);
-          navigation.navigate("MenuPrincipal");
+          if (auth().currentUser.emailVerified==true){
+            navigation.navigate("MenuPrincipal");
+          }
+          else{
+            auth().currentUser.reload();
+            auth().currentUser.getIdToken(true);
+            setWarning('Verifique seu e-mail antes de prosseguir!');
+            setModalVisible(true);
+        }
         }).catch(error => {
           if (error.code == 'auth/user-not-found'){
             setWarning('Usuário não cadastrado!');
@@ -124,10 +121,9 @@ function Login({navigation}) {
             setModalVisible(true);
           }
         })
-        }
       }
+    }  
   }
-
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
