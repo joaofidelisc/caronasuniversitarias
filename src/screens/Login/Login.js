@@ -13,6 +13,9 @@ import {
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth'
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 // incluir aqui dominios permitidos (válido para email e autenticação com Google)
 const dominios_permitidos = ["estudante.ufscar.br", "unesp.com.br", "yahoo.com.br"]
 
@@ -29,6 +32,12 @@ function Login({navigation}) {
   const [warning, setWarning] = useState('');
   const [loginPermitidoEmail, setLoginPermitidoEmail] = useState(false);
 
+  const state = {
+    email:"",
+    password:"",
+    userData:{}
+  };
+  
   const SignInGoogle = async() =>{
     const { idToken } = await GoogleSignin.signIn();
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
@@ -53,6 +62,7 @@ function Login({navigation}) {
     }
     else{
       auth().signInWithEmailAndPassword(email, password).then((result)=>{
+        // AsyncStorage.setItem("TOKEN", auth().currentUser.uid);
         navigation.navigate("MenuPrincipal");
       }).catch(error => {
         if (error.code == 'auth/user-not-found'){

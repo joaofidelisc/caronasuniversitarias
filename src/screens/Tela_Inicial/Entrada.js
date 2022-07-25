@@ -1,7 +1,24 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Image, SafeAreaView, StatusBar } from 'react-native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import auth from '@react-native-firebase/auth'
+
 function Entrada({navigation}){
+  // https://www.youtube.com/watch?v=MvepxO0qssA
+  //https://instamobile.io/react-native-tutorials/asyncstorage-example-react-native/
+
+  // const SignInToken = async() =>{
+  //   // auth().signInWithCustomToken(AsyncStorage.getItem("TOKEN"));
+  //   // navigation.navigate("MenuPrincipal");
+  // }
+
+  // useEffect(()=>{
+  //   AsyncStorage.getItem("TOKEN").then((token)=>{
+  //     // SignInToken();
+  //   })
+  // })
+
   return (
     <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
