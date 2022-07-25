@@ -32,30 +32,33 @@ function Cadastro_Email({navigation}) {
   const [tokenEmailEnviado, setTokenEmailEnviado] = useState(false);
 
   const descartarAlteracoes = async() =>{
-    auth().currentUser.delete();
+    // auth().currentUser.delete();
     navigation.navigate('Entrada');
+    // if (auth().currentUser.emailVerified == true){
+      // navigation.navigate('Como_Comecar', {email: email, senha: password});
+    // }
   }
 
-  useEffect(() => {
-    const backAction = () => {
-      Alert.alert("Descartar alterações", "Tem certeza que deseja voltar e cancelar o cadastro?", [
-        {
-          text: "Cancelar",
-          onPress: () => null,
-          style: "cancel"
-        },
-        { text: "Sim", onPress: () => descartarAlteracoes()}
-      ]);
-      return true;
-    };
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     Alert.alert("Descartar alterações", "Tem certeza que deseja voltar e cancelar o cadastro?", [
+  //       {
+  //         text: "Cancelar",
+  //         onPress: () => null,
+  //         style: "cancel"
+  //       },
+  //       { text: "Sim", onPress: () => descartarAlteracoes()}
+  //     ]);
+  //     return true;
+  //   };
 
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
+  //   const backHandler = BackHandler.addEventListener(
+  //     "hardwareBackPress",
+  //     backAction
+  //   );
 
-    return () => backHandler.remove();
-  }, []);
+  //   return () => backHandler.remove();
+  // }, []);
   
   const InsertUserWithEmail = async() =>{
     if (email == '' && password == ''){

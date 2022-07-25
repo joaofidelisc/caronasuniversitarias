@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Modal, 
   StyleSheet,
+  ActivityIndicatorComponent,
 } from 'react-native';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -30,7 +31,9 @@ function Login({navigation}) {
   const [password, setPassword] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [warning, setWarning] = useState('');
-  const [loginPermitidoEmail, setLoginPermitidoEmail] = useState(false);
+  const [emailVerificado, setEmailVerificado] = useState(false);
+
+  const partesEmail = email.split("@");
 
   const state = {
     email:"",
@@ -45,6 +48,11 @@ function Login({navigation}) {
     console.log(res);
   }
 
+  // const esqueciMinhaSenha = async()=>{
+  //   auth().sendPasswordResetEmail(email);
+  //   setWarning(`O link de redefinição de senha foi enviado para ${email}`);
+  //   setModalVisible(true);
+  // }
   //https://blog.logrocket.com/email-authentication-react-native-react-navigation-firebase/
   //tratar e-mails e contexto
   const SignInWithEmail = async() =>{
@@ -61,25 +69,45 @@ function Login({navigation}) {
       setModalVisible(true);
     }
     else{
-      auth().signInWithEmailAndPassword(email, password).then((result)=>{
-        // AsyncStorage.setItem("TOKEN", auth().currentUser.uid);
-        navigation.navigate("MenuPrincipal");
-      }).catch(error => {
-        if (error.code == 'auth/user-not-found'){
-          setWarning('Usuário não cadastrado!');
-          setModalVisible(true);
-        }else if (error.code == 'auth/wrong-password'){
-          setWarning('Senha Incorreta!');
-          setModalVisible(true);
-        }else if (error.code == 'auth/too-many-requests'){
-          setWarning('Você tentou muitas vezes, tente novamente\n daqui a 20 segundos.');
-          setModalVisible(true);
-        }else{
-          setWarning('Algo deu errado, tente novamente mais tarde.');
+      if (auth().currentUser.emailVerified==false){
+        console.log('primeira',partesEmail[0],'segunda', partesEmail[1]);
+        if (partesEmail[0] == undefined || partesEmail[1] == undefined || partesEmail[0] == "" || partesEmail[1] == ""){
+          setWarning('E-mail inválido.');
           setModalVisible(true);
         }
-      })
-    }
+        else{
+          setWarning('Verifique seu e-mail antes de prosseguir!');
+          setModalVisible(true);
+        }
+      }
+      //testar se o usuário já verificou o e-mail mas ainda não preencheu o formulário de motorista e/ou passageiro;
+      // else if(){
+
+      // }
+      else{
+        auth().signInWithEmailAndPassword(email, password).then((result)=>{
+          // AsyncStorage.setItem("TOKEN", auth().currentUser.uid);
+          navigation.navigate("MenuPrincipal");
+        }).catch(error => {
+          if (error.code == 'auth/user-not-found'){
+            setWarning('Usuário não cadastrado!');
+            setModalVisible(true);
+          }else if (error.code == 'auth/wrong-password'){
+            setWarning('Senha Incorreta!');
+            setModalVisible(true);
+          }else if (error.code == 'auth/too-many-requests'){
+            setWarning('Você tentou muitas vezes, tente novamente\n daqui a 20 segundos.');
+            setModalVisible(true);
+          }else if (error.code == 'auth/invalid-email'){
+            setWarning('E-mail inválido.\nDigite um e-mail corretamente.');
+            setModalVisible(true);
+          }else{
+            setWarning('Algo deu errado, tente novamente mais tarde.');
+            setModalVisible(true);
+          }
+        })
+        }
+      }
   }
 
   return (
@@ -119,6 +147,12 @@ function Login({navigation}) {
             onPress={SignInWithEmail}
             >
             <Text style={{color: 'white', fontWeight: '600', fontSize: 20, lineHeight: 24, textAlign: 'center'}}>Continuar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={{position: 'absolute', width: 291, height: 47, top: 590, alignSelf: 'center', justifyContent: 'center'}}
+            // onPress={esqueciMinhaSenha}
+            >
+            <Text style={{color: '#FF5F55', fontWeight: '600', fontSize: 15, lineHeight: 24, textAlign: 'center'}}>Esqueci minha senha</Text>
           </TouchableOpacity>
           <Modal
               animationType="fade"
