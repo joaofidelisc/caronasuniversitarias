@@ -35,19 +35,32 @@ function Forms_Motorista({route, navigation}) {
         return () => backHandler.remove();
     }, []);
     
-
-    
+    //todo motorista também é um passageiro
     const insertDataNewUser = async() => {
         firestore().collection('Motorista').add({
             nome: nome,
             CPF: CPF,
             data_nasc: data_nasc,
             num_cel: num_cel,
-            universidade: universidade
+            universidade: universidade,
+            email: route.params?.email,
+            placa_veiculo: "",
+            ano_veiculo: "",
+            cor_veiculo: "",
+            nome_veiculo: ""
         }).then(()=>{
+            firestore().collection('Passageiro').add({
+                nome: nome,
+                CPF: CPF,
+                data_nasc: data_nasc,
+                num_cel: num_cel,
+                universidade: universidade,
+                email: route.params?.email
+            });
             navigation.navigate('Forms_Motorista_Veiculo');
         });
     }
+
     return (
     <SafeAreaView>
         <StatusBar barStyle={'light-content'} />

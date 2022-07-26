@@ -42,6 +42,21 @@ function Login({navigation}) {
     userData:{}
   };
   
+  
+  const redirecionamentoLogin = async()=>{
+    firestore().collection('Passageiro').where('email', '==', email).get().then(querySnapshot=>{
+      const valor = querySnapshot.docs;
+      // console.log(valor);
+      if (valor == ""){
+        // console.log("AAA");
+        navigation.navigate("Como_Comecar", {email: email});
+      }
+      else{
+        navigation.navigate("MenuPrincipal");
+      }
+    })
+  }
+
   const SignInGoogle = async() =>{
     const { idToken } = await GoogleSignin.signIn();
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
@@ -96,7 +111,7 @@ function Login({navigation}) {
       else{
         auth().signInWithEmailAndPassword(email, password).then((result)=>{
           if (auth().currentUser.emailVerified==true){
-            navigation.navigate("MenuPrincipal");
+            redirecionamentoLogin();
           }
           else{
             auth().currentUser.reload();
@@ -124,14 +139,6 @@ function Login({navigation}) {
         })
       }
     }  
-  }
-
-  const testeBD = async()=>{
-    firestore().collection('Motorista').where('email', '==', 'joao.fidelis@estudante.ufscar.br').get().then(querySnapshot=>{
-      const valor = querySnapshot.docs;
-      console.log(valor);
-      // console.log(querySnapshot.docs);
-    })
   }
 
   return (
@@ -175,12 +182,6 @@ function Login({navigation}) {
             onPress={esqueciMinhaSenha}
             >
             <Text style={{color: '#FF5F55', fontWeight: '600', fontSize: 15, lineHeight: 24, textAlign: 'center'}}>Esqueci minha senha</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={{position: 'absolute', width: 291, height: 47, top: 650, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
-            onPress={testeBD}
-            >
-            <Text style={{color: 'white', fontWeight: '600', fontSize: 20, lineHeight: 24, textAlign: 'center'}}>TESTE BD</Text>
           </TouchableOpacity>
           <Modal
               animationType="fade"

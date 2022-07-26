@@ -45,8 +45,17 @@ function Forms_Passageiro({route, navigation}) {
             CPF: CPF,
             data_nasc: data_nasc,
             num_cel: num_cel,
-            universidade: universidade
+            universidade: universidade,
+            email: route.params?.email
         }).then(()=>{
+            // firestore().collection('Motorista').add({
+            //     nome: nome,
+            //     CPF: CPF,
+            //     data_nasc: data_nasc,
+            //     num_cel: num_cel,
+            //     universidade: universidade,
+            //     email: route.params?.email
+            // });
             navigation.navigate('MenuPrincipal');
         });
     }

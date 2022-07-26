@@ -7,7 +7,7 @@ function Como_Comecar({navigation, route}) {
   const senha = route.params?.senha;
   
   const descartarAlteracoes = async() =>{
-    auth().currentUser.delete();
+    // auth().currentUser.delete();
     navigation.navigate('Entrada');
   }
 
