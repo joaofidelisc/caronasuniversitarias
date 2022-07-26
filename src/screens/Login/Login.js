@@ -16,6 +16,7 @@ import auth from '@react-native-firebase/auth'
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import firestore from '@react-native-firebase/firestore';
 
 // incluir aqui dominios permitidos (válido para email e autenticação com Google)
 const dominios_permitidos = ["estudante.ufscar.br", "unesp.com.br", "yahoo.com.br"]
@@ -124,6 +125,15 @@ function Login({navigation}) {
       }
     }  
   }
+
+  const testeBD = async()=>{
+    firestore().collection('Motorista').where('email', '==', 'joao.fidelis@estudante.ufscar.br').get().then(querySnapshot=>{
+      const valor = querySnapshot.docs;
+      console.log(valor);
+      // console.log(querySnapshot.docs);
+    })
+  }
+
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
@@ -165,6 +175,12 @@ function Login({navigation}) {
             onPress={esqueciMinhaSenha}
             >
             <Text style={{color: '#FF5F55', fontWeight: '600', fontSize: 15, lineHeight: 24, textAlign: 'center'}}>Esqueci minha senha</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={{position: 'absolute', width: 291, height: 47, top: 650, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
+            onPress={testeBD}
+            >
+            <Text style={{color: 'white', fontWeight: '600', fontSize: 20, lineHeight: 24, textAlign: 'center'}}>TESTE BD</Text>
           </TouchableOpacity>
           <Modal
               animationType="fade"
