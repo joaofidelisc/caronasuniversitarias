@@ -20,9 +20,9 @@ function Perfil_Detalhes({navigation, route}){
     });
   }
   
+  //falta implementar aqui
   const signOutGoogle = async() =>{
     GoogleSignin.signOut().then(()=>{
-    // return <RotaEntrada/>;
     console.log('saiu');
     }).catch(error =>{
       // console.log(error.code);
