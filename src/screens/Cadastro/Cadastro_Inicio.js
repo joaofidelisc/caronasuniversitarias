@@ -33,7 +33,10 @@ function Cadastro_Inicio({navigation}) {
         navigation.navigate("Como_Comecar", {email: emailGoogle});
       }
       else{
-        navigation.navigate("MenuPrincipal");
+        setWarning('Email já cadastrado.\nFaça login para continuar.');
+        setModalVisible(true);
+        signOutGoogle();
+        // navigation.navigate("MenuPrincipal");
       }
     })
   }

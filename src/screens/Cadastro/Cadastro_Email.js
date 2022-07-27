@@ -39,14 +39,14 @@ function Cadastro_Email({navigation}) {
     }
     else{
       console.log('implementar aqui código de verificação');
+      // auth().sendEmailVerification(email).then(()=>{
+      //   setWarning('Um novo código de verificação foi enviado para');
+      //   modalVisible(true);
+      // }).catch(error =>{
+      //   console.log(error.code);
+      // })
     }
     // else{
-    //   auth().sendEmailVerification(email).then(()=>{
-    //     setWarning('Um novo código de verificação foi enviado para');
-    //     modalVisible(true);
-    //   }).catch(error =>{
-    //     console.log(error.code);
-    //   })
     // }
   }
 
