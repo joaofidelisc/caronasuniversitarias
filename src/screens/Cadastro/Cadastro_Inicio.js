@@ -1,7 +1,73 @@
-import React from 'react';
-import {View, Text, StatusBar, StyleSheet, TouchableOpacity, SafeAreaView} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StatusBar, StyleSheet, TouchableOpacity, SafeAreaView, Modal} from 'react-native';
+
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import firestore from '@react-native-firebase/firestore';
+
+const dominios_permitidos = ["estudante.ufscar.br"];
+
+
+GoogleSignin.configure({
+  webClientId: '97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com',
+});
+
 
 function Cadastro_Inicio({navigation}) {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [warning, setWarning] = useState('');
+  useEffect(()=>{
+    if(GoogleSignin.isSignedIn){
+      signOutGoogle();
+    }
+  })
+  
+  const redirecionamentoLogin = async(emailGoogle)=>{  
+    // console.log('email:', emailGoogle);
+    firestore().collection('Passageiro').where('email', '==', emailGoogle).get().then(querySnapshot=>{
+      const valor = querySnapshot.docs;
+      // console.log(valor);
+      if (valor == ""){
+        // console.log("AAA");
+        navigation.navigate("Como_Comecar", {email: emailGoogle});
+      }
+      else{
+        navigation.navigate("MenuPrincipal");
+      }
+    })
+  }
+
+  const signOutGoogle = async() =>{
+    GoogleSignin.signOut().then(()=>{
+      // console.log('saiu');
+    }).catch(error =>{
+      // console.log(error.code);
+      setWarning('Algum erro ocorreu.');
+      setModalVisible(true);
+    })
+  }
+
+  //impede o usuário de fazer login mas não o remove da base de dados;
+  const SignInGoogle = async() =>{
+    const { idToken } = await GoogleSignin.signIn();
+    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+    const res = await auth().signInWithCredential(googleCredential);
+    const dominio = res.user.email.split("@");
+    if (dominios_permitidos.includes(dominio[1]) == false){
+      setWarning('Você pode se cadastrar apenas\n com e-mails institucionais!');
+      setModalVisible(true);
+      if (auth().onAuthStateChanged()){
+        const bloquearAcesso = await auth().currentUser;
+        await bloquearAcesso.delete();
+      }
+      signOutGoogle();
+    }else{
+      await AsyncStorage.setItem("token", idToken);
+      const emailGoogle = res.user.email.slice();
+      redirecionamentoLogin(emailGoogle);
+    }
+  }
     return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -15,7 +81,10 @@ function Cadastro_Inicio({navigation}) {
             <Text style={styles.txtCadastro}>
                 Como você deseja se {'\n'}cadastrar?
             </Text>
-            <TouchableOpacity style={[styles.btnContinuarComRedes]}>
+            <TouchableOpacity 
+              style={[styles.btnContinuarComRedes]}
+              onPress={SignInGoogle}  
+            >
                 <Text style={styles.txtBtnContinuarComRedes}>Continuar com Google</Text>
             </TouchableOpacity>
             <View style={{position: 'absolute',
@@ -49,6 +118,24 @@ function Cadastro_Inicio({navigation}) {
                 meio da Lei Geral de Proteção de Dados (LGPD), Lei nº{'\n'}
                 13.709/2018.
             </Text> 
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {setModalVisible(!modalVisible);}}
+          >
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 190, alignSelf: 'center'}}>
+                <View style={styles.modalView}>
+                    <Text style={{color: 'black', textAlign: 'center', marginBottom: 15}}>{warning}</Text>
+                    <TouchableOpacity
+                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
+                        onPress={() => setModalVisible(!modalVisible)}
+                    >
+                        <Text style={styles.textStyle}>Entendi</Text>
+                    </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
           </View>
       </SafeAreaView>
     );
@@ -139,5 +226,25 @@ const styles = StyleSheet.create({
     fontSize: 10,
     lineHeight:12,
     alignItems: 'center',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
   },
 });
