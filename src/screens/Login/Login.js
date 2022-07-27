@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView, 
   StatusBar,
@@ -12,14 +12,14 @@ import {
 } from 'react-native';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import auth from '@react-native-firebase/auth'
+import auth, { firebase } from '@react-native-firebase/auth'
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import firestore from '@react-native-firebase/firestore';
 
 // incluir aqui dominios permitidos (válido para email e autenticação com Google)
-const dominios_permitidos = ["estudante.ufscar.br", "unesp.com.br", "yahoo.com.br"]
+const dominios_permitidos = ["estudante.ufscar.br"];
 
 GoogleSignin.configure({
   webClientId: '97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com',
@@ -42,26 +42,65 @@ function Login({navigation}) {
     userData:{}
   };
   
-  
-  const redirecionamentoLogin = async()=>{
-    firestore().collection('Passageiro').where('email', '==', email).get().then(querySnapshot=>{
-      const valor = querySnapshot.docs;
-      // console.log(valor);
-      if (valor == ""){
-        // console.log("AAA");
-        navigation.navigate("Como_Comecar", {email: email});
-      }
-      else{
-        navigation.navigate("MenuPrincipal");
-      }
+  useEffect(()=>{
+    if(GoogleSignin.isSignedIn){
+      signOutGoogle();
+    }
+  })
+  const redirecionamentoLogin = async(emailGoogle)=>{  
+    // console.log('email:', emailGoogle);
+    if (email == ''){
+      firestore().collection('Passageiro').where('email', '==', emailGoogle).get().then(querySnapshot=>{
+        const valor = querySnapshot.docs;
+        // console.log(valor);
+        if (valor == ""){
+          // console.log("AAA");
+          navigation.navigate("Como_Comecar", {email: emailGoogle});
+        }
+        else{
+          navigation.navigate("MenuPrincipal");
+        }
+      })
+    }else{
+      firestore().collection('Passageiro').where('email', '==', email).get().then(querySnapshot=>{
+        const valor = querySnapshot.docs;
+        console.log(valor);
+        if (valor == ""){
+          // console.log("AAA");
+          navigation.navigate("Como_Comecar", {email: email});
+        }
+        else{
+          navigation.navigate("MenuPrincipal");
+        }
+      })
+    }
+  }
+
+  const signOutGoogle = async() =>{
+    GoogleSignin.signOut().then(()=>{
+      // console.log('saiu');
+    }).catch(error =>{
+      // console.log(error.code);
+      setWarning('Algum erro ocorreu.');
+      setModalVisible(true);
     })
   }
 
+  //impede o usuário de fazer login mas não o remove da base de dados;
   const SignInGoogle = async() =>{
     const { idToken } = await GoogleSignin.signIn();
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-    res = await auth().signInWithCredential(googleCredential);
-    console.log(res);
+    const res = await auth().signInWithCredential(googleCredential);
+    const dominio = res.user.email.split("@");
+    if (dominios_permitidos.includes(dominio[1]) == false){
+      setWarning('Você pode entrar apenas\n com e-mails institucionais!');
+      setModalVisible(true);
+      signOutGoogle();
+    }else{
+      await AsyncStorage.setItem("token", idToken);
+      const emailGoogle = res.user.email.slice();
+      redirecionamentoLogin(emailGoogle);
+    }
   }
 
   const esqueciMinhaSenha = async()=>{

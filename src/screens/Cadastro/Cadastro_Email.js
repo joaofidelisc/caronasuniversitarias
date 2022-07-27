@@ -17,7 +17,7 @@ import auth from '@react-native-firebase/auth'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // incluir aqui dominios permitidos (válido para email e autenticação com Google)
-const dominios_permitidos = ["estudante.ufscar.br", "unesp.com.br", "yahoo.com.br", "gmail.com"]
+const dominios_permitidos = ["estudante.ufscar.br"];
 
 GoogleSignin.configure({
   webClientId: '97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com',

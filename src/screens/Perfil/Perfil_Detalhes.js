@@ -1,5 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar } from 'react-native';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import auth, { firebase } from '@react-native-firebase/auth'
+import RotaEntrada from '../../routes/app.public.routes';
 
 import estilos from '../../estilos/estilos';
 
@@ -16,6 +19,27 @@ function Perfil_Detalhes({navigation, route}){
       });
     });
   }
+  
+  const signOutGoogle = async() =>{
+    GoogleSignin.signOut().then(()=>{
+    // return <RotaEntrada/>;
+    console.log('saiu');
+    }).catch(error =>{
+      // console.log(error.code);
+      setWarning('Algum erro ocorreu.');
+      setModalVisible(true);
+    })
+  }
+  
+  const logout = async()=>{
+    if(GoogleSignin.isSignedIn){
+      signOutGoogle();
+    }else{
+      auth().currentUser.signOut;
+    }
+  }
+
+
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
@@ -61,9 +85,9 @@ function Perfil_Detalhes({navigation, route}){
         </Text>
         <TouchableOpacity 
           style={estilos.TouchbleOpct1}
-          onPress={RecuperarDados}  
+          onPress={logout}  
         >
-          <Text style={estilos.Text14}>Adicionar carro +</Text>
+          <Text style={estilos.Text14}>Sair</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

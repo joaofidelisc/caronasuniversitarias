@@ -1,13 +1,27 @@
 import React, {useEffect} from 'react';
 import {View, Text, SafeAreaView, StatusBar, TouchableOpacity, Alert, BackHandler} from 'react-native';
 import auth from '@react-native-firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 function Como_Comecar({navigation, route}) {
   const email = route.params?.email;
   const senha = route.params?.senha;
   
+  const signOutGoogle = async() =>{
+    GoogleSignin.signOut().then(()=>{
+      // console.log('saiu');
+    }).catch(error =>{
+      // console.log(error.code);
+      setWarning('Algum erro ocorreu.');
+      setModalVisible(true);
+    })
+  }
+
   const descartarAlteracoes = async() =>{
     // auth().currentUser.delete();
+    if (GoogleSignin.isSignedIn){
+      signOutGoogle();
+    }
     navigation.navigate('Entrada');
   }
 
