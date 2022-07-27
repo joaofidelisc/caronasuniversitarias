@@ -47,6 +47,7 @@ function Login({navigation}) {
       signOutGoogle();
     }
   })
+  
   const redirecionamentoLogin = async(emailGoogle)=>{  
     // console.log('email:', emailGoogle);
     if (email == ''){
@@ -95,6 +96,10 @@ function Login({navigation}) {
     if (dominios_permitidos.includes(dominio[1]) == false){
       setWarning('Você pode entrar apenas\n com e-mails institucionais!');
       setModalVisible(true);
+      if (auth().onAuthStateChanged()){
+        const bloquearAcesso = await auth().currentUser;
+        await bloquearAcesso.delete();
+      }
       signOutGoogle();
     }else{
       await AsyncStorage.setItem("token", idToken);

@@ -2,8 +2,6 @@ import React, {useEffect, useState} from 'react';
 import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar } from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth, { firebase } from '@react-native-firebase/auth'
-import RotaEntrada from '../../routes/app.public.routes';
-
 import estilos from '../../estilos/estilos';
 
 import firestore from '@react-native-firebase/firestore';
