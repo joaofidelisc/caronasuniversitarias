@@ -4,6 +4,7 @@ import { BackHandler } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import Procurar from '../screens/Procurar/Procurar';
 import Buscando_Carona from '../screens/Buscar/BuscandoCarona';
@@ -21,6 +22,7 @@ import Classificacao from '../screens/Buscar/Classificacao';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+// const DrawerNavigationMethod = createDrawerNavigator();
 
 //nested navigation https://www.youtube.com/watch?v=SPzjttByz6E
 
@@ -47,7 +49,8 @@ function RotaBuscandoCarona(){
  * 
 */
 function RotaPerfil(){
-  <Tab.Navigator 
+  return(
+    <Tab.Navigator 
     initialRouteName='Perfil_Conta'
     screenOptions={{
       headerShown: false,
@@ -59,7 +62,19 @@ function RotaPerfil(){
       <Tab.Screen name="Conta" component={Perfil_Conta} />
       <Tab.Screen name="Detalhes" component={Perfil_Detalhes} />
     </Tab.Navigator>
+  )
 }
+
+// function RotaPerfil(){
+//   return(
+//     // <NavigationContainer independent={true}>
+//       <DrawerNavigationMethod.Navigator initialRouteName='Perfil_Detalhes'>
+//         <DrawerNavigationMethod.Screen name="Conta" component={Perfil_Conta}/>
+//         <DrawerNavigationMethod.Screen name="Detalhes" component={Perfil_Detalhes}/>
+//       </DrawerNavigationMethod.Navigator>
+//     // </NavigationContainer>
+//   )
+// }
 
 function AppRoutes({route, navigation}) {
   useEffect(() => {
@@ -82,7 +97,7 @@ function AppRoutes({route, navigation}) {
         <Tab.Screen name="Oferecer" component={Oferecer} />
         <Tab.Screen name="Suas Viagens" component={Suas_Viagens} />
         <Tab.Screen name="Mensagens" component={Mensagens} />
-        <Tab.Screen name="Perfil" component={Perfil_Detalhes} />
+        <Tab.Screen name="Perfil" component={RotaPerfil} />
       </Tab.Navigator>
     </NavigationContainer>
   );
