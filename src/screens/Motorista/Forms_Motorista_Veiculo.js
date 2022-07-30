@@ -1,8 +1,40 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image} from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+
 
 function Forms_Motorista_Veiculo({navigation, route}) {
+    
+    const [placa_veiculo, setPlacaVeiculo] = useState('');
+    const [ano_veiculo, setAnoVeiculo] = useState('');
+    const [cor_veiculo, setCorVeiculo] = useState('');
+    const [nome_veiculo, setNomeVeiculo] = useState('');
+
     const userID = route.params?.userID;
+    const nome = route.params?.nome;
+    const CPF = route.params?.cpf;
+    const data_nasc = route.params?.data_nasc;
+    const num_cel = route.params?.num_cel;
+    const universidade = route.params?.universidade;
+    const email = route.params?.email;
+
+    const insertDataNewUser = async() => {
+        firestore().collection('Users').doc(userID).set({
+            nome: nome,
+            CPF: CPF,
+            data_nasc: data_nasc,
+            num_cel: num_cel,
+            universidade: universidade,
+            email: email,
+            placa_veiculo: placa_veiculo,
+            ano_veiculo: ano_veiculo,
+            cor_veiculo: cor_veiculo,
+            nome_veiculo: nome_veiculo,
+            motorista: true,
+        }).then(()=>{
+            navigation.navigate('MenuPrincipal');
+        });
+    }
 
     return (
     <SafeAreaView>
@@ -50,7 +82,7 @@ function Forms_Motorista_Veiculo({navigation, route}) {
                 />
                 <TouchableOpacity 
                     style={{position: 'absolute', top: 542}}
-                    onPress={()=>navigation.navigate('MenuPrincipal', {userID: userID})}    
+                    onPress={insertDataNewUser}    
                 >
                     <Text style={{fontWeight: '700', fontSize: 18, color: '#06444C'}}>Avançar</Text>
                 </TouchableOpacity>

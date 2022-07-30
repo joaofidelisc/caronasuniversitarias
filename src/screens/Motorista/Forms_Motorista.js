@@ -1,8 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image, Alert, BackHandler} from 'react-native';
-import firestore from '@react-native-firebase/firestore';
 import { TextInputMask } from 'react-native-masked-text';
-
 
 function Forms_Motorista({route, navigation}) {
     const [nome, setNome] = useState('');
@@ -38,25 +36,6 @@ function Forms_Motorista({route, navigation}) {
 
         return () => backHandler.remove();
     }, []);
-    
-    //todo motorista também é um passageiro
-    const insertDataNewUser = async() => {
-        firestore().collection('Users').doc(userID).set({
-            nome: nome,
-            CPF: CPF,
-            data_nasc: data_nasc,
-            num_cel: num_cel,
-            universidade: universidade,
-            email: route.params?.email,
-            placa_veiculo: "",
-            ano_veiculo: "",
-            cor_veiculo: "",
-            nome_veiculo: "",
-            motorista: true,
-        }).then(()=>{
-            navigation.navigate('Forms_Motorista_Veiculo', {userID: userID});
-        });
-    }
 
     return (
     <SafeAreaView>
@@ -121,7 +100,7 @@ function Forms_Motorista({route, navigation}) {
                 />
                 <TouchableOpacity 
                     style={{position: 'absolute', top: 542}}
-                    onPress={insertDataNewUser}
+                    onPress={()=>{navigation.navigate('Forms_Motorista_Veiculo', {userID: userID, nome: nome, cpf: CPF, data_nasc: data_nasc, num_cel: num_cel, universidade: universidade, email: route.params?.email});}}
                 >
                     <Text style={{fontWeight: '700', fontSize: 18, color: '#06444C'}}>Salvar</Text>
                 </TouchableOpacity>
