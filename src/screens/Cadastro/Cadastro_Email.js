@@ -111,13 +111,15 @@ function Cadastro_Email({navigation}) {
           </TouchableOpacity>
           <Text style={{color: '#06444C', position: 'absolute', top: 65, fontWeight: '700', fontSize: 20, lineHeight: 29, alignSelf: 'center', textAlign: 'center'}}>Digite um e-mail institucional{'\n'}  e uma senha para se cadastrar</Text>
           <TextInput
-            style={{backgroundColor: '#C4C4C4', width: 291, height: 47, top: 167, alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: 18, lineHeight: 22}}
+            style={{width: 291, height: 47, top: 167, alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: 18, lineHeight: 22, borderWidth:1, color:'black'}}
+            placeholderTextColor='black'
             placeholder='Digite aqui o e-mail'
             keyboardType='email-address'
             onChangeText={(email)=>setEmail(email)}
             />
           <TextInput
-            style={{backgroundColor: '#C4C4C4', width: 291, height: 47, top: 200, alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: 18, lineHeight: 22}}
+            style={{width: 291, height: 47, top: 200, alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: 18, lineHeight: 22, borderWidth:1, color:'black'}}
+            placeholderTextColor='black'
             placeholder='Digite aqui a senha'
             secureTextEntry={true}
             onChangeText={(password)=>setPassword(password)}

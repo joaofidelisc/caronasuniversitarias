@@ -68,32 +68,33 @@ function Forms_Passageiro({route, navigation}) {
                     require('../../assets/icons/user_undefined.png')} 
                     style={{height:63, width: 63, position: 'absolute', top:70}}  
                 />
-                <Text style={{position: 'absolute', top: 158, textAlign: 'center', fontWeight: '700', fontSize: 16, lineHeight: 20, color: '#06444C'}}>Dados pessoais</Text>
+                <Text style={{position: 'absolute', top: 158, textAlign: 'center', fontWeight: '700', fontSize: 18, lineHeight: 20, color: '#06444C'}}>Dados pessoais</Text>
                 <TextInput
-                    style={{position:'absolute', width: 315, height: 39, top: 222, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
-                    placeholderTextColor='white'
+                    style={{position:'absolute', width: 315, height: 39, top: 222, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth:1, color:'black'}}
+                    placeholderTextColor='black'
                     placeholder='Nome'
                     onChangeText={(nome)=>setNome(nome)}
                 />
                 <TextInputMask 
-                    style={{position:'absolute', width: 139, height: 39, top: 280, left:34, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
+                    style={{position:'absolute', width: 139, height: 39, top: 280, left:34, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth:1, color:'black'}}
+                    placeholderTextColor='black'
                     type="cpf"
                     onChangeText={(CPF)=>setCPF(CPF)}
                     placeholder='CPF'
-                    placeholderTextColor='white'
                 />
                 <TextInputMask
-                    style={{position:'absolute', width: 139, height: 39, top: 280, left:210, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
+                    style={{position:'absolute', width: 139, height: 39, top: 280, left:210, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth:1, color:'black'}}
+                    placeholderTextColor='black'
                     type="datetime"
                     options={{
                         format: 'DD/MM/YYYY'
                     }}
                     placeholder='Nascimento'
-                    placeholderTextColor='white'
                     onChangeText={(data_nasc)=>setDataNasc(data_nasc)}
                 />
                 <TextInputMask
-                    style={{position:'absolute', width: 315, height: 39, top: 344, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
+                    style={{position:'absolute', width: 315, height: 39, top: 344, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth:1, color:'black'}}
+                    placeholderTextColor='black'
                     type="cel-phone"
                     options={{
                         maskType: 'BRL',
@@ -101,18 +102,17 @@ function Forms_Passageiro({route, navigation}) {
                         dddMask: '(99)'
                     }}
                     placeholder='Número de celular'
-                    placeholderTextColor='white'
                     onChangeText={(num_cel)=>setNumCel(num_cel)}
                 />
                 <TextInput
-                    style={{position:'absolute', width: 315, height: 39, top: 405, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
-                    placeholderTextColor='white'
+                    style={{position:'absolute', width: 315, height: 39, top: 405, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth:1, color:'black'}}
+                    placeholderTextColor='black'
                     placeholder='Universidade'
                     onChangeText={(universidade)=>setUniversidade(universidade)}
                     />
                 <TextInput
-                    style={{position:'absolute', width: 315, height: 39, top: 470, backgroundColor: '#FF5F55', borderRadius: 12, textAlign: 'center', fontWeight: '700', fontSize: 16}}
-                    placeholderTextColor='white'
+                    style={{position:'absolute', width: 315, height: 39, top: 470, backgroundColor: '#D3D3D3', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, color:'black'}}
+                    placeholderTextColor='black'
                     placeholder='E-mail'
                     keyboardType='email-address'
                     value= {route.params?.email}
@@ -122,7 +122,7 @@ function Forms_Passageiro({route, navigation}) {
                     style={{position: 'absolute', top: 542}}
                     onPress={insertDataNewUser}
                 >
-                    <Text style={{fontWeight: '700', fontSize: 16, color: '#06444C'}}>Salvar</Text>
+                    <Text style={{fontWeight: '700', fontSize: 18, color: '#06444C'}}>Salvar</Text>
                 </TouchableOpacity>
             </View>
     </SafeAreaView>
