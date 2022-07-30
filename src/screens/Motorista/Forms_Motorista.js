@@ -3,6 +3,7 @@ import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image,
 import firestore from '@react-native-firebase/firestore';
 import { TextInputMask } from 'react-native-masked-text';
 
+
 function Forms_Motorista({route, navigation}) {
     const [nome, setNome] = useState('');
     const [CPF, setCPF] = useState('');
@@ -10,11 +11,14 @@ function Forms_Motorista({route, navigation}) {
     const [num_cel, setNumCel] = useState('');
     const [universidade, setUniversidade] = useState('');
     
-  const descartarAlteracoes = async() =>{
-    navigation.navigate('Como_Comecar', {email: route.params?.email});
-  }
+    const userID = route.params?.userID;
+
+    const descartarAlteracoes = async() =>{
+        navigation.navigate('Como_Comecar', {email: route.params?.email, userID: route.params?.userID});
+    }
 
     useEffect(() => {
+        console.log(userID);
         const backAction = () => {
         Alert.alert("Descartar informações de motorista", "Tem certeza que deseja voltar?\nSuas informações serão descartadas!", [
             {
@@ -37,7 +41,7 @@ function Forms_Motorista({route, navigation}) {
     
     //todo motorista também é um passageiro
     const insertDataNewUser = async() => {
-        firestore().collection('Motorista').add({
+        firestore().collection('Users').doc(userID).set({
             nome: nome,
             CPF: CPF,
             data_nasc: data_nasc,
@@ -47,17 +51,10 @@ function Forms_Motorista({route, navigation}) {
             placa_veiculo: "",
             ano_veiculo: "",
             cor_veiculo: "",
-            nome_veiculo: ""
+            nome_veiculo: "",
+            motorista: true,
         }).then(()=>{
-            firestore().collection('Passageiro').add({
-                nome: nome,
-                CPF: CPF,
-                data_nasc: data_nasc,
-                num_cel: num_cel,
-                universidade: universidade,
-                email: route.params?.email
-            });
-            navigation.navigate('Forms_Motorista_Veiculo');
+            navigation.navigate('Forms_Motorista_Veiculo', {userID: userID});
         });
     }
 

@@ -6,6 +6,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 function Como_Comecar({navigation, route}) {
   const email = route.params?.email;
   const senha = route.params?.senha;
+  const userID = auth().currentUser.uid;
   
   const signOutGoogle = async() =>{
     GoogleSignin.signOut().then(()=>{
@@ -53,13 +54,13 @@ function Como_Comecar({navigation, route}) {
             <Text style={{position:'absolute', top: 78, fontWeight: '700', fontSize: 24, lineHeight: 29, color:'#06444C', textAlign:'center'}}>Como você quer{'\n'}começar?</Text>
             <TouchableOpacity 
               style={{position: 'absolute', width: 315, height: 39, top: 222, backgroundColor: '#FF5F55', borderRadius: 12, justifyContent: 'center'}}
-              onPress={()=>navigation.navigate('Forms_Passageiro', {email: email, senha: senha})}  
+              onPress={()=>navigation.navigate('Forms_Passageiro', {email: email, senha: senha, userID: userID})}  
             >
               <Text style={{textAlign: 'center', fontWeight: '700', fontSize: 16, lineHeight: 20, color:'white'}}>Sou passageiro</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={{position: 'absolute', width: 315, height: 39, top: 300, backgroundColor: '#FF5F55', borderRadius: 12, justifyContent: 'center'}}
-              onPress={()=>navigation.navigate('Forms_Motorista', {email: email, senha: senha})}  
+              onPress={()=>navigation.navigate('Forms_Motorista', {email: email, senha: senha, userID: userID})}  
             >
               <Text style={{textAlign: 'center', fontWeight: '700', fontSize: 16, lineHeight: 20, color:'white'}}>Sou motorista</Text>
             </TouchableOpacity>

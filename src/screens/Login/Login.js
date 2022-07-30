@@ -32,15 +32,8 @@ function Login({navigation}) {
   const [password, setPassword] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [warning, setWarning] = useState('');
-  const [emailVerificado, setEmailVerificado] = useState(false);
 
   const partesEmail = email.split("@");
-
-  const state = {
-    email:"",
-    password:"",
-    userData:{}
-  };
   
   useEffect(()=>{
     if(GoogleSignin.isSignedIn){
@@ -49,13 +42,10 @@ function Login({navigation}) {
   })
   
   const redirecionamentoLogin = async(emailGoogle)=>{  
-    // console.log('email:', emailGoogle);
     if (email == ''){
-      firestore().collection('Passageiro').where('email', '==', emailGoogle).get().then(querySnapshot=>{
+      firestore().collection('Users').where('email', '==', emailGoogle).get().then(querySnapshot=>{
         const valor = querySnapshot.docs;
-        // console.log(valor);
         if (valor == ""){
-          // console.log("AAA");
           navigation.navigate("Como_Comecar", {email: emailGoogle});
         }
         else{
@@ -63,11 +53,9 @@ function Login({navigation}) {
         }
       })
     }else{
-      firestore().collection('Passageiro').where('email', '==', email).get().then(querySnapshot=>{
+      firestore().collection('Users').where('email', '==', email).get().then(querySnapshot=>{
         const valor = querySnapshot.docs;
-        console.log(valor);
         if (valor == ""){
-          // console.log("AAA");
           navigation.navigate("Como_Comecar", {email: email});
         }
         else{
@@ -79,15 +67,12 @@ function Login({navigation}) {
 
   const signOutGoogle = async() =>{
     GoogleSignin.signOut().then(()=>{
-      // console.log('saiu');
     }).catch(error =>{
-      // console.log(error.code);
       setWarning('Algum erro ocorreu.');
       setModalVisible(true);
     })
   }
 
-  //impede o usuário de fazer login mas não o remove da base de dados;
   const SignInGoogle = async() =>{
     const { idToken } = await GoogleSignin.signIn();
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
@@ -151,7 +136,6 @@ function Login({navigation}) {
         setWarning('E-mail inválido.');
         setModalVisible(true);
       }
-      //testar se o usuário já verificou o e-mail mas ainda não preencheu o formulário de motorista e/ou passageiro;
       else{
         auth().signInWithEmailAndPassword(email, password).then((result)=>{
           if (auth().currentUser.emailVerified==true){

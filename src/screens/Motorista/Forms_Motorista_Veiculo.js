@@ -2,6 +2,8 @@ import React from 'react';
 import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image} from 'react-native';
 
 function Forms_Motorista_Veiculo({navigation}) {
+    const userID = route.params?.userID;
+
     return (
     <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -48,7 +50,7 @@ function Forms_Motorista_Veiculo({navigation}) {
                 />
                 <TouchableOpacity 
                     style={{position: 'absolute', top: 542}}
-                    onPress={()=>navigation.navigate('MenuPrincipal')}    
+                    onPress={()=>navigation.navigate('MenuPrincipal', {userID: userID})}    
                 >
                     <Text style={{fontWeight: '700', fontSize: 16, color: '#06444C'}}>Avançar</Text>
                 </TouchableOpacity>

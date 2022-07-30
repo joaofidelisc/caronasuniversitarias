@@ -10,13 +10,14 @@ function Forms_Passageiro({route, navigation}) {
     const [num_cel, setNumCel] = useState('');
     const [universidade, setUniversidade] = useState('');
 
+    const userID = route.params?.userID;
 
     const descartarAlteracoes = async() =>{
-        // auth().currentUser.delete();
-        navigation.navigate('Como_Comecar', {email: route.params?.email});
-      }
+        navigation.navigate('Como_Comecar', {email: route.params?.email, userID: route.params?.userID});
+    }
     
         useEffect(() => {
+            console.log(userID);
             const backAction = () => {
             Alert.alert("Descartar informações de passageiro", "Tem certeza que deseja voltar?\nSuas informações serão descartadas!", [
                 {
@@ -40,23 +41,20 @@ function Forms_Passageiro({route, navigation}) {
 
     
     const insertDataNewUser = async() => {
-        firestore().collection('Passageiro').add({
+        firestore().collection('Users').doc(userID).set({
             nome: nome,
             CPF: CPF,
             data_nasc: data_nasc,
             num_cel: num_cel,
             universidade: universidade,
-            email: route.params?.email
+            email: route.params?.email,
+            placa_veiculo: "",
+            ano_veiculo: "",
+            cor_veiculo: "",
+            nome_veiculo: "",
+            motorista: false,
         }).then(()=>{
-            // firestore().collection('Motorista').add({
-            //     nome: nome,
-            //     CPF: CPF,
-            //     data_nasc: data_nasc,
-            //     num_cel: num_cel,
-            //     universidade: universidade,
-            //     email: route.params?.email
-            // });
-            navigation.navigate('MenuPrincipal');
+            navigation.navigate('MenuPrincipal', {userID: userID});
         });
     }
     return (
