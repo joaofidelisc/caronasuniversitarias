@@ -29,6 +29,7 @@ export default function App() {
   useEffect(()=>{
     loginToken();
   })
+  
   return (
     <RotaEntrada/>
   );

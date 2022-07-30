@@ -1,27 +1,42 @@
 import React, {useEffect, useState} from 'react';
 import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar } from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import auth, { firebase } from '@react-native-firebase/auth'
 import estilos from '../../estilos/estilos';
 
 import firestore from '@react-native-firebase/firestore';
 
+import auth from '@react-native-firebase/auth'
 
 function Perfil_Detalhes({navigation, route}){
-  const RecuperarDados = async()=>{
-    console.log('teste');
-    firestore().collection('Passageiro').where('email', '==', 'joao.fidelis@estudante.ufscar.br').get().then(querySnapshot => {
-      console.log('Total users: ', querySnapshot.size);
-      querySnapshot.forEach(documentSnapshot =>{
-        console.log('User ID', documentSnapshot.id, documentSnapshot.data());
-      });
-    });
+  const [nome, setNome] = useState('');
+  const [celular, setCelular] = useState('');
+  const [email, setEmail] = useState('');
+  const [universidade, setUniversidade] = useState('');
+  //pesquisar como passar isso por params (está indo pra menuprincipal, mas preciso que vá para Perfil_Conta e Perfil_Detalhes);
+  //quando resolver, remover o import auth;
+  
+  
+  const recuperarDados = async()=>{
+    const userID = await auth().currentUser.uid;
+    firestore().collection('Users').doc(userID).get().then(doc=>{
+      if (doc && doc.exists){
+        const nome_usuario = doc.data().nome;
+        const celular_usuario = doc.data().num_cel;
+        const email_usuario = doc.data().email;
+        const universidade_usuario = doc.data().universidade;
+        setNome(nome_usuario);
+        setCelular(celular_usuario);
+        setEmail(email_usuario);
+        setUniversidade(universidade_usuario);
+      }
+    })
   }
+  
   
   //falta implementar aqui
   const signOutGoogle = async() =>{
     GoogleSignin.signOut().then(()=>{
-    console.log('saiu');
+      console.log('saiu');
     }).catch(error =>{
       // console.log(error.code);
       setWarning('Algum erro ocorreu.');
@@ -36,8 +51,11 @@ function Perfil_Detalhes({navigation, route}){
       auth().currentUser.signOut;
     }
   }
-
-
+  
+  useEffect(()=>{
+    recuperarDados();
+  })
+  
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
@@ -55,13 +73,13 @@ function Perfil_Detalhes({navigation, route}){
           Número cadastrado
         </Text>
         <Text style={estilos.Text5}>
-          +XX (XX) XXXXX-XXXX
+          {celular}
         </Text>
         <Text style={estilos.Text6}>
           Endereço de e-mail
         </Text>
         <Text style={estilos.Text7}>
-          {/* {profile.email} */}
+          {email}
         </Text>
         <Text style={estilos.Text8}>
           Sobre você
@@ -70,7 +88,7 @@ function Perfil_Detalhes({navigation, route}){
           Universidade/Campus
         </Text>
         <Text style={estilos.Text10}>
-          UFSCar/São Carlos
+          {universidade}
         </Text>
         <Text style={estilos.Text11}>
           Preferências
@@ -83,7 +101,7 @@ function Perfil_Detalhes({navigation, route}){
         </Text>
         <TouchableOpacity 
           style={estilos.TouchbleOpct1}
-          onPress={logout}  
+          // onPress={recuperarDados}  
         >
           <Text style={estilos.Text14}>Sair</Text>
         </TouchableOpacity>
