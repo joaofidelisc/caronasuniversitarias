@@ -17,18 +17,18 @@ import Forms_Motorista from './src/screens/Motorista/Forms_Motorista';
 import Cadastro_Email from './src/screens/Cadastro/Cadastro_Email';
 
 export default function App() {
-  const loginToken = async()=>{
-    const token = await AsyncStorage.getItem("TOKEN");
-    // auth().signInWithCustomToken(token).then(()=>{
-    //   console.log('LOGOU');
-    // }).catch(error =>{
-    //   console.log(error.code);
-    // })
-    // console.log(token);
-  }
-  useEffect(()=>{
-    loginToken();
-  })
+  // const loginToken = async()=>{
+  //   // const token = await AsyncStorage.getItem("TOKEN");
+  //   // auth().signInWithCustomToken(token).then(()=>{
+  //   //   console.log('LOGOU');
+  //   // }).catch(error =>{
+  //   //   console.log(error.code);
+  //   // })
+  //   // console.log(token);
+  // }
+  // useEffect(()=>{
+  //   loginToken();
+  // })
   
   return (
     <RotaEntrada/>

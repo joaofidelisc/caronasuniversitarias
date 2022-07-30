@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar } from 'react-native';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import estilos from '../../estilos/estilos';
 
 import firestore from '@react-native-firebase/firestore';
@@ -30,26 +29,6 @@ function Perfil_Detalhes({navigation, route}){
         setUniversidade(universidade_usuario);
       }
     })
-  }
-  
-  
-  //falta implementar aqui
-  const signOutGoogle = async() =>{
-    GoogleSignin.signOut().then(()=>{
-      console.log('saiu');
-    }).catch(error =>{
-      // console.log(error.code);
-      setWarning('Algum erro ocorreu.');
-      setModalVisible(true);
-    })
-  }
-  
-  const logout = async()=>{
-    if(GoogleSignin.isSignedIn){
-      signOutGoogle();
-    }else{
-      auth().currentUser.signOut;
-    }
   }
   
   useEffect(()=>{
@@ -99,12 +78,6 @@ function Perfil_Detalhes({navigation, route}){
         <Text style={estilos.Text13}>
           Carros
         </Text>
-        <TouchableOpacity 
-          style={estilos.TouchbleOpct1}
-          // onPress={recuperarDados}  
-        >
-          <Text style={estilos.Text14}>Sair</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar } from 'react-native';
 
-import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+// import firestore from '@react-native-firebase/firestore';
+// import auth from '@react-native-firebase/auth';
 
 import estilos from '../../estilos/estilos';
 
@@ -12,20 +13,17 @@ import estilos from '../../estilos/estilos';
 
 function Perfil_Conta({navigation}){
 
-  //pesquisar como passar isso por params (está indo pra menuprincipal, mas preciso que vá para Perfil_Conta e Perfil_Detalhes);
-  //quando resolver, remover o import auth;
-  const userID = auth().currentUser.uid;
 
-  const recuperarDados = async(userID)=>{
-
-    firestore().collection('Users').doc(userID).get().then(doc=>{
-      if (doc && doc.exists){
-        const nome = doc.data().nome;
-        console.log(nome);
-      }
+  //falta implementar aqui
+  const signOutGoogle = async() =>{
+    GoogleSignin.signOut().then(()=>{
+      console.log('saiu');
+    }).catch(error =>{
+      // console.log(error.code);
+      setWarning('Algum erro ocorreu.');
+      setModalVisible(true);
     })
   }
-
 
   return (
     <SafeAreaView>
@@ -52,6 +50,12 @@ function Perfil_Conta({navigation}){
               <Text style={{position: 'absolute', left: 40, top: 530, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Ajuda</Text>
               <Text style={{position: 'absolute', left: 40, top: 560, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Termos de uso</Text>
               <Text style={{position: 'absolute', left: 40, top: 590, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Licença</Text>      
+            <TouchableOpacity 
+              style={[estilos.TouchbleOpct1, {top:620}]}
+              // onPress={signOutGoogle}
+            >
+              <Text style={estilos.Text14}>Sair</Text>
+            </TouchableOpacity>
           </View>
     {/* </View> */}
     </SafeAreaView>
