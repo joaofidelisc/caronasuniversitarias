@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StatusBar, StyleSheet, TouchableOpacity, SafeAreaView, Modal} from 'react-native';
+import {View, Text, StatusBar, StyleSheet, TouchableOpacity, SafeAreaView, Modal, Image} from 'react-native';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth'
@@ -86,11 +86,18 @@ function Cadastro_Inicio({navigation}) {
               style={styles.btnFechar}
               onPress={()=>navigation.navigate('Entrada')}
               >
-                <Text style={styles.txtBtnFechar}>X</Text>
+                <Image source={
+                  require('../../assets/icons/close.png')} 
+                  style={{height:22, width: 22}}  
+                />
             </TouchableOpacity>
             <Text style={styles.txtCadastro}>
                 Como você deseja se {'\n'}cadastrar?
             </Text>
+            <Image source={
+              require('../../assets/icons/google-color.png')} 
+              style={{height:22, width: 22, position: 'absolute', left: 30, top: 233}}  
+            />
             <TouchableOpacity 
               style={[styles.btnContinuarComRedes]}
               onPress={SignInGoogle}  
@@ -105,6 +112,10 @@ function Cadastro_Inicio({navigation}) {
                 top: 266.5}}>
                 <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
             </View>
+            <Image source={
+              require('../../assets/icons/email.png')} 
+              style={{height:22, width: 22, position: 'absolute', left: 30, top: 275}}  
+            />
             <TouchableOpacity 
               style={[styles.btnContinuarComRedes, {width:228, top:279}]}
               onPress={()=>navigation.navigate('Cadastro_Email')}  

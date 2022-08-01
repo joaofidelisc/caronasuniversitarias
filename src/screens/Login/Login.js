@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Modal, 
   StyleSheet,
-  ActivityIndicatorComponent,
+  Image,
 } from 'react-native';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -183,8 +183,11 @@ function Login({navigation}) {
           <TouchableOpacity 
               style={styles.btnFechar}
               onPress={()=>navigation.navigate('Entrada')}
-              >
-                <Text style={styles.txtBtnFechar}>X</Text>
+          >
+            <Image source={
+              require('../../assets/icons/close.png')} 
+              style={{height:22, width: 22}}  
+            />
           </TouchableOpacity>
           <Text style={{color: '#06444C', position: 'absolute', top: 65, fontWeight: '700', fontSize: 24, lineHeight: 29, alignSelf: 'center', textAlign: 'center'}}>Nos informe seu e-mail{'\n'} e senha de cadastro</Text>
           <TextInput
@@ -202,10 +205,13 @@ function Login({navigation}) {
             onChangeText={(password)=>setPassword(password)}
           />
           <TouchableOpacity 
-            style={{position: 'absolute', width: 291, height: 47, top: 395, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
+            style={{position: 'absolute', width: 291, height: 47, top: 395, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center', flexDirection: 'row', alignItems:'center'}}
             onPress={SignInGoogle}
           >
-            
+            <Image source={
+            require('../../assets/icons/google.png')} 
+            style={{height:22, width: 22, position: 'absolute', left: 20}}  
+            />
             <Text style={{fontWeight: '600', fontSize: 18, lineHeight: 20, textAlign: 'center', color:'white'}}>Continuar com Google</Text>
           </TouchableOpacity>
           <TouchableOpacity 
