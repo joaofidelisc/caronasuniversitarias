@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import { BackHandler } from 'react-native';
+import { Image } from 'react-native';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -59,8 +60,26 @@ function RotaPerfil(){
       tabBarStyle: {position:'absolute', top:141}
     }}  
     >
-      <Tab.Screen name="Conta" component={Perfil_Conta} />
-      <Tab.Screen name="Detalhes" component={Perfil_Detalhes} />
+      <Tab.Screen name="Conta" component={Perfil_Conta} 
+        options={{
+          tabBarIcon:(()=>
+          <Image source={
+            require('../assets/icons/conta.png')} 
+            style={{height:22, width: 22}}  
+          />
+            )
+        }}
+      />
+      <Tab.Screen name="Detalhes" component={Perfil_Detalhes} 
+        options={{
+          tabBarIcon:(()=>
+          <Image source={
+            require('../assets/icons/detalhes.png')} 
+            style={{height:22, width: 22}}  
+          />
+            )
+        }}
+      />
     </Tab.Navigator>
   )
 }
@@ -93,11 +112,56 @@ function AppRoutes({route, navigation}) {
           tabBarInactiveTintColor: 'gray'
         }}  
       >
-        <Tab.Screen name="Buscar" component={RotaBuscandoCarona} />
-        <Tab.Screen name="Oferecer" component={Oferecer} />
-        <Tab.Screen name="Suas Viagens" component={Suas_Viagens} />
-        <Tab.Screen name="Mensagens" component={Mensagens} />
-        <Tab.Screen name="Perfil" component={RotaPerfil} />
+        <Tab.Screen name="Buscar" component={RotaBuscandoCarona} 
+          options={{
+            tabBarIcon:(()=>
+            <Image source={
+              require('../assets/icons/search.png')} 
+              style={{height:22, width: 22}}  
+            />
+              )
+          }}
+        />
+        <Tab.Screen name="Oferecer" component={Oferecer} 
+          options={{
+            tabBarIcon:(()=>
+            <Image source={
+              require('../assets/icons/oferecer.png')} 
+              style={{height:22, width: 22}}  
+            />
+              )
+          }}
+        />
+        <Tab.Screen name="Suas Viagens" component={Suas_Viagens} 
+          options={{
+            tabBarIcon:(()=>
+            <Image source={
+              require('../assets/icons/viagens.png')} 
+              style={{height:22, width: 22}}  
+            />
+              )
+          }}
+        />
+        <Tab.Screen name="Mensagens" component={Mensagens} 
+          options={{
+            tabBarIcon:(()=>
+            <Image source={
+              require('../assets/icons/mensagens.png')} 
+              style={{height:22, width: 22}}  
+            />
+              )
+          }}
+        />
+        <Tab.Screen name="Perfil" component={RotaPerfil} 
+          options={{
+            tabBarIcon:(()=>
+            <Image source={
+              require('../assets/icons/perfil.png')} 
+              style={{height:22, width: 22}}  
+            />
+              )
+          }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );
