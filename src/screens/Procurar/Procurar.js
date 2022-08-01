@@ -36,6 +36,7 @@ export default function Procurar({navigation}) {
           borderTopLeftRadius:15,
           borderTopRightRadius:15,
           marginHorizontal:0,
+          color:'black'
       
         }}
           value={lugar}
