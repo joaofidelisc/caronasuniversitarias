@@ -9,7 +9,8 @@ import {
   Modal, 
   StyleSheet,
   Alert,
-  BackHandler
+  BackHandler,
+  Image
 } from 'react-native';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -106,8 +107,11 @@ function Cadastro_Email({navigation}) {
           <TouchableOpacity 
               style={styles.btnFechar}
               onPress={()=>navigation.navigate('Entrada')}
-              >
-                <Text style={styles.txtBtnFechar}>X</Text>
+          >
+             <Image source={
+              require('../../assets/icons/close.png')} 
+              style={{height:22, width: 22}}  
+            />
           </TouchableOpacity>
           <Text style={{color: '#06444C', position: 'absolute', top: 65, fontWeight: '700', fontSize: 20, lineHeight: 29, alignSelf: 'center', textAlign: 'center'}}>Digite um e-mail institucional{'\n'}  e uma senha para se cadastrar</Text>
           <TextInput
