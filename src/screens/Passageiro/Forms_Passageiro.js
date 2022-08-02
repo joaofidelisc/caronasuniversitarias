@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image, BackHandler, Alert} from 'react-native';
+import React, {useState, useEffect, useRef} from 'react';
+import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image, BackHandler, Alert, Modal, StyleSheet} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { TextInputMask } from 'react-native-masked-text'
 
@@ -9,54 +9,65 @@ function Forms_Passageiro({route, navigation}) {
     const [data_nasc, setDataNasc] = useState('');
     const [num_cel, setNumCel] = useState('');
     const [universidade, setUniversidade] = useState('');
-
+    const CPFRef = useRef(null);
+    
+    const [modalVisible, setModalVisible] = useState(false);
+    const [warning, setWarning] = useState('');
+    
     const userID = route.params?.userID;
-
+    
     const descartarAlteracoes = async() =>{
         navigation.navigate('Como_Comecar', {email: route.params?.email, userID: route.params?.userID});
     }
     
-        useEffect(() => {
-            console.log(userID);
-            const backAction = () => {
+    useEffect(() => {
+        // console.log(userID);
+        const backAction = () => {
             Alert.alert("Descartar informações de passageiro", "Tem certeza que deseja voltar?\nSuas informações serão descartadas!", [
                 {
-                text: "Cancelar",
+                    text: "Cancelar",
                 onPress: () => null,
                 style: "cancel"
-                },
-                { text: "Sim", onPress: () => descartarAlteracoes()}
-            ]);
-            return true;
-            };
+            },
+            { text: "Sim", onPress: () => descartarAlteracoes()}
+        ]);
+        return true;
+    };
     
-            const backHandler = BackHandler.addEventListener(
-            "hardwareBackPress",
-            backAction
-            );
-    
-            return () => backHandler.remove();
-        }, []);
+    const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+        );
         
-
+        return () => backHandler.remove();
+    }, []);
+    
+    
     
     const insertDataNewUser = async() => {
-        firestore().collection('Users').doc(userID).set({
-            nome: nome,
-            CPF: CPF,
-            data_nasc: data_nasc,
-            num_cel: num_cel,
-            universidade: universidade,
-            email: route.params?.email,
-            placa_veiculo: "",
-            ano_veiculo: "",
-            cor_veiculo: "",
-            nome_veiculo: "",
-            motorista: false,
-        }).then(()=>{
-            navigation.navigate('MenuPrincipal', {userID: userID});
-        });
+        if (nome == '' || CPF == '' || data_nasc == '' || num_cel == '' || universidade == ''){
+            setWarning('Preencha todos os campos!');
+            setModalVisible(true);
+        }
+        else{
+            firestore().collection('Users').doc(userID).set({
+                nome: nome,
+                CPF: CPF,
+                data_nasc: data_nasc,
+                num_cel: num_cel,
+                universidade: universidade,
+                email: route.params?.email,
+                placa_veiculo: "",
+                ano_veiculo: "",
+                cor_veiculo: "",
+                nome_veiculo: "",
+                motorista: false,
+            }).then(()=>{
+                navigation.navigate('MenuPrincipal', {userID: userID});
+            });
+        }
     }
+
     return (
     <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -81,6 +92,7 @@ function Forms_Passageiro({route, navigation}) {
                     type="cpf"
                     onChangeText={(CPF)=>setCPF(CPF)}
                     placeholder='CPF'
+                    ref={CPFRef}
                 />
                 <TextInputMask
                     style={{position:'absolute', width: 139, height: 39, top: 280, left:210, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth:1, color:'black'}}
@@ -124,9 +136,50 @@ function Forms_Passageiro({route, navigation}) {
                 >
                     <Text style={{fontWeight: '700', fontSize: 18, color: '#06444C'}}>Salvar</Text>
                 </TouchableOpacity>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {setModalVisible(!modalVisible);}}
+                >
+                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 190, alignSelf: 'center'}}>
+                        <View style={styles.modalView}>
+                            <Text style={{color: 'black', textAlign: 'center', marginBottom: 15}}>{warning}</Text>
+                            <TouchableOpacity
+                                style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
+                                onPress={() => setModalVisible(!modalVisible)}
+                            >
+                                <Text style={styles.textStyle}>Entendi</Text>
+                            </TouchableOpacity>
+                    </View>
+                    </View>
+                </Modal>
             </View>
     </SafeAreaView>
     );
 }
+
+const styles = StyleSheet.create({
+    modalView: {
+      margin: 20,
+      backgroundColor: "white",
+      borderRadius: 20,
+      padding: 35,
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5
+    },
+    textStyle: {
+      color: "white",
+      fontWeight: "bold",
+      textAlign: "center"
+    },
+  });
 
 export default Forms_Passageiro;

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image, Alert, BackHandler} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image, Alert, BackHandler, Modal, StyleSheet} from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 
 function Forms_Motorista({route, navigation}) {
@@ -9,6 +9,9 @@ function Forms_Motorista({route, navigation}) {
     const [num_cel, setNumCel] = useState('');
     const [universidade, setUniversidade] = useState('');
     
+    const [modalVisible, setModalVisible] = useState(false);
+    const [warning, setWarning] = useState('');
+
     const userID = route.params?.userID;
 
     const descartarAlteracoes = async() =>{
@@ -16,7 +19,7 @@ function Forms_Motorista({route, navigation}) {
     }
 
     useEffect(() => {
-        console.log(userID);
+        // console.log(userID);
         const backAction = () => {
         Alert.alert("Descartar informações de motorista", "Tem certeza que deseja voltar?\nSuas informações serão descartadas!", [
             {
@@ -28,14 +31,24 @@ function Forms_Motorista({route, navigation}) {
         ]);
         return true;
         };
-
+        
         const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        backAction
-        );
-
-        return () => backHandler.remove();
-    }, []);
+            "hardwareBackPress",
+            backAction
+            );
+            
+            return () => backHandler.remove();
+        }, []);
+        
+    const checarInformacoes = async()=>{
+        if (nome == '' || CPF == '' || data_nasc == '' || num_cel == '' || universidade == ''){
+            setWarning('Preencha todos os campos!');
+            setModalVisible(true);
+        }
+        else{
+            navigation.navigate('Forms_Motorista_Veiculo', {userID: userID, nome: nome, cpf: CPF, data_nasc: data_nasc, num_cel: num_cel, universidade: universidade, email: route.params?.email});
+        }
+    }
 
     return (
     <SafeAreaView>
@@ -100,13 +113,55 @@ function Forms_Motorista({route, navigation}) {
                 />
                 <TouchableOpacity 
                     style={{position: 'absolute', top: 542}}
-                    onPress={()=>{navigation.navigate('Forms_Motorista_Veiculo', {userID: userID, nome: nome, cpf: CPF, data_nasc: data_nasc, num_cel: num_cel, universidade: universidade, email: route.params?.email});}}
+                    // onPress={()=>{navigation.navigate('Forms_Motorista_Veiculo', {userID: userID, nome: nome, cpf: CPF, data_nasc: data_nasc, num_cel: num_cel, universidade: universidade, email: route.params?.email});}}
+                    onPress={checarInformacoes}
                 >
                     <Text style={{fontWeight: '700', fontSize: 18, color: '#06444C'}}>Salvar</Text>
                 </TouchableOpacity>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {setModalVisible(!modalVisible);}}
+                >
+                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 190, alignSelf: 'center'}}>
+                        <View style={styles.modalView}>
+                            <Text style={{color: 'black', textAlign: 'center', marginBottom: 15}}>{warning}</Text>
+                            <TouchableOpacity
+                                style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
+                                onPress={() => setModalVisible(!modalVisible)}
+                            >
+                                <Text style={styles.textStyle}>Entendi</Text>
+                            </TouchableOpacity>
+                    </View>
+                    </View>
+                </Modal>
             </View>
     </SafeAreaView>
     );
 }
+
+const styles = StyleSheet.create({
+    modalView: {
+      margin: 20,
+      backgroundColor: "white",
+      borderRadius: 20,
+      padding: 35,
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5
+    },
+    textStyle: {
+      color: "white",
+      fontWeight: "bold",
+      textAlign: "center"
+    },
+  });
 
 export default Forms_Motorista;
