@@ -62,20 +62,20 @@ function RotaPerfil(){
     >
       <Tab.Screen name="Conta" component={Perfil_Conta} 
         options={{
-          tabBarIcon:(()=>
+          tabBarIcon:(({color})=>
           <Image source={
             require('../assets/icons/conta.png')} 
-            style={{height:22, width: 22}}  
+            style={{height:22, width: 22, tintColor:color}}  
           />
             )
         }}
       />
       <Tab.Screen name="Detalhes" component={Perfil_Detalhes} 
         options={{
-          tabBarIcon:(()=>
+          tabBarIcon:(({color})=>
           <Image source={
             require('../assets/icons/detalhes.png')} 
-            style={{height:22, width: 22}}  
+            style={{height:22, width: 22, tintColor:color}}  
           />
             )
         }}
@@ -114,50 +114,50 @@ function AppRoutes({route, navigation}) {
       >
         <Tab.Screen name="Buscar" component={RotaBuscandoCarona} 
           options={{
-            tabBarIcon:(()=>
+            tabBarIcon:(({color})=>
             <Image source={
               require('../assets/icons/search.png')} 
-              style={{height:22, width: 22}}  
+              style={{height:22, width: 22, tintColor: color}}  
             />
               )
           }}
         />
         <Tab.Screen name="Oferecer" component={Oferecer} 
           options={{
-            tabBarIcon:(()=>
+            tabBarIcon:(({color})=>
             <Image source={
               require('../assets/icons/oferecer.png')} 
-              style={{height:22, width: 22}}  
+              style={{height:22, width: 22, tintColor: color}}  
             />
               )
           }}
         />
         <Tab.Screen name="Suas Viagens" component={Suas_Viagens} 
           options={{
-            tabBarIcon:(()=>
+            tabBarIcon:(({color})=>
             <Image source={
               require('../assets/icons/viagens.png')} 
-              style={{height:22, width: 22}}  
+              style={{height:22, width: 22, tintColor: color}}  
             />
               )
           }}
         />
         <Tab.Screen name="Mensagens" component={Mensagens} 
           options={{
-            tabBarIcon:(()=>
+            tabBarIcon:(({color})=>
             <Image source={
               require('../assets/icons/mensagens.png')} 
-              style={{height:22, width: 22}}  
+              style={{height:22, width: 22, tintColor: color}}  
             />
               )
           }}
         />
         <Tab.Screen name="Perfil" component={RotaPerfil} 
           options={{
-            tabBarIcon:(()=>
+            tabBarIcon:(({color})=>
             <Image source={
               require('../assets/icons/perfil.png')} 
-              style={{height:22, width: 22}}  
+              style={{height:22, width: 22, tintColor:color}}  
             />
               )
           }}
