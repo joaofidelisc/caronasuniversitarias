@@ -26,6 +26,14 @@ function Forms_Motorista_Veiculo({navigation, route}) {
             setWarning('Preencha todos os campos!');
             setModalVisible(true);
         }
+        else if (placa_veiculo.length != 7){
+            setWarning('Placa de veículo incorreta.');
+            setModalVisible(true);
+        }
+        else if (ano_veiculo.length != 4){
+            setWarning('Digite o ano com 4 números.');
+            setModalVisible(true);
+        }
         else{
             firestore().collection('Users').doc(userID).set({
                 nome: nome,
@@ -83,7 +91,7 @@ function Forms_Motorista_Veiculo({navigation, route}) {
                     style={{position:'absolute', width: 315, height: 39, top: 344, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth: 1, color:'black'}}
                     placeholderTextColor='black'
                     placeholder='Placa'
-                    maxLength={15}
+                    maxLength={7}
                     onChangeText={(placa_veiculo)=>setPlacaVeiculo(placa_veiculo)}
                 />
                 <TouchableOpacity style={{position: 'absolute', top: 403}}>

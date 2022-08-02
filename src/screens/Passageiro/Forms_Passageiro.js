@@ -23,7 +23,7 @@ function Forms_Passageiro({route, navigation}) {
     useEffect(() => {
         // console.log(userID);
         const backAction = () => {
-            Alert.alert("Descartar informações de passageiro", "Tem certeza que deseja voltar?\nSuas informações serão descartadas!", [
+            Alert.alert("Descartar informações", "Tem certeza que deseja voltar?\nSuas informações serão descartadas.", [
                 {
                     text: "Cancelar",
                 onPress: () => null,
@@ -47,6 +47,18 @@ function Forms_Passageiro({route, navigation}) {
     const insertDataNewUser = async() => {
         if (nome == '' || CPF == '' || data_nasc == '' || num_cel == '' || universidade == ''){
             setWarning('Preencha todos os campos!');
+            setModalVisible(true);
+        }
+        else if (CPF.length != 14){
+            setWarning('CPF incorreto.');
+            setModalVisible(true);
+        }
+        else if (data_nasc.length != 10){
+            setWarning('Data de nascimento incorreta.');
+            setModalVisible(true);
+        }
+        else if (num_cel.length != 14){
+            setWarning('Número de celular incorreto.');
             setModalVisible(true);
         }
         else{
