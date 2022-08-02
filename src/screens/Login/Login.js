@@ -106,15 +106,15 @@ function Login({navigation}) {
       setModalVisible(true);
     }else{
       auth().sendPasswordResetEmail(email).then(()=>{
-      setWarning(`O link de redefinição de senha foi enviado para ${email}`);
+      setWarning(`Se existir o usuário, o link de redefinição de senha será enviado para ${email}`);
       setModalVisible(true);
-      }).catch(error =>{
-        if (error.code == 'auth/invalid-email'){
-          setWarning('Digite um e-mail válido para recuperar a senha.');
-          setModalVisible(true);
-        }
-        else if(error.code == 'auth/user-not-found'){
-          setWarning('Usuário não encontrado.');
+    }).catch(error =>{
+      if (error.code == 'auth/invalid-email'){
+        setWarning('Digite um e-mail válido para recuperar a senha.');
+        setModalVisible(true);
+      }
+      else if(error.code == 'auth/user-not-found'){
+          setWarning(`Se existir o usuário, o link de redefinição de senha será enviado para ${email}`);
           setModalVisible(true);
         }
         else{
