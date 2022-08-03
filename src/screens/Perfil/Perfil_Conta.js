@@ -57,7 +57,7 @@ function Perfil_Conta({navigation}){
       cameraType: 'front',
       quality: 1, //qualiadade da imagem de 0 a 1
     }
-    
+    var result;
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA,
@@ -72,7 +72,7 @@ function Perfil_Conta({navigation}){
         }
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log("You can use the camera");
+        // console.log("You can use the camera");
         result = await launchCamera(options);
         if (result?.assets){
           setAlterar(true);
@@ -89,7 +89,7 @@ function Perfil_Conta({navigation}){
 
   const recuperaFotoStorage = async()=>{
     console.log('testando storage...');
-    const url = await storage().ref('Perfil.jpg').getDownloadURL();
+    const url = await storage().ref('Perfil.jpeg').getDownloadURL();
     setImageUser(url);
   }
 
