@@ -7,7 +7,6 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
-//storage com problema
 import storage from '@react-native-firebase/storage';
 
 import estilos from '../../estilos/estilos';
@@ -34,7 +33,6 @@ function Perfil_Conta({navigation}){
   const receberFoto = async()=>{
     setMessage('Atualizar foto do perfil')
     setModalVisible(true);
-    // pickImageFromCamera();
   }
   
   const pickImageFromGalery = async()=>{
@@ -87,7 +85,14 @@ function Perfil_Conta({navigation}){
     } catch (err) {
       console.warn(err);
     }
+  }
 
+  const testeStorage = async()=>{
+
+    console.log('testando storage...');
+    const reference = storage().ref('Perfil.jpg');
+    const url = await storage().ref('Perfil.jpg').getDownloadURL();
+    console.log(url);
   }
 
   return (
@@ -133,9 +138,9 @@ function Perfil_Conta({navigation}){
               <Text style={{position: 'absolute', left: 40, top: 590, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Licença</Text>      
             <TouchableOpacity 
               style={[estilos.TouchbleOpct1, {top:620}]}
-              // onPress={signOutGoogle}
+              onPress={testeStorage}
             >
-              <Text style={estilos.Text14}>Sair</Text>
+              <Text style={estilos.Text14}>Teste Storage</Text>
             </TouchableOpacity>
             <Modal
               animationType="fade"
