@@ -19,7 +19,7 @@ function Perfil_Conta({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState('');
 
-  const [imageUser, setImageUser] = useState('');
+  const [imageUser, setImageUser] = useState('../../assets/icons/user_undefined.png');
   
   //falta implementar aqui
   const signOutGoogle = async() =>{
@@ -45,6 +45,7 @@ function Perfil_Conta({navigation}){
     if (result?.assets){
       setImageUser(result.assets[0].uri);
       console.log(imageUser);
+      console.log(typeof(imageUser));
       return
     }
     //tratar excecao
@@ -73,17 +74,20 @@ function Perfil_Conta({navigation}){
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log("You can use the camera");
-        await launchCamera(options);
+        result = await launchCamera(options);
+        if (result?.assets){
+          setImageUser(result.assets[0].uri);
+          console.log(imageUser);
+          console.log(typeof(imageUser));
+          return
+        }
       } else {
         console.log("Camera permission denied");
       }
     } catch (err) {
       console.warn(err);
     }
-    // if (result.assets){
-    //   setImageUser(result.assets[0].uri);
-    //   return
-    // }
+
   }
 
   return (
@@ -94,12 +98,22 @@ function Perfil_Conta({navigation}){
             <View style={estilos.retangulo}>
               <Text style={estilos.Style2}>Perfil</Text>
               <TouchableOpacity 
-                style={{position: 'absolute', top:60, alignSelf: 'center'}}
+                style={{position: 'absolute', top:30, alignSelf: 'center'}}
                 onPress={receberFoto}  
               >
-                <Image source={
-                      require('../../assets/icons/user_undefined.png')} 
-                      style={{height:63, width: 63}}  
+                <Image 
+                  source={ 
+                  require('../../assets/icons/user_undefined.png')} 
+                  style={{height:100, width: 100}}  
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{position: 'absolute', top:30, alignSelf: 'center'}}
+                onPress={receberFoto}  
+              >
+                <Image 
+                    source={{uri:imageUser}}
+                    style={{height:100, width: 100, borderRadius: 100}}  
                 />
               </TouchableOpacity>
             </View>
