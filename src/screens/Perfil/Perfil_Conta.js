@@ -18,8 +18,10 @@ function Perfil_Conta({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState('');
 
-  const [imageUser, setImageUser] = useState('../../assets/icons/user_undefined.png');
+  const [alterar, setAlterar] = useState(false);
+  const [imageUser, setImageUser] = useState('');
   
+
   //falta implementar aqui
   const signOutGoogle = async() =>{
     GoogleSignin.signOut().then(()=>{
@@ -41,9 +43,8 @@ function Perfil_Conta({navigation}){
     }
     const result = await launchImageLibrary(options);
     if (result?.assets){
+      setAlterar(true);
       setImageUser(result.assets[0].uri);
-      console.log(imageUser);
-      console.log(typeof(imageUser));
       return
     }
     //tratar excecao
@@ -74,9 +75,8 @@ function Perfil_Conta({navigation}){
         console.log("You can use the camera");
         result = await launchCamera(options);
         if (result?.assets){
+          setAlterar(true);
           setImageUser(result.assets[0].uri);
-          console.log(imageUser);
-          console.log(typeof(imageUser));
           return
         }
       } else {
@@ -87,14 +87,17 @@ function Perfil_Conta({navigation}){
     }
   }
 
-  const testeStorage = async()=>{
-
+  const recuperaFotoStorage = async()=>{
     console.log('testando storage...');
-    const reference = storage().ref('Perfil.jpg');
     const url = await storage().ref('Perfil.jpg').getDownloadURL();
-    console.log(url);
+    setImageUser(url);
   }
 
+  useEffect(()=>{
+    if (alterar == false){
+      recuperaFotoStorage();
+    }
+  })
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
@@ -102,22 +105,13 @@ function Perfil_Conta({navigation}){
           <View style={[estilos.styleOne, {flex:0, backgroundColor:'white', height: '100%'}]}>
             <View style={estilos.retangulo}>
               <Text style={estilos.Style2}>Perfil</Text>
-              <TouchableOpacity 
-                style={{position: 'absolute', top:30, alignSelf: 'center'}}
-                onPress={receberFoto}  
-              >
-                <Image 
-                  source={ 
-                  require('../../assets/icons/user_undefined.png')} 
-                  style={{height:100, width: 100}}  
-                />
-              </TouchableOpacity>
               <TouchableOpacity
                 style={{position: 'absolute', top:30, alignSelf: 'center'}}
                 onPress={receberFoto}  
               >
                 <Image 
-                    source={{uri:imageUser}}
+                    source={
+                      imageUser!=''?{uri:imageUser}:null}
                     style={{height:100, width: 100, borderRadius: 100}}  
                 />
               </TouchableOpacity>
@@ -138,9 +132,9 @@ function Perfil_Conta({navigation}){
               <Text style={{position: 'absolute', left: 40, top: 590, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Licença</Text>      
             <TouchableOpacity 
               style={[estilos.TouchbleOpct1, {top:620}]}
-              onPress={testeStorage}
+              // onPress={}
             >
-              <Text style={estilos.Text14}>Teste Storage</Text>
+              <Text style={estilos.Text14}>Sair</Text>
             </TouchableOpacity>
             <Modal
               animationType="fade"
