@@ -7,9 +7,12 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
+import { utils } from '@react-native-firebase/app';
 import storage from '@react-native-firebase/storage';
-
 import estilos from '../../estilos/estilos';
+
+import auth, { firebase } from '@react-native-firebase/auth';
+
 /*
   tentar inserir dados no firestore usando o UID, fica mais fácil depois pra fazer as operações de CRUD - João;
 */
@@ -22,21 +25,45 @@ function Perfil_Conta({navigation}){
   const [imageUser, setImageUser] = useState('');
   
 
-  //falta implementar aqui
-  const signOutGoogle = async() =>{
-    GoogleSignin.signOut().then(()=>{
-      console.log('saiu');
-    }).catch(error =>{
-      // console.log(error.code);
-      setWarning('Algum erro ocorreu.');
-      setModalVisible(true);
-    })
-  }
+  // //falta implementar aqui
+  // const signOutGoogle = async() =>{
+  //   GoogleSignin.signOut().then(()=>{
+  //     console.log('saiu');
+  //   }).catch(error =>{
+  //     // console.log(error.code);
+  //     setWarning('Algum erro ocorreu.');
+  //     setModalVisible(true);
+  //   })
+  // }
+
   const receberFoto = async()=>{
     setMessage('Atualizar foto do perfil')
     setModalVisible(true);
   }
+
+  //envia a foto do usuário para o firebase (storage) com o formato uidPerfil
+  const enviarFotoStorage = async(local)=>{
+    const currentUser = await auth().currentUser.uid;
+    var caminhoFirebase = currentUser.concat('Perfil');    
+    const reference = storage().ref(caminhoFirebase);
+    await reference.putFile(local);
+  }
   
+  const recuperarFotoStorage = async()=>{
+    const currentUser = auth().currentUser.uid;
+    var caminhoFirebase = currentUser.concat('Perfil');    
+    var url = '';
+    try{
+      url = await storage().ref(caminhoFirebase).getDownloadURL();
+      setImageUser(url); 
+    } catch (error){
+      if (error.code == 'storage/object-not-found'){
+        url = await storage().ref('user_undefined.png').getDownloadURL(); 
+        setImageUser(url); 
+      }
+    }
+  }
+
   const pickImageFromGalery = async()=>{
     const options = {
       mediaType: 'photo',
@@ -45,6 +72,7 @@ function Perfil_Conta({navigation}){
     if (result?.assets){
       setAlterar(true);
       setImageUser(result.assets[0].uri);
+      enviarFotoStorage(result.assets[0].uri);
       return
     }
     //tratar excecao
@@ -77,6 +105,7 @@ function Perfil_Conta({navigation}){
         if (result?.assets){
           setAlterar(true);
           setImageUser(result.assets[0].uri);
+          enviarFotoStorage(result.assets[0].uri);
           return
         }
       } else {
@@ -87,15 +116,9 @@ function Perfil_Conta({navigation}){
     }
   }
 
-  const recuperaFotoStorage = async()=>{
-    console.log('testando storage...');
-    const url = await storage().ref('Perfil.jpeg').getDownloadURL();
-    setImageUser(url);
-  }
-
   useEffect(()=>{
     if (alterar == false){
-      recuperaFotoStorage();
+      recuperarFotoStorage();
     }
   })
   return (
