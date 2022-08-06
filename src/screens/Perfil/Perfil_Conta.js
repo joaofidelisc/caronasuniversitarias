@@ -21,6 +21,9 @@ function Perfil_Conta({navigation}){
   //   })
   // }
 
+  useEffect(()=>{
+    console.log('Perfil_Conta');
+  })
   
   return (
     <SafeAreaView>

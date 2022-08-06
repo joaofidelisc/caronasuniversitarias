@@ -31,6 +31,7 @@ function Perfil_Detalhes({navigation, route}){
 
   useEffect(()=>{
     recuperarDados();
+    console.log('Perfil_Detalhes');
   })
   
   return (
