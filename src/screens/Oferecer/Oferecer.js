@@ -3,6 +3,8 @@ import {View, Text, SafeAreaView, StatusBar, StyleSheet, PermissionsAndroid, Dim
 
 import MapView from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import config from '../../config';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -56,8 +58,23 @@ function Oferecer() {
           style={{position: 'absolute', top: 90, width: 312, height: 38, backgroundColor:'white', borderRadius: 15, fontSize: 14, fontWeight:'600', lineHeight: 17, color:'rgba(83, 83, 83, 0.8)', textAlign:'center', borderWidth: 1, borderColor:'rgba(83, 83, 83, 0.8)'}}
           placeholderTextColor='rgba(83, 83, 83, 0.8)'
           placeholder='Digite o destino da sua viagem'
-
+          
         />
+        {/* <GooglePlacesAutocomplete
+            styles={{listView:{height:100}, backgroundColor:'gray'}}
+            placeholder='Digite o destino da sua viagem'
+            minLength={2}
+            autoFocus={false}
+            onPress={(data, details = null) => {
+              // 'details' is provided when fetchDetails = true
+              console.log(data, details);
+            }}
+            query={{
+              key: config.googleAPI,
+              language: 'pt-br',
+            }}
+            fetchDetails={true}
+          /> */}
         </View>
       </SafeAreaView>
     );

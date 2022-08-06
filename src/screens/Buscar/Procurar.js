@@ -13,7 +13,7 @@ export default function Procurar({navigation}) {
         <StatusBar barStyle={'light-content'} />
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%',}}>
         <Image
-          source={require('../Procurar/carropesquisa.png')}
+          source={require('../Buscar/carropesquisa.png')}
           style={{resizeMode:'center',width:100, height:100, padding:100, paddingVertical:90, marginVertical:0}}
         />
         <Text style={{fontSize:20, color:'#2f4f4f', paddingHorizontal:70, fontWeight:'bold'}}>Para onde pretende ir?</Text>

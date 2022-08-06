@@ -7,7 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import { createDrawerNavigator } from '@react-navigation/drawer';
 
-import Procurar from '../screens/Procurar/Procurar';
+import Procurar from '../screens/Buscar/Procurar';
 import Buscando_Carona from '../screens/Buscar/BuscandoCarona';
 import Oferecer from '../screens/Oferecer/Oferecer';
 import Suas_Viagens from '../screens/Suas_Viagens/Suas_Viagens';

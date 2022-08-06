@@ -10,7 +10,7 @@ function BuscandoCarona({navigation}) {
           Buscando caronas para você. Isso pode levar alguns minutos...
         </Text>
         <Image
-            source={require('../Procurar/carropesquisa.png')}
+            source={require('../Buscar/carropesquisa.png')}
             style={{resizeMode:'center',width:100, height:100, padding:70, paddingVertical:80, marginHorizontal:100, marginVertical:1}}
         />
         <Text style={{fontSize:20, color:'#c0c0c0', paddingHorizontal:10, fontWeight:'normal',marginVertical:35 }}>
