@@ -5,6 +5,7 @@ import estilos from '../../estilos/estilos';
 import firestore from '@react-native-firebase/firestore';
 
 import auth from '@react-native-firebase/auth'
+import FotoPerfil from '../../components/Perfil/FotoPerfil';
 
 function Perfil_Detalhes({navigation, route}){
   const [nome, setNome] = useState('');
@@ -28,12 +29,6 @@ function Perfil_Detalhes({navigation, route}){
     })
   }
 
-  const receberFoto = async()=>{
-    // console.log('rodando');
-    // const reference = storage().ref('Perfil.jpg');
-    // console.log('passou');
-  }
-  
   useEffect(()=>{
     recuperarDados();
   })
@@ -43,17 +38,9 @@ function Perfil_Detalhes({navigation, route}){
       <StatusBar barStyle={'light-content'} />
       <View style={[estilos.styleOne, {flex:0, backgroundColor: 'white', height: '100%'}]}>
         <View style={estilos.retangulo}>
-          <Text style={estilos.Style2}>Perfil</Text>
-          <TouchableOpacity 
-            style={{position: 'absolute', top:30, alignSelf: 'center'}}
-            onPress={receberFoto}  
-          >    
-            <Image source={
-              require('../../assets/icons/user_undefined.png')} 
-              style={{height:100, width: 100}}  
-            />
-          </TouchableOpacity>
+          <FotoPerfil/>
         </View>
+        <Text style={estilos.Style2}>Perfil</Text>
         <Text style={estilos.Text3}>
           Confirme seus dados
         </Text>
@@ -80,9 +67,6 @@ function Perfil_Detalhes({navigation, route}){
         </Text>
         <Text style={estilos.Text11}>
           Preferências
-        </Text>
-        <Text style={estilos.Text12}>
-          {/* {route.params?.email} */}
         </Text>
         <Text style={estilos.Text13}>
           Carros

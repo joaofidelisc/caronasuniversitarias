@@ -2,28 +2,13 @@ import React, {useEffect, useState} from 'react';
 import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, Modal, PermissionsAndroid} from 'react-native';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-// import firestore from '@react-native-firebase/firestore';
-// import auth from '@react-native-firebase/auth';
 
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-
-import { utils } from '@react-native-firebase/app';
-import storage from '@react-native-firebase/storage';
 import estilos from '../../estilos/estilos';
 
-import auth, { firebase } from '@react-native-firebase/auth';
-
-/*
-  tentar inserir dados no firestore usando o UID, fica mais fácil depois pra fazer as operações de CRUD - João;
-*/
+import FotoPerfil from '../../components/Perfil/FotoPerfil';
 
 function Perfil_Conta({navigation}){
-  const [modalVisible, setModalVisible] = useState(false);
-  const [message, setMessage] = useState('');
 
-  const [alterar, setAlterar] = useState(false);
-  const [imageUser, setImageUser] = useState('');
-  
 
   // //falta implementar aqui
   // const signOutGoogle = async() =>{
@@ -36,109 +21,15 @@ function Perfil_Conta({navigation}){
   //   })
   // }
 
-  const receberFoto = async()=>{
-    setMessage('Atualizar foto do perfil')
-    setModalVisible(true);
-  }
-
-  //envia a foto do usuário para o firebase (storage) com o formato uidPerfil
-  const enviarFotoStorage = async(local)=>{
-    const currentUser = await auth().currentUser.uid;
-    var caminhoFirebase = currentUser.concat('Perfil');    
-    const reference = storage().ref(caminhoFirebase);
-    await reference.putFile(local);
-  }
   
-  const recuperarFotoStorage = async()=>{
-    const currentUser = auth().currentUser.uid;
-    var caminhoFirebase = currentUser.concat('Perfil');    
-    var url = '';
-    try{
-      url = await storage().ref(caminhoFirebase).getDownloadURL();
-      setImageUser(url); 
-    } catch (error){
-      if (error.code == 'storage/object-not-found'){
-        url = await storage().ref('user_undefined.png').getDownloadURL(); 
-        setImageUser(url); 
-      }
-    }
-  }
-
-  const pickImageFromGalery = async()=>{
-    const options = {
-      mediaType: 'photo',
-    }
-    const result = await launchImageLibrary(options);
-    if (result?.assets){
-      setAlterar(true);
-      setImageUser(result.assets[0].uri);
-      enviarFotoStorage(result.assets[0].uri);
-      return
-    }
-    //tratar excecao
-  }
-
-  const pickImageFromCamera = async()=>{
-    const options = {
-      mediaType: 'photo',
-      saveToPhotos: false,
-      cameraType: 'front',
-      quality: 1, //qualiadade da imagem de 0 a 1
-    }
-    var result;
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          title: "Cool Photo App Camera Permission",
-          message:
-            "Cool Photo App needs access to your camera " +
-            "so you can take awesome pictures.",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK"
-        }
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        // console.log("You can use the camera");
-        result = await launchCamera(options);
-        if (result?.assets){
-          setAlterar(true);
-          setImageUser(result.assets[0].uri);
-          enviarFotoStorage(result.assets[0].uri);
-          return
-        }
-      } else {
-        console.log("Camera permission denied");
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  }
-
-  useEffect(()=>{
-    if (alterar == false){
-      recuperarFotoStorage();
-    }
-  })
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
-        {/* <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}> */}
-          <View style={[estilos.styleOne, {flex:0, backgroundColor:'white', height: '100%'}]}>
+          <View style={[estilos.styleOne, {flex:0, backgroundColor:'white', height: '100%'}]}>           
             <View style={estilos.retangulo}>
-              <Text style={estilos.Style2}>Perfil</Text>
-              <TouchableOpacity
-                style={{position: 'absolute', top:30, alignSelf: 'center'}}
-                onPress={receberFoto}  
-              >
-                <Image 
-                    source={
-                      imageUser!=''?{uri:imageUser}:null}
-                    style={{height:100, width: 100, borderRadius: 100}}  
-                />
-              </TouchableOpacity>
+              <FotoPerfil/>
             </View>
+            <Text style={estilos.Style2}>Perfil</Text>
             <Text style={{position: 'absolute', left: 25, top: 200, fontWeight: '700', fontSize: 15, lineHeight: 15, color: '#06444C'}}>Avaliação</Text>
               <Text style={{position: 'absolute', left: 40, top: 230, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Avaliações</Text>
               <Text style={{position: 'absolute', left: 40, top: 260, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Feedback</Text>
@@ -159,36 +50,7 @@ function Perfil_Conta({navigation}){
             >
               <Text style={estilos.Text14}>Sair</Text>
             </TouchableOpacity>
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={modalVisible}
-              onRequestClose={() => {setModalVisible(!modalVisible);}}
-            >
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: -10, left:210, alignSelf: 'center'}}>
-                    <Text style={{color: 'white', textAlign: 'center', marginBottom: 5, fontSize:12, fontWeight: '500'}}>{message}</Text>
-                    <TouchableOpacity
-                        style={{backgroundColor:'#FF5F55', width: 120, height: 30, borderRadius: 15, justifyContent: 'center', borderColor:'white', borderWidth:1}}
-                        onPress={pickImageFromGalery}
-                    >
-                        <Text style={styles.textStyle}>+ Carregar</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{backgroundColor:'#FF5F55', width: 120, height: 30, borderRadius: 15, justifyContent: 'center', borderColor:'white', borderWidth:1, marginTop:5}}
-                        onPress={pickImageFromCamera}
-                    >
-                        <Text style={styles.textStyle}>Tirar foto</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{backgroundColor:'#FF5F55', width: 120, height: 30, borderRadius: 15, justifyContent: 'center', marginTop: 5, borderColor:'white', borderWidth:1}}
-                        onPress={() => setModalVisible(!modalVisible)}
-                    >
-                        <Text style={styles.textStyle}>Confirmar</Text>
-                    </TouchableOpacity>
-            </View>
-          </Modal>
           </View>
-    {/* </View> */}
     </SafeAreaView>
   );
 }
