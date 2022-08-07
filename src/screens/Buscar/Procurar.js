@@ -1,8 +1,13 @@
-import React from 'react';
-import {View, Text, SafeAreaView, StatusBar, Button, Image, TextInput} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, SafeAreaView, StatusBar, Button, Image, Dimensions, TextInput} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import {useState} from 'react';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+
+import config from '../../config';
+
+const {width, height} = Dimensions.get('screen');
+
 
 export default function Procurar({navigation}) {
 
@@ -18,7 +23,7 @@ export default function Procurar({navigation}) {
         />
         <Text style={{fontSize:20, color:'#2f4f4f', paddingHorizontal:70, fontWeight:'bold'}}>Para onde pretende ir?</Text>
         <Text style={{fontSize:15, color:'#c0c0c0', paddingHorizontal:70, fontWeight:'normal', marginVertical:15}}>Ex: Universidade fereral de São Carlos</Text>
-        <TextInput
+        {/* <TextInput
           style={{
 
           borderWidth:1, 
@@ -46,6 +51,53 @@ export default function Procurar({navigation}) {
           caretHidden={false}
           blurOnSubmit={true}
   
+        /> */}
+        <GooglePlacesAutocomplete
+          minLength={2}
+          autoFocus={false}
+          fetchDetails={true}
+          onPress={(data, details = null) => {
+            console.log(details.geometry.location.lat);
+            console.log(details.geometry.location.lng);
+            // setDestination({
+            //   latitude: details.geometry.location.lat,
+            //   longitude: details.geometry.location.lng,
+            //   latitudeDelta: 0.0922,
+            //   longitudeDelta: 0.0421
+            // })
+          }}
+          query={{
+            key: config.googleAPI,
+            language: 'pt-br',
+          }}
+          styles={{
+            container: {
+              position:'absolute',
+              alignItems: 'center',
+              top: 90,                   
+              width: width,
+              justifyContent: 'center',
+            },
+            textInputContainer: {
+              width: 312,
+              height: 50,
+              borderColor: 'rgba(83, 83, 83, 0.8)',
+              borderWidth:2,
+              borderRadius: 8,
+              backgroundColor: 'white',
+            },
+            textInput:{
+              color: 'black',
+            },
+            description: {
+              color: 'black'
+            },
+            listView: {
+              elevation: 1,
+              height: 100,
+              width: 312
+            },
+          }}
         />
         <View style={{marginVertical:50}}>
         <Button 

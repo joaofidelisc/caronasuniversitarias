@@ -1,38 +1,59 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, StatusBar, StyleSheet, PermissionsAndroid, Dimensions, TextInput} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, StyleSheet, PermissionsAndroid, Dimensions, TextInput, AppState} from 'react-native';
 
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+
+
+import storage from '@react-native-firebase/storage';
+import database from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
+
 import config from '../../config';
+
 
 const {width, height} = Dimensions.get('screen');
 
 function Oferecer() {
-  const [region, setRegion] = useState(null);  
-  
+  var [region, setRegion] = useState(null);  
+  var [destination, setDestination] = useState(null);
+
+  function atualizaEstado(){
+   const currentUser = auth().currentUser.uid;
+   var caminhoCoordMotorista = currentUser.concat('User');
+   const reference = database().ref(caminhoCoordMotorista);
+   try{
+    reference.set({
+      latitude: region.latitude,
+      longitude: region.longitude,
+      ativo: true,
+    }).then(()=> console.log('coordenadas enviadas!'));
+   }catch(error){
+    console.log('ERRO:', error.code);
+   }
+  }
+
   function getMyLocation(){
     Geolocation.getCurrentPosition(info=>{
-      console.log("LATITUDE ", info.coords.latitude);
-      console.log("LONGITUDE ", info.coords.longitude);
       setRegion({
         latitude: info.coords.latitude,
         longitude: info.coords.longitude,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421
       })
-    
     },
     ()=>{console.log('erro')}, {
       enableHighAccuracy:true,
       timeout:2000,
     })
+    atualizaEstado();
   }
   
   useEffect(()=>{
     getMyLocation();
   }, [])
-
+  
 
   return (
       <SafeAreaView>
@@ -53,38 +74,64 @@ function Oferecer() {
             minZoomLevel={17}
             showsUserLocation={true}
             loadingEnabled={true}
-          />
-        <TextInput
-          style={{position: 'absolute', top: 90, width: 312, height: 38, backgroundColor:'white', borderRadius: 15, fontSize: 14, fontWeight:'600', lineHeight: 17, color:'rgba(83, 83, 83, 0.8)', textAlign:'center', borderWidth: 1, borderColor:'rgba(83, 83, 83, 0.8)'}}
-          placeholderTextColor='rgba(83, 83, 83, 0.8)'
-          placeholder='Digite o destino da sua viagem'
-          
+            onRegionChange={getMyLocation}
+          >
+            <Marker
+              coordinate={{ latitude : -21.593920 , longitude : -48.351474 }}
+              onPress={()=>{console.log('pressionou no pin')}}
+              // image={{uri: 'https://reactjs.org/logo-og.png'}}
+            />
+          </MapView>
+        <GooglePlacesAutocomplete
+          minLength={2}
+          autoFocus={false}
+          fetchDetails={true}
+          onPress={(data, details = null) => {
+            console.log(details.geometry.location.lat);
+            console.log(details.geometry.location.lng);
+            // setDestination({
+            //   latitude: details.geometry.location.lat,
+            //   longitude: details.geometry.location.lng,
+            //   latitudeDelta: 0.0922,
+            //   longitudeDelta: 0.0421
+            // })
+          }}
+          query={{
+            key: config.googleAPI,
+            language: 'pt-br',
+          }}
+          styles={{
+            container: {
+              position:'absolute',
+              alignItems: 'center',
+              top: 90,                   
+              width: width,
+              justifyContent: 'center',
+            },
+            textInputContainer: {
+              width: 312,
+              height: 50,
+              borderColor: 'rgba(83, 83, 83, 0.8)',
+              borderWidth:2,
+              borderRadius: 8,
+              backgroundColor: 'white',
+            },
+            textInput:{
+              color: 'black',
+            },
+            description: {
+              color: 'black'
+            },
+            listView: {
+              elevation: 1,
+              height: 100,
+              width: 312
+            },
+          }}
         />
-        {/* <GooglePlacesAutocomplete
-            styles={{listView:{height:100}, backgroundColor:'gray'}}
-            placeholder='Digite o destino da sua viagem'
-            minLength={2}
-            autoFocus={false}
-            onPress={(data, details = null) => {
-              // 'details' is provided when fetchDetails = true
-              console.log(data, details);
-            }}
-            query={{
-              key: config.googleAPI,
-              language: 'pt-br',
-            }}
-            fetchDetails={true}
-          /> */}
         </View>
       </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-  map:{
-    height: '100%',
-    // backgroundColor: 'black',
-  }
-})
 
 export default Oferecer;
