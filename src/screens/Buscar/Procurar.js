@@ -74,7 +74,7 @@ export default function Procurar({navigation}) {
             container: {
               position:'absolute',
               alignItems: 'center',
-              top: 90,                   
+              top: 100,                   
               width: width,
               justifyContent: 'center',
             },

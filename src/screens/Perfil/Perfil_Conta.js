@@ -32,23 +32,43 @@ function Perfil_Conta({navigation}){
             <View style={estilos.retangulo}>
               <FotoPerfil/>
             </View>
-            <Text style={estilos.Style2}>Perfil</Text>
+            <Text style={[estilos.Style2, {color:'white', fontSize: 15}]}>Perfil</Text>
             <Text style={{position: 'absolute', left: 25, top: 200, fontWeight: '700', fontSize: 15, lineHeight: 15, color: '#06444C'}}>Avaliação</Text>
-              <Text style={{position: 'absolute', left: 40, top: 230, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Avaliações</Text>
-              <Text style={{position: 'absolute', left: 40, top: 260, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Feedback</Text>
+              <TouchableOpacity style={{position: 'absolute', left: 40, top: 230}}>
+                <Text style={{fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Avaliações</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={{position: 'absolute', left: 40, top: 260}}>
+                <Text style={{fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Feedback</Text>
+              </TouchableOpacity>
             <Text style={{position: 'absolute', left: 25, right: 259, top: 290, fontWeight: '700', fontSize: 15, lineHeight: 15, color: '#06444C'}}>Preferências</Text>
-              <Text style={{position: 'absolute', left: 40, top: 320, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Alterar senha</Text>
-              <Text style={{position: 'absolute', left: 40, top: 350, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Notificações</Text>
-              <Text style={{position: 'absolute', left: 40, top: 380, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Endereço</Text>
+              <TouchableOpacity style={{position: 'absolute', left: 40, top: 320}}>
+                <Text style={{fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Alterar senha</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={{position: 'absolute', left: 40, top: 350}}>
+                <Text style={{fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Notificações</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={{position: 'absolute', left: 40, top: 380}}>
+                <Text style={{fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Endereço</Text>
+              </TouchableOpacity>
             <Text style={{position: 'absolute', left: 25, right: 259, top: 410, fontWeight: '700', fontSize: 15, lineHeight: 15, color: '#06444C'}}>Dinheiro</Text>
-              <Text style={{position: 'absolute', left: 40, top: 440, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Métodos de pagamento</Text>
-              <Text style={{position: 'absolute', left: 40, top: 470, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Dinheiro</Text>
+              <TouchableOpacity style={{position: 'absolute', left: 40, top: 440}}>
+                <Text style={{fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Métodos de pagamento</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={{position: 'absolute', left: 40, top: 470}}>
+                <Text style={{fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Dinheiro</Text>
+              </TouchableOpacity>
             <Text style={{position: 'absolute', left: 25, right: 259, top: 500, fontWeight: '700', fontSize: 15, lineHeight: 15, color: '#06444C'}}>Sobre</Text>
-              <Text style={{position: 'absolute', left: 40, top: 530, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Ajuda</Text>
-              <Text style={{position: 'absolute', left: 40, top: 560, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Termos de uso</Text>
-              <Text style={{position: 'absolute', left: 40, top: 590, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Licença</Text>      
+              <TouchableOpacity style={{position: 'absolute', left: 40, top: 530}}>
+                <Text style={{fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Ajuda</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={{position: 'absolute', left: 40, top: 560}}>
+                <Text style={{fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Termos de uso</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={{position: 'absolute', left: 40, top: 590}}>
+                <Text style={{fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Licença</Text>      
+              </TouchableOpacity>
             <TouchableOpacity 
-              style={[estilos.TouchbleOpct1, {top:620}]}
+              style={[estilos.TouchbleOpct1, {top:640}]}
               // onPress={}
             >
               <Text style={estilos.Text14}>Sair</Text>

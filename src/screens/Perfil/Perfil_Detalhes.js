@@ -41,7 +41,7 @@ function Perfil_Detalhes({navigation, route}){
         <View style={estilos.retangulo}>
           <FotoPerfil/>
         </View>
-        <Text style={estilos.Style2}>Perfil</Text>
+        <Text style={[estilos.Style2, {color:'white', fontSize: 15}]}>Perfil</Text>
         <Text style={estilos.Text3}>
           Confirme seus dados
         </Text>
@@ -60,16 +60,23 @@ function Perfil_Detalhes({navigation, route}){
         <Text style={estilos.Text8}>
           Sobre você
         </Text>
-        <Text style={estilos.Text9}>
-          Universidade/Campus
-        </Text>
+        <TouchableOpacity style={{position: 'absolute', left: 40, top: 355}}>
+          <Text style={estilos.Text9}>
+            Universidade/Campus
+          </Text>
+        </TouchableOpacity>
         <Text style={estilos.Text10}>
           {universidade}
         </Text>
-        <Text style={estilos.Text11}>
-          Preferências
-        </Text>
-        <Text style={estilos.Text13}>
+        {/* <TouchableOpacity style={{ position: 'absolute', left: 40, top: 415}}>
+          <Text style={estilos.Text11}>
+            Preferências
+          </Text>
+        </TouchableOpacity>
+        <Text style={[estilos.Text10, {top: 440}]}>
+          Sr. João
+        </Text> */}
+        <Text style={[estilos.Text13, {top: 415}]}>
           Carros
         </Text>
       </View>

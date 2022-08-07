@@ -80,6 +80,7 @@ function Oferecer() {
               coordinate={{ latitude : -21.593920 , longitude : -48.351474 }}
               onPress={()=>{console.log('pressionou no pin')}}
               // image={{uri: 'https://reactjs.org/logo-og.png'}}
+              // image={{}}
             />
           </MapView>
         <GooglePlacesAutocomplete

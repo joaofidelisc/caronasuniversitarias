@@ -149,13 +149,13 @@ export default StyleSheet.create({
       position: 'absolute', left: 25, top: 325, fontWeight: '700', fontSize: 15, lineHeight: 18, color:'#06444C'
     },
     Text9:{
-      position: 'absolute', left: 40, top: 355, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'
+      fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'
     },
     Text10:{
       position: 'absolute', left: 60, top: 385, fontWeight: '600', fontSize: 12, lineHeight: 15, color:'#FF5F55'
     },
     Text11:{
-      position: 'absolute', left: 40, top: 415, fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'
+      fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'
     },
     Text12:{
       position: 'absolute', left: 60, top: 445, fontWeight: '600', fontSize: 12, lineHeight: 15, color:'#FF5F55'
