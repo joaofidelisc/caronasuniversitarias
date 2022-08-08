@@ -1,10 +1,10 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, StatusBar, StyleSheet, PermissionsAndroid, Dimensions, TextInput, AppState} from 'react-native';
+import React, {useState, useEffect, useRef} from 'react';
+import {View, Text, SafeAreaView, StatusBar, StyleSheet, PermissionsAndroid, Dimensions, TextInput, AppState, Modal, TouchableOpacity, Image} from 'react-native';
 
 import MapView, { Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-
+import MapViewDirections from 'react-native-maps-directions';
 
 import storage from '@react-native-firebase/storage';
 import database from '@react-native-firebase/database';
@@ -16,8 +16,13 @@ import config from '../../config';
 const {width, height} = Dimensions.get('screen');
 
 function Oferecer() {
-  var [region, setRegion] = useState(null);  
-  var [destination, setDestination] = useState(null);
+  const mapEL = useRef(null);
+  const [region, setRegion] = useState(null);  
+  const [destination, setDestination] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [message, setMessage] = useState('');
+  const [imageUser, setImageUser] = useState('');
+
 
   function atualizaEstado(){
    const currentUser = auth().currentUser.uid;
@@ -54,6 +59,16 @@ function Oferecer() {
     getMyLocation();
   }, [])
   
+  const buscaUsuario = async()=>{
+    try{
+      const url = await storage().ref('user_undefined.png').getDownloadURL(); 
+      setImageUser(url); 
+    }catch(error){
+      console.log(error.code);
+    }
+    setMessage('Usuário');
+    setModalVisible(true);
+  }
 
   return (
       <SafeAreaView>
@@ -75,27 +90,48 @@ function Oferecer() {
             showsUserLocation={true}
             loadingEnabled={true}
             onRegionChange={getMyLocation}
+            // ref={mapEL}
+            initialRegion={{
+              latitude: -21.983311,
+              longitude: -47.883154,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
           >
             <Marker
-              coordinate={{ latitude : -21.593920 , longitude : -48.351474 }}
-              onPress={()=>{console.log('pressionou no pin')}}
+              coordinate={{ latitude : -21.98526 , longitude : -47.89466}}
+              onPress={buscaUsuario}
               // image={{uri: 'https://reactjs.org/logo-og.png'}}
               // image={{}}
             />
+            {
+              destination &&
+              <MapViewDirections
+                  origin={region}
+                  destination={destination}
+                  apikey={config.googleAPI}
+                  strokeWidth={3}
+                  strokeColor='#FF5F55'
+                  onReady={result=>{
+                    // mapEL.current.
+                    // console.log(result);
+                  }}
+                />
+            }
           </MapView>
         <GooglePlacesAutocomplete
           minLength={2}
           autoFocus={false}
           fetchDetails={true}
           onPress={(data, details = null) => {
-            console.log(details.geometry.location.lat);
-            console.log(details.geometry.location.lng);
-            // setDestination({
-            //   latitude: details.geometry.location.lat,
-            //   longitude: details.geometry.location.lng,
-            //   latitudeDelta: 0.0922,
-            //   longitudeDelta: 0.0421
-            // })
+            // console.log(details.geometry.location.lat);
+            // console.log(details.geometry.location.lng);
+            setDestination({
+              latitude: details.geometry.location.lat,
+              longitude: details.geometry.location.lng,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421
+            })
           }}
           query={{
             key: config.googleAPI,
@@ -130,9 +166,77 @@ function Oferecer() {
             },
           }}
         />
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {setModalVisible(!modalVisible);}}
+          >
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 190, alignSelf: 'center'}}>
+                <View style={styles.modalView}>
+                    <Image 
+                      source={
+                        imageUser!=''?{uri:imageUser}:null}
+                        style={{height:70, width: 70, borderRadius: 100, marginBottom:10}}  
+                    />
+                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>João Vitor Fidelis Cardozo</Text>
+                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: Kartódromo</Text>
+            
+                    <TouchableOpacity
+                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
+                        // onPress={() => setModalVisible(!modalVisible)}
+                    >
+                        <Text style={styles.textStyle}>Oferecer carona</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
+                        onPress={() => setModalVisible(!modalVisible)}
+                    >
+                        <Text style={styles.textStyle}>Cancelar</Text>
+                    </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </View>
       </SafeAreaView>
     );
 }
+
+const styles = StyleSheet.create({
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  btnFechar:{
+    position: 'absolute',
+    width: 14,
+    height: 29,
+    left: 22,
+    top: 20,
+  },
+  txtBtnFechar:{
+    fontWeight: '600',
+    fontSize: 24,
+    lineHeight: 29,
+    alignItems: 'center',
+    color: '#FF5F55',
+  },
+});
 
 export default Oferecer;

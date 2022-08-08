@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, Modal, PermissionsAndroid} from 'react-native';
+import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, Modal, TextInput} from 'react-native';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
@@ -8,7 +8,12 @@ import estilos from '../../estilos/estilos';
 import FotoPerfil from '../../components/Perfil/FotoPerfil';
 
 function Perfil_Conta({navigation}){
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [message, setMessage] = useState('');
+  const [alterarSenha, setAlterarSenha] = useState(false);
+  const [aviso, setAviso] = useState('');
+  const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
   // //falta implementar aqui
   // const signOutGoogle = async() =>{
@@ -20,6 +25,19 @@ function Perfil_Conta({navigation}){
   //     setModalVisible(true);
   //   })
   // }
+  const changePassword = async()=>{
+    setAviso('Digite a senha atual e a nova')
+    setAlterarSenha(true);
+    setModalVisible(true);
+  }
+
+  const notificacoes = async()=>{
+
+  }
+
+  const endereco = async()=>{
+    
+  }
 
   useEffect(()=>{
     console.log('Perfil_Conta');
@@ -41,7 +59,10 @@ function Perfil_Conta({navigation}){
                 <Text style={{fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Feedback</Text>
               </TouchableOpacity>
             <Text style={{position: 'absolute', left: 25, right: 259, top: 290, fontWeight: '700', fontSize: 15, lineHeight: 15, color: '#06444C'}}>Preferências</Text>
-              <TouchableOpacity style={{position: 'absolute', left: 40, top: 320}}>
+              <TouchableOpacity 
+                style={{position: 'absolute', left: 40, top: 320}}
+                onPress={changePassword}
+                >
                 <Text style={{fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'}}>Alterar senha</Text>
               </TouchableOpacity>
               <TouchableOpacity style={{position: 'absolute', left: 40, top: 350}}>
@@ -73,6 +94,45 @@ function Perfil_Conta({navigation}){
             >
               <Text style={estilos.Text14}>Sair</Text>
             </TouchableOpacity>
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {setModalVisible(!modalVisible);}}
+            >
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 190, alignSelf: 'center'}}>
+                <View style={styles.modalView}>
+                    <Text style={{color: 'black', textAlign: 'center', marginBottom: 15}}>{aviso}</Text>
+                    {
+                      alterarSenha &&
+                      <>
+                        <TextInput
+                        style={{width: 200, height: 40, alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: 15, borderWidth: 1, color:'black'}}
+                        placeholderTextColor='black'
+                        placeholder='Senha atual'
+                        secureTextEntry={true}
+                        onChangeText={(password)=>setPassword(password)}
+                        />
+                         <TextInput
+                        style={{width: 200, height: 40, alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: 15, borderWidth: 1, color:'black', marginTop: 15, marginBottom: 15}}
+                        placeholderTextColor='black'
+                        placeholder='Nova senha'
+                        secureTextEntry={true}
+                        onChangeText={(newPassword)=>setNewPassword(newPassword)}
+                        />
+
+                      </>
+                      
+                    }
+                    <TouchableOpacity
+                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
+                        onPress={() => setModalVisible(!modalVisible)}
+                    >
+                        <Text style={styles.textStyle}>Confirmar</Text>
+                    </TouchableOpacity>
+              </View>
+            </View>
+            </Modal>
           </View>
     </SafeAreaView>
   );
