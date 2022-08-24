@@ -28,7 +28,8 @@ import {
       <Text style={{fontSize:25, color:'#2f4f4f', paddingHorizontal:20, fontWeight:'bold', marginVertical:10}}>
         Você encontrou sua carona!</Text>
       <Image
-        source={require('../Buscar/checkcar.png')}
+        source={require('../../assets/icons/checkcar.png')}
+        // source={require('../Buscar/checkcar.png')}
         style={{resizeMode:'center',width:100, height:100, padding:70, paddingVertical:100, marginHorizontal:100, marginVertical:15}}
       />
       <Modal 

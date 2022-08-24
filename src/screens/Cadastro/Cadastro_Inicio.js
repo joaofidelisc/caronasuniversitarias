@@ -25,9 +25,9 @@ function Cadastro_Inicio({navigation}) {
   
   const redirecionamentoLogin = async(emailGoogle)=>{  
     // console.log('email:', emailGoogle);
-    firestore().collection('Passageiro').where('email', '==', emailGoogle).get().then(querySnapshot=>{
+    firestore().collection('Users').where('email', '==', emailGoogle).get().then(querySnapshot=>{
       const valor = querySnapshot.docs;
-      // console.log(valor);
+      console.log(valor);
       if (valor == ""){
         // console.log("AAA");
         navigation.navigate("Como_Comecar", {email: emailGoogle});

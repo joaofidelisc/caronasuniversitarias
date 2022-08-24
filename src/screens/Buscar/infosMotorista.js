@@ -24,7 +24,8 @@ export default function TelaInfos({navigation}){
         <View>
         <View style={{fontsize:15, color:'#dc143c'}}>
         <Image
-          source={require('../Buscar/perfil.png')}
+          source={require('../../assets/icons/perfil.png')}
+          // source={require('../Buscar/perfil.png')}
           style={{resizeMode:'center',width:60, height:60, padding:35, paddingVertical:50, marginHorizontal:135, marginVertical:0}}
         />
         <Text style={estilos.TextoCiano}>Nome do motorista</Text>
@@ -40,7 +41,8 @@ export default function TelaInfos({navigation}){
 
         <Text style={estilos.TextoCiano4}>Classificação</Text>
         <Image
-          source={require('../Buscar/star.png')}
+          // source={require('../Buscar/star.png')}
+          source={require('../../assets/icons/star.png')}
           style={{resizeMode:'center',width:110, height:110, padding:35, paddingVertical:50, marginHorizontal:110, marginVertical:0}}
         />
     </View>

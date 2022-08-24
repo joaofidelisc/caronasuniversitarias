@@ -7,7 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import { createDrawerNavigator } from '@react-navigation/drawer';
 
-import Procurar from '../screens/Buscar/Procurar';
+import Buscar from '../screens/Buscar/Buscar';
 import Buscando_Carona from '../screens/Buscar/BuscandoCarona';
 import Oferecer from '../screens/Oferecer/Oferecer';
 import Suas_Viagens from '../screens/Suas_Viagens/Suas_Viagens';
@@ -32,8 +32,8 @@ function RotaBuscandoCarona(){
     <NavigationContainer
       independent={true}
     >
-      <Stack.Navigator initialRouteName="Procurar" options={{headerShown:false}}>
-        <Stack.Screen name="Procurar" component={Procurar} options={{headerShown:false}}/>
+      <Stack.Navigator initialRouteName="Buscar" options={{headerShown:false}}>
+        <Stack.Screen name="Buscar" component={Buscar} options={{headerShown:false}}/>
         <Stack.Screen name="Buscando_Carona" component={BuscandoCarona} options={{headerShown:false}} />
         <Stack.Screen name="Options" component={Options} options={{headerShown:false}}/>
         <Stack.Screen name="CaronaEncontrada" component={CaronaEncontrada} options={{headerShown:false}}/>

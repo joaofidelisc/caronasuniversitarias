@@ -10,6 +10,9 @@ import storage from '@react-native-firebase/storage';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 
+import { BackHandler, DeviceEventEmitter } from 'react-native';
+import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
+
 import config from '../../config';
 
 
@@ -24,14 +27,32 @@ function Oferecer() {
   const [imageUser, setImageUser] = useState('');
 
 
+    const localizacaoLigada = async()=>{
+      LocationServicesDialogBox.checkLocationServicesIsEnabled({
+        message: "<h2 style='color: #0af13e'>Usar localização</h2><br/>Deseja permitir que o aplicativo <b>Caronas Universitárias</b> acesse a sua localização?<br/><br/>",
+        ok: "Permitir",
+        cancel: "Negar",
+        enableHighAccuracy: true, // true => GPS AND NETWORK PROVIDER, false => GPS OR NETWORK PROVIDER
+        showDialog: true, // false => Opens the Location access page directly
+        openLocationServices: true, // false => Directly catch method is called if location services are turned off
+        preventOutSideTouch: false, // true => To prevent the location services window from closing when it is clicked outside
+        preventBackClick: false, // true => To prevent the location services popup from closing when it is clicked back button
+        providerListener: false // true ==> Trigger locationProviderStatusChange listener when the location state changes
+    }).then(function(success) {
+        // getMyLocation();
+        console.log(success); // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
+    }).catch((error) => {
+        console.log(error.message); // error.message => "disabled"
+    });
+  }
+
   function atualizaEstado(){
    const currentUser = auth().currentUser.uid;
-   var caminhoCoordMotorista = currentUser.concat('User');
-   const reference = database().ref(caminhoCoordMotorista);
+   const reference = database().ref(`Motoristas/${currentUser}`);
    try{
     reference.set({
-      latitude: region.latitude,
-      longitude: region.longitude,
+      latitudeMotorista: region.latitude,
+      longitudeMotorista: region.longitude,
       ativo: true,
     }).then(()=> console.log('coordenadas enviadas!'));
    }catch(error){
@@ -40,19 +61,23 @@ function Oferecer() {
   }
 
   function getMyLocation(){
-    Geolocation.getCurrentPosition(info=>{
-      setRegion({
-        latitude: info.coords.latitude,
-        longitude: info.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421
+    try{
+      Geolocation.getCurrentPosition(info=>{
+        setRegion({
+          latitude: info.coords.latitude,
+          longitude: info.coords.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421
+        })
+      },
+      ()=>{console.log('Atualizando...')}, {
+        enableHighAccuracy:false,
+        timeout:2000,
       })
-    },
-    ()=>{console.log('erro')}, {
-      enableHighAccuracy:true,
-      timeout:2000,
-    })
-    atualizaEstado();
+      atualizaEstado();
+    }catch(error){
+      console.log(error.code);
+    }
   }
   
   useEffect(()=>{
@@ -80,7 +105,8 @@ function Oferecer() {
               PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
                 .then(()=>{
-                  console.log('Permissão aceita')
+                  console.log('Permissão aceita');  
+                  localizacaoLigada();
                 })
             }}
             style={{width:width, height:height, flex:1}}
@@ -98,12 +124,12 @@ function Oferecer() {
               longitudeDelta: 0.0421,
             }}
           >
-            <Marker
+            {/* <Marker
               coordinate={{ latitude : -21.98526 , longitude : -47.89466}}
               onPress={buscaUsuario}
               // image={{uri: 'https://reactjs.org/logo-og.png'}}
               // image={{}}
-            />
+            /> */}
             {
               destination &&
               <MapViewDirections

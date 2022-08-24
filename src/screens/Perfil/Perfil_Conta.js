@@ -6,6 +6,8 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import estilos from '../../estilos/estilos';
 
 import FotoPerfil from '../../components/Perfil/FotoPerfil';
+import auth, { firebase } from '@react-native-firebase/auth'
+
 
 function Perfil_Conta({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
@@ -25,10 +27,15 @@ function Perfil_Conta({navigation}){
   //     setModalVisible(true);
   //   })
   // }
+
+
   const changePassword = async()=>{
     setAviso('Digite a senha atual e a nova')
     setAlterarSenha(true);
     setModalVisible(true);
+    const senha_atual = await auth().currentUser.uid;
+    console.log(senha_atual);
+
   }
 
   const notificacoes = async()=>{

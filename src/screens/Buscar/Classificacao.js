@@ -136,7 +136,7 @@ export default function Classificacao({navigation}){
         <Button
           title="Finalizar"
           color={'#cd5c5c'}
-          onPress={()=>navigation.navigate('Procurar')}
+          onPress={()=>navigation.navigate('Buscar')}
         />
       </View>  
     </View>

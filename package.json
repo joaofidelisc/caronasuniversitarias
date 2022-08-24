@@ -27,6 +27,7 @@
     "@react-navigation/stack": "^6.2.2",
     "react": "18.0.0",
     "react-native": "0.69.1",
+    "react-native-android-location-services-dialog-box": "^2.8.2",
     "react-native-gesture-handler": "^2.5.0",
     "react-native-google-places-autocomplete": "^2.4.1",
     "react-native-image-picker": "^4.8.4",
