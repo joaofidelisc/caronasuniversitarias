@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {View, Text, SafeAreaView, StatusBar, StyleSheet, PermissionsAndroid, Dimensions, TextInput, AppState, Modal, TouchableOpacity, Image} from 'react-native';
 
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Callout } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapViewDirections from 'react-native-maps-directions';
@@ -25,7 +25,7 @@ function Oferecer() {
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState('');
   const [imageUser, setImageUser] = useState('');
-
+  const [caronistas, setCaronistas] = useState([]);
 
     const localizacaoLigada = async()=>{
       LocationServicesDialogBox.checkLocationServicesIsEnabled({
@@ -45,6 +45,29 @@ function Oferecer() {
         console.log(error.message); // error.message => "disabled"
     });
   }
+
+  function getCaronistas(){
+    setCaronistas([]);
+    let db = database().ref();
+    let usersRef = db.child('Passageiros');
+    usersRef.once("value").then(function(snapshot) {
+      snapshot.forEach(function(userSnapshot) {
+        let uidPassageiro = userSnapshot.key;
+        let latitudePassageiro = userSnapshot.val().latitudePassageiro;
+        let longitudePassageiro = userSnapshot.val().longitudePassageiro;
+        setCaronistas(
+          [
+            ...caronistas, {
+              uid: uidPassageiro,
+              latitude: latitudePassageiro,
+              longitude: longitudePassageiro,
+            }
+          ]  
+          )
+        });
+      });    
+  }
+
 
   function atualizaEstado(){
    const currentUser = auth().currentUser.uid;
@@ -79,9 +102,15 @@ function Oferecer() {
       console.log(error.code);
     }
   }
-  
+
+  setTimeout(function(){
+    console.log('Refresh a cada 2 segundos');
+  }, 2000);
+
   useEffect(()=>{
     getMyLocation();
+    getCaronistas();
+    console.log('atualizou\n');
   }, [])
   
   const buscaUsuario = async()=>{
@@ -124,12 +153,21 @@ function Oferecer() {
               longitudeDelta: 0.0421,
             }}
           >
-            {/* <Marker
-              coordinate={{ latitude : -21.98526 , longitude : -47.89466}}
-              onPress={buscaUsuario}
-              // image={{uri: 'https://reactjs.org/logo-og.png'}}
-              // image={{}}
-            /> */}
+            {
+    
+              caronistas.map(passageiro=>(
+                <Marker
+                  // key={passageiro.uid}
+                  coordinate={{ latitude : passageiro.latitude , longitude : passageiro.longitude}}
+                  onPress={buscaUsuario}
+                  title={passageiro.uid}
+                  description={'TESTE'}
+                  // image={{uri: 'https://reactjs.org/logo-og.png'}}
+                  // image={{}}
+                />
+              ))
+            }
+            
             {
               destination &&
               <MapViewDirections

@@ -19,24 +19,57 @@ const {width, height} = Dimensions.get('screen');
 
 export default function Buscar({navigation}) {
 
+
   const [localDestino, setLocalDestino] = useState(null);
   const [localizacaoPassageiro, setlocalizacaoPassageiro] = useState(null);
   const [localizacaoAtiva, setLocalizacaoAtiva] = useState(false);
-
+  // const [objPassageiro, setObjPassageiro] = useState([]);
 
 //itera por todos os documentos
-function testarBanco(){
-  let db = database().ref();
-  let usersRef = db.child('Motoristas')
-  usersRef.once("value").then(function(snapshot) {
-    snapshot.forEach(function(userSnapshot) {
-      console.log(userSnapshot.key);
-      console.log(userSnapshot.val()); 
-      // console.log(userSnapshot.child("points").val());
-    });
-  });
-}
+// function testarBanco(){  
+//   setObjPassageiro([]); //reseta objPassageiro
+//   var numPassageiros = 0;
+//   let db = database().ref();
+//   let usersRef = db.child('Passageiros');
+//   usersRef.once("value").then(function(snapshot) {
+//     snapshot.forEach(function(userSnapshot) {
+//       let uidPassageiro = userSnapshot.key;
+//       let latitudePassageiro = userSnapshot.val().latitudePassageiro;
+//       let longitudePassageiro = userSnapshot.val().longitudePassageiro;
+//       setObjPassageiro(
+//         [
+//           ...objPassageiro, {
+//             uid: uidPassageiro,
+//             latitude: latitudePassageiro,
+//             longitude: longitudePassageiro,
+//           }
+//         ]  
+//         )
+//         // numPassageiros+=1;
+//       });
+//     });
+//   setObjPassageiro([]); //reseta objPassageiro
+//   console.log('Obj:\n');
+//   console.log(objPassageiro);
+  
+//   //PASSAR PARA O MARKER ATUALIZADO;
+//   // console.log('TESTANDO MAP:\n');
+//   // objPassageiro.map(passageiro=>(
+//   //   console.log(passageiro.uid)
+//   // ))
+// }
 
+// function getCaronistas(){
+//   let db = database().ref();
+//   let usersRef = db.child('Motoristas')
+//   usersRef.once("value").then(function(snapshot) {
+//     snapshot.forEach(function(userSnapshot) {
+//       console.log(userSnapshot.key);
+//       console.log(userSnapshot.val()); 
+//       // console.log(userSnapshot.child("points").val());
+//     });
+//   });
+// }
 
   function enviarLocalizacaoPassageiro(latitude, longitude){
     const currentUser = auth().currentUser.uid;
@@ -179,8 +212,8 @@ function testarBanco(){
         style={{position: 'absolute', backgroundColor: '#FF5F55', top: 260, width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
         // onPress={()=>navigation.navigate('Buscando_Carona', {destino: destino, nomeDestino: nomeDestino})}
         // onPress={requestLocationPermission}
-        // onPress={getLocalPassageiro}
-        onPress={testarBanco}
+        onPress={getLocalPassageiro}
+        // onPress={testarBanco}
         // onPress={ligarLocalizacao}
       >
         <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
