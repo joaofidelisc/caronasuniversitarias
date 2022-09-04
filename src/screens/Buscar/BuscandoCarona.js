@@ -3,6 +3,8 @@ import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity} from 'reac
 
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+
 
 
 function BuscandoCarona({navigation, route}) {
@@ -10,17 +12,43 @@ function BuscandoCarona({navigation, route}) {
   const destinoPassageiro = route.params?.destino;
 
 
-function testarBanco(){
-  try{
-    database().ref('Passageiros').then(snapshot =>{
-      console.log('User data:', snapshot.val());
-    })
-  }catch(error){
-    console.log(error.code);
+  function testarBanco(){
+    try{
+      database().ref('Passageiros').then(snapshot =>{
+        console.log('User data:', snapshot.val());
+      })
+    }catch(error){
+      console.log(error.code);
+    }
   }
-}
+
+  function getDadosCaronista(){
+    console.log('Obtendo dados...\n');
+    try{
+      firestore().collection('Users').doc('NbFrgDf5K7WVkZGE3taldHdo5qI3').onSnapshot(documentSnapshot=>{
+        console.log('User data: ', documentSnapshot.data().nome);
+      });
+    }catch(error){
+      console.log('ERROR', error.code);
+    }
+  }
+
+  function getDestinoCaronista(){
+
+    database().ref(`Passageiros/NbFrgDf5K7WVkZGE3taldHdo5qI3`).once('value').then(snapshot=>{
+      console.log('Usuario:', snapshot.val().nomeDestino);
+    })
+  }
+
+  // const subscriber = firestore()
+  //     .collection('Users')
+  //     .doc(userId)
+  //     .onSnapshot(documentSnapshot => {
+  //       console.log('User data: ', documentSnapshot.data());
+  //     });
+
   useEffect(()=>{
-    testarBanco();
+    // testarBanco();
     // console.log(localizacaoPassageiro);
     // console.log(destinoPassageiro);
   })
@@ -43,6 +71,8 @@ function testarBanco(){
         <TouchableOpacity
           style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
           onPress={()=>{navigation.navigate('Options')}}
+          // onPress={getDadosCaronista}
+          // onPress={getDestinoCaronista}
         >
           <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
             Exibir lista

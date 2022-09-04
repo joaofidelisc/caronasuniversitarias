@@ -19,6 +19,7 @@ import Options from '../screens/Buscar/Options';
 import CaronaEncontrada from '../screens/Buscar/CaronaEncontrada';
 import TelaInfos from '../screens/Buscar/infosMotorista';
 import Classificacao from '../screens/Buscar/Classificacao';
+import ConfirmarSolicitacao from '../screens/Buscar/ConfirmarSolicitacao';
 
 
 const Tab = createBottomTabNavigator();
@@ -34,6 +35,7 @@ function RotaBuscandoCarona(){
     >
       <Stack.Navigator initialRouteName="Buscar" options={{headerShown:false}}>
         <Stack.Screen name="Buscar" component={Buscar} options={{headerShown:false}}/>
+        <Stack.Screen name="ConfirmarSolicitacao" component={ConfirmarSolicitacao} options={{headerShown:false}}/>
         <Stack.Screen name="Buscando_Carona" component={BuscandoCarona} options={{headerShown:false}} />
         <Stack.Screen name="Options" component={Options} options={{headerShown:false}}/>
         <Stack.Screen name="CaronaEncontrada" component={CaronaEncontrada} options={{headerShown:false}}/>

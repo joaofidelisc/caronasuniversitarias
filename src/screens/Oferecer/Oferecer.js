@@ -9,6 +9,8 @@ import MapViewDirections from 'react-native-maps-directions';
 import storage from '@react-native-firebase/storage';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+
 
 import { BackHandler, DeviceEventEmitter } from 'react-native';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
@@ -25,7 +27,14 @@ function Oferecer() {
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState('');
   const [imageUser, setImageUser] = useState('');
-  const [caronistas, setCaronistas] = useState([]);
+  const [atualizarMarker, setAtualizarMarker] = useState(false);
+  const [vetorCaronistas, setCaronistas] = useState([]);
+  const [estaPresente, setEstaPresente] = useState(false);
+
+  const [nomeCaronista, setNomeCaronista] = useState('');
+  const [nomeDestinoCaronista, setNomeDestinoCaronista] = useState('');
+
+  // const vetorCaronistas = [];
 
     const localizacaoLigada = async()=>{
       LocationServicesDialogBox.checkLocationServicesIsEnabled({
@@ -46,29 +55,95 @@ function Oferecer() {
     });
   }
 
-  function getCaronistas(){
-    setCaronistas([]);
-    let db = database().ref();
-    let usersRef = db.child('Passageiros');
-    usersRef.once("value").then(function(snapshot) {
-      snapshot.forEach(function(userSnapshot) {
-        let uidPassageiro = userSnapshot.key;
-        let latitudePassageiro = userSnapshot.val().latitudePassageiro;
-        let longitudePassageiro = userSnapshot.val().longitudePassageiro;
-        setCaronistas(
-          [
-            ...caronistas, {
-              uid: uidPassageiro,
-              latitude: latitudePassageiro,
-              longitude: longitudePassageiro,
-            }
-          ]  
-          )
-        });
-      });    
+
+  // //leitura em tempo real funcionando!!
+  // //não zerar vetor no começo, se o id existe (só atualizar), se não existir (atualizar);
+  // function getCaronistasMarker(){
+  //   try{
+  //     database().ref().child('Passageiros').on('value', function(snapshot){
+  //       snapshot.forEach(function(userSnapshot){
+  //         let uidPassageiro = userSnapshot.key;
+  //         let latitudePassageiro = userSnapshot.val().latitudePassageiro;
+  //         let longitudePassageiro = userSnapshot.val().longitudePassageiro;
+  //         vetorCaronistas.some(caronista=>{
+  //           if (caronista.uid === uidPassageiro){
+  //             console.log('Atualizando posição...\n');
+  //             // vetorCaronistas[vetorCaronistas.indexOf(caronista)].latitude = latitudePassageiro;
+  //             // vetorCaronistas[vetorCaronistas.indexOf(caronista)].longitude = longitudePassageiro
+  //             // setEstaPresente(true);  
+  //           }
+  //         })
+  //         if (!estaPresente){
+  //           setCaronistas(
+  //             [
+  //               ...vetorCaronistas, {
+  //                 uid: uidPassageiro,
+  //                 latitude: latitudePassageiro,
+  //                 longitude: longitudePassageiro,
+  //               }
+  //             ]  
+  //             )
+  //         }
+  //           console.log('ATUALIZOU COORDENADAS!');
+  //       })
+  //       setEstaPresente(false);
+  //     })
+  //   }catch(error){
+  //     console.log('ERRO', error.code);
+  //   }
+  // }
+
+  function getDestinoCaronista(userUID){
+    // database().ref(`Passageiros/NbFrgDf5K7WVkZGE3taldHdo5qI3`).once('value').then(snapshot=>{
+    database().ref(`Passageiros/${userUID}`).once('value').then(snapshot=>{
+      // console.log('Destino:', snapshot.val().nomeDestino);
+      setNomeDestinoCaronista(snapshot.val().nomeDestino);
+      console.log('Destino:', nomeDestinoCaronista);
+    })
   }
 
+  function getCaronistasMarker(){
+    try{
+      database().ref().child('Passageiros').on('value', function(snapshot){
+        snapshot.forEach(function(userSnapshot){          
+          if (vetorCaronistas.length == 0){
+            setCaronistas([{
+              latitude: userSnapshot.val().latitudePassageiro,
+              longitude: userSnapshot.val().longitudePassageiro,
+              uid: userSnapshot.key,          
+              }
+            ])
+          }
+          else{
+            const estaPresente = vetorCaronistas.some(caronista=>{
+              if (caronista.uid === userSnapshot.key){
+                console.log('Atualizando posição...\n');
+                vetorCaronistas[vetorCaronistas.indexOf(caronista)].latitude = userSnapshot.val().latitudePassageiro;
+                vetorCaronistas[vetorCaronistas.indexOf(caronista)].longitude = userSnapshot.val().longitudePassageiro;
+                return true;
+              }
+              return false;
+            })
+            if (!estaPresente){
+              console.log('Não está presente!');
+              setCaronistas([...vetorCaronistas, {
+                latitude: userSnapshot.val().latitudePassageiro,
+                longitude: userSnapshot.val().longitudePassageiro,
+                uid: userSnapshot.key,          
+                }
+              ])
+            }
+          }
+          console.log('VETOR:\n');
+          console.log(vetorCaronistas);
+        })
+      })
+    }catch(error){
+      console.log('ERRO', error.code);
+    }
+  }
 
+  //atualiza o estado do motorista
   function atualizaEstado(){
    const currentUser = auth().currentUser.uid;
    const reference = database().ref(`Motoristas/${currentUser}`);
@@ -82,6 +157,7 @@ function Oferecer() {
     console.log('ERRO:', error.code);
    }
   }
+
 
   function getMyLocation(){
     try{
@@ -103,27 +179,42 @@ function Oferecer() {
     }
   }
 
-  setTimeout(function(){
-    console.log('Refresh a cada 2 segundos');
-  }, 2000);
-
-  useEffect(()=>{
-    getMyLocation();
-    getCaronistas();
-    console.log('atualizou\n');
-  }, [])
   
-  const buscaUsuario = async()=>{
+  const recuperarFotoStorage = async(userUID)=>{
+    const uidCaronista = userUID;
+    var caminhoFirebase = uidCaronista.concat('Perfil');    
+    var url = '';
     try{
-      const url = await storage().ref('user_undefined.png').getDownloadURL(); 
+      url = await storage().ref(caminhoFirebase).getDownloadURL();
       setImageUser(url); 
+    } catch (error){
+      if (error.code == 'storage/object-not-found'){
+        url = await storage().ref('user_undefined.png').getDownloadURL(); 
+        setImageUser(url); 
+      }
+    }
+  }
+  
+  const buscaUsuario = async(userUID)=>{
+    // function buscaUsuario(userUID){
+      try{
+        await recuperarFotoStorage(userUID);
+        firestore().collection('Users').doc(userUID).onSnapshot(documentSnapshot=>{
+          setNomeCaronista(documentSnapshot.data().nome)
+      });
+      getDestinoCaronista(userUID);
     }catch(error){
       console.log(error.code);
     }
     setMessage('Usuário');
     setModalVisible(true);
   }
-
+  
+  useEffect(()=>{
+    getMyLocation();
+    getCaronistasMarker();
+  }, [])
+  
   return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -154,20 +245,20 @@ function Oferecer() {
             }}
           >
             {
-    
-              caronistas.map(passageiro=>(
+              vetorCaronistas.map(passageiro=>(
                 <Marker
-                  // key={passageiro.uid}
+                  key={passageiro.uid}
                   coordinate={{ latitude : passageiro.latitude , longitude : passageiro.longitude}}
-                  onPress={buscaUsuario}
+                  onPress={()=>{
+                    buscaUsuario(passageiro.uid);
+                  }}
                   title={passageiro.uid}
-                  description={'TESTE'}
+                  // description={'Passageiro'}
                   // image={{uri: 'https://reactjs.org/logo-og.png'}}
                   // image={{}}
                 />
               ))
-            }
-            
+            }          
             {
               destination &&
               <MapViewDirections
@@ -243,8 +334,8 @@ function Oferecer() {
                         imageUser!=''?{uri:imageUser}:null}
                         style={{height:70, width: 70, borderRadius: 100, marginBottom:10}}  
                     />
-                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>João Vitor Fidelis Cardozo</Text>
-                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: Kartódromo</Text>
+                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{nomeCaronista}</Text>
+                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
             
                     <TouchableOpacity
                         style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}

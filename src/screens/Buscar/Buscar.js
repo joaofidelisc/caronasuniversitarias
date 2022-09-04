@@ -21,6 +21,7 @@ export default function Buscar({navigation}) {
 
 
   const [localDestino, setLocalDestino] = useState(null);
+  const [nomeDestino, setNomeDestino] = useState('');
   const [localizacaoPassageiro, setlocalizacaoPassageiro] = useState(null);
   const [localizacaoAtiva, setLocalizacaoAtiva] = useState(false);
   // const [objPassageiro, setObjPassageiro] = useState([]);
@@ -86,9 +87,10 @@ export default function Buscar({navigation}) {
     }catch(error){
       console.log('ERRO:', error.code);
     }
-
   }
 
+
+  //TERMINAR DE IMPLEMENTAR E TESTAR
   function getLocalPassageiro(){
     PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
@@ -111,8 +113,7 @@ export default function Buscar({navigation}) {
           enableHighAccuracy:false,
           timeout:2000,
         })
-        //falta passar destino do passageiro com coordenadas
-        navigation.navigate('Buscando_Carona', {localizacao: localizacaoPassageiro, destino: localDestino})
+        navigation.navigate('ConfirmarSolicitacao', {nomeDestino: nomeDestino, localDestino: localDestino})
       } catch(error){
         console.log(error.code); //tratamento de excecao
       }
@@ -144,9 +145,10 @@ export default function Buscar({navigation}) {
   }
 
 
-  // useEffect(()=>{
-  //   ligarLocalizacao();
-  // })
+  useEffect(()=>{
+    console.log('Buscar');
+    ligarLocalizacao();
+  })
 
 
   return (
@@ -166,12 +168,16 @@ export default function Buscar({navigation}) {
         autoFocus={false}
         fetchDetails={true}
         onPress={(data, details = null) => {
+          setNomeDestino(data.description);
           setLocalDestino({
             latitude: details.geometry.location.lat,
             longitude: details.geometry.location.lng,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421
           })
+        }}
+        textInputProps={{
+          onChangeText: (nomeDestino) =>{setNomeDestino(nomeDestino)}
         }}
         query={{
           key: config.googleAPI,
@@ -210,11 +216,9 @@ export default function Buscar({navigation}) {
       <View style={{marginVertical:50}}>
       <TouchableOpacity
         style={{position: 'absolute', backgroundColor: '#FF5F55', top: 260, width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
-        // onPress={()=>navigation.navigate('Buscando_Carona', {destino: destino, nomeDestino: nomeDestino})}
-        // onPress={requestLocationPermission}
+        
+        // onPress={()=>navigation.navigate('ConfirmarSolicitacao', {nomeDestino: nomeDestino, localDestino: localDestino})}
         onPress={getLocalPassageiro}
-        // onPress={testarBanco}
-        // onPress={ligarLocalizacao}
       >
         <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
           Buscar Carona
