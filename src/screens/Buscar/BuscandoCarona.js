@@ -47,6 +47,23 @@ function BuscandoCarona({navigation, route}) {
   //       console.log('User data: ', documentSnapshot.data());
   //     });
 
+
+  function getCaronistasMarker(){
+    try{
+     database().ref().child('Passageiros').on('value', function(snapshot){
+      snapshot.forEach(function(userSnapshot){
+        console.log('CARONISTAS BUSCANDO CARONA:\n');
+        console.log('UID:', userSnapshot.key);
+        console.log('Latitude:', userSnapshot.val().latitudePassageiro);
+        console.log('Longitude:', userSnapshot.val().longitudePassageiro);
+        console.log('--------------------------------\n');
+      })
+     })
+    }catch(error){
+      console.log('ERROR', error.code)
+    }
+  }
+
   useEffect(()=>{
     // testarBanco();
     // console.log(localizacaoPassageiro);
@@ -71,8 +88,7 @@ function BuscandoCarona({navigation, route}) {
         <TouchableOpacity
           style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
           onPress={()=>{navigation.navigate('Options')}}
-          // onPress={getDadosCaronista}
-          // onPress={getDestinoCaronista}
+          // onPress={getCaronistasMarker}
         >
           <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
             Exibir lista

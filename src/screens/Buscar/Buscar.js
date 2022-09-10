@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, SafeAreaView, StatusBar, Button, Image, Dimensions, TextInput, TouchableOpacity, Platform} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, Button, Image, Dimensions, TextInput, TouchableOpacity, Platform, Modal, StyleSheet} from 'react-native';
 
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
@@ -25,6 +25,9 @@ export default function Buscar({navigation}) {
   const [localizacaoPassageiro, setlocalizacaoPassageiro] = useState(null);
   const [localizacaoAtiva, setLocalizacaoAtiva] = useState(false);
   // const [objPassageiro, setObjPassageiro] = useState([]);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [warning, setWarning] = useState('');
 
 //itera por todos os documentos
 // function testarBanco(){  
@@ -98,26 +101,31 @@ export default function Buscar({navigation}) {
         ligarLocalizacao();
       })
     if (localizacaoAtiva == true){
-      try{
-        Geolocation.getCurrentPosition(info=>{
-          setlocalizacaoPassageiro({
-            latitude: info.coords.latitude,
-            longitude: info.coords.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421
+      if (nomeDestino != ''){
+        try{
+          Geolocation.getCurrentPosition(info=>{
+            setlocalizacaoPassageiro({
+              latitude: info.coords.latitude,
+              longitude: info.coords.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421
+            })
+            enviarLocalizacaoPassageiro(info.coords.latitude, info.coords.longitude);
+          },
+          ()=>{
+            console.log('erro')}, {
+            enableHighAccuracy:false,
+            timeout:2000,
           })
-          enviarLocalizacaoPassageiro(info.coords.latitude, info.coords.longitude);
-        },
-        ()=>{
-          console.log('erro')}, {
-          enableHighAccuracy:false,
-          timeout:2000,
-        })
-        navigation.navigate('ConfirmarSolicitacao', {nomeDestino: nomeDestino, localDestino: localDestino})
-      } catch(error){
-        console.log(error.code); //tratamento de excecao
+          navigation.navigate('ConfirmarSolicitacao', {nomeDestino: nomeDestino, localDestino: localDestino})
+        } catch(error){
+          console.log(error.code); //tratamento de excecao
+        }
+        console.log('deu bom\n');
       }
-      console.log('deu bom\n');
+      else{
+        setModalVisible(true);
+      }
     } else{
       console.log('localizacao desativada');
     }
@@ -219,14 +227,72 @@ export default function Buscar({navigation}) {
         
         // onPress={()=>navigation.navigate('ConfirmarSolicitacao', {nomeDestino: nomeDestino, localDestino: localDestino})}
         onPress={getLocalPassageiro}
+        // onPress={()=>{setModalVisible(true)}}
       >
         <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
           Buscar Carona
         </Text>
       </TouchableOpacity>
       </View>
+      <Modal
+              animationType="fade"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {setModalVisible(!modalVisible);}}
+            >
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 190, alignSelf: 'center'}}>
+                <View style={styles.modalView}>
+                    <Text style={{color: 'black', textAlign: 'center', marginBottom: 15, fontWeight:'600'}}>Informações incompletas</Text>
+                    <Text style={{color: 'black', textAlign: 'center', marginBottom: 15}}>Preencha o local de destino antes de prosseguir para a próxima etapa!</Text>
+                    <TouchableOpacity
+                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
+                        onPress={() => setModalVisible(!modalVisible)}
+                        // onPress={buscarCarona}
+                    >
+                        <Text style={styles.textStyle}>Entendi</Text>
+                    </TouchableOpacity>
+              </View>
+            </View>
+        </Modal>
+
       </View>
     </SafeAreaView>
   );
 }
 
+const styles = StyleSheet.create({
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  btnFechar:{
+    position: 'absolute',
+    width: 14,
+    height: 29,
+    left: 22,
+    top: 20,
+  },
+  txtBtnFechar:{
+    fontWeight: '600',
+    fontSize: 24,
+    lineHeight: 29,
+    alignItems: 'center',
+    color: '#FF5F55',
+  },
+});

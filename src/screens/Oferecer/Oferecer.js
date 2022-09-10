@@ -134,7 +134,7 @@ function Oferecer() {
               ])
             }
           }
-          console.log('VETOR:\n');
+          console.log('VETOR OFERECER:\n');
           console.log(vetorCaronistas);
         })
       })
