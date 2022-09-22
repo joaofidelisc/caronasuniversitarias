@@ -18,6 +18,7 @@ import { BackHandler, DeviceEventEmitter } from 'react-native';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
 import config from '../../config';
+import Geocoder from 'react-native-geocoding';
 
 
 const {width, height} = Dimensions.get('screen');
@@ -45,6 +46,15 @@ function Oferecer() {
   const [oferecerMaisCaronas, setOferecerMaisCaronas] = useState(false);
 
   const [buscandoPassageiro, setBuscandoPassageiro] = useState(false);
+  const [cidade, setCidade] = useState('');
+  const [estado, setEstado] = useState('');
+
+    const reverseGeocoding = async()=>{
+      var cidade = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[1].short_name;
+      var estado = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[3].short_name;
+      setCidade(cidade);
+      setEstado(estado);
+    }
 
     const localizacaoLigada = async()=>{
       LocationServicesDialogBox.checkLocationServicesIsEnabled({
@@ -68,7 +78,7 @@ function Oferecer() {
 
 
   function getDestinoCaronista(userUID){
-    database().ref(`Passageiros/${userUID}`).once('value').then(snapshot=>{
+    database().ref(`${estado}/${cidade}Passageiros/${userUID}`).once('value').then(snapshot=>{
       setNomeDestinoCaronista(snapshot.val().nomeDestino);
       console.log('Destino:', nomeDestinoCaronista);
     })
@@ -135,7 +145,7 @@ function Oferecer() {
       //   console.log('Titulo:', data.key);
       // })
 
-      database().ref().child('Passageiros').on('value', function(snapshot){
+      database().ref().child(`${estado}/${cidade}/Passageiros`).on('value', function(snapshot){
         snapshot.forEach(function(userSnapshot){
           // console.log('USER UID:', userSnapshot.key);          
           if (vetorCaronistas.length == 0){
@@ -178,14 +188,11 @@ function Oferecer() {
     }
   }
 
-
-
-  
   //atualiza o estado do motorista
 
   function atualizaEstado(){
    const currentUser = auth().currentUser.uid;
-   const reference = database().ref(`Motoristas/${currentUser}`);
+   const reference = database().ref(`${estado}/${cidade}Motoristas/${currentUser}`);
    try{
     reference.update({
       latitudeMotorista: region.latitude,
@@ -266,7 +273,7 @@ function Oferecer() {
       setModalVisible(true);
     }else{
       try{
-        database().ref(`Passageiros/${userUID}`).once('value', function(snapshot){
+        database().ref(`${estado}/${cidade}Passageiros/${userUID}`).once('value', function(snapshot){
           if (snapshot.val().caronasAceitas != ''){
             console.log('Carona aceita. Motorista UID:', snapshot.val().caronasAceitas);
           }
@@ -289,14 +296,14 @@ function Oferecer() {
     
     const uidMotorista = auth().currentUser.uid;
     try{
-      database().ref(`Passageiros/${uidPassageiro}`).once('value').then(snapshot=>{
+      database().ref(`${estado}/${cidade}Passageiros/${uidPassageiro}`).once('value').then(snapshot=>{
         vetorCaronas.push(snapshot.val().ofertasCaronas);
         if (!vetorCaronas.includes(uidMotorista)){
           vetorCaronas.push(uidMotorista);
         }
         console.log('VETOR DE CARONAS:', vetorCaronas);
       })
-      database().ref(`Passageiros/${uidPassageiro}`).update({
+      database().ref(`${estado}/${cidade}Passageiros/${uidPassageiro}`).update({
         ofertasCaronas: uidMotorista
       });
     }catch(error){
@@ -307,7 +314,7 @@ function Oferecer() {
   function caronasAceitas(){
     const currentUser = auth().currentUser.uid;
     try{
-      database().ref(`Motoristas/${currentUser}`).on('value', function(snapshot){
+      database().ref(`${estado}/${cidade}Motoristas/${currentUser}`).on('value', function(snapshot){
         // console.log('Caronas Aceitas:', snapshot.val().caronasAceitas);
         if (snapshot.val().caronasAceitas != ''){
           setCaronaAceita(true);
@@ -331,6 +338,8 @@ function Oferecer() {
   //remover minha localização como passageiro do banco, pra não ser possível oferecer carona pra mim mesmo
   useEffect(()=>{
     console.log('TELA: Oferecer');
+    Geocoder.init(config.googleAPI, {language:'pt-BR'});
+    reverseGeocoding();
     estadoInicial();
     getMyLocation();
     getCaronistasMarker();

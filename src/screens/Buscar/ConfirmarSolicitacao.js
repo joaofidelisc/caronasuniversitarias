@@ -16,6 +16,8 @@ function ConfirmarSolicitacao({navigation, route}) {
   
   const nomeDestino = route.params?.nomeDestino;
   const localDestino = route.params?.localDestino;
+  const cidade = route.params?.cidade; 
+  const estado = route.params?.estado;
 
   
 
@@ -74,7 +76,7 @@ function ConfirmarSolicitacao({navigation, route}) {
 
     function enviarDestinoPassageiro(){
     const currentUser = auth().currentUser.uid;
-    const reference = database().ref(`Passageiros/${currentUser}`);
+    const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
       try{
         reference.update({
           // latitudeDestino:localDestino.latitude,
@@ -91,7 +93,7 @@ function ConfirmarSolicitacao({navigation, route}) {
     function buscarCarona(){
       setModalVisible(!modalVisible);
       enviarDestinoPassageiro();
-      navigation.navigate('Buscando_Carona');
+      navigation.navigate('Buscando_Carona', {estado: estado, cidade: cidade});
       //enviar para banco de dados as informações de carona!
     }
 

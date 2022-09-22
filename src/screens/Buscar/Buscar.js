@@ -12,7 +12,8 @@ import auth from '@react-native-firebase/auth';
 
 
 import config from '../../config';
-import { onChange } from 'react-native-reanimated';
+import { onChange, set } from 'react-native-reanimated'; //?
+import Geocoder from 'react-native-geocoding';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -28,6 +29,8 @@ export default function Buscar({navigation}) {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [warning, setWarning] = useState('');
+  const [cidade, setCidade] = useState('');
+  const [estado, setEstado] = useState('');
 
 //itera por todos os documentos
 // function testarBanco(){  
@@ -75,16 +78,22 @@ export default function Buscar({navigation}) {
 //   });
 // }
 
-  function enviarLocalizacaoPassageiro(latitude, longitude){
+  //alterar coordenadas
+  //passar latitude e longitude como parametro
+  async function enviarLocalizacaoPassageiro(latitude, longitude){
     const currentUser = auth().currentUser.uid;
-    const reference = database().ref(`Passageiros/${currentUser}`);
+    var cidade = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[1].short_name;
+    var estado = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[3].short_name;
+    setCidade(cidade); //set com delay, fica como null na props
+    setEstado(estado); //set com delay, fica como null na props
+    const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
       reference.set({
         latitudePassageiro: latitude,
         longitudePassageiro: longitude,
-        latitudeDestino:'',
-        longitudeDestino:'',
-        nomeDestino:'',
+        latitudeDestino:localDestino.latitude,
+        longitudeDestino:localDestino.longitude,
+        nomeDestino: nomeDestino,
         ativo: true,
         ofertasCaronas:'',
         caronasAceitas:'',
@@ -94,32 +103,34 @@ export default function Buscar({navigation}) {
     }
   }
 
-
+  
   //TERMINAR DE IMPLEMENTAR E TESTAR
+  //ALTERAR LINHA 133
   function getLocalPassageiro(){
     PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
       .then(()=>{
         ligarLocalizacao();
       })
-    if (localizacaoAtiva == true){
-      if (nomeDestino != ''){
-        try{
-          Geolocation.getCurrentPosition(info=>{
-            setlocalizacaoPassageiro({
-              latitude: info.coords.latitude,
-              longitude: info.coords.longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421
-            })
-            enviarLocalizacaoPassageiro(info.coords.latitude, info.coords.longitude);
-          },
-          ()=>{
-            console.log('erro')}, {
-            enableHighAccuracy:false,
-            timeout:2000,
+      if (localizacaoAtiva == true){
+        if (nomeDestino != ''){
+          try{
+            Geolocation.getCurrentPosition(info=>{
+              setlocalizacaoPassageiro({
+                latitude: info.coords.latitude,
+                longitude: info.coords.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421
+              })
+              enviarLocalizacaoPassageiro(info.coords.latitude, info.coords.longitude);
+            },
+            ()=>{
+              console.log('erro')}, {
+                enableHighAccuracy:false,
+                timeout:2000,
           })
-          navigation.navigate('ConfirmarSolicitacao', {nomeDestino: nomeDestino, localDestino: localDestino})
+          console.log('antes de enviar cidade/estado:', cidade, estado);
+          navigation.navigate('Buscando_Carona', {nomeDestino: nomeDestino, localDestino: localDestino, cidade: 'São Carlos', estado: 'SP'})
         } catch(error){
           console.log(error.code); //tratamento de excecao
         }
@@ -132,53 +143,56 @@ export default function Buscar({navigation}) {
       console.log('localizacao desativada');
     }
   }
-
+  
   //implementando
   const ligarLocalizacao = async()=>{
-      LocationServicesDialogBox.checkLocationServicesIsEnabled({
-        message: "<h2 style='color: #0af13e'>Usar localização</h2><br/>Deseja permitir que o aplicativo <b>Caronas Universitárias</b> acesse a sua localização?<br/><br/>",
-        ok: "Permitir",
-        cancel: "Negar",
-        enableHighAccuracy: true, // true => GPS AND NETWORK PROVIDER, false => GPS OR NETWORK PROVIDER
-        showDialog: true, // false => Opens the Location access page directly
+    LocationServicesDialogBox.checkLocationServicesIsEnabled({
+      message: "<h2 style='color: #0af13e'>Usar localização</h2><br/>Deseja permitir que o aplicativo <b>Caronas Universitárias</b> acesse a sua localização?<br/><br/>",
+      ok: "Permitir",
+      cancel: "Negar",
+      enableHighAccuracy: true, // true => GPS AND NETWORK PROVIDER, false => GPS OR NETWORK PROVIDER
+      showDialog: true, // false => Opens the Location access page directly
         openLocationServices: true, // false => Directly catch method is called if location services are turned off
         preventOutSideTouch: false, // true => To prevent the location services window from closing when it is clicked outside
         preventBackClick: false, // true => To prevent the location services popup from closing when it is clicked back button
         providerListener: false // true ==> Trigger locationProviderStatusChange listener when the location state changes
-    }).then(function(success) {
+      }).then(function(success) {
         setLocalizacaoAtiva(true);
         // console.log(success); // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
-    }).catch((error) => {
+      }).catch((error) => {
         setLocalizacaoAtiva(false);  
-      console.log(error.message); // error.message => "disabled"
-    });
-  }
-
-  // function resetarInformacoes(){
-  //   const currentUser = auth().currentUser.uid;
-  //   const reference = database().ref(`Passageiros/${currentUser}`);
-  //     try{
-  //       reference.update({
-  //         // latitudeDestino:localDestino.latitude,
-  //         latitudeDestino:'',
-  //         longitudeDestino:'',
-  //         nomeDestino: '',
-  //         ofertasCaronas: '',
-  //         ativo: true,
-  //       }).then(()=>console.log('Destino enviado!'));
-  //     }catch(error){
-  //       console.log('ERRO:', error.code);
-  //     }
-  //   }
+        console.log(error.message); // error.message => "disabled"
+      });
+    }
+    
+    // function resetarInformacoes(){
+      //   const currentUser = auth().currentUser.uid;
+      //   const reference = database().ref(`Passageiros/${currentUser}`);
+      //     try{
+        //       reference.update({
+          //         // latitudeDestino:localDestino.latitude,
+          //         latitudeDestino:'',
+          //         longitudeDestino:'',
+          //         nomeDestino: '',
+          //         ofertasCaronas: '',
+          //         ativo: true,
+          //       }).then(()=>console.log('Destino enviado!'));
+          //     }catch(error){
+            //       console.log('ERRO:', error.code);
+            //     }
+            //   }
 
 
   useEffect(()=>{
     console.log('TELA: Buscar');
+    Geocoder.init(config.googleAPI, {language:'pt-BR'});
+    // setEstado('');
+    // setCidade('');
     // resetarInformacoes();
     ligarLocalizacao();
-  })
-
-
+  }, [cidade, estado])
+  
+  
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />

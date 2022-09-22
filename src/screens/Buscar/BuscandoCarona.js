@@ -17,11 +17,12 @@ function BuscandoCarona({navigation, route}) {
   const currentUser = auth().currentUser.uid;
 
   const recusouCarona = route.params?.recusou;
+  const cidade = route.params?.cidade;
+  const estado = route.params?.estado;
 
-  //ALTERAR CAMINHO PARA CURRENT UID 
   function buscarCarona(){
     try{
-      database().ref(`Passageiros/${currentUser}`).on('value', function(snapshot){
+      database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`).on('value', function(snapshot){
         console.log('Ofertas Caronas:', snapshot.val().ofertasCaronas);
         if (snapshot.val().ofertasCaronas != ''){
           setEncontrouCarona(true);
@@ -37,6 +38,9 @@ function BuscandoCarona({navigation, route}) {
 
 
   useEffect(()=>{
+    console.log('estado+cidade');
+    console.log(estado);
+    console.log(cidade);
     buscarCarona();
   })
 

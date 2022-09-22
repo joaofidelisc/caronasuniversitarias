@@ -20,13 +20,15 @@ function Options({navigation}) {
     const [imageUser, setImageUser] = useState('');
     // const [recusouCarona, setRecusouCarona] = useState(false);
 
+    const cidade = route.params?.cidade;
+    const estado = route.params?.estado;
 
     const buscaMotorista = async()=>{
       // const currentUser = auth().currentUser.uid;
       // console.log('Rodou!');
       // if (!recusouCarona){
       try{
-        database().ref(`Passageiros/${currentUser}`).on('value', function(snapshot){
+        database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`).on('value', function(snapshot){
           if (snapshot.val().ofertasCaronas != ''){
             setUidMotorista(snapshot.val().ofertasCaronas);
             recuperarFotoMotorista(snapshot.val().ofertasCaronas);
@@ -53,8 +55,8 @@ function Options({navigation}) {
   
   function aceitarCarona(){
     console.log('Carona aceita!');
-    const reference_motorista = database().ref(`Motoristas/${uidMotorista}`);
-    const reference_passageiro = database().ref(`Passageiros/${currentUser}`);
+    const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
+    const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
       reference_motorista.update({        
         caronasAceitas:currentUser,
@@ -96,21 +98,21 @@ function Options({navigation}) {
     }
   }
   
-  //mudar de lugar isso dps
-  const geolocalizacaoTeste = async()=>{
-    console.log('testando geolocalização!');
-    Geocoder.init(config.googleAPI, {language:'pt-BR'});
-    var cidade = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[1].short_name;
-    var estado = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[3].short_name;
-    console.log(cidade, estado);
-    // console.log((await Geocoder.from(-21.98104, -47.89139)).results[0].address_components);
-    // Geocoder.from(-21.98104, -47.89139)
-		// .then(json => {
-    //     		var addressComponent = json.results[0].address_components[0];
-		// 	console.log(addressComponent);
-		// })
-		// .catch(error => console.warn(error));
-  }
+  // //mudar de lugar isso dps
+  // const geolocalizacaoTeste = async()=>{
+  //   console.log('testando geolocalização!');
+  //   Geocoder.init(config.googleAPI, {language:'pt-BR'});
+  //   var cidade = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[1].short_name;
+  //   var estado = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[3].short_name;
+  //   console.log(cidade, estado);
+  //   // console.log((await Geocoder.from(-21.98104, -47.89139)).results[0].address_components);
+  //   // Geocoder.from(-21.98104, -47.89139)
+	// 	// .then(json => {
+  //   //     		var addressComponent = json.results[0].address_components[0];
+	// 	// 	console.log(addressComponent);
+	// 	// })
+	// 	// .catch(error => console.warn(error));
+  // }
 
 
   useEffect(()=>{
@@ -126,12 +128,12 @@ function Options({navigation}) {
           />
           <Text style={{color:'#06444C', left: 24, fontWeight:'700', fontSize: 20, lineHeight:24, textAlign:'left', top: -120}}>Carona encontrada!</Text>
           <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 20, lineHeight:24, textAlign:'left', top: -110}}>Motoristas disponíveis:</Text>
-          <TouchableOpacity 
+          {/* <TouchableOpacity 
             style={{backgroundColor:'black', top:-100, alignSelf:'center'}}
             onPress={geolocalizacaoTeste}  
           >
             <Text>Geolocalização</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         <ScrollView style={[styles.scrollView,{top:-100}]}>
           <View style={styles.viewMotoristas}>
             <Image 
