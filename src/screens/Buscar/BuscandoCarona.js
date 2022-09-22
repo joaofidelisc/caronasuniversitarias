@@ -12,62 +12,32 @@ function BuscandoCarona({navigation, route}) {
   const destinoPassageiro = route.params?.destino;
 
 
-  function testarBanco(){
+
+  const [encontrouCarona, setEncontrouCarona] = useState('');
+  const currentUser = auth().currentUser.uid;
+
+  const recusouCarona = route.params?.recusou;
+
+  //ALTERAR CAMINHO PARA CURRENT UID 
+  function buscarCarona(){
     try{
-      database().ref('Passageiros').then(snapshot =>{
-        console.log('User data:', snapshot.val());
+      database().ref(`Passageiros/${currentUser}`).on('value', function(snapshot){
+        console.log('Ofertas Caronas:', snapshot.val().ofertasCaronas);
+        if (snapshot.val().ofertasCaronas != ''){
+          setEncontrouCarona(true);
+          console.log('Encontrou carona?:', encontrouCarona);
+        } else{
+          setEncontrouCarona(false);
+        }
       })
-    }catch(error){
-      console.log(error.code);
+    } catch(error){
+      console.log('Error', error.code);
     }
   }
 
-  function getDadosCaronista(){
-    console.log('Obtendo dados...\n');
-    try{
-      firestore().collection('Users').doc('NbFrgDf5K7WVkZGE3taldHdo5qI3').onSnapshot(documentSnapshot=>{
-        console.log('User data: ', documentSnapshot.data().nome);
-      });
-    }catch(error){
-      console.log('ERROR', error.code);
-    }
-  }
-
-  function getDestinoCaronista(){
-
-    database().ref(`Passageiros/NbFrgDf5K7WVkZGE3taldHdo5qI3`).once('value').then(snapshot=>{
-      console.log('Usuario:', snapshot.val().nomeDestino);
-    })
-  }
-
-  // const subscriber = firestore()
-  //     .collection('Users')
-  //     .doc(userId)
-  //     .onSnapshot(documentSnapshot => {
-  //       console.log('User data: ', documentSnapshot.data());
-  //     });
-
-
-  function getCaronistasMarker(){
-    try{
-     database().ref().child('Passageiros').on('value', function(snapshot){
-      snapshot.forEach(function(userSnapshot){
-        console.log('CARONISTAS BUSCANDO CARONA:\n');
-        console.log('UID:', userSnapshot.key);
-        console.log('Latitude:', userSnapshot.val().latitudePassageiro);
-        console.log('Longitude:', userSnapshot.val().longitudePassageiro);
-        console.log('--------------------------------\n');
-      })
-     })
-    }catch(error){
-      console.log('ERROR', error.code)
-    }
-  }
 
   useEffect(()=>{
-    // testarBanco();
-    // console.log(localizacaoPassageiro);
-    // console.log(destinoPassageiro);
+    buscarCarona();
   })
 
 
@@ -85,15 +55,19 @@ function BuscandoCarona({navigation, route}) {
         <Text style={{fontSize:20, color:'#c0c0c0', paddingHorizontal:10, fontWeight:'normal',marginVertical:35 }}>
           Exibiremos uma lista de propostas assim que possível!
         </Text>
-        <TouchableOpacity
-          style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
-          onPress={()=>{navigation.navigate('Options')}}
-          // onPress={getCaronistasMarker}
-        >
-          <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
-            Exibir lista
-          </Text>
-        </TouchableOpacity>
+        
+        {
+          encontrouCarona && 
+          <TouchableOpacity
+            style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
+            onPress={()=>{navigation.navigate('Options')}}
+            // onPress={getCaronistasMarker}
+          >
+            <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
+              Exibir lista
+            </Text>
+          </TouchableOpacity>
+        }
       </View>
     </SafeAreaView>
   );

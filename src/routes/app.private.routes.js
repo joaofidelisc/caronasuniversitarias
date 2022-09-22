@@ -15,8 +15,8 @@ import Mensagens from '../screens/Mensagens/Mensagens';
 import Perfil_Conta from '../screens/Perfil/Perfil_Conta';
 import Perfil_Detalhes from '../screens/Perfil/Perfil_Detalhes';
 import BuscandoCarona from '../screens/Buscar/BuscandoCarona'
-import Options from '../screens/Buscar/Options';
-import CaronaEncontrada from '../screens/Buscar/CaronaEncontrada';
+import Options from '../screens/Buscar/CaronaEncontrada';
+import CaronaEncontrada from '../screens/Buscar/FimViagem';
 import TelaInfos from '../screens/Buscar/infosMotorista';
 import Classificacao from '../screens/Buscar/Classificacao';
 import ConfirmarSolicitacao from '../screens/Buscar/ConfirmarSolicitacao';

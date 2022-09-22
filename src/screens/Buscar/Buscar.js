@@ -86,6 +86,8 @@ export default function Buscar({navigation}) {
         longitudeDestino:'',
         nomeDestino:'',
         ativo: true,
+        ofertasCaronas:'',
+        caronasAceitas:'',
       }).then(()=>console.log('coordenadas passageiro enviadas!'));
     }catch(error){
       console.log('ERRO:', error.code);
@@ -145,16 +147,34 @@ export default function Buscar({navigation}) {
         providerListener: false // true ==> Trigger locationProviderStatusChange listener when the location state changes
     }).then(function(success) {
         setLocalizacaoAtiva(true);
-        console.log(success); // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
+        // console.log(success); // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
     }).catch((error) => {
         setLocalizacaoAtiva(false);  
       console.log(error.message); // error.message => "disabled"
     });
   }
 
+  // function resetarInformacoes(){
+  //   const currentUser = auth().currentUser.uid;
+  //   const reference = database().ref(`Passageiros/${currentUser}`);
+  //     try{
+  //       reference.update({
+  //         // latitudeDestino:localDestino.latitude,
+  //         latitudeDestino:'',
+  //         longitudeDestino:'',
+  //         nomeDestino: '',
+  //         ofertasCaronas: '',
+  //         ativo: true,
+  //       }).then(()=>console.log('Destino enviado!'));
+  //     }catch(error){
+  //       console.log('ERRO:', error.code);
+  //     }
+  //   }
+
 
   useEffect(()=>{
-    console.log('Buscar');
+    console.log('TELA: Buscar');
+    // resetarInformacoes();
     ligarLocalizacao();
   })
 

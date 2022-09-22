@@ -11,6 +11,8 @@ import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
+import {setTimeout} from "timers/promises";
+
 
 import { BackHandler, DeviceEventEmitter } from 'react-native';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
@@ -21,20 +23,28 @@ import config from '../../config';
 const {width, height} = Dimensions.get('screen');
 
 function Oferecer() {
+  //por que usar isso?
   const mapEL = useRef(null);
   const [region, setRegion] = useState(null);  
   const [destination, setDestination] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  
+  //USADO NO MODAL
   const [message, setMessage] = useState('');
   const [imageUser, setImageUser] = useState('');
-  const [atualizarMarker, setAtualizarMarker] = useState(false);
+  
   const [vetorCaronistas, setCaronistas] = useState([]);
-  const [estaPresente, setEstaPresente] = useState(false);
-
+  
   const [nomeCaronista, setNomeCaronista] = useState('');
   const [nomeDestinoCaronista, setNomeDestinoCaronista] = useState('');
+  
+  const [uidPassageiro, setUidPassageiro] = useState('');
+  
+  const [lotacaoAtingida, setLotacaoAtingida] = useState(false);
+  const [caronaAceita, setCaronaAceita] = useState(false);
+  const [oferecerMaisCaronas, setOferecerMaisCaronas] = useState(false);
 
-  // const vetorCaronistas = [];
+  const [buscandoPassageiro, setBuscandoPassageiro] = useState(false);
 
     const localizacaoLigada = async()=>{
       LocationServicesDialogBox.checkLocationServicesIsEnabled({
@@ -49,115 +59,159 @@ function Oferecer() {
         providerListener: false // true ==> Trigger locationProviderStatusChange listener when the location state changes
     }).then(function(success) {
         // getMyLocation();
-        console.log(success); // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
+        // console.log('Localização ligada!');
+        // console.log(success); // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
     }).catch((error) => {
         console.log(error.message); // error.message => "disabled"
     });
   }
 
 
-  // //leitura em tempo real funcionando!!
-  // //não zerar vetor no começo, se o id existe (só atualizar), se não existir (atualizar);
-  // function getCaronistasMarker(){
-  //   try{
-  //     database().ref().child('Passageiros').on('value', function(snapshot){
-  //       snapshot.forEach(function(userSnapshot){
-  //         let uidPassageiro = userSnapshot.key;
-  //         let latitudePassageiro = userSnapshot.val().latitudePassageiro;
-  //         let longitudePassageiro = userSnapshot.val().longitudePassageiro;
-  //         vetorCaronistas.some(caronista=>{
-  //           if (caronista.uid === uidPassageiro){
-  //             console.log('Atualizando posição...\n');
-  //             // vetorCaronistas[vetorCaronistas.indexOf(caronista)].latitude = latitudePassageiro;
-  //             // vetorCaronistas[vetorCaronistas.indexOf(caronista)].longitude = longitudePassageiro
-  //             // setEstaPresente(true);  
-  //           }
-  //         })
-  //         if (!estaPresente){
-  //           setCaronistas(
-  //             [
-  //               ...vetorCaronistas, {
-  //                 uid: uidPassageiro,
-  //                 latitude: latitudePassageiro,
-  //                 longitude: longitudePassageiro,
-  //               }
-  //             ]  
-  //             )
-  //         }
-  //           console.log('ATUALIZOU COORDENADAS!');
-  //       })
-  //       setEstaPresente(false);
-  //     })
-  //   }catch(error){
-  //     console.log('ERRO', error.code);
-  //   }
-  // }
-
   function getDestinoCaronista(userUID){
-    // database().ref(`Passageiros/NbFrgDf5K7WVkZGE3taldHdo5qI3`).once('value').then(snapshot=>{
     database().ref(`Passageiros/${userUID}`).once('value').then(snapshot=>{
-      // console.log('Destino:', snapshot.val().nomeDestino);
       setNomeDestinoCaronista(snapshot.val().nomeDestino);
       console.log('Destino:', nomeDestinoCaronista);
     })
   }
 
+  // function getCaronistasMarker(){
+  //   var reference = database().ref('Passageiros');
+  //   // console.log('Vetor caronas:');
+  //   // console.log(vetorCaronistas);
+  //   reference.on('child_added', function(data){
+  //     // console.log('usuario adicionado(a):', data.key);
+  //     setCaronistas([...vetorCaronistas, {
+  //       latitude: data.val().latitudePassageiro,
+  //       longitude: data.val().longitudePassageiro,
+  //       uid: data.key,          
+  //       }
+  //     ])
+      
+  //   })
+  // }
+
+
+
+  // function getCaronistasMarker(){
+  //   var reference = database().ref('Passageiros');
+  //   try{
+  //     if (vetorCaronistas.length == 0){
+  //       database().ref().child('Passageiros').once('value', function(snapshot){
+  //         snapshot.forEach(function(userSnapshot){
+  //           setCaronistas([...vetorCaronistas, {
+  //             latitude: userSnapshot.val().latitudePassageiro,
+  //             longitude: userSnapshot.val().longitudePassageiro,
+  //             uid: userSnapshot.key,          
+  //             }
+  //           ])
+  //         })
+  //       })
+  //     }else{
+  //       reference.on('child_added', function(data){
+  //         setCaronistas([...vetorCaronistas, {
+  //           latitude: data.val().latitudePassageiro,
+  //           longitude: data.val().longitudePassageiro,
+  //           uid: data.key,          
+  //           }
+  //         ])
+  //       })
+  //     }
+  //   }catch(error){
+  //     console.log('Deu erro aqui!');
+  //   }
+  //   console.log('VETOR:', vetorCaronistas);
+  // }
+
   function getCaronistasMarker(){
+  // const getCaronistasMarker = async() => {
+    // var bd = database().ref('Passageiros');
+    let jaExiste = false;
+    if (jaExiste == true){
+      jaExiste = false;
+    }
     try{
+      // bd.on('child_changed', function(data){
+      //   console.log('Atualizou!!!!!');
+      //   console.log('Titulo:', data.key);
+      // })
+
       database().ref().child('Passageiros').on('value', function(snapshot){
-        snapshot.forEach(function(userSnapshot){          
+        snapshot.forEach(function(userSnapshot){
+          // console.log('USER UID:', userSnapshot.key);          
           if (vetorCaronistas.length == 0){
             setCaronistas([{
               latitude: userSnapshot.val().latitudePassageiro,
               longitude: userSnapshot.val().longitudePassageiro,
-              uid: userSnapshot.key,          
+              uid: userSnapshot.key,  
+              caronasAceitas: userSnapshot.val().caronasAceitas,        
               }
             ])
           }
           else{
-            const estaPresente = vetorCaronistas.some(caronista=>{
+            vetorCaronistas.some(caronista=>{
               if (caronista.uid === userSnapshot.key){
                 console.log('Atualizando posição...\n');
                 vetorCaronistas[vetorCaronistas.indexOf(caronista)].latitude = userSnapshot.val().latitudePassageiro;
                 vetorCaronistas[vetorCaronistas.indexOf(caronista)].longitude = userSnapshot.val().longitudePassageiro;
-                return true;
+                jaExiste = true;
               }
-              return false;
             })
-            if (!estaPresente){
+            if (!jaExiste){
               console.log('Não está presente!');
               setCaronistas([...vetorCaronistas, {
                 latitude: userSnapshot.val().latitudePassageiro,
                 longitude: userSnapshot.val().longitudePassageiro,
-                uid: userSnapshot.key,          
+                uid: userSnapshot.key,
+                caronasAceitas: userSnapshot.val().caronasAceitas,      
                 }
               ])
             }
           }
-          console.log('VETOR OFERECER:\n');
-          console.log(vetorCaronistas);
+          // await setTimeout(50);
+          // console.log('VETOR OFERECER:\n');
+          // console.log(vetorCaronistas);
+          // await setTimeout(5000);
         })
       })
     }catch(error){
-      console.log('ERRO', error.code);
+      // console.log('ERRO', error.code);
     }
   }
 
+
+
+  
   //atualiza o estado do motorista
+
   function atualizaEstado(){
    const currentUser = auth().currentUser.uid;
    const reference = database().ref(`Motoristas/${currentUser}`);
    try{
-    reference.set({
+    reference.update({
       latitudeMotorista: region.latitude,
       longitudeMotorista: region.longitude,
       ativo: true,
-    }).then(()=> console.log('coordenadas enviadas!'));
+    });
+    // }).then(()=> console.log('coordenadas enviadas!'));
    }catch(error){
-    console.log('ERRO:', error.code);
+    console.log('atualizaEstado, ERRO:', error.code);
    }
   }
 
+  function estadoInicial(){
+    console.log('estadoInicial() rodando...');
+    try{
+      reference.set({
+        latitudeMotorista: region.latitude,
+        longitudeMotorista: region.longitude,
+        caronasAceitas:'',
+        ativo: true,
+      });
+      // }).then(()=> console.log('coordenadas enviadas!'));
+     }catch(error){
+      console.log('atualizaEstado, ERRO:', error.code);
+     }
+  }
 
   function getMyLocation(){
     try{
@@ -195,25 +249,93 @@ function Oferecer() {
     }
   }
   
-  const buscaUsuario = async(userUID)=>{
-    // function buscaUsuario(userUID){
+  //terminar de implementar aqui
+  const buscaUsuario = async(userUID, caronaAceita)=>{
+    if (caronaAceita == ''){
       try{
-        await recuperarFotoStorage(userUID);
-        firestore().collection('Users').doc(userUID).onSnapshot(documentSnapshot=>{
-          setNomeCaronista(documentSnapshot.data().nome)
+          await recuperarFotoStorage(userUID);
+          firestore().collection('Users').doc(userUID).onSnapshot(documentSnapshot=>{
+            setNomeCaronista(documentSnapshot.data().nome)
+        });
+        getDestinoCaronista(userUID);
+      }catch(error){
+        console.log(error.code);
+      }
+      setUidPassageiro(userUID);
+      setMessage('Usuário');
+      setModalVisible(true);
+    }else{
+      try{
+        database().ref(`Passageiros/${userUID}`).once('value', function(snapshot){
+          if (snapshot.val().caronasAceitas != ''){
+            console.log('Carona aceita. Motorista UID:', snapshot.val().caronasAceitas);
+          }
+          //IMPLEMENTAR AQUI APÓS DÚVIDAS
+        })
+      }catch(error){
+        console.log(error.code);
+      }
+      console.log('Esse passageiro já tem uma carona aceita!');
+    }  
+  }
+
+  //O MOTORISTA PODE OFERECER QUANTAS CARONAS PRO PASSAGEIRO?
+  //A CADA QUANTO TEMPO?
+
+  function oferecerCarona(){
+    // console.log('UID Passageiro:', uidPassageiro);
+    let vetorCaronas = [];
+    setModalVisible(false);
+    
+    const uidMotorista = auth().currentUser.uid;
+    try{
+      database().ref(`Passageiros/${uidPassageiro}`).once('value').then(snapshot=>{
+        vetorCaronas.push(snapshot.val().ofertasCaronas);
+        if (!vetorCaronas.includes(uidMotorista)){
+          vetorCaronas.push(uidMotorista);
+        }
+        console.log('VETOR DE CARONAS:', vetorCaronas);
+      })
+      database().ref(`Passageiros/${uidPassageiro}`).update({
+        ofertasCaronas: uidMotorista
       });
-      getDestinoCaronista(userUID);
     }catch(error){
-      console.log(error.code);
+      console.log('Deu algum erro aqui :(');
     }
-    setMessage('Usuário');
-    setModalVisible(true);
+  }
+
+  function caronasAceitas(){
+    const currentUser = auth().currentUser.uid;
+    try{
+      database().ref(`Motoristas/${currentUser}`).on('value', function(snapshot){
+        // console.log('Caronas Aceitas:', snapshot.val().caronasAceitas);
+        if (snapshot.val().caronasAceitas != ''){
+          setCaronaAceita(true);
+          buscaUsuario(snapshot.val().caronasAceitas);
+        } else{
+          // console.log('Aguardando aceitar...');
+        }
+      })
+    } catch(error){
+      console.log('Error', error.code);
+    }
+  }
+
+  function buscarPassageiro(){
+    console.log('Buscando passageiro...\n');
+    // setModalVisible(!modalVisible);
+    setCaronaAceita(false);
+    setBuscandoPassageiro(true);
   }
   
+  //remover minha localização como passageiro do banco, pra não ser possível oferecer carona pra mim mesmo
   useEffect(()=>{
+    console.log('TELA: Oferecer');
+    estadoInicial();
     getMyLocation();
     getCaronistasMarker();
-  }, [])
+    caronasAceitas();
+  }, [vetorCaronistas])
   
   return (
       <SafeAreaView>
@@ -250,9 +372,10 @@ function Oferecer() {
                   key={passageiro.uid}
                   coordinate={{ latitude : passageiro.latitude , longitude : passageiro.longitude}}
                   onPress={()=>{
-                    buscaUsuario(passageiro.uid);
+                    buscaUsuario(passageiro.uid, passageiro.caronasAceitas);
                   }}
                   title={passageiro.uid}
+                  icon={passageiro.caronasAceitas==''?require('../../assets/icons/caronista.png'):require('../../assets/icons/carona_aceita.png')}
                   // description={'Passageiro'}
                   // image={{uri: 'https://reactjs.org/logo-og.png'}}
                   // image={{}}
@@ -274,7 +397,7 @@ function Oferecer() {
                 />
             }
           </MapView>
-        <GooglePlacesAutocomplete
+        {/* <GooglePlacesAutocomplete
           minLength={2}
           autoFocus={false}
           fetchDetails={true}
@@ -320,7 +443,7 @@ function Oferecer() {
               width: 312
             },
           }}
-        />
+        /> */}
           <Modal
             animationType="fade"
             transparent={true}
@@ -329,26 +452,78 @@ function Oferecer() {
           >
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 190, alignSelf: 'center'}}>
                 <View style={styles.modalView}>
+                  
+                  {
+                    caronaAceita && !buscandoPassageiro &&
+                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Carona aceita!</Text>
+                  }
+                  {
+                    !buscandoPassageiro &&
                     <Image 
                       source={
                         imageUser!=''?{uri:imageUser}:null}
                         style={{height:70, width: 70, borderRadius: 100, marginBottom:10}}  
                     />
+                  }
+                  {
+                    !buscandoPassageiro &&
                     <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{nomeCaronista}</Text>
+                  }
+                  {
+                    !buscandoPassageiro &&
                     <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
+                  }
             
+                   {
+                    !caronaAceita && !buscandoPassageiro &&
                     <TouchableOpacity
                         style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
                         // onPress={() => setModalVisible(!modalVisible)}
+                        onPress={()=>{oferecerCarona()}}
                     >
                         <Text style={styles.textStyle}>Oferecer carona</Text>
                     </TouchableOpacity>
+                   }
+                   {
+                    caronaAceita && !buscandoPassageiro &&
                     <TouchableOpacity
                         style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
-                        onPress={() => setModalVisible(!modalVisible)}
+                        onPress={() => {buscarPassageiro()}}
+                    >
+                        <Text style={styles.textStyle}>Buscar passageiro(a)</Text>
+                    </TouchableOpacity>
+                   }
+                   {
+                    !caronaAceita && !buscandoPassageiro &&
+                   <TouchableOpacity
+                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
+                        onPress={() => {
+                          setModalVisible(!modalVisible)}}
                     >
                         <Text style={styles.textStyle}>Cancelar</Text>
                     </TouchableOpacity>
+                   }
+                   {
+                    buscandoPassageiro &&
+                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Informações de rota</Text>
+                   }
+                    {
+                    buscandoPassageiro &&
+                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Pressione no ícone de mapa no canto inferior direito que você será redirecionado(a) para o aplicativo de rotas.</Text>
+                   }
+                   {
+                    buscandoPassageiro &&
+                    <TouchableOpacity
+                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
+                        onPress={() => {
+                          setModalVisible(!modalVisible);
+                          setBuscandoPassageiro(!buscandoPassageiro);
+                        }}
+                    >
+                        <Text style={styles.textStyle}>Entendi</Text>
+                    </TouchableOpacity>
+                   }
+
               </View>
             </View>
           </Modal>
