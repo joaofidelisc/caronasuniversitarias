@@ -6,6 +6,11 @@ import firestore from '@react-native-firebase/firestore';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
 
+//mudar de lugar isso dps
+//
+import config from '../../config';
+import Geocoder from 'react-native-geocoding';
+//
 
 function Options({navigation}) {
 
@@ -90,10 +95,27 @@ function Options({navigation}) {
       }
     }
   }
-    
-    useEffect(()=>{
-      buscaMotorista();
-    }, [])
+  
+  //mudar de lugar isso dps
+  const geolocalizacaoTeste = async()=>{
+    console.log('testando geolocalização!');
+    Geocoder.init(config.googleAPI, {language:'pt-BR'});
+    var cidade = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[1].short_name;
+    var estado = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[3].short_name;
+    console.log(cidade, estado);
+    // console.log((await Geocoder.from(-21.98104, -47.89139)).results[0].address_components);
+    // Geocoder.from(-21.98104, -47.89139)
+		// .then(json => {
+    //     		var addressComponent = json.results[0].address_components[0];
+		// 	console.log(addressComponent);
+		// })
+		// .catch(error => console.warn(error));
+  }
+
+
+  useEffect(()=>{
+    buscaMotorista();
+  }, [])
 
     return (
        <SafeAreaView style={styles.container}>
@@ -104,6 +126,12 @@ function Options({navigation}) {
           />
           <Text style={{color:'#06444C', left: 24, fontWeight:'700', fontSize: 20, lineHeight:24, textAlign:'left', top: -120}}>Carona encontrada!</Text>
           <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 20, lineHeight:24, textAlign:'left', top: -110}}>Motoristas disponíveis:</Text>
+          <TouchableOpacity 
+            style={{backgroundColor:'black', top:-100, alignSelf:'center'}}
+            onPress={geolocalizacaoTeste}  
+          >
+            <Text>Geolocalização</Text>
+          </TouchableOpacity>
         <ScrollView style={[styles.scrollView,{top:-100}]}>
           <View style={styles.viewMotoristas}>
             <Image 
