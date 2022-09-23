@@ -46,15 +46,14 @@ function Oferecer() {
   const [oferecerMaisCaronas, setOferecerMaisCaronas] = useState(false);
 
   const [buscandoPassageiro, setBuscandoPassageiro] = useState(false);
-  const [cidade, setCidade] = useState('');
-  const [estado, setEstado] = useState('');
-
-    const reverseGeocoding = async()=>{
-      var cidade = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[1].short_name;
-      var estado = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[3].short_name;
-      setCidade(cidade);
-      setEstado(estado);
-    }
+  
+  const cidade = 'São Carlos';
+  const estado = 'SP';
+  
+    // const reverseGeocoding = async()=>{
+    //   var cidade = (await Geocoder.from(-21.98186, -47.88460)).results[0].address_components[1].short_name;
+    //   var estado = (await Geocoder.from(-21.98186, -47.88460)).results[0].address_components[3].short_name;      setCidade(cidade);
+    // }
 
     const localizacaoLigada = async()=>{
       LocationServicesDialogBox.checkLocationServicesIsEnabled({
@@ -78,10 +77,14 @@ function Oferecer() {
 
 
   function getDestinoCaronista(userUID){
-    database().ref(`${estado}/${cidade}Passageiros/${userUID}`).once('value').then(snapshot=>{
-      setNomeDestinoCaronista(snapshot.val().nomeDestino);
-      console.log('Destino:', nomeDestinoCaronista);
-    })
+    try{
+      database().ref(`${estado}/${cidade}/Passageiros/${userUID}`).once('value').then(snapshot=>{
+        setNomeDestinoCaronista(snapshot.val().nomeDestino);
+        console.log('Destino:', nomeDestinoCaronista);
+      })
+    }catch(error){
+      console.log(error.code);
+    }
   }
 
   // function getCaronistasMarker(){
@@ -192,21 +195,23 @@ function Oferecer() {
 
   function atualizaEstado(){
    const currentUser = auth().currentUser.uid;
-   const reference = database().ref(`${estado}/${cidade}Motoristas/${currentUser}`);
+   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
    try{
-    reference.update({
-      latitudeMotorista: region.latitude,
-      longitudeMotorista: region.longitude,
-      ativo: true,
-    });
-    // }).then(()=> console.log('coordenadas enviadas!'));
-   }catch(error){
-    console.log('atualizaEstado, ERRO:', error.code);
-   }
+     reference.update({
+       latitudeMotorista: region.latitude,
+       longitudeMotorista: region.longitude,
+       ativo: true,
+      });
+      // }).then(()=> console.log('coordenadas enviadas!'));
+    }catch(error){
+      console.log('atualizaEstado, ERRO:', error.code);
+    }
   }
-
+  
   function estadoInicial(){
     console.log('estadoInicial() rodando...');
+    const currentUser = auth().currentUser.uid;
+    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
     try{
       reference.set({
         latitudeMotorista: region.latitude,
@@ -215,11 +220,11 @@ function Oferecer() {
         ativo: true,
       });
       // }).then(()=> console.log('coordenadas enviadas!'));
-     }catch(error){
+    }catch(error){
       console.log('atualizaEstado, ERRO:', error.code);
-     }
+    }
   }
-
+  
   function getMyLocation(){
     try{
       Geolocation.getCurrentPosition(info=>{
@@ -239,7 +244,7 @@ function Oferecer() {
       console.log(error.code);
     }
   }
-
+  
   
   const recuperarFotoStorage = async(userUID)=>{
     const uidCaronista = userUID;
@@ -258,6 +263,9 @@ function Oferecer() {
   
   //terminar de implementar aqui
   const buscaUsuario = async(userUID, caronaAceita)=>{
+    console.log('você clicou no usuário:', userUID);
+    console.log('')
+    const reference = database().ref(`${estado}/${cidade}/Passageiros/${userUID}`);
     if (caronaAceita == ''){
       try{
           await recuperarFotoStorage(userUID);
@@ -273,10 +281,12 @@ function Oferecer() {
       setModalVisible(true);
     }else{
       try{
-        database().ref(`${estado}/${cidade}Passageiros/${userUID}`).once('value', function(snapshot){
+        reference.once('value', function(snapshot){
+          console.log(snapshot.val());
           if (snapshot.val().caronasAceitas != ''){
             console.log('Carona aceita. Motorista UID:', snapshot.val().caronasAceitas);
           }
+          // console.log('Passando por aqui!');
           //IMPLEMENTAR AQUI APÓS DÚVIDAS
         })
       }catch(error){
@@ -296,14 +306,14 @@ function Oferecer() {
     
     const uidMotorista = auth().currentUser.uid;
     try{
-      database().ref(`${estado}/${cidade}Passageiros/${uidPassageiro}`).once('value').then(snapshot=>{
+      database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).once('value').then(snapshot=>{
         vetorCaronas.push(snapshot.val().ofertasCaronas);
         if (!vetorCaronas.includes(uidMotorista)){
           vetorCaronas.push(uidMotorista);
         }
         console.log('VETOR DE CARONAS:', vetorCaronas);
       })
-      database().ref(`${estado}/${cidade}Passageiros/${uidPassageiro}`).update({
+      database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).update({
         ofertasCaronas: uidMotorista
       });
     }catch(error){
@@ -311,14 +321,15 @@ function Oferecer() {
     }
   }
 
+  //verifica as caronasAceitas no banco de motoristas
   function caronasAceitas(){
     const currentUser = auth().currentUser.uid;
     try{
-      database().ref(`${estado}/${cidade}Motoristas/${currentUser}`).on('value', function(snapshot){
+      database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`).on('value', function(snapshot){
         // console.log('Caronas Aceitas:', snapshot.val().caronasAceitas);
         if (snapshot.val().caronasAceitas != ''){
           setCaronaAceita(true);
-          buscaUsuario(snapshot.val().caronasAceitas);
+          // buscaUsuario(,snapshot.val().caronasAceitas);
         } else{
           // console.log('Aguardando aceitar...');
         }
@@ -339,7 +350,7 @@ function Oferecer() {
   useEffect(()=>{
     console.log('TELA: Oferecer');
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
-    reverseGeocoding();
+    // reverseGeocoding();
     estadoInicial();
     getMyLocation();
     getCaronistasMarker();

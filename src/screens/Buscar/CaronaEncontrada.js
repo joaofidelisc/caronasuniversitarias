@@ -12,7 +12,7 @@ import config from '../../config';
 import Geocoder from 'react-native-geocoding';
 //
 
-function Options({navigation}) {
+function Options({navigation, route}) {
 
     const [nomeMotorista, setNomeMotorista] = useState('');
     const [uidMotorista, setUidMotorista] = useState('');
@@ -116,6 +116,8 @@ function Options({navigation}) {
 
 
   useEffect(()=>{
+    console.log('Tela: CaronaEncontrada!');
+    console.log('estado:', estado, 'cidade:', cidade);
     buscaMotorista();
   }, [])
 

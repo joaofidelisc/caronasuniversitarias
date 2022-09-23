@@ -29,8 +29,6 @@ export default function Buscar({navigation}) {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [warning, setWarning] = useState('');
-  const [cidade, setCidade] = useState('');
-  const [estado, setEstado] = useState('');
 
 //itera por todos os documentos
 // function testarBanco(){  
@@ -78,14 +76,12 @@ export default function Buscar({navigation}) {
 //   });
 // }
 
-  //alterar coordenadas
-  //passar latitude e longitude como parametro
+
+  //ALTERAR PARA LATITUDE E LONGITUDE COMO PARÂMETRO!
   async function enviarLocalizacaoPassageiro(latitude, longitude){
     const currentUser = auth().currentUser.uid;
-    var cidade = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[1].short_name;
-    var estado = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[3].short_name;
-    setCidade(cidade); //set com delay, fica como null na props
-    setEstado(estado); //set com delay, fica como null na props
+    var cidade = (await Geocoder.from(-21.98186, -47.88460)).results[0].address_components[1].short_name;
+    var estado = (await Geocoder.from(-21.98186, -47.88460)).results[0].address_components[3].short_name;
     const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
       reference.set({
@@ -98,6 +94,7 @@ export default function Buscar({navigation}) {
         ofertasCaronas:'',
         caronasAceitas:'',
       }).then(()=>console.log('coordenadas passageiro enviadas!'));
+      navigation.navigate('Buscando_Carona', {nomeDestino: nomeDestino, localDestino: localDestino, cidade: cidade, estado: estado})
     }catch(error){
       console.log('ERRO:', error.code);
     }
@@ -106,7 +103,7 @@ export default function Buscar({navigation}) {
   
   //TERMINAR DE IMPLEMENTAR E TESTAR
   //ALTERAR LINHA 133
-  function getLocalPassageiro(){
+  async function getLocalPassageiro(){
     PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
       .then(()=>{
@@ -129,8 +126,7 @@ export default function Buscar({navigation}) {
                 enableHighAccuracy:false,
                 timeout:2000,
           })
-          console.log('antes de enviar cidade/estado:', cidade, estado);
-          navigation.navigate('Buscando_Carona', {nomeDestino: nomeDestino, localDestino: localDestino, cidade: 'São Carlos', estado: 'SP'})
+          // console.log('antes de enviar cidade/estado:', cidade, estado);
         } catch(error){
           console.log(error.code); //tratamento de excecao
         }
@@ -190,7 +186,7 @@ export default function Buscar({navigation}) {
     // setCidade('');
     // resetarInformacoes();
     ligarLocalizacao();
-  }, [cidade, estado])
+  }, [])
   
   
   return (

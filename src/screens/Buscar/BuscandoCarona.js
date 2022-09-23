@@ -36,11 +36,20 @@ function BuscandoCarona({navigation, route}) {
     }
   }
 
+  function navigateTo(){
+    // console.log('Estado:', estado);
+    // console.log('Cidade:', cidade);
+    navigation.navigate('Options', {cidade: cidade, estado: estado});
+  }
+
 
   useEffect(()=>{
-    console.log('estado+cidade');
-    console.log(estado);
-    console.log(cidade);
+    console.log('Tela: BuscandoCarona');
+    // console.log(estado);
+    // console.log(cidade);
+    // console.log('estado+cidade');
+    // console.log(estado);
+    // console.log(cidade);
     buscarCarona();
   })
 
@@ -64,7 +73,7 @@ function BuscandoCarona({navigation, route}) {
           encontrouCarona && 
           <TouchableOpacity
             style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
-            onPress={()=>{navigation.navigate('Options')}}
+            onPress={navigateTo}
             // onPress={getCaronistasMarker}
           >
             <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
