@@ -222,8 +222,7 @@ function Oferecer() {
       console.log(error.code);
     }
 
-    
-
+  
     if (!estadoInicialControle){
       console.log('estadoInicial() rodando...');
       try{
@@ -277,11 +276,14 @@ function Oferecer() {
   }
   
   //terminar de implementar aqui
+  //exibe o modal em duas ocasiões:
+  //1º quando o caronista não tem carona aceita;
+  //2º quando o caronista aceita uma carona, exibe o modal automaticamente, caronasAceitas do passaigeiro == uidMotorista
   const buscaUsuario = async(userUID, caronaAceita)=>{
     // console.log('você clicou no usuário:', userUID);
     // console.log('')
     const reference = database().ref(`${estado}/${cidade}/Passageiros/${userUID}`);
-    if (caronaAceita == ''){
+    if (caronaAceita == '' || caronaAceita == true){
       try{
           await recuperarFotoStorage(userUID);
           firestore().collection('Users').doc(userUID).onSnapshot(documentSnapshot=>{
@@ -338,17 +340,18 @@ function Oferecer() {
   }
 
   //verifica as caronasAceitas no banco de motoristas
+  //ESSA FUNÇÃO FAZ APARECER O MODAL NA TELA QUANDO O CARONISTA ACEITA UMA PROPOSTA DE CARONA DO MOTORISTA
   function caronasAceitas(){
     const currentUser = auth().currentUser.uid;
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
     
     // console.log(reference); 
     try{
-      if (!reference.toString().includes('null')){
+      if (!reference.toString().includes('null')){ //MUDAR A LÓGICA AQUI
         reference.on('value', function(snapshot){
           if (snapshot.val().caronasAceitas != ''){
             setCaronaAceita(true);
-            // buscaUsuario(,snapshot.val().caronasAceitas);
+            buscaUsuario(snapshot.val().caronasAceitas, true);
           } else{
             // console.log('Aguardando aceitar...');
           }
