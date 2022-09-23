@@ -51,23 +51,31 @@ function Options({navigation, route}) {
       // }
   }
 
-
-  
-  function aceitarCarona(){
-    console.log('Carona aceita!');
+  function escreverBancoMotorista(){
+    console.log('Escrevendo no banco de motorista');
     const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
-    const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
       reference_motorista.update({        
         caronasAceitas:currentUser,
       });
+   
+    }catch(error){
+      console.log('ERRO:', error.code);
+    }
+  }
+  
+  function aceitarCarona(){
+    console.log('Carona aceita!');
+    const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+    try{
       reference_passageiro.update({        
         caronasAceitas:uidMotorista,
       });
       navigation.navigate('CaronaEncontrada');
-     }catch(error){
+    }catch(error){
       console.log('ERRO:', error.code);
-     }
+    }
+    escreverBancoMotorista();
   }
 
   

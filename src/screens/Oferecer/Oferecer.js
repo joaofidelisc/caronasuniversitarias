@@ -46,6 +46,8 @@ function Oferecer() {
   const [oferecerMaisCaronas, setOferecerMaisCaronas] = useState(false);
 
   const [buscandoPassageiro, setBuscandoPassageiro] = useState(false);
+
+  const [estadoInicialControle, setEstadoInicialControle] = useState(false);
   
   const cidade = 'São Carlos';
   const estado = 'SP';
@@ -209,19 +211,32 @@ function Oferecer() {
   }
   
   function estadoInicial(){
-    console.log('estadoInicial() rodando...');
     const currentUser = auth().currentUser.uid;
+
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
     try{
-      reference.set({
-        latitudeMotorista: region.latitude,
-        longitudeMotorista: region.longitude,
-        caronasAceitas:'',
-        ativo: true,
-      });
-      // }).then(()=> console.log('coordenadas enviadas!'));
+      reference.once('value').then(function(snapshot){
+        setEstadoInicialControle(snapshot.exists());
+      })
     }catch(error){
-      console.log('atualizaEstado, ERRO:', error.code);
+      console.log(error.code);
+    }
+
+    
+
+    if (!estadoInicialControle){
+      console.log('estadoInicial() rodando...');
+      try{
+        reference.set({
+          latitudeMotorista: region.latitude,
+          longitudeMotorista: region.longitude,
+          caronasAceitas:'',
+          ativo: true,
+        });
+        // }).then(()=> console.log('coordenadas enviadas!'));
+      }catch(error){
+        console.log('atualizaEstado, ERRO:', error.code);
+      }
     }
   }
   
@@ -263,8 +278,8 @@ function Oferecer() {
   
   //terminar de implementar aqui
   const buscaUsuario = async(userUID, caronaAceita)=>{
-    console.log('você clicou no usuário:', userUID);
-    console.log('')
+    // console.log('você clicou no usuário:', userUID);
+    // console.log('')
     const reference = database().ref(`${estado}/${cidade}/Passageiros/${userUID}`);
     if (caronaAceita == ''){
       try{
@@ -282,7 +297,7 @@ function Oferecer() {
     }else{
       try{
         reference.once('value', function(snapshot){
-          console.log(snapshot.val());
+          // console.log(snapshot.val());
           if (snapshot.val().caronasAceitas != ''){
             console.log('Carona aceita. Motorista UID:', snapshot.val().caronasAceitas);
           }
@@ -299,6 +314,7 @@ function Oferecer() {
   //O MOTORISTA PODE OFERECER QUANTAS CARONAS PRO PASSAGEIRO?
   //A CADA QUANTO TEMPO?
 
+  
   function oferecerCarona(){
     // console.log('UID Passageiro:', uidPassageiro);
     let vetorCaronas = [];
@@ -324,16 +340,20 @@ function Oferecer() {
   //verifica as caronasAceitas no banco de motoristas
   function caronasAceitas(){
     const currentUser = auth().currentUser.uid;
+    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+    
+    // console.log(reference); 
     try{
-      database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`).on('value', function(snapshot){
-        // console.log('Caronas Aceitas:', snapshot.val().caronasAceitas);
-        if (snapshot.val().caronasAceitas != ''){
-          setCaronaAceita(true);
-          // buscaUsuario(,snapshot.val().caronasAceitas);
-        } else{
-          // console.log('Aguardando aceitar...');
-        }
-      })
+      if (!reference.toString().includes('null')){
+        reference.on('value', function(snapshot){
+          if (snapshot.val().caronasAceitas != ''){
+            setCaronaAceita(true);
+            // buscaUsuario(,snapshot.val().caronasAceitas);
+          } else{
+            // console.log('Aguardando aceitar...');
+          }
+        })
+      }
     } catch(error){
       console.log('Error', error.code);
     }
