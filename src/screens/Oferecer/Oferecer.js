@@ -24,8 +24,6 @@ import Geocoder from 'react-native-geocoding';
 const {width, height} = Dimensions.get('screen');
 
 function Oferecer() {
-  //por que usar isso?
-  const mapEL = useRef(null);
   const [region, setRegion] = useState(null);  
   const [destination, setDestination] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -33,16 +31,16 @@ function Oferecer() {
   //USADO NO MODAL
   const [message, setMessage] = useState('');
   const [imageUser, setImageUser] = useState('');
+
   
   const [vetorCaronistas, setCaronistas] = useState([]);
-  
   const [nomeCaronista, setNomeCaronista] = useState('');
   const [nomeDestinoCaronista, setNomeDestinoCaronista] = useState('');
   
   const [uidPassageiro, setUidPassageiro] = useState('');
   
-  const [lotacaoAtingida, setLotacaoAtingida] = useState(false);
   const [caronaAceita, setCaronaAceita] = useState(false);
+  const [lotacaoAtingida, setLotacaoAtingida] = useState(false);
   const [oferecerMaisCaronas, setOferecerMaisCaronas] = useState(false);
 
   const [buscandoPassageiro, setBuscandoPassageiro] = useState(false);
@@ -315,7 +313,6 @@ function Oferecer() {
   useEffect(()=>{
     console.log('TELA: Oferecer');
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
-    // reverseGeocoding();
     estadoInicial();
     getMyLocation();
     getCaronistasMarker();
@@ -326,7 +323,6 @@ function Oferecer() {
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
-          {/* <Text style={{color:'black'}}>Oferecer</Text> */}
           <MapView
             onMapReady={()=>{
               PermissionsAndroid.request(
@@ -343,7 +339,6 @@ function Oferecer() {
             showsUserLocation={true}
             loadingEnabled={true}
             onRegionChange={getMyLocation}
-            // ref={mapEL}
             initialRegion={{
               latitude: -21.983311,
               longitude: -47.883154,
@@ -371,8 +366,8 @@ function Oferecer() {
                   apikey={config.googleAPI}
                   strokeWidth={3}
                   strokeColor='#FF5F55'
-                  onReady={result=>{
-                  }}
+                  // onReady={result=>{
+                  // }}
                 />
             }
           </MapView>
@@ -411,7 +406,6 @@ function Oferecer() {
                     !caronaAceita && !buscandoPassageiro &&
                     <TouchableOpacity
                         style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
-                        // onPress={() => setModalVisible(!modalVisible)}
                         onPress={()=>{oferecerCarona()}}
                     >
                         <Text style={styles.textStyle}>Oferecer carona</Text>
@@ -456,7 +450,6 @@ function Oferecer() {
                         <Text style={styles.textStyle}>Entendi</Text>
                     </TouchableOpacity>
                    }
-
               </View>
             </View>
           </Modal>
