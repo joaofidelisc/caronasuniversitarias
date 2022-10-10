@@ -48,12 +48,16 @@ function BuscandoCarona({navigation, route}) {
 
   
   const testeGeocoder = async ()=>{
-    const response = await Geocoder.from(-21.98327, -47.88029);
+    const response = await Geocoder.from(-21.59381, -48.35135);
     var filtered_array = response.results[0].address_components.filter(function(address_component){
       return address_component.types.includes("administrative_area_level_2");
     }); 
+    var filtro_estado = response.results[0].address_components.filter(function(address_component){
+      return address_component.types.includes("administrative_area_level_1");
+    });
     console.log('filtro', filtered_array);
     console.log('cidade:', filtered_array[0].short_name);
+    console.log('estado:', filtro_estado[0].short_name);
     // console.log('response:', response.results[0], '\n\n');
     // console.log('lenght:', response.results[0].address_components.length, '\n\n');
     // for(var indice=0; indice<response.results[0].address_components.length; indice++){

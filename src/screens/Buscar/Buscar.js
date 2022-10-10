@@ -76,12 +76,20 @@ export default function Buscar({navigation}) {
 //   });
 // }
 
-
-  //ALTERAR PARA LATITUDE E LONGITUDE COMO PARÂMETRO!
   async function enviarLocalizacaoPassageiro(latitude, longitude){
     const currentUser = auth().currentUser.uid;
-    var cidade = (await Geocoder.from(-21.98186, -47.88460)).results[0].address_components[1].short_name;
-    var estado = (await Geocoder.from(-21.98186, -47.88460)).results[0].address_components[3].short_name;
+    var response = await Geocoder.from(latitude, longitude);
+    var filtro_cidade = response.results[0].address_components.filter(function(address_component){
+      return address_component.types.includes("administrative_area_level_2");
+    }); 
+
+    var filtro_estado = response.results[0].address_components.filter(function(address_component){
+      return address_component.types.includes("administrative_area_level_1");
+    });
+    
+    var cidade = filtro_cidade[0].short_name; 
+    var estado = filtro_estado[0].short_name;
+
     const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
       reference.set({
