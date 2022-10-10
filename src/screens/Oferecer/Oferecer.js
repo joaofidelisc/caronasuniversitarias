@@ -52,13 +52,11 @@ function Oferecer() {
   const cidade = 'Matão';
   const estado = 'SP';
   
-    // const reverseGeocoding = async()=>{
-    //   var cidade = (await Geocoder.from(-21.98186, -47.88460)).results[0].address_components[1].short_name;
-    //   var estado = (await Geocoder.from(-21.98186, -47.88460)).results[0].address_components[3].short_name;      setCidade(cidade);
-    // }
 
-    const localizacaoLigada = async()=>{
-      LocationServicesDialogBox.checkLocationServicesIsEnabled({
+  //Função responsável por solicitar ao usuário ligar sua localização;
+
+  const localizacaoLigada = async()=>{
+    LocationServicesDialogBox.checkLocationServicesIsEnabled({
         message: "<h2 style='color: #0af13e'>Usar localização</h2><br/>Deseja permitir que o aplicativo <b>Caronas Universitárias</b> acesse a sua localização?<br/><br/>",
         ok: "Permitir",
         cancel: "Negar",
@@ -77,82 +75,32 @@ function Oferecer() {
     });
   }
 
-
+  
+  //Função responsável por obter o destino do caronista com base em seu UserID;
+  //Essa função é chamada apenas quando um marcador é pressionado;
+  
   function getDestinoCaronista(userUID){
     try{
       database().ref(`${estado}/${cidade}/Passageiros/${userUID}`).once('value').then(snapshot=>{
         setNomeDestinoCaronista(snapshot.val().nomeDestino);
-        console.log('Destino:', nomeDestinoCaronista);
+        // console.log('Destino:', nomeDestinoCaronista);
       })
     }catch(error){
       console.log(error.code);
     }
   }
 
-  // function getCaronistasMarker(){
-  //   var reference = database().ref('Passageiros');
-  //   // console.log('Vetor caronas:');
-  //   // console.log(vetorCaronistas);
-  //   reference.on('child_added', function(data){
-  //     // console.log('usuario adicionado(a):', data.key);
-  //     setCaronistas([...vetorCaronistas, {
-  //       latitude: data.val().latitudePassageiro,
-  //       longitude: data.val().longitudePassageiro,
-  //       uid: data.key,          
-  //       }
-  //     ])
-      
-  //   })
-  // }
-
-
-
-  // function getCaronistasMarker(){
-  //   var reference = database().ref('Passageiros');
-  //   try{
-  //     if (vetorCaronistas.length == 0){
-  //       database().ref().child('Passageiros').once('value', function(snapshot){
-  //         snapshot.forEach(function(userSnapshot){
-  //           setCaronistas([...vetorCaronistas, {
-  //             latitude: userSnapshot.val().latitudePassageiro,
-  //             longitude: userSnapshot.val().longitudePassageiro,
-  //             uid: userSnapshot.key,          
-  //             }
-  //           ])
-  //         })
-  //       })
-  //     }else{
-  //       reference.on('child_added', function(data){
-  //         setCaronistas([...vetorCaronistas, {
-  //           latitude: data.val().latitudePassageiro,
-  //           longitude: data.val().longitudePassageiro,
-  //           uid: data.key,          
-  //           }
-  //         ])
-  //       })
-  //     }
-  //   }catch(error){
-  //     console.log('Deu erro aqui!');
-  //   }
-  //   console.log('VETOR:', vetorCaronistas);
-  // }
-
+  //Função responsável por 'desenhar' os marcadores (caronistas) no mapa;
+  //A lógica empregada é iterar por todos os marcadores na primeira vez e caso tenha algum marcador a ser inserido, apenas inserimos; caso um marcador mude de posição, ele é apenas atualizado.
+  
   function getCaronistasMarker(){
-  // const getCaronistasMarker = async() => {
-    // var bd = database().ref('Passageiros');
     let jaExiste = false;
     if (jaExiste == true){
       jaExiste = false;
     }
     try{
-      // bd.on('child_changed', function(data){
-      //   console.log('Atualizou!!!!!');
-      //   console.log('Titulo:', data.key);
-      // })
-
       database().ref().child(`${estado}/${cidade}/Passageiros`).on('value', function(snapshot){
-        snapshot.forEach(function(userSnapshot){
-          // console.log('USER UID:', userSnapshot.key);          
+        snapshot.forEach(function(userSnapshot){       
           if (vetorCaronistas.length == 0){
             setCaronistas([{
               latitude: userSnapshot.val().latitudePassageiro,
@@ -165,14 +113,12 @@ function Oferecer() {
           else{
             vetorCaronistas.some(caronista=>{
               if (caronista.uid === userSnapshot.key){
-                console.log('Atualizando posição...\n');
                 vetorCaronistas[vetorCaronistas.indexOf(caronista)].latitude = userSnapshot.val().latitudePassageiro;
                 vetorCaronistas[vetorCaronistas.indexOf(caronista)].longitude = userSnapshot.val().longitudePassageiro;
                 jaExiste = true;
               }
             })
             if (!jaExiste){
-              console.log('Não está presente!');
               setCaronistas([...vetorCaronistas, {
                 latitude: userSnapshot.val().latitudePassageiro,
                 longitude: userSnapshot.val().longitudePassageiro,
@@ -182,18 +128,15 @@ function Oferecer() {
               ])
             }
           }
-          // await setTimeout(50);
-          // console.log('VETOR OFERECER:\n');
-          // console.log(vetorCaronistas);
-          // await setTimeout(5000);
         })
       })
     }catch(error){
-      // console.log('ERRO', error.code);
     }
   }
 
-  //atualiza o estado do motorista
+
+  //Função responsável por atualizar o estado do motorista em tempo real;
+  //Atualiza no banco de dados essa posição.
 
   function atualizaEstado(){
    const currentUser = auth().currentUser.uid;
@@ -204,12 +147,15 @@ function Oferecer() {
        longitudeMotorista: region.longitude,
        ativo: true,
       });
-      // }).then(()=> console.log('coordenadas enviadas!'));
     }catch(error){
       console.log('atualizaEstado, ERRO:', error.code);
     }
   }
   
+  //Função responsável por definir um estado inicial para o motorista, ou seja, sua posição inicial ao iniciar o App;
+  //Quando o app é iniciado, é necessário ver se o banco de dados para esse motorista já existe e, caso contrário, ele deve ser criado;
+  //O banco de dados nessa parte é utilizado em Realtime.
+
   function estadoInicial(){
     const currentUser = auth().currentUser.uid;
 
@@ -232,13 +178,14 @@ function Oferecer() {
           caronasAceitas:'',
           ativo: true,
         });
-        // }).then(()=> console.log('coordenadas enviadas!'));
       }catch(error){
         console.log('atualizaEstado, ERRO:', error.code);
       }
     }
   }
   
+  //Função responsável apenas por obter a localização do motorista em tempo real;
+
   function getMyLocation(){
     try{
       Geolocation.getCurrentPosition(info=>{
@@ -259,7 +206,9 @@ function Oferecer() {
     }
   }
   
-  
+  //Função responsável por recuperar a foto do passageiro no banco de dados;
+  //Utilizada para exibir essa foto no Modal.
+
   const recuperarFotoStorage = async(userUID)=>{
     const uidCaronista = userUID;
     var caminhoFirebase = uidCaronista.concat('Perfil');    
@@ -275,15 +224,20 @@ function Oferecer() {
     }
   }
   
-  //terminar de implementar aqui
-  //exibe o modal em duas ocasiões:
-  //1º quando o caronista não tem carona aceita;
-  //2º quando o caronista aceita uma carona, exibe o modal automaticamente, caronasAceitas do passaigeiro == uidMotorista
-  const buscaUsuario = async(userUID, caronaAceita)=>{
-    // console.log('você clicou no usuário:', userUID);
-    // console.log('')
-    const reference = database().ref(`${estado}/${cidade}/Passageiros/${userUID}`);
-    if (caronaAceita == '' || caronaAceita == true){
+  
+  /*Função responsável por buscar as informações do usuário, sendo essas: Destino, Foto de perfil e nome.
+  Essas informações são exibidas no modal, quando pressionado o marcador (joinha) de carona;
+  O modal é exibido em duas ocasiões:
+  - quando o caronista não tem carona aceita e quero oferecer uma carona para ele;
+  - quando o caronista aceita a minha carona proposta, o modal é exibido automaticamente;
+  * nesse caso, temos que caronasAceitas do passageiro é == uidMotorista atual* 
+  Importante: se caronaAceita for vazio ou igual ao UID do motorista, indica que o caronista não aceitou carona ou que o caronista aceitou a minha carona (caronaAceita == currentUser);
+              caso contrário, o caronista aceitou a carona de outro motorista.
+  */
+ 
+ const buscaUsuario = async(userUID, caronaAceita)=>{
+    const currentUser = auth().currentUser.uid;
+    if (caronaAceita == '' || caronaAceita == currentUser){
       try{
           await recuperarFotoStorage(userUID);
           firestore().collection('Users').doc(userUID).onSnapshot(documentSnapshot=>{
@@ -296,32 +250,19 @@ function Oferecer() {
       setUidPassageiro(userUID);
       setMessage('Usuário');
       setModalVisible(true);
-    }else{
-      try{
-        reference.once('value', function(snapshot){
-          // console.log(snapshot.val());
-          if (snapshot.val().caronasAceitas != ''){
-            console.log('Carona aceita. Motorista UID:', snapshot.val().caronasAceitas);
-          }
-          // console.log('Passando por aqui!');
-          //IMPLEMENTAR AQUI APÓS DÚVIDAS
-        })
-      }catch(error){
-        console.log(error.code);
-      }
-      console.log('Esse passageiro já tem uma carona aceita!');
-    }  
+    }
   }
 
-  //O MOTORISTA PODE OFERECER QUANTAS CARONAS PRO PASSAGEIRO?
-  //A CADA QUANTO TEMPO?
-
+ 
+  /*Função responsável por oferecer carona a um possível passageiro;
+    Essa função, escreve no banco de dados do Passageiro em 'ofertasCaronas' o UID do motorista.
+    A ideia é concatenar a string da caronas já existente em 'ofertasCaronas' do passageiro com o UID do motorista, mantendo assim, os demais motoristas oferecedores
+    de carona.
+  */
   
   function oferecerCarona(){
-    // console.log('UID Passageiro:', uidPassageiro);
     let vetorCaronas = [];
     setModalVisible(false);
-    
     const uidMotorista = auth().currentUser.uid;
     try{
       database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).once('value').then(snapshot=>{
@@ -330,38 +271,39 @@ function Oferecer() {
           vetorCaronas.push(uidMotorista);
         }
         console.log('VETOR DE CARONAS:', vetorCaronas);
+        database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).update({
+          ofertasCaronas: uidMotorista
+        });
       })
-      database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).update({
-        ofertasCaronas: uidMotorista
-      });
     }catch(error){
       console.log('Deu algum erro aqui :(');
     }
   }
 
-  //verifica as caronasAceitas no banco de motoristas
-  //ESSA FUNÇÃO FAZ APARECER O MODAL NA TELA QUANDO O CARONISTA ACEITA UMA PROPOSTA DE CARONA DO MOTORISTA
+
+  /*Essa função é responsável por verificar em tempo real as caronas aceitas pelos passageiros no banco do atual motorista;
+  Ou seja, caso um passageiro aceite uma proposta de carona minha, aparecerá um modal na tela, ressaltando essa informação. 
+  */
+
   function caronasAceitas(){
     const currentUser = auth().currentUser.uid;
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-    
-    // console.log(reference); 
+    console.log('caronasAceitas');
     try{
-      if (!reference.toString().includes('null')){ //MUDAR A LÓGICA AQUI
-        reference.on('value', function(snapshot){
-          if (snapshot.val().caronasAceitas != ''){
-            setCaronaAceita(true);
-            buscaUsuario(snapshot.val().caronasAceitas, true);
-          } else{
-            // console.log('Aguardando aceitar...');
-          }
-        })
-      }
-    } catch(error){
+      reference.on('value', function(snapshot){
+        if (snapshot.val().caronasAceitas != ''){
+          setCaronaAceita(true);
+          buscaUsuario(snapshot.val().caronasAceitas, currentUser);
+        }
+      })
+    }catch(error){
       console.log('Error', error.code);
     }
   }
 
+
+  /*A implementação dessa função não está finalizada, mas a ideia é chamá-la sempre que for buscar um passageiro que aceitou uma carona minha.
+  */
   function buscarPassageiro(){
     console.log('Buscando passageiro...\n');
     // setModalVisible(!modalVisible);
@@ -369,7 +311,7 @@ function Oferecer() {
     setBuscandoPassageiro(true);
   }
   
-  //remover minha localização como passageiro do banco, pra não ser possível oferecer carona pra mim mesmo
+
   useEffect(()=>{
     console.log('TELA: Oferecer');
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
