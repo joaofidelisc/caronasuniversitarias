@@ -6,6 +6,8 @@ import Lottie from 'lottie-react-native';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import Geocoder from 'react-native-geocoding';
+
 
 const {height, width} = Dimensions.get('screen')
 
@@ -44,6 +46,24 @@ function BuscandoCarona({navigation, route}) {
     navigation.navigate('Options', {cidade: cidade, estado: estado});
   }
 
+  
+  const testeGeocoder = async ()=>{
+    const response = await Geocoder.from(-21.98327, -47.88029);
+    var filtered_array = response.results[0].address_components.filter(function(address_component){
+      return address_component.types.includes("administrative_area_level_2");
+    }); 
+    console.log('filtro', filtered_array);
+    console.log('cidade:', filtered_array[0].short_name);
+    // console.log('response:', response.results[0], '\n\n');
+    // console.log('lenght:', response.results[0].address_components.length, '\n\n');
+    // for(var indice=0; indice<response.results[0].address_components.length; indice++){
+    //   console.log('response:\n', response.results[0].address_components[indice].types);
+    // }
+    // var cidade = (await Geocoder.from(-21.98186, -47.88460)).results[0].address_components[1].short_name;
+    // var estado = (await Geocoder.from(-21.98186, -47.88460)).results[0].address_components[3].short_name;
+
+  }
+
 
   useEffect(()=>{
     console.log('Tela: BuscandoCarona');
@@ -78,8 +98,8 @@ function BuscandoCarona({navigation, route}) {
           encontrouCarona && 
           <TouchableOpacity
             style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
-            onPress={navigateTo}
-            // onPress={getCaronistasMarker}
+            // onPress={navigateTo}
+            onPress={testeGeocoder}
           >
             <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
               Exibir lista
