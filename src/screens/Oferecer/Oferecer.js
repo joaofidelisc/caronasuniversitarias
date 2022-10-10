@@ -49,11 +49,8 @@ function Oferecer() {
 
   const [estadoInicialControle, setEstadoInicialControle] = useState(false);
   
-  const [estado, setEstado] = useState('');
-  const [cidade, setCidade] = useState('');
-
-  // const cidade = '';
-  // const estado = '';
+  const cidade = 'Matão';
+  const estado = 'SP';
   
     // const reverseGeocoding = async()=>{
     //   var cidade = (await Geocoder.from(-21.98186, -47.88460)).results[0].address_components[1].short_name;
@@ -213,27 +210,9 @@ function Oferecer() {
     }
   }
   
-  async function localizacaoReversa(latitude, longitude){
+  function estadoInicial(){
     const currentUser = auth().currentUser.uid;
-    var response = await Geocoder.from(latitude, longitude);
-    var filtro_cidade = response.results[0].address_components.filter(function(address_component){
-      return address_component.types.includes("administrative_area_level_2");
-    }); 
 
-    var filtro_estado = response.results[0].address_components.filter(function(address_component){
-      return address_component.types.includes("administrative_area_level_1");
-    });
-    
-    var cidade = filtro_cidade[0].short_name; 
-    var estado = filtro_estado[0].short_name;
-    console.log('cidade dentro de geocoder:', cidade);
-    console.log('estado dentro de geocoder:', estado);
-    
-    setCidade(filtro_cidade[0].short_name);
-    setEstado(filtro_estado[0].short_name);
-
-    //aqui eu busco entender se o banco de motoristas para aquele motorista no estado/cidade já existe;
-    //se não existe, eu crio ele
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
     try{
       reference.once('value').then(function(snapshot){
@@ -259,23 +238,7 @@ function Oferecer() {
       }
     }
   }
-
-  function estadoInicial(){
-    try{
-      Geolocation.getCurrentPosition(info=>{
-        localizacaoReversa(info.coords.latitude, info.coords.longitude);
-      },
-      ()=>{console.log('Atualizando...')}, {
-        enableHighAccuracy:false,
-        timeout:2000,
-      })
-    }catch(error){
-      console.log(error.code);
-    }
-  }
   
-
-
   function getMyLocation(){
     try{
       Geolocation.getCurrentPosition(info=>{

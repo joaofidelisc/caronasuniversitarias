@@ -77,17 +77,26 @@ function Options({navigation, route}) {
     }
     escreverBancoMotorista();
   }
-
+  
   
   //avisar motorista que a carona foi recusada pelo usuário x (?);
   //voltar para a tela de buscando carona
   //tratar banco de dados
   function recusarCarona(){
     // setRecusouCarona(true);
+    const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+    try{
+      reference_passageiro.update({        
+        ofertasCaronas:'',
+      });
+      // navigation.navigate('CaronaEncontrada');
+      navigation.navigate('Buscando_Carona', {recusou: true});
+    }catch(error){
+      console.log('ERRO:', error.code);
+    }
     // database().ref(`Passageiros/${currentUser}`).update({
     //   ofertasCaronas: ''
     // });
-    navigation.navigate('Buscando_Carona', {recusou: true});
     console.log('Carona recusada!');
   }
 

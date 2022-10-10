@@ -47,26 +47,26 @@ function BuscandoCarona({navigation, route}) {
   }
 
   
-  const testeGeocoder = async ()=>{
-    const response = await Geocoder.from(-21.59381, -48.35135);
-    var filtered_array = response.results[0].address_components.filter(function(address_component){
-      return address_component.types.includes("administrative_area_level_2");
-    }); 
-    var filtro_estado = response.results[0].address_components.filter(function(address_component){
-      return address_component.types.includes("administrative_area_level_1");
-    });
-    console.log('filtro', filtered_array);
-    console.log('cidade:', filtered_array[0].short_name);
-    console.log('estado:', filtro_estado[0].short_name);
-    // console.log('response:', response.results[0], '\n\n');
-    // console.log('lenght:', response.results[0].address_components.length, '\n\n');
-    // for(var indice=0; indice<response.results[0].address_components.length; indice++){
-    //   console.log('response:\n', response.results[0].address_components[indice].types);
-    // }
-    // var cidade = (await Geocoder.from(-21.98186, -47.88460)).results[0].address_components[1].short_name;
-    // var estado = (await Geocoder.from(-21.98186, -47.88460)).results[0].address_components[3].short_name;
+  // const testeGeocoder = async ()=>{
+  //   const response = await Geocoder.from(-21.59381, -48.35135);
+  //   var filtered_array = response.results[0].address_components.filter(function(address_component){
+  //     return address_component.types.includes("administrative_area_level_2");
+  //   }); 
+  //   var filtro_estado = response.results[0].address_components.filter(function(address_component){
+  //     return address_component.types.includes("administrative_area_level_1");
+  //   });
+  //   console.log('filtro', filtered_array);
+  //   console.log('cidade:', filtered_array[0].short_name);
+  //   console.log('estado:', filtro_estado[0].short_name);
+  //   // console.log('response:', response.results[0], '\n\n');
+  //   // console.log('lenght:', response.results[0].address_components.length, '\n\n');
+  //   // for(var indice=0; indice<response.results[0].address_components.length; indice++){
+  //   //   console.log('response:\n', response.results[0].address_components[indice].types);
+  //   // }
+  //   // var cidade = (await Geocoder.from(-21.98186, -47.88460)).results[0].address_components[1].short_name;
+  //   // var estado = (await Geocoder.from(-21.98186, -47.88460)).results[0].address_components[3].short_name;
 
-  }
+  // }
 
 
   useEffect(()=>{
@@ -102,8 +102,8 @@ function BuscandoCarona({navigation, route}) {
           encontrouCarona && 
           <TouchableOpacity
             style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
-            // onPress={navigateTo}
-            onPress={testeGeocoder}
+            onPress={navigateTo}
+            // onPress={testeGeocoder}
           >
             <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
               Exibir lista
