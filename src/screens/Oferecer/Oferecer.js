@@ -259,7 +259,7 @@ function Oferecer() {
     A ideia é concatenar a string da caronas já existente em 'ofertasCaronas' do passageiro com o UID do motorista, mantendo assim, os demais motoristas oferecedores
     de carona.
   */
-  
+
   function oferecerCarona(){
     let vetorCaronas = [];
     setModalVisible(false);
@@ -359,11 +359,7 @@ function Oferecer() {
                   onPress={()=>{
                     buscaUsuario(passageiro.uid, passageiro.caronasAceitas);
                   }}
-                  title={passageiro.uid}
                   icon={passageiro.caronasAceitas==''?require('../../assets/icons/caronista.png'):require('../../assets/icons/carona_aceita.png')}
-                  // description={'Passageiro'}
-                  // image={{uri: 'https://reactjs.org/logo-og.png'}}
-                  // image={{}}
                 />
               ))
             }          
@@ -376,59 +372,11 @@ function Oferecer() {
                   strokeWidth={3}
                   strokeColor='#FF5F55'
                   onReady={result=>{
-                    // mapEL.current.
-                    // console.log(result);
                   }}
                 />
             }
           </MapView>
-        {/* <GooglePlacesAutocomplete
-          minLength={2}
-          autoFocus={false}
-          fetchDetails={true}
-          onPress={(data, details = null) => {
-            // console.log(details.geometry.location.lat);
-            // console.log(details.geometry.location.lng);
-            setDestination({
-              latitude: details.geometry.location.lat,
-              longitude: details.geometry.location.lng,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421
-            })
-          }}
-          query={{
-            key: config.googleAPI,
-            language: 'pt-br',
-          }}
-          styles={{
-            container: {
-              position:'absolute',
-              alignItems: 'center',
-              top: 90,                   
-              width: width,
-              justifyContent: 'center',
-            },
-            textInputContainer: {
-              width: 312,
-              height: 50,
-              borderColor: 'rgba(83, 83, 83, 0.8)',
-              borderWidth:2,
-              borderRadius: 8,
-              backgroundColor: 'white',
-            },
-            textInput:{
-              color: 'black',
-            },
-            description: {
-              color: 'black'
-            },
-            listView: {
-              elevation: 1,
-              height: 100,
-              width: 312
-            },
-          }}
-        /> */}
+       
           <Modal
             animationType="fade"
             transparent={true}
