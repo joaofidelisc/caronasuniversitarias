@@ -15,6 +15,7 @@ import Forms_Passageiro from './src/screens/Passageiro/Forms_Passageiro';
 import Forms_Motorista_Veiculo from './src/screens/Motorista/Forms_Motorista_Veiculo';
 import Forms_Motorista from './src/screens/Motorista/Forms_Motorista';
 import Cadastro_Email from './src/screens/Cadastro/Cadastro_Email';
+import BuscandoCarona from './src/screens/Buscar/BuscandoCarona';
 
 export default function App() {
   // const loginToken = async()=>{

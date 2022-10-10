@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, Dimensions} from 'react-native';
+import Lottie from 'lottie-react-native';
+
 
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
-
+const {height, width} = Dimensions.get('screen')
 
 function BuscandoCarona({navigation, route}) {
   const localizacaoPassageiro = route.params?.localizacao;
@@ -53,19 +55,22 @@ function BuscandoCarona({navigation, route}) {
     buscarCarona();
   })
 
-
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
       <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
-        <Text style={{positition: 'absolute', fontSize:25, color:'#2f4f4f', paddingHorizontal:20, fontWeight:'bold', marginVertical:10}}>
+        <Text style={{positition: 'absolute', fontSize:height*0.03, color:'#2f4f4f', paddingHorizontal:20, fontWeight:'bold', marginVertical:10}}>
           Buscando caronas para você. Isso pode levar alguns minutos...
         </Text>
-        <Image
-            source={require('../../assets/images/buscando_carona.png')}
-            style={{resizeMode:'center', width:300, height:300, padding:70, paddingVertical:80, marginHorizontal:100, marginVertical:1}}
-        />
-        <Text style={{fontSize:20, color:'#c0c0c0', paddingHorizontal:10, fontWeight:'normal',marginVertical:35 }}>
+        
+        <Lottie 
+        style={{height:height*0.5, width:width, marginTop:'5%'}}
+        source={require('../../assets/JSON/mapCell.json')} 
+        autoPlay 
+        loop />
+
+        
+        <Text style={{fontSize:height*0.025, color:'#c0c0c0', paddingHorizontal:10, fontWeight:'normal',marginVertical:35 }}>
           Exibiremos uma lista de propostas assim que possível!
         </Text>
         
