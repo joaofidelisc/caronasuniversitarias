@@ -228,6 +228,16 @@ export default function Buscar({navigation}) {
         query={{
           key: config.googleAPI,
           language: 'pt-br',
+          components: 'country:br',
+          location: "-21.59397, -48.35135",
+          radius: "15000", //15km
+          strictbounds: true
+        }}
+        // filterReverseGeocodingByTypes={[
+        //   'locality'
+        // ]}
+        GooglePlacesSearchQuery={{
+          rankby: 'distance',
         }}
         styles={{
           container: {

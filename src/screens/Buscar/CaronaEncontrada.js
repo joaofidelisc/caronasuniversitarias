@@ -1,55 +1,49 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, ScrollView, StyleSheet} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, ScrollView, StyleSheet, CameraRoll} from 'react-native';
 
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
 
-//mudar de lugar isso dps
-//
-import config from '../../config';
-import Geocoder from 'react-native-geocoding';
-//
 
 function Options({navigation, route}) {
 
-    const [nomeMotorista, setNomeMotorista] = useState('');
     const [uidMotorista, setUidMotorista] = useState('');
+    const [vetorMotoristas, setMotoristas] = useState([]);
+    
     const currentUser = auth().currentUser.uid;
-    const [imageUser, setImageUser] = useState('');
-    // const [recusouCarona, setRecusouCarona] = useState(false);
 
     const cidade = route.params?.cidade;
     const estado = route.params?.estado;
 
-    const buscaMotorista = async()=>{
-      // const currentUser = auth().currentUser.uid;
-      // console.log('Rodou!');
-      // if (!recusouCarona){
+    async function getDadosMotorista(){
+      let listaCaronas = '';
+      let arrayUIDs = [];
+      const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
       try{
-        database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`).on('value', function(snapshot){
-          if (snapshot.val().ofertasCaronas != ''){
-            setUidMotorista(snapshot.val().ofertasCaronas);
-            recuperarFotoMotorista(snapshot.val().ofertasCaronas);
-            try{
-              // console.log('Entrou no segundo!');
-              firestore().collection('Users').doc(snapshot.val().ofertasCaronas).onSnapshot(documentSnapshot=>{
-                if (documentSnapshot.exists == true){
-                  setNomeMotorista(documentSnapshot.data().nome)
-                }
-                // console.log(documentSnapshot.data());
-            });
-            }catch(error){
-              console.log(error.code);
+        reference.on('value', function(snapshot){
+          listaCaronas = snapshot.val().ofertasCaronas;
+          arrayUIDs = listaCaronas.split(', ');
+          arrayUIDs.forEach(uid =>{
+            if (uid != ''){
+              console.log('UID', uid);
+              setMotoristas([{
+                url: recuperarFotoMotorista(uid),
+                uid: uid,
+                nome: recuperarNomeMotorista(uid),
+                carro:'Gol',
+                placa:'123',
+              }])
             }
-          }
+          });
         })
       } catch(error){
-        console.log('Error', error.code);
+        console.log('error.code:', error.code);
       }
-      // }
-  }
+    }
+
+
 
   function escreverBancoMotorista(){
     console.log('Escrevendo no banco de motorista');
@@ -89,53 +83,50 @@ function Options({navigation, route}) {
       reference_passageiro.update({        
         ofertasCaronas:'',
       });
-      // navigation.navigate('CaronaEncontrada');
+
       navigation.navigate('Buscando_Carona', {recusou: true});
     }catch(error){
       console.log('ERRO:', error.code);
     }
-    // database().ref(`Passageiros/${currentUser}`).update({
-    //   ofertasCaronas: ''
-    // });
+
     console.log('Carona recusada!');
   }
 
-  const recuperarFotoMotorista = async(userUID)=>{
-    const uidMotorista = userUID;
+  //Função responsável por recuperar o nome do motorista
+  const recuperarNomeMotorista = async(motoristaUID)=>{
+    let nomeMotorista = '';
+    try{
+      firestore().collection('Users').doc(motoristaUID).onSnapshot(documentSnapshot=>{
+        if (documentSnapshot.exists == true){
+          nomeMotorista = documentSnapshot.data().nome;
+        }
+      })
+    }catch(error){
+      console.log(error.code);
+    }
+    return nomeMotorista;
+  }
+
+
+  //Função responsável por receber um UID e retornar uma url para a imagem do motorista;
+  const recuperarFotoMotorista = async(motoristaUID)=>{
+    const uidMotorista = motoristaUID;
     var caminhoFirebase = uidMotorista.concat('Perfil');    
     var url = '';
     try{
       url = await storage().ref(caminhoFirebase).getDownloadURL();
-      setImageUser(url); 
     } catch (error){
       if (error.code == 'storage/object-not-found'){
         url = await storage().ref('user_undefined.png').getDownloadURL(); 
-        setImageUser(url); 
       }
     }
+    return url;
   }
   
-  // //mudar de lugar isso dps
-  // const geolocalizacaoTeste = async()=>{
-  //   console.log('testando geolocalização!');
-  //   Geocoder.init(config.googleAPI, {language:'pt-BR'});
-  //   var cidade = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[1].short_name;
-  //   var estado = (await Geocoder.from(-21.98104, -47.89139)).results[0].address_components[3].short_name;
-  //   console.log(cidade, estado);
-  //   // console.log((await Geocoder.from(-21.98104, -47.89139)).results[0].address_components);
-  //   // Geocoder.from(-21.98104, -47.89139)
-	// 	// .then(json => {
-  //   //     		var addressComponent = json.results[0].address_components[0];
-	// 	// 	console.log(addressComponent);
-	// 	// })
-	// 	// .catch(error => console.warn(error));
-  // }
 
 
   useEffect(()=>{
-    console.log('Tela: CaronaEncontrada!');
-    console.log('estado:', estado, 'cidade:', cidade);
-    buscaMotorista();
+    getDadosMotorista();
   }, [])
 
     return (
@@ -147,140 +138,43 @@ function Options({navigation, route}) {
           />
           <Text style={{color:'#06444C', left: 24, fontWeight:'700', fontSize: 20, lineHeight:24, textAlign:'left', top: -120}}>Carona encontrada!</Text>
           <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 20, lineHeight:24, textAlign:'left', top: -110}}>Motoristas disponíveis:</Text>
-          {/* <TouchableOpacity 
-            style={{backgroundColor:'black', top:-100, alignSelf:'center'}}
-            onPress={geolocalizacaoTeste}  
-          >
-            <Text>Geolocalização</Text>
-          </TouchableOpacity> */}
-        <ScrollView style={[styles.scrollView,{top:-100}]}>
-          <View style={styles.viewMotoristas}>
-            <Image 
-              source={
-                imageUser!=''?{uri:imageUser}:null}
-                style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
-            />
-            {
-              nomeMotorista &&
-              <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Nome: {nomeMotorista}</Text>
-            }
-            <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Carro:</Text>
-            <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Placa:</Text>
-            <View style={{flexDirection:'row', alignSelf:'center'}}>
-            <TouchableOpacity
-              style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginRight: 20}}
-              onPress={()=>{aceitarCarona()}}
-              >
-              <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
-                Aceitar
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: 10}}
-              
-              // onPress={()=>navigation.navigate('ConfirmarSolicitacao', {nomeDestino: nomeDestino, localDestino: localDestino})}
-              // onPress={getLocalPassageiro}
-              // onPress={()=>{setModalVisible(true)}}
-              onPress={()=>{recusarCarona()}}
-              >
-              <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
-                Recusar
-              </Text>
-            </TouchableOpacity>
-              </View>
-          </View>
-
-          {/* <View style={styles.viewMotoristas}>
-            <Image 
-              source={
-                imageUser!=''?{uri:imageUser}:null}
-                style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
-            />
-            {
-              nomeMotorista &&
-              <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Nome: {nomeMotorista}</Text>
-            }
-            <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Carro:</Text>
-            <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Placa:</Text>
-            <View style={{flexDirection:'row', alignSelf:'center'}}>
-            <TouchableOpacity
-              style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginRight: 20}}
-              onPress={()=>{aceitarCarona()}}
-              >
-              <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
-                Aceitar
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: 10}}
-              
-              // onPress={()=>navigation.navigate('ConfirmarSolicitacao', {nomeDestino: nomeDestino, localDestino: localDestino})}
-              // onPress={getLocalPassageiro}
-              // onPress={()=>{setModalVisible(true)}}
-              onPress={()=>{recusarCarona()}}
-              >
-              <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
-                Recusar
-              </Text>
-            </TouchableOpacity>
-              </View>
-          </View> */}
-         
-          
-          <Text style={styles.text}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-            minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </Text>
-        </ScrollView>
+          {
+            vetorMotoristas.map(motorista=>(
+              <ScrollView style={[styles.scrollView,{top:-100}]}>
+                <View style={styles.viewMotoristas}>
+                  <Image 
+                    source={{
+                      // uri: motorista.url._W
+                      uri: 'https://firebasestorage.googleapis.com/v0/b/caronasuniversitarias-c98eb.appspot.com/o/0VtQXRifF8PdbcKCrthdOtlnah12Perfil?alt=media&token=7032fc59-b26a-433d-b283-d48373d7af0d'
+                    }}
+                    style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
+                  />
+                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Nome: {motorista.nome}</Text>
+                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Carro:</Text>
+                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Placa:</Text>
+                  <View style={{flexDirection:'row', alignSelf:'center'}}>
+                  <TouchableOpacity
+                    style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginRight: 20}}
+                    onPress={()=>{aceitarCarona()}}
+                    >
+                    <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                      Aceitar
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: 10}}
+                    onPress={()=>{recusarCarona()}}
+                    >
+                    <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                      Recusar
+                    </Text>
+                  </TouchableOpacity>
+                  </View>
+                </View>
+              </ScrollView>
+            ))
+          }
     </SafeAreaView>
-      // <SafeAreaView style={styles.container}>
-      //   <StatusBar barStyle={'light-content'} />
-      //   {/* <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}> */}
-      //     <ScrollView style={styles.scrollView}>
-      //     <Image source={
-      //       require('../../assets/images/carona-encontrada.png')} 
-      //       style={{height:450, width: 450, position: 'absolute', top: 0, alignSelf: 'center'}}  
-      //     />
-
-    
-      //     <Text style={{color:'#06444C', position: 'absolute', top:400, left: 24, fontWeight:'700', fontSize: 20, lineHeight:24, textAlign:'left'}}>Carona encontrada!</Text>
-      //     <Text style={{color:'#06444C', position: 'absolute', top:426, left: 24, fontWeight:'600', fontSize: 20, lineHeight:24, textAlign:'left'}}>Motoristas disponíveis:</Text>
-      //     {
-      //       nomeMotorista &&
-      //       <Text style={{color:'#06444C', position: 'absolute', top:452, left: 24, fontWeight:'600', fontSize: 20, lineHeight:24, textAlign:'left'}}>Nome: {nomeMotorista}</Text>
-      //     }
-      //     <TouchableOpacity
-      //       style={{position: 'absolute', backgroundColor: '#FF5F55', top: 500, width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
-            
-      //       // onPress={()=>navigation.navigate('ConfirmarSolicitacao', {nomeDestino: nomeDestino, localDestino: localDestino})}
-      //       // onPress={getLocalPassageiro}
-      //       // onPress={()=>{setModalVisible(true)}}
-      //       onPress={()=>{aceitarCarona()}}
-      //     >
-      //       <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
-      //         Aceitar
-      //       </Text>
-      //     </TouchableOpacity>
-      //     <TouchableOpacity
-      //       style={{position: 'absolute', backgroundColor: '#FF5F55', top: 560, width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
-            
-      //       // onPress={()=>navigation.navigate('ConfirmarSolicitacao', {nomeDestino: nomeDestino, localDestino: localDestino})}
-      //       // onPress={getLocalPassageiro}
-      //       // onPress={()=>{setModalVisible(true)}}
-      //       onPress={()=>{recusarCarona()}}
-      //     >
-      //       <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
-      //         Recusar
-      //       </Text>
-      //     </TouchableOpacity>
-      //     </ScrollView>
-      //   {/* </View> */}
-      // </SafeAreaView>
     );
 }
 

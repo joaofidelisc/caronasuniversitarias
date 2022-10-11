@@ -29,7 +29,7 @@ function Oferecer() {
   const [modalVisible, setModalVisible] = useState(false);
   
   //USADO NO MODAL
-  const [message, setMessage] = useState('');
+  // const [message, setMessage] = useState('');
   const [imageUser, setImageUser] = useState('');
 
   
@@ -236,6 +236,10 @@ function Oferecer() {
  const buscaUsuario = async(userUID, caronaAceita)=>{
     const currentUser = auth().currentUser.uid;
     if (caronaAceita == '' || caronaAceita == currentUser){
+      if (caronaAceita == currentUser){
+        setCaronaAceita(true);
+        setBuscandoPassageiro(false);
+      }
       try{
           await recuperarFotoStorage(userUID);
           firestore().collection('Users').doc(userUID).onSnapshot(documentSnapshot=>{
@@ -246,7 +250,6 @@ function Oferecer() {
         console.log(error.code);
       }
       setUidPassageiro(userUID);
-      setMessage('Usuário');
       setModalVisible(true);
     }
   }
@@ -259,18 +262,24 @@ function Oferecer() {
   */
 
   function oferecerCarona(){
-    let vetorCaronas = [];
+    let listaCaronas = '';
+    let vetorTeste = [];
     setModalVisible(false);
     const uidMotorista = auth().currentUser.uid;
     try{
       database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).once('value').then(snapshot=>{
-        vetorCaronas.push(snapshot.val().ofertasCaronas);
-        if (!vetorCaronas.includes(uidMotorista)){
-          vetorCaronas.push(uidMotorista);
-        }
-        console.log('VETOR DE CARONAS:', vetorCaronas);
+        listaCaronas = snapshot.val().ofertasCaronas;
+        // vetorCaronas.push(snapshot.val().ofertasCaronas);
+        console.log('LISTA CARONAS:', listaCaronas);
+        console.log('UID MOTORISTA:', uidMotorista);
+        vetorTeste = listaCaronas.split(', ');
+        console.log('VETOR TESTE', vetorTeste);
+        if (!listaCaronas.includes(uidMotorista)){
+          console.log('NÃO TÁ INCLUSO!');
+          listaCaronas = listaCaronas.concat(', ',uidMotorista); //faz um join com os elementos do vetor e depois concatena com o uidMotorista;
+        }        
         database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).update({
-          ofertasCaronas: uidMotorista
+          ofertasCaronas: listaCaronas
         });
       })
     }catch(error){
