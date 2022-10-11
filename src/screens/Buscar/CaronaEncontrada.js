@@ -75,7 +75,7 @@ function Options({navigation, route}) {
     return url;
   }
 
-  //Função com problema, resolver!
+  
   //Função responsável por recusar carona. O ato de recusar carona de um motorista, implica em remover o seu UID do banco de dados.
   function recusarCarona(motoristaUID){
     let totalOfertas = '';
@@ -94,6 +94,7 @@ function Options({navigation, route}) {
           reference_passageiro.update({
             ofertasCaronas: ofertasRestantes,
           })
+          //ALÉM DE ATUALIZAR NO BANCO, É NECESSÁRIO REMOVER DO ARRAY DE MOTORISTAS, PARA ATUALIZAR NA TELA;
         }
       })
     }catch(error){
