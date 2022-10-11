@@ -75,7 +75,7 @@ function Options({navigation, route}) {
     return url;
   }
 
-  
+
   //Função responsável por recusar carona. O ato de recusar carona de um motorista, implica em remover o seu UID do banco de dados.
   function recusarCarona(motoristaUID){
     let totalOfertas = '';
@@ -145,6 +145,12 @@ function Options({navigation, route}) {
             onPress={recusarCarona}  
           >
             <Text>Recusar Carona</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={{backgroundColor:'black', marginTop: 20, height: 40, width: 300, alignSelf:'center'}}
+            onPress={()=>{navigation.navigate('CaronaEncontrada')}}  
+          >
+            <Text>PRÓXIMA TELA</Text>
           </TouchableOpacity>
           {/* {
             vetorMotoristas.map(motorista=>(
