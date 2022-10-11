@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {View, Text, SafeAreaView, StatusBar, Button, Image, Dimensions, TextInput, TouchableOpacity, Platform, Modal, StyleSheet} from 'react-native';
 
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
@@ -30,51 +30,6 @@ export default function Buscar({navigation}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [warning, setWarning] = useState('');
 
-//itera por todos os documentos
-// function testarBanco(){  
-//   setObjPassageiro([]); //reseta objPassageiro
-//   var numPassageiros = 0;
-//   let db = database().ref();
-//   let usersRef = db.child('Passageiros');
-//   usersRef.once("value").then(function(snapshot) {
-//     snapshot.forEach(function(userSnapshot) {
-//       let uidPassageiro = userSnapshot.key;
-//       let latitudePassageiro = userSnapshot.val().latitudePassageiro;
-//       let longitudePassageiro = userSnapshot.val().longitudePassageiro;
-//       setObjPassageiro(
-//         [
-//           ...objPassageiro, {
-//             uid: uidPassageiro,
-//             latitude: latitudePassageiro,
-//             longitude: longitudePassageiro,
-//           }
-//         ]  
-//         )
-//         // numPassageiros+=1;
-//       });
-//     });
-//   setObjPassageiro([]); //reseta objPassageiro
-//   console.log('Obj:\n');
-//   console.log(objPassageiro);
-  
-//   //PASSAR PARA O MARKER ATUALIZADO;
-//   // console.log('TESTANDO MAP:\n');
-//   // objPassageiro.map(passageiro=>(
-//   //   console.log(passageiro.uid)
-//   // ))
-// }
-
-// function getCaronistas(){
-//   let db = database().ref();
-//   let usersRef = db.child('Motoristas')
-//   usersRef.once("value").then(function(snapshot) {
-//     snapshot.forEach(function(userSnapshot) {
-//       console.log(userSnapshot.key);
-//       console.log(userSnapshot.val()); 
-//       // console.log(userSnapshot.child("points").val());
-//     });
-//   });
-// }
 
   async function enviarLocalizacaoPassageiro(latitude, longitude){
     const currentUser = auth().currentUser.uid;
@@ -108,9 +63,10 @@ export default function Buscar({navigation}) {
     }
   }
 
-  
-  //TERMINAR DE IMPLEMENTAR E TESTAR
-  //ALTERAR LINHA 133
+  async function getLocalizacaoInicial(){
+
+  }
+
   async function getLocalPassageiro(){
     PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
@@ -134,9 +90,8 @@ export default function Buscar({navigation}) {
                 enableHighAccuracy:false,
                 timeout:2000,
           })
-          // console.log('antes de enviar cidade/estado:', cidade, estado);
         } catch(error){
-          console.log(error.code); //tratamento de excecao
+          console.log(error.code); 
         }
         console.log('deu bom\n');
       }
@@ -169,23 +124,6 @@ export default function Buscar({navigation}) {
       });
     }
     
-    // function resetarInformacoes(){
-      //   const currentUser = auth().currentUser.uid;
-      //   const reference = database().ref(`Passageiros/${currentUser}`);
-      //     try{
-        //       reference.update({
-          //         // latitudeDestino:localDestino.latitude,
-          //         latitudeDestino:'',
-          //         longitudeDestino:'',
-          //         nomeDestino: '',
-          //         ofertasCaronas: '',
-          //         ativo: true,
-          //       }).then(()=>console.log('Destino enviado!'));
-          //     }catch(error){
-            //       console.log('ERRO:', error.code);
-            //     }
-            //   }
-
 
   useEffect(()=>{
     console.log('TELA: Buscar');
@@ -194,6 +132,7 @@ export default function Buscar({navigation}) {
     // setCidade('');
     // resetarInformacoes();
     ligarLocalizacao();
+  
   }, [])
   
   
@@ -225,17 +164,16 @@ export default function Buscar({navigation}) {
         textInputProps={{
           onChangeText: (nomeDestino) =>{setNomeDestino(nomeDestino)}
         }}
+        
         query={{
           key: config.googleAPI,
           language: 'pt-br',
           components: 'country:br',
-          location: "-21.59397, -48.35135",
+          location: "-21.59397, -48.35135", //alterar aqui para coordenadas atuais
           radius: "15000", //15km
           strictbounds: true
         }}
-        // filterReverseGeocodingByTypes={[
-        //   'locality'
-        // ]}
+  
         GooglePlacesSearchQuery={{
           rankby: 'distance',
         }}

@@ -44,54 +44,6 @@ function Options({navigation, route}) {
     }
 
 
-
-  function escreverBancoMotorista(){
-    console.log('Escrevendo no banco de motorista');
-    const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
-    try{
-      reference_motorista.update({        
-        caronasAceitas:currentUser,
-      });
-   
-    }catch(error){
-      console.log('ERRO:', error.code);
-    }
-  }
-  
-  function aceitarCarona(){
-    console.log('Carona aceita!');
-    const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
-    try{
-      reference_passageiro.update({        
-        caronasAceitas:uidMotorista,
-      });
-      navigation.navigate('CaronaEncontrada');
-    }catch(error){
-      console.log('ERRO:', error.code);
-    }
-    escreverBancoMotorista();
-  }
-  
-  
-  //avisar motorista que a carona foi recusada pelo usuário x (?);
-  //voltar para a tela de buscando carona
-  //tratar banco de dados
-  function recusarCarona(){
-    // setRecusouCarona(true);
-    const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
-    try{
-      reference_passageiro.update({        
-        ofertasCaronas:'',
-      });
-
-      navigation.navigate('Buscando_Carona', {recusou: true});
-    }catch(error){
-      console.log('ERRO:', error.code);
-    }
-
-    console.log('Carona recusada!');
-  }
-
   //Função responsável por recuperar o nome do motorista
   const recuperarNomeMotorista = async(motoristaUID)=>{
     let nomeMotorista = '';
@@ -122,9 +74,65 @@ function Options({navigation, route}) {
     }
     return url;
   }
+
+  //Função com problema, resolver!
+  //Função responsável por recusar carona. O ato de recusar carona de um motorista, implica em remover o seu UID do banco de dados.
+  function recusarCarona(motoristaUID){
+    let totalOfertas = '';
+    let arrayOfertasRestantes = [];
+    let ofertasRestantes = '';
+
+    motoristaUID = '123';
+    const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+    try{
+      reference_passageiro.once('value', function(snapshot){
+        totalOfertas = snapshot.val().ofertasCaronas;
+        arrayOfertasRestantes = totalOfertas.split(', ');
+        arrayOfertasRestantes.splice(arrayOfertasRestantes.indexOf(motoristaUID), 1);
+        ofertasRestantes = arrayOfertasRestantes.join(', ');
+        reference_passageiro.update({
+          ofertasCaronas: ofertasRestantes,
+        })
+      })
+    }catch(error){
+      console.log('deu ruim');
+    }
+    // try{
+    //   reference_passageiro.update({        
+    //     ofertasCaronas:'',
+    //   });
+
+    //   // navigation.navigate('Buscando_Carona', {recusou: true});
+    // }catch(error){
+    //   console.log('ERRO:', error.code);
+    // }
+    console.log('Carona recusada!');
+  }
   
-
-
+  //Função responsável por aceitar carona - escreve no banco do motorista o uid do passageiro e escreve no banco do passageiro o uid do motorista;
+  //ATUALIZAR ESSA FUNÇÃO DEPOIS, NÃO ESTÁ IMPLEMENTADA DA MELHOR MANEIRA (2 TRY-CATCH);
+  function aceitarCarona(){
+    console.log('Carona aceita!');
+    const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+    const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
+    try{
+      reference_passageiro.update({        
+        caronasAceitas:uidMotorista,
+      });
+    }catch(error){
+      console.log('ERRO:', error.code);
+    }
+    try{
+      reference_motorista.update({        
+        caronasAceitas:currentUser,
+      });
+      
+    }catch(error){
+      console.log('ERRO:', error.code);
+    }
+    navigation.navigate('CaronaEncontrada');
+  }
+  
   useEffect(()=>{
     getDadosMotorista();
   }, [])
@@ -138,7 +146,13 @@ function Options({navigation, route}) {
           />
           <Text style={{color:'#06444C', left: 24, fontWeight:'700', fontSize: 20, lineHeight:24, textAlign:'left', top: -120}}>Carona encontrada!</Text>
           <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 20, lineHeight:24, textAlign:'left', top: -110}}>Motoristas disponíveis:</Text>
-          {
+          <TouchableOpacity 
+            style={{backgroundColor:'black'}}
+            onPress={recusarCarona}  
+          >
+            <Text>Recusar Carona</Text>
+          </TouchableOpacity>
+          {/* {
             vetorMotoristas.map(motorista=>(
               <ScrollView style={[styles.scrollView,{top:-100}]}>
                 <View style={styles.viewMotoristas}>
@@ -173,7 +187,7 @@ function Options({navigation, route}) {
                 </View>
               </ScrollView>
             ))
-          }
+          } */}
     </SafeAreaView>
     );
 }
