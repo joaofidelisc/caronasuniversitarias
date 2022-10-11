@@ -112,18 +112,23 @@ function Options({navigation, route}) {
     try{
       reference_passageiro.once('value').then(snapshot=>{
         totalOfertas = snapshot.val().ofertasCaronas;
-        arrayOfertasRestantes = totalOfertas.split(', ');
-        if (totalOfertas.includes(motoristaUID)){
-          arrayOfertasRestantes.splice(arrayOfertasRestantes.indexOf(motoristaUID), 1);
-          ofertasRestantes = arrayOfertasRestantes.join(', ');
-          reference_passageiro.update({
-            ofertasCaronas: ofertasRestantes,
-          })
-          vetorMotoristas.some(motorista=>{
-            if (motorista.uid == motoristaUID){
-              vetorMotoristas.splice(vetorMotoristas.indexOf(motorista), 1);
-            }
-          })
+        if (totalOfertas != '' || totalOfertas.split(', ').length>1){
+          arrayOfertasRestantes = totalOfertas.split(', ');
+          if (totalOfertas.includes(motoristaUID)){
+            arrayOfertasRestantes.splice(arrayOfertasRestantes.indexOf(motoristaUID), 1);
+            ofertasRestantes = arrayOfertasRestantes.join(', ');
+            reference_passageiro.update({
+              ofertasCaronas: ofertasRestantes,
+            })
+            vetorMotoristas.some(motorista=>{
+              if (motorista.uid == motoristaUID){
+                vetorMotoristas.splice(vetorMotoristas.indexOf(motorista), 1);
+              }
+            })
+          }
+        }else{
+          console.log('entrou aqui!!!');
+          setMotoristas([]);
         }
       })
     }catch(error){
@@ -134,32 +139,28 @@ function Options({navigation, route}) {
   
   //Função responsável por aceitar carona - escreve no banco do motorista o uid do passageiro e escreve no banco do passageiro o uid do motorista;
   //ATUALIZAR ESSA FUNÇÃO DEPOIS, NÃO ESTÁ IMPLEMENTADA DA MELHOR MANEIRA (2 TRY-CATCH);
+  //AO ACEITAR CARONA, REMOVER VETOR DE OFERTAS DE CARONAS DO BANCO;
+
   function aceitarCarona(){
     console.log('Carona aceita!');
-    const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
-    const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
-    try{
-      reference_passageiro.update({        
-        caronasAceitas:uidMotorista,
-      });
-    }catch(error){
-      console.log('ERRO:', error.code);
-    }
-    try{
-      reference_motorista.update({        
-        caronasAceitas:currentUser,
-      });
+    // const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+    // const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
+    // try{
+    //   reference_passageiro.update({        
+    //     caronasAceitas:uidMotorista,
+    //   });
+    // }catch(error){
+    //   console.log('ERRO:', error.code);
+    // }
+    // try{
+    //   reference_motorista.update({        
+    //     caronasAceitas:currentUser,
+    //   });
       
-    }catch(error){
-      console.log('ERRO:', error.code);
-    }
-    navigation.navigate('CaronaEncontrada');
-  }
-
-  const testeFuncao = async()=>{
-    console.log('vetorMotoristas');
-    console.log(vetorMotoristas);
-    getDadosMotorista();
+    // }catch(error){
+    //   console.log('ERRO:', error.code);
+    // }
+    // navigation.navigate('CaronaEncontrada');
   }
   
   useEffect(()=>{
@@ -175,24 +176,7 @@ function Options({navigation, route}) {
           />
           <Text style={{color:'#06444C', left: 24, fontWeight:'700', fontSize: 20, lineHeight:24, textAlign:'left', top: -120}}>Carona encontrada!</Text>
           <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 20, lineHeight:24, textAlign:'left', top: -110}}>Motoristas disponíveis:</Text>
-          {/* <TouchableOpacity 
-            style={{backgroundColor:'black'}}
-            onPress={testeFuncao}  
-          >
-            <Text>Teste função</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={{backgroundColor:'black', marginTop: 20, height: 40, width: 300, alignSelf:'center'}}
-            onPress={()=>{navigation.navigate('CaronaEncontrada')}}  
-          >
-            <Text>PRÓXIMA TELA</Text>
-          </TouchableOpacity> */}
-          {/* <TouchableOpacity 
-            style={{backgroundColor:'black', marginTop: 20, height: 40, width: 300, alignSelf:'center'}}
-            onPress={testeFuncao}  
-          >
-            <Text>TESTE FUNÇÃO</Text>
-          </TouchableOpacity> */}
+   
           <ScrollView style={[styles.scrollView,{top:-100}]}>
           {
             vetorMotoristas.map(motorista=>(
@@ -202,8 +186,9 @@ function Options({navigation, route}) {
                   >
                   <Image 
                     source={{
-                      // uri: motorista.url._W
+                      // uri: motorista.url
                       uri: 'https://firebasestorage.googleapis.com/v0/b/caronasuniversitarias-c98eb.appspot.com/o/0VtQXRifF8PdbcKCrthdOtlnah12Perfil?alt=media&token=7032fc59-b26a-433d-b283-d48373d7af0d'
+                      // uri: 'https://firebasestorage.googleapis.com/v0/b/caronasuniversitarias-c98eb.appspot.com/o/0VtQXRifF8PdbcKCrthdOtlnah12Perfil?alt=media&token=7032fc59-b26a-433d-b283-d48373d7af0d'
                     }}
                     style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
                   />
