@@ -17,24 +17,46 @@ function Options({navigation, route}) {
     const cidade = route.params?.cidade;
     const estado = route.params?.estado;
 
+
+    /*
+    Função responsável por definir o vetor de motoristas e atualizar em tempo real conforme mais caronas forem oferecidas.
+    */
     async function getDadosMotorista(){
       let listaCaronas = '';
       let arrayUIDs = [];
+      let jaExiste = false;
+      if (jaExiste == true){
+        jaExiste = false;
+      }
       const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
       try{
         reference.on('value', function(snapshot){
           listaCaronas = snapshot.val().ofertasCaronas;
           arrayUIDs = listaCaronas.split(', ');
           arrayUIDs.forEach(uid =>{
-            if (uid != ''){
-              console.log('UID', uid);
+            if (vetorMotoristas.length == 0){
               setMotoristas([{
                 url: recuperarFotoMotorista(uid),
                 uid: uid,
-                nome: recuperarNomeMotorista(uid),
-                carro:'Gol',
-                placa:'123',
+                nome: '',
+                carro:'ATUALIZAR',
+                placa:'ATUALIZAR',
               }])
+            }else{
+              vetorMotoristas.some(motorista=>{
+                if (motorista.uid == uid){
+                  jaExiste = true;
+                }
+              })
+              if (!jaExiste){
+                setMotoristas([...vetorMotoristas, {
+                  url: recuperarFotoMotorista(uid),
+                  uid: uid,
+                  nome: '',
+                  carro:'ATUALIZAR',
+                  placa:'ATUALIZAR',
+                }])
+              }
             }
           });
         })
@@ -44,21 +66,25 @@ function Options({navigation, route}) {
     }
 
 
-  //Função responsável por recuperar o nome do motorista
-  const recuperarNomeMotorista = async(motoristaUID)=>{
-    let nomeMotorista = '';
-    try{
-      firestore().collection('Users').doc(motoristaUID).onSnapshot(documentSnapshot=>{
-        if (documentSnapshot.exists == true){
-          nomeMotorista = documentSnapshot.data().nome;
-        }
-      })
-    }catch(error){
-      console.log(error.code);
-    }
-    return nomeMotorista;
-  }
-
+  //Função responsável por recuperar o nome do motorista e atualizar no vetor;
+  // const recuperarNomeMotorista = async(motoristaUID)=>{
+  //   let nomeMotorista = '';
+  //   try{
+  //     firestore().collection('Users').doc(motoristaUID).onSnapshot(documentSnapshot=>{
+  //       if (documentSnapshot.exists == true){
+  //         nomeMotorista = documentSnapshot.data().nome;
+  //         vetorMotoristas.some(motorista=>{
+  //           if (motorista.uid == motoristaUID){
+  //             vetorMotoristas[vetorMotoristas.indexOf(motorista)].nome = nomeMotorista;
+  //             console.log('ATUALIZOU NOME MOTORISTA!');
+  //           }
+  //         })
+  //       }
+  //     })
+  //   }catch(error){
+  //     console.log(error.code);
+  //   }
+  // }
 
   //Função responsável por receber um UID e retornar uma url para a imagem do motorista;
   const recuperarFotoMotorista = async(motoristaUID)=>{
@@ -76,13 +102,12 @@ function Options({navigation, route}) {
   }
 
 
-  //Função responsável por recusar carona. O ato de recusar carona de um motorista, implica em remover o seu UID do banco de dados.
+  //Função responsável por recusar carona. O ato de recusar carona de um motorista, implica em remover o seu UID do banco de dados e do vetor corrente de motoristas.
   function recusarCarona(motoristaUID){
     let totalOfertas = '';
     let arrayOfertasRestantes = [];
     let ofertasRestantes = '';
 
-    motoristaUID = 'mariano'; //comentar essa linha quando for chamar a função no botão do modal;
     const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
       reference_passageiro.once('value').then(snapshot=>{
@@ -94,11 +119,15 @@ function Options({navigation, route}) {
           reference_passageiro.update({
             ofertasCaronas: ofertasRestantes,
           })
-          //ALÉM DE ATUALIZAR NO BANCO, É NECESSÁRIO REMOVER DO ARRAY DE MOTORISTAS, PARA ATUALIZAR NA TELA;
+          vetorMotoristas.some(motorista=>{
+            if (motorista.uid == motoristaUID){
+              vetorMotoristas.splice(vetorMotoristas.indexOf(motorista), 1);
+            }
+          })
         }
       })
     }catch(error){
-      console.log('deu ruim');
+      console.log('error.code', error.code);
     }
     console.log('Carona recusada!');
   }
@@ -126,10 +155,16 @@ function Options({navigation, route}) {
     }
     navigation.navigate('CaronaEncontrada');
   }
+
+  const testeFuncao = async()=>{
+    console.log('vetorMotoristas');
+    console.log(vetorMotoristas);
+    getDadosMotorista();
+  }
   
   useEffect(()=>{
     getDadosMotorista();
-  }, [])
+  }, [vetorMotoristas]);
 
     return (
        <SafeAreaView style={styles.container}>
@@ -140,22 +175,31 @@ function Options({navigation, route}) {
           />
           <Text style={{color:'#06444C', left: 24, fontWeight:'700', fontSize: 20, lineHeight:24, textAlign:'left', top: -120}}>Carona encontrada!</Text>
           <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 20, lineHeight:24, textAlign:'left', top: -110}}>Motoristas disponíveis:</Text>
-          <TouchableOpacity 
+          {/* <TouchableOpacity 
             style={{backgroundColor:'black'}}
-            onPress={recusarCarona}  
+            onPress={testeFuncao}  
           >
-            <Text>Recusar Carona</Text>
+            <Text>Teste função</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={{backgroundColor:'black', marginTop: 20, height: 40, width: 300, alignSelf:'center'}}
             onPress={()=>{navigation.navigate('CaronaEncontrada')}}  
           >
             <Text>PRÓXIMA TELA</Text>
-          </TouchableOpacity>
-          {/* {
+          </TouchableOpacity> */}
+          {/* <TouchableOpacity 
+            style={{backgroundColor:'black', marginTop: 20, height: 40, width: 300, alignSelf:'center'}}
+            onPress={testeFuncao}  
+          >
+            <Text>TESTE FUNÇÃO</Text>
+          </TouchableOpacity> */}
+          <ScrollView style={[styles.scrollView,{top:-100}]}>
+          {
             vetorMotoristas.map(motorista=>(
-              <ScrollView style={[styles.scrollView,{top:-100}]}>
-                <View style={styles.viewMotoristas}>
+              <>
+              <View style={styles.viewMotoristas}
+                  key={motorista.uid}
+                  >
                   <Image 
                     source={{
                       // uri: motorista.url._W
@@ -163,7 +207,7 @@ function Options({navigation, route}) {
                     }}
                     style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
                   />
-                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Nome: {motorista.nome}</Text>
+                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Nome: {motorista.uid}</Text>
                   <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Carro:</Text>
                   <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Placa:</Text>
                   <View style={{flexDirection:'row', alignSelf:'center'}}>
@@ -177,7 +221,7 @@ function Options({navigation, route}) {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: 10}}
-                    onPress={()=>{recusarCarona()}}
+                    onPress={()=>{recusarCarona(motorista.uid)}}
                     >
                     <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
                       Recusar
@@ -185,9 +229,15 @@ function Options({navigation, route}) {
                   </TouchableOpacity>
                   </View>
                 </View>
-              </ScrollView>
+                </>
             ))
-          } */}
+          }
+            <Text style={styles.text}>
+            
+            {'\n\n\n\n'}
+            {'\n\n\n\n\n'}
+            </Text>
+          </ScrollView>
     </SafeAreaView>
     );
 }
