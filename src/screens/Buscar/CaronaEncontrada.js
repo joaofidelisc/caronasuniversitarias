@@ -82,30 +82,23 @@ function Options({navigation, route}) {
     let arrayOfertasRestantes = [];
     let ofertasRestantes = '';
 
-    motoristaUID = '123';
+    motoristaUID = 'mariano'; //comentar essa linha quando for chamar a função no botão do modal;
     const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
-      reference_passageiro.once('value', function(snapshot){
+      reference_passageiro.once('value').then(snapshot=>{
         totalOfertas = snapshot.val().ofertasCaronas;
         arrayOfertasRestantes = totalOfertas.split(', ');
-        arrayOfertasRestantes.splice(arrayOfertasRestantes.indexOf(motoristaUID), 1);
-        ofertasRestantes = arrayOfertasRestantes.join(', ');
-        reference_passageiro.update({
-          ofertasCaronas: ofertasRestantes,
-        })
+        if (totalOfertas.includes(motoristaUID)){
+          arrayOfertasRestantes.splice(arrayOfertasRestantes.indexOf(motoristaUID), 1);
+          ofertasRestantes = arrayOfertasRestantes.join(', ');
+          reference_passageiro.update({
+            ofertasCaronas: ofertasRestantes,
+          })
+        }
       })
     }catch(error){
       console.log('deu ruim');
     }
-    // try{
-    //   reference_passageiro.update({        
-    //     ofertasCaronas:'',
-    //   });
-
-    //   // navigation.navigate('Buscando_Carona', {recusou: true});
-    // }catch(error){
-    //   console.log('ERRO:', error.code);
-    // }
     console.log('Carona recusada!');
   }
   
