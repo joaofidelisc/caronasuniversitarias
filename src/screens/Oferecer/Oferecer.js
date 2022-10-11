@@ -261,24 +261,19 @@ function Oferecer() {
     de carona.
   */
 
-
-  //Resolver esse tipo de concatenação ', UID';
   function oferecerCarona(){
     let listaCaronas = '';
-    // let vetorTeste = [];
     setModalVisible(false);
     const uidMotorista = auth().currentUser.uid;
     try{
       database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).once('value').then(snapshot=>{
         listaCaronas = snapshot.val().ofertasCaronas;
-        // vetorCaronas.push(snapshot.val().ofertasCaronas);
-        // console.log('LISTA CARONAS:', listaCaronas);
-        // console.log('UID MOTORISTA:', uidMotorista);
-        // vetorTeste = listaCaronas.split(', ');
-        // console.log('VETOR TESTE', vetorTeste);
         if (!listaCaronas.includes(uidMotorista)){
-          // console.log('NÃO TÁ INCLUSO!');
-          listaCaronas = listaCaronas.concat(', ',uidMotorista); //faz um join com os elementos do vetor e depois concatena com o uidMotorista;
+          if (listaCaronas == ''){
+            listaCaronas = uidMotorista;
+          }else{
+            listaCaronas = listaCaronas.concat(', ',uidMotorista); //faz um join com os elementos do vetor e depois concatena com o uidMotorista;
+          }
         }        
         database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).update({
           ofertasCaronas: listaCaronas
@@ -288,7 +283,6 @@ function Oferecer() {
       console.log('Deu algum erro aqui :(');
     }
   }
-
 
   /*Essa função é responsável por verificar em tempo real as caronas aceitas pelos passageiros no banco do atual motorista;
   Ou seja, caso um passageiro aceite uma proposta de carona minha, aparecerá um modal na tela, ressaltando essa informação. 
