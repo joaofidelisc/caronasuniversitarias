@@ -14,6 +14,7 @@ import Como_Comecar from '../screens/Cadastro/Como_Comecar';
 import Forms_Passageiro from '../screens/Passageiro/Forms_Passageiro';
 import Forms_Motorista from '../screens/Motorista/Forms_Motorista';
 import Forms_Motorista_Veiculo from '../screens/Motorista/Forms_Motorista_Veiculo';
+import { Splash } from '../screens/SplashScreen/SplashScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,7 +23,8 @@ function RotaEntrada() {
       <NavigationContainer
         independent={true}
       >
-        <Stack.Navigator initialRouteName="Entrada">
+        <Stack.Navigator initialRouteName="Splash">
+          <Stack.Screen name= "Splash" component={Splash} options={{headerShown:false}}/>
           <Stack.Screen name="Entrada" component={Entrada} options={{headerShown:false}} />
           <Stack.Screen name="Login" component={Login} options={{headerShown:false}}/>
           <Stack.Screen name="Cadastro_Inicio" component={Cadastro_Inicio} options={{headerShown:false}} />
