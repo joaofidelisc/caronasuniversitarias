@@ -9,11 +9,10 @@ import storage from '@react-native-firebase/storage';
 
 function Options({navigation, route}) {
 
-    const [uidMotorista, setUidMotorista] = useState('');
-    const [vetorMotoristas, setMotoristas] = useState([]);
-    
-    const currentUser = auth().currentUser.uid;
+    const [vetorMotoristas, setMotoristas] = useState([]);    
 
+    const currentUser = auth().currentUser.uid;
+    
     const cidade = route.params?.cidade;
     const estado = route.params?.estado;
 
@@ -33,12 +32,12 @@ function Options({navigation, route}) {
         reference.on('value', function(snapshot){
           listaCaronas = snapshot.val().ofertasCaronas;
           arrayUIDs = listaCaronas.split(', ');
-          arrayUIDs.forEach(uid =>{
+          arrayUIDs.forEach(async uid =>{
             if (vetorMotoristas.length == 0){
               setMotoristas([{
-                url: recuperarFotoMotorista(uid),
+                url: await recuperarFotoMotorista(uid),
                 uid: uid,
-                nome: '',
+                nome: await recuperarNomeMotorista(uid),
                 carro:'ATUALIZAR',
                 placa:'ATUALIZAR',
               }])
@@ -50,9 +49,9 @@ function Options({navigation, route}) {
               })
               if (!jaExiste){
                 setMotoristas([...vetorMotoristas, {
-                  url: recuperarFotoMotorista(uid),
+                  url: await recuperarFotoMotorista(uid),
                   uid: uid,
-                  nome: '',
+                  nome: await recuperarNomeMotorista(uid),
                   carro:'ATUALIZAR',
                   placa:'ATUALIZAR',
                 }])
@@ -66,27 +65,23 @@ function Options({navigation, route}) {
     }
 
 
-  //Função responsável por recuperar o nome do motorista e atualizar no vetor;
-  // const recuperarNomeMotorista = async(motoristaUID)=>{
-  //   let nomeMotorista = '';
-  //   try{
-  //     firestore().collection('Users').doc(motoristaUID).onSnapshot(documentSnapshot=>{
-  //       if (documentSnapshot.exists == true){
-  //         nomeMotorista = documentSnapshot.data().nome;
-  //         vetorMotoristas.some(motorista=>{
-  //           if (motorista.uid == motoristaUID){
-  //             vetorMotoristas[vetorMotoristas.indexOf(motorista)].nome = nomeMotorista;
-  //             console.log('ATUALIZOU NOME MOTORISTA!');
-  //           }
-  //         })
-  //       }
-  //     })
-  //   }catch(error){
-  //     console.log(error.code);
-  //   }
-  // }
 
-  //Função responsável por receber um UID e retornar uma url para a imagem do motorista;
+  //Função responsável por recuperar o nome do motorista e atualizar no vetor;
+  async function recuperarNomeMotorista(motoristaUID){
+    let nomeMotorista = '';
+    let docRef = firestore().collection('Users').doc(motoristaUID);
+    return docRef.get().then((doc)=>{
+      if (doc.exists){
+        nomeMotorista = doc.data().nome;
+        return nomeMotorista;
+      }else{
+        return '';
+      }
+    })
+  }
+
+
+  //Função responsável por receber um UID e retornar a url para a imagem do motorista.
   const recuperarFotoMotorista = async(motoristaUID)=>{
     const uidMotorista = motoristaUID;
     var caminhoFirebase = uidMotorista.concat('Perfil');    
@@ -98,7 +93,7 @@ function Options({navigation, route}) {
         url = await storage().ref('user_undefined.png').getDownloadURL(); 
       }
     }
-    return url;
+   return url;
   }
 
 
@@ -136,32 +131,38 @@ function Options({navigation, route}) {
     }
     console.log('Carona recusada!');
   }
-  
-  //Função responsável por aceitar carona - escreve no banco do motorista o uid do passageiro e escreve no banco do passageiro o uid do motorista;
-  //ATUALIZAR ESSA FUNÇÃO DEPOIS, NÃO ESTÁ IMPLEMENTADA DA MELHOR MANEIRA (2 TRY-CATCH);
-  //AO ACEITAR CARONA, REMOVER VETOR DE OFERTAS DE CARONAS DO BANCO;
 
-  function aceitarCarona(){
-    console.log('Carona aceita!');
-    // const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
-    // const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
-    // try{
-    //   reference_passageiro.update({        
-    //     caronasAceitas:uidMotorista,
-    //   });
-    // }catch(error){
-    //   console.log('ERRO:', error.code);
-    // }
-    // try{
-    //   reference_motorista.update({        
-    //     caronasAceitas:currentUser,
-    //   });
-      
-    // }catch(error){
-    //   console.log('ERRO:', error.code);
-    // }
-    // navigation.navigate('CaronaEncontrada');
+  //Função responsável por complementar a função abaixo.
+  //Escreve no banco do motorista o UID do passageiro.
+  function aceitarCarona_(uidMotorista){
+    const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
+    try{
+        reference_motorista.update({        
+        caronasAceitas:currentUser,
+      });
+    
+    }catch(error){
+        console.log('ERRO:', error.code);
+    }
+    navigation.navigate('CaronaEncontrada');
   }
+  
+  //Função responsável por aceitar carona - escreve no banco do banco do passageiro o uid do motorista e reseta o vetor de ofertas de caronas;
+  //Além disso, invoca a função aceitarCarona_ (complementar desta), que é responsável por escrever no banco do motorista o uid do passageiro;
+  function aceitarCarona(uidMotorista){
+    const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+    try{
+        reference_passageiro.update({        
+        caronasAceitas:uidMotorista,
+        ofertasCaronas:''
+      });
+      navigation.navigate('CaronaEncontrada');
+    }catch(error){
+        console.log('ERRO:', error.code);
+    }
+    aceitarCarona_(uidMotorista);
+  }
+    
   
   useEffect(()=>{
     getDadosMotorista();
@@ -186,20 +187,18 @@ function Options({navigation, route}) {
                   >
                   <Image 
                     source={{
-                      // uri: motorista.url
-                      uri: 'https://firebasestorage.googleapis.com/v0/b/caronasuniversitarias-c98eb.appspot.com/o/0VtQXRifF8PdbcKCrthdOtlnah12Perfil?alt=media&token=7032fc59-b26a-433d-b283-d48373d7af0d'
-                      // uri: 'https://firebasestorage.googleapis.com/v0/b/caronasuniversitarias-c98eb.appspot.com/o/0VtQXRifF8PdbcKCrthdOtlnah12Perfil?alt=media&token=7032fc59-b26a-433d-b283-d48373d7af0d'
+                      uri: motorista.url
                     }}
                     style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
                   />
-                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Nome: {motorista.uid}</Text>
-                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Carro:</Text>
-                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Placa:</Text>
+                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Nome: {motorista.nome}</Text>
+                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Carro:{motorista.carro}</Text>
+                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Placa:{motorista.placa}</Text>
                   <View style={{flexDirection:'row', alignSelf:'center'}}>
                   <TouchableOpacity
                     style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginRight: 20}}
-                    onPress={()=>{aceitarCarona()}}
-                    >
+                    onPress={()=>{aceitarCarona(motorista.uid)}}
+                  >
                     <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
                       Aceitar
                     </Text>
