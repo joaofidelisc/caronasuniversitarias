@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Image, SafeAreaView, StatusBar, Dimensions } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Image, SafeAreaView, StatusBar, Dimensions, BackHandler } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth'
@@ -21,6 +21,13 @@ function Entrada({navigation}){
   //     // SignInToken();
   //   })
   // })
+
+  //travar o botão voltar para evitar repetição indesejada da splash screen
+  useEffect(()=> {
+    BackHandler.addEventListener('hardwareBackPress', ()=>{
+      return true
+    })
+  }, []) 
 
   return (
     <SafeAreaView>
