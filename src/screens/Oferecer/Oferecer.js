@@ -294,9 +294,11 @@ function Oferecer() {
     console.log('caronasAceitas');
     try{
       reference.on('value', function(snapshot){
-        if (snapshot.val().caronasAceitas != ''){
-          setCaronaAceita(true);
-          buscaUsuario(snapshot.val().caronasAceitas, currentUser);
+        if (snapshot.exists()){
+          if (snapshot.val().caronasAceitas != ''){
+            setCaronaAceita(true);
+            buscaUsuario(snapshot.val().caronasAceitas, currentUser);
+          }
         }
       })
     }catch(error){
@@ -304,7 +306,7 @@ function Oferecer() {
     }
   }
 
-
+  
   /*A implementação dessa função não está finalizada, mas a ideia é chamá-la sempre que for buscar um passageiro que aceitou uma carona minha.
   */
   function buscarPassageiro(){

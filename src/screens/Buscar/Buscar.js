@@ -63,10 +63,6 @@ export default function Buscar({navigation}) {
     }
   }
 
-  async function getLocalizacaoInicial(){
-
-  }
-
   async function getLocalPassageiro(){
     PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
