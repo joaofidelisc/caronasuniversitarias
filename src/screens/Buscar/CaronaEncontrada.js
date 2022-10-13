@@ -30,7 +30,9 @@ function Options({navigation, route}) {
       const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
       try{
         reference.on('value', function(snapshot){
-          listaCaronas = snapshot.val().ofertasCaronas;
+          if (snapshot.exists() && snapshot.val().ofertasCaronas != undefined){
+            listaCaronas = snapshot.val().ofertasCaronas;
+          }
           arrayUIDs = listaCaronas.split(', ');
           arrayUIDs.forEach(async uid =>{
             if (vetorMotoristas.length == 0){
@@ -106,7 +108,9 @@ function Options({navigation, route}) {
     const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
       reference_passageiro.once('value').then(snapshot=>{
-        totalOfertas = snapshot.val().ofertasCaronas;
+        if (snapshot.exists() && snapshot.val().ofertasCaronas != undefined){
+          totalOfertas = snapshot.val().ofertasCaronas;
+        }
         if (totalOfertas != '' || totalOfertas.split(', ').length>1){
           arrayOfertasRestantes = totalOfertas.split(', ');
           if (totalOfertas.includes(motoristaUID)){
@@ -180,10 +184,10 @@ function Options({navigation, route}) {
    
           <ScrollView style={[styles.scrollView,{top:-100}]}>
           {
-            vetorMotoristas.map(motorista=>(
+            vetorMotoristas.map((motorista, uid)=>(
               <>
               <View style={styles.viewMotoristas}
-                  key={motorista.uid}
+                  // key={motorista.uid}
                   >
                   <Image 
                     source={{

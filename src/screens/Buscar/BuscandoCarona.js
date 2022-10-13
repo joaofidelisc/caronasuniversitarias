@@ -27,8 +27,8 @@ function BuscandoCarona({navigation, route}) {
   function buscarCarona(){
     try{
       database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`).on('value', function(snapshot){
-        console.log('Ofertas Caronas:', snapshot.val().ofertasCaronas);
-        if (snapshot.val().ofertasCaronas != ''){
+        // console.log('Ofertas Caronas:', snapshot.val().ofertasCaronas);
+        if (snapshot.val().ofertasCaronas != '' && snapshot.val().ofertasCaronas != null && snapshot.val().ofertasCaronas != undefined){
           setEncontrouCarona(true);
           console.log('Encontrou carona?:', encontrouCarona);
         } else{
