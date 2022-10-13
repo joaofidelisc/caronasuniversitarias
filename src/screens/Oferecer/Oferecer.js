@@ -295,7 +295,7 @@ function Oferecer() {
     try{
       reference.on('value', function(snapshot){
         if (snapshot.exists()){
-          if (snapshot.val().caronasAceitas != ''){
+          if (snapshot.val().caronasAceitas != '' && snapshot.val().caronasAceitas != undefined){
             setCaronaAceita(true);
             buscaUsuario(snapshot.val().caronasAceitas, currentUser);
           }
@@ -311,11 +311,9 @@ function Oferecer() {
   */
   function buscarPassageiro(){
     console.log('Buscando passageiro...\n');
-    // setModalVisible(!modalVisible);
     setCaronaAceita(false);
     setBuscandoPassageiro(true);
   }
-  
 
   useEffect(()=>{
     console.log('TELA: Oferecer');
