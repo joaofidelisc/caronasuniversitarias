@@ -32,22 +32,22 @@ function Entrada({navigation}){
   return (
     <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
-        <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: height *0.3, width: width,}}>
+        <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: height *0.3, width: width}}>
         <Image source={
             require('../../assets/images/driver-car.png')} 
-            style={{height:height*0.5 , width: width*0.82, marginTop: 0}}  
+            style={{height:height*0.5 , width: width, marginTop: 0, backgroundColor:'white'}}  
             />
-          </View> 
-         <View Style={{height: height*0.3, width: width, backgroundColor:'white',}}>
+        </View> 
+         <View Style={{width: width, backgroundColor:'white'}}>
         <Text style={{textAlign:'center',
-                fontSize: height*0.04, 
+                fontSize: height*0.038, 
                 backgroundColor: 'white', 
                 height: height *0.3, 
                 width: width,
                 fontWeight: 'bold',
                 color: '#06444C',
-                lineHeight:height*0.07
-                
+                lineHeight:height*0.055,
+                marginTop: height*0.06
                 }}>
             Caronas Universitárias, o{'\n'}
             seu app universitário!
@@ -66,13 +66,10 @@ function Entrada({navigation}){
             onPress={()=>navigation.navigate('Cadastro_Inicio')}
             >
             <Text style={{textAlign:'center', 
-            fontSize:height*0.04,
+            fontSize:height*0.026,
             fontWeight:'bold', 
             color:"white", 
-            padding:5,
-            marginHorizontal: width*0.1,
             alignItems:'center'
-
           }}>
             Cadastre-se</Text>
         </TouchableOpacity>
@@ -92,10 +89,10 @@ export default Entrada;
 const styles = StyleSheet.create({
     btnCadastrar:{
       backgroundColor: '#FF5F55',
-      borderRadius: width*0.06,
+      borderRadius: width*0.05,
       padding: 10,
       width: width *0.85,
-      height: height*0.095,
+      height: height*0.064,
       alignItems:'center',
       marginVertical:width*0.08,
       marginHorizontal: width*0.08
@@ -103,7 +100,7 @@ const styles = StyleSheet.create({
     txtBtnCadastrar:{
       fontWeight: 'bold',
       textAlign: 'center',
-      fontSize: 16,
+      fontSize: 10,
       color: 'white',
     },
     txtBtnEntrar:{
