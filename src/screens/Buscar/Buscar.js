@@ -29,6 +29,8 @@ export default function Buscar({navigation}) {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [warning, setWarning] = useState('');
+  const [latitudeAPI, setLatitudeAPI] = useState('');
+  const [longitudeAPI, setLongitudeAPI] = useState('');
 
 
   async function enviarLocalizacaoPassageiro(latitude, longitude){
@@ -113,6 +115,7 @@ export default function Buscar({navigation}) {
         providerListener: false // true ==> Trigger locationProviderStatusChange listener when the location state changes
       }).then(function(success) {
         setLocalizacaoAtiva(true);
+        estadoInicial();
         // console.log(success); // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
       }).catch((error) => {
         setLocalizacaoAtiva(false);  
@@ -120,15 +123,31 @@ export default function Buscar({navigation}) {
       });
     }
     
+  const estadoInicial = async()=>{
+    console.log('rodando estadoInicial!');
+    try{
+      Geolocation.getCurrentPosition(info=>{
+        setlocalizacaoPassageiro({
+          latitude: info.coords.latitude,
+          longitude: info.coords.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421
+        })
+      },
+        ()=>{
+          console.log('erro')}, {
+            enableHighAccuracy:false,
+            timeout:2000,
+      })
+    } catch(error){
+      console.log(error.code); 
+    }
+  }
 
   useEffect(()=>{
     console.log('TELA: Buscar');
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
-    // setEstado('');
-    // setCidade('');
-    // resetarInformacoes();
-    ligarLocalizacao();
-  
+    ligarLocalizacao();    
   }, [])
   
   
@@ -143,65 +162,69 @@ export default function Buscar({navigation}) {
       />
       <Text style={{fontSize:20, color:'#2f4f4f', paddingHorizontal:70, fontWeight:'bold', position: 'absolute', top: 65}}>Para onde pretende ir?</Text>
       <Text style={{fontSize:15, color:'#c0c0c0', paddingHorizontal:70, fontWeight:'normal', marginVertical:15, position: 'absolute', top: 170, fontWeight: '600'}}>Ex: Universidade fereral de São Carlos</Text>
-
-      <GooglePlacesAutocomplete
-        minLength={2}
-        autoFocus={false}
-        fetchDetails={true}
-        onPress={(data, details = null) => {
-          setNomeDestino(data.description);
-          setLocalDestino({
-            latitude: details.geometry.location.lat,
-            longitude: details.geometry.location.lng,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421
-          })
-        }}
-        textInputProps={{
-          onChangeText: (nomeDestino) =>{setNomeDestino(nomeDestino)}
-        }}
-        
-        query={{
-          key: config.googleAPI,
-          language: 'pt-br',
-          components: 'country:br',
-          location: "-21.59397, -48.35135", //alterar aqui para coordenadas atuais
-          radius: "15000", //15km
-          strictbounds: true
-        }}
-  
-        GooglePlacesSearchQuery={{
-          rankby: 'distance',
-        }}
-        styles={{
-          container: {
-            position:'absolute',
-            alignItems: 'center',
-            top: 120,                   
-            width: width,
-            justifyContent: 'center',
-          },
-          textInputContainer: {
-            width: 312,
-            height: 50,
-            borderColor: 'rgba(83, 83, 83, 0.8)',
-            borderWidth:2,
-            borderRadius: 8,
-            backgroundColor: 'white',
-          },
-          textInput:{
-            color: 'black',
-          },
-          description: {
-            color: 'black'
-          },
-          listView: {
-            elevation: 1,
-            height: 100,
-            width: 312
-          },
-        }}
-      />
+      {
+        localizacaoPassageiro &&
+        <GooglePlacesAutocomplete
+          minLength={2}
+          autoFocus={false}
+          fetchDetails={true}
+          onPress={(data, details = null) => {
+            setNomeDestino(data.description);
+            setLocalDestino({
+              latitude: details.geometry.location.lat,
+              longitude: details.geometry.location.lng,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421
+            })
+          }}
+          textInputProps={{
+            onChangeText: (nomeDestino) =>{
+              setNomeDestino(nomeDestino)
+            }
+          }}
+          
+          query={{
+            key: config.googleAPI,
+            language: 'pt-br',
+            components: 'country:br',
+            location: `${localizacaoPassageiro.latitude}, ${localizacaoPassageiro.longitude}`, //alterar aqui para coordenadas atuais
+            radius: "15000", //15km
+            strictbounds: true
+          }}
+    
+          GooglePlacesSearchQuery={{
+            rankby: 'distance',
+          }}
+          styles={{
+            container: {
+              position:'absolute',
+              alignItems: 'center',
+              top: 120,                   
+              width: width,
+              justifyContent: 'center',
+            },
+            textInputContainer: {
+              width: 312,
+              height: 50,
+              borderColor: 'rgba(83, 83, 83, 0.8)',
+              borderWidth:2,
+              borderRadius: 8,
+              backgroundColor: 'white',
+            },
+            textInput:{
+              color: 'black',
+            },
+            description: {
+              color: 'black'
+            },
+            listView: {
+              elevation: 1,
+              height: 100,
+              width: 312
+            },
+          }}
+        />
+      }
       
       <View style={{marginVertical:50}}>
       <TouchableOpacity

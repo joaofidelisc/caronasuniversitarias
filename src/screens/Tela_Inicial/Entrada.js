@@ -75,7 +75,8 @@ function Entrada({navigation}){
         </TouchableOpacity>
         <TouchableOpacity
             onPress={()=>navigation.navigate('Login')}
-            >
+            style={{alignSelf:'center'}}
+        >
             <Text style={styles.txtBtnEntrar}>Entrar</Text>
         </TouchableOpacity>
           </View>
@@ -94,8 +95,7 @@ const styles = StyleSheet.create({
       width: width *0.85,
       height: height*0.064,
       alignItems:'center',
-      marginVertical:width*0.08,
-      marginHorizontal: width*0.08
+      alignSelf:'center'
     },
     txtBtnCadastrar:{
       fontWeight: 'bold',
