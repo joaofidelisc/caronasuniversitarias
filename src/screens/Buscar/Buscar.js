@@ -25,14 +25,9 @@ export default function Buscar({navigation}) {
   const [nomeDestino, setNomeDestino] = useState('');
   const [localizacaoPassageiro, setlocalizacaoPassageiro] = useState(null);
   const [localizacaoAtiva, setLocalizacaoAtiva] = useState(false);
-  // const [objPassageiro, setObjPassageiro] = useState([]);
-
   const [modalVisible, setModalVisible] = useState(false);
-  const [warning, setWarning] = useState('');
-  const [latitudeAPI, setLatitudeAPI] = useState('');
-  const [longitudeAPI, setLongitudeAPI] = useState('');
 
-
+  
   async function enviarLocalizacaoPassageiro(latitude, longitude){
     const currentUser = auth().currentUser.uid;
     var response = await Geocoder.from(latitude, longitude);
@@ -124,7 +119,6 @@ export default function Buscar({navigation}) {
     }
     
   const estadoInicial = async()=>{
-    console.log('rodando estadoInicial!');
     try{
       Geolocation.getCurrentPosition(info=>{
         setlocalizacaoPassageiro({
