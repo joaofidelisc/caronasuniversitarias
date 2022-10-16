@@ -1,33 +1,50 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Image, SafeAreaView, StatusBar, Dimensions, BackHandler } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth'
 
 const {height,width}=Dimensions.get('window')
-let div = height *0.3
-function Entrada({navigation}){
-  // https://www.youtube.com/watch?v=MvepxO0qssA
-  //https://instamobile.io/react-native-tutorials/asyncstorage-example-react-native/
+// let div = height *0.3
 
+function Entrada({navigation}){
+  const [falhaLogin, setFalhaLogin] = useState(true);
+
+  const redirecionamentoLogin = async(email)=>{  
+    try{
+      firestore().collection('Users').where('email', '==', email).get().then(querySnapshot=>{
+        const valor = querySnapshot.docs;
+        if (valor == ""){
+          navigation.navigate("Como_Comecar", {email: email});
+        }
+        else{
+          navigation.navigate("MenuPrincipal");
+        }
+      })
+    }catch(error){
+      console.log('erro no redirecionamento');
+    }   
+  }
+  
   const SignInToken = async() =>{
     let token = await AsyncStorage.getItem("token");
     let email = await AsyncStorage.getItem('email');
     let password = await AsyncStorage.getItem('password');
-    // console.log(AsyncStorage.getItem("token").then((token)=>{console.log(token)}));
     try{
       if (token != null){
         auth().signInWithCustomToken(token);
-        navigation.navigate("MenuPrincipal");
+        await redirecionamentoLogin(email);
       } else if (email != null && password != null){
         auth().signInWithEmailAndPassword(email, password);
-        navigation.navigate("MenuPrincipal");
+        await redirecionamentoLogin(email);
       }
     }catch(error){
       if (error.code == 'auth/missing-identifier'){
         console.log('missing identifier!');
       }
       console.log('erro no login automático');
+      setFalhaLogin(false);
     }
   }
 
@@ -37,60 +54,64 @@ function Entrada({navigation}){
     BackHandler.addEventListener('hardwareBackPress', ()=>{
       return true
     })
-  }, []) 
+  }, [falhaLogin]); 
 
   return (
     <SafeAreaView>
-        <StatusBar barStyle={'light-content'} />
-        <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: height *0.3, width: width}}>
-        <Image source={
-            require('../../assets/images/driver-car.png')} 
-            style={{height:height*0.5 , width: width, marginTop: 0, backgroundColor:'white'}}  
-            />
-        </View> 
-         <View Style={{width: width, backgroundColor:'white'}}>
-        <Text style={{textAlign:'center',
-                fontSize: height*0.038, 
-                backgroundColor: 'white', 
-                height: height *0.3, 
-                width: width,
-                fontWeight: 'bold',
-                color: '#06444C',
-                lineHeight:height*0.055,
-                marginTop: height*0.06
-                }}>
-            Caronas Universitárias, o{'\n'}
-            seu app universitário!
-        </Text> 
-        </View>
-        <View style={{height: height, 
-          width: width, backgroundColor:'#ffffff',}}>
-       
-        <View Style={{height: height*0.04, 
-          width: width, backgroundColor:'#ffffff',
-          justifyContent: 'center', 
-          alignItems: 'center'}}>
+        {
+          falhaLogin && <>
+          <StatusBar barStyle={'light-content'} />
+            <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: height *0.3, width: width}}>
+            <Image source={
+                require('../../assets/images/driver-car.png')} 
+                style={{height:height*0.5 , width: width, marginTop: 0, backgroundColor:'white'}}  
+                />
+            </View> 
+            <View Style={{width: width, backgroundColor:'white'}}>
+            <Text style={{textAlign:'center',
+                    fontSize: height*0.038, 
+                    backgroundColor: 'white', 
+                    height: height *0.3, 
+                    width: width,
+                    fontWeight: 'bold',
+                    color: '#06444C',
+                    lineHeight:height*0.055,
+                    marginTop: height*0.06
+                  }}>
+                Caronas Universitárias, o{'\n'}
+                seu app universitário!
+            </Text> 
+            </View>
+            <View style={{height: height, 
+              width: width, backgroundColor:'#ffffff',}}>
+          
+            <View Style={{height: height*0.04, 
+              width: width, backgroundColor:'#ffffff',
+              justifyContent: 'center', 
+              alignItems: 'center'}}>
 
-        <TouchableOpacity 
-            style={styles.btnCadastrar}
-            onPress={()=>navigation.navigate('Cadastro_Inicio')}
-            >
-            <Text style={{textAlign:'center', 
-            fontSize:height*0.026,
-            fontWeight:'bold', 
-            color:"white", 
-            alignItems:'center'
-          }}>
-            Cadastre-se</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-            onPress={()=>navigation.navigate('Login')}
-            style={{alignSelf:'center'}}
-        >
-            <Text style={styles.txtBtnEntrar}>Entrar</Text>
-        </TouchableOpacity>
-          </View>
-        </View>
+            <TouchableOpacity 
+                style={styles.btnCadastrar}
+                onPress={()=>navigation.navigate('Cadastro_Inicio')}
+                >
+                <Text style={{textAlign:'center', 
+                fontSize:height*0.026,
+                fontWeight:'bold', 
+                color:"white", 
+                alignItems:'center'
+              }}>
+                Cadastre-se</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                onPress={()=>navigation.navigate('Login')}
+                style={{alignSelf:'center'}}
+                >
+                <Text style={styles.txtBtnEntrar}>Entrar</Text>
+            </TouchableOpacity>
+              </View>
+            </View>
+        </>
+        }
     </SafeAreaView>
   );
 }
@@ -98,7 +119,7 @@ function Entrada({navigation}){
 export default Entrada;
 
 const styles = StyleSheet.create({
-    btnCadastrar:{
+  btnCadastrar:{
       backgroundColor: '#FF5F55',
       borderRadius: width*0.05,
       padding: 10,

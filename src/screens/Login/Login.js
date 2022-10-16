@@ -44,9 +44,8 @@ function Login({navigation}) {
   })
   
   const redirecionamentoLogin = async(emailGoogle)=>{  
-    await AsyncStorage.setItem('email', email);
-    await AsyncStorage.setItem('password', password);
     if (email == ''){
+      await AsyncStorage.setItem('email', emailGoogle);
       firestore().collection('Users').where('email', '==', emailGoogle).get().then(querySnapshot=>{
         const valor = querySnapshot.docs;
         if (valor == ""){
@@ -57,6 +56,8 @@ function Login({navigation}) {
         }
       })
     }else{
+      await AsyncStorage.setItem('email', email);
+      await AsyncStorage.setItem('password', password);
       firestore().collection('Users').where('email', '==', email).get().then(querySnapshot=>{
         const valor = querySnapshot.docs;
         if (valor == ""){
@@ -80,7 +81,7 @@ function Login({navigation}) {
   const SignInGoogle = async() =>{
     try{
       const { idToken } = await GoogleSignin.signIn();
-      // console.log('ID GOOGLE:', idToken);
+      console.log('ID GOOGLE:', idToken);
       await AsyncStorage.setItem('token', idToken);
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       const res = await auth().signInWithCredential(googleCredential);

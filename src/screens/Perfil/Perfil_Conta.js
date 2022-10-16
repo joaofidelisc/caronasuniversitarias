@@ -21,25 +21,24 @@ function Perfil_Conta({navigation}){
 
 
   const signOut = async()=>{
-    await AsyncStorage.removeItem('email');
-    await AsyncStorage.removeItem('password');
-    await AsyncStorage.removeItem("token");
-    RNRestart.Restart();
+    const providerID = auth().currentUser?.providerData[0].providerId;
+    console.log(auth().currentUser?.providerData[0].providerId);
+    try{
+      if (providerID == 'google.com'){
+        await AsyncStorage.removeItem('email');
+        await AsyncStorage.removeItem("token");
+        await GoogleSignin.signOut();
+      }else{
+        await AsyncStorage.removeItem('email');
+        await AsyncStorage.removeItem('password');
+        auth().signOut();
+      }
+      RNRestart.Restart();
+    }catch(error){
+      console.log('erro no logout!');
+    }
+    console.log('SAINDO...');
   }
-
-  // //falta implementar aqui
-  // const signOutGoogle = async() =>{
-  //   await AsyncStorage.removeItem("token");
-  //   await GoogleSignin.signOut().then(()=>{
-  //     RNRestart.Restart();
-  //     // console.log('saiu');
-  //   }).catch(error =>{
-  //     // console.log(error.code);
-  //     setWarning('Algum erro ocorreu.');
-  //     // setModalVisible(true);
-  //   })
-  // }
-
 
   const changePassword = async()=>{
     setAviso('Digite a senha atual e a nova')
