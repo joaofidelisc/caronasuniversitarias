@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import auth, { firebase } from '@react-native-firebase/auth'
+import auth from '@react-native-firebase/auth'
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -42,7 +42,8 @@ function Login({navigation}) {
   })
   
   const redirecionamentoLogin = async(emailGoogle)=>{  
-    
+    await AsyncStorage.setItem('email', email);
+    await AsyncStorage.setItem('password', password);
     if (email == ''){
       firestore().collection('Users').where('email', '==', emailGoogle).get().then(querySnapshot=>{
         const valor = querySnapshot.docs;
@@ -155,6 +156,7 @@ function Login({navigation}) {
           else{
             auth().currentUser.reload();
             auth().currentUser.getIdToken(true);
+            // console.log('GET TOKEN EMAIL', auth().currentUser.getIdTokenResult);
             setWarning('Verifique seu e-mail antes de prosseguir!');
             setModalVisible(true);
         }

@@ -12,10 +12,15 @@ function Entrada({navigation}){
 
   const SignInToken = async() =>{
     let token = await AsyncStorage.getItem("token");
-    console.log(AsyncStorage.getItem("token").then((token)=>{console.log(token)}));
+    let email = await AsyncStorage.getItem('email');
+    let password = await AsyncStorage.getItem('password');
+    // console.log(AsyncStorage.getItem("token").then((token)=>{console.log(token)}));
     try{
       if (token != null){
         auth().signInWithCustomToken(token);
+        navigation.navigate("MenuPrincipal");
+      } else if (email != null && password != null){
+        auth().signInWithEmailAndPassword(email, password);
         navigation.navigate("MenuPrincipal");
       }
     }catch(error){

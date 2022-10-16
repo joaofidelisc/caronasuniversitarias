@@ -20,6 +20,16 @@ function Perfil_Conta({navigation}){
   const [newPassword, setNewPassword] = useState('');
 
 
+  const signOut = async()=>{
+    await AsyncStorage.removeItem('email');
+    await AsyncStorage.removeItem('password');
+    // try{
+      
+    // }catch(error){
+
+    // }
+  }
+
   // //falta implementar aqui
   const signOutGoogle = async() =>{
     await AsyncStorage.removeItem("token");
