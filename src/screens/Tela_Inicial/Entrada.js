@@ -10,20 +10,25 @@ function Entrada({navigation}){
   // https://www.youtube.com/watch?v=MvepxO0qssA
   //https://instamobile.io/react-native-tutorials/asyncstorage-example-react-native/
 
-  // const SignInToken = async() =>{
-  //   // auth().signInWithCustomToken(AsyncStorage.getItem("TOKEN"));
-  //   // navigation.navigate("MenuPrincipal");
-  // }
-
-  // useEffect(()=>{
-  //   // auth().
-  //   // AsyncStorage.getItem("TOKEN").then((token)=>{
-  //     // SignInToken();
-  //   })
-  // })
+  const SignInToken = async() =>{
+    let token = await AsyncStorage.getItem("token");
+    console.log(AsyncStorage.getItem("token").then((token)=>{console.log(token)}));
+    try{
+      if (token != null){
+        auth().signInWithCustomToken(token);
+        navigation.navigate("MenuPrincipal");
+      }
+    }catch(error){
+      if (error.code == 'auth/missing-identifier'){
+        console.log('missing identifier!');
+      }
+      console.log('erro no login automático');
+    }
+  }
 
   //travar o botão voltar para evitar repetição indesejada da splash screen
   useEffect(()=> {
+    SignInToken();
     BackHandler.addEventListener('hardwareBackPress', ()=>{
       return true
     })

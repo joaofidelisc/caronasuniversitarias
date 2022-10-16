@@ -22,5 +22,5 @@ export function Splash(){
             onAnimationFinish={()=> navigation.navigate('Entrada')}
         /> 
         </View>
-)
+    )
 }

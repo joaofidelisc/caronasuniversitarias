@@ -151,7 +151,6 @@ function Oferecer() {
 
   function estadoInicial(){
     const currentUser = auth().currentUser.uid;
-
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
     try{
       reference.once('value').then(function(snapshot){
@@ -160,7 +159,6 @@ function Oferecer() {
     }catch(error){
       console.log(error.code);
     }
-
   
     if (!estadoInicialControle){
       console.log('estadoInicial() rodando...');
@@ -310,6 +308,19 @@ function Oferecer() {
     setBuscandoPassageiro(true);
   }
 
+  //A função abaixo é responsável por impedir que um passageiro dê carona a ele mesmo como motorista.
+  // function excluiBancoMotoristaPassageiro(){
+  //   const currentUser = auth().currentUser.uid;
+  //   const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+  //   try{
+  //     reference.on('child_added', snapshot=>{
+  //       reference.remove();
+  //     })
+  //   }catch(error){
+  //     console.log('excluiBancoMotoristaPassageiro');
+  //   }
+  // }
+
   useEffect(()=>{
     console.log('TELA: Oferecer');
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
@@ -317,6 +328,7 @@ function Oferecer() {
     getMyLocation();
     getCaronistasMarker();
     caronasAceitas();
+    // excluiBancoMotoristaPassageiro();
   }, [vetorCaronistas])
   
   return (

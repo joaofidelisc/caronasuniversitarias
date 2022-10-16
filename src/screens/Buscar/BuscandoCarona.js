@@ -56,6 +56,8 @@ function BuscandoCarona({navigation, route}) {
     navigation.navigate('Buscar');
   }
 
+
+
   useEffect(()=>{
     console.log('Tela: BuscandoCarona');
     buscarCarona();

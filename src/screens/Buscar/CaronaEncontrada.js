@@ -32,6 +32,7 @@ function Options({navigation, route}) {
         reference.on('value', function(snapshot){
           if (snapshot.exists() && snapshot.val().ofertasCaronas != undefined){
             listaCaronas = snapshot.val().ofertasCaronas;
+            console.log('listaCaronas:', listaCaronas);
           }
           arrayUIDs = listaCaronas.split(', ');
           arrayUIDs.forEach(async uid =>{
@@ -116,6 +117,11 @@ function Options({navigation, route}) {
           if (totalOfertas.includes(motoristaUID)){
             arrayOfertasRestantes.splice(arrayOfertasRestantes.indexOf(motoristaUID), 1);
             ofertasRestantes = arrayOfertasRestantes.join(', ');
+            console.log('ofertas restantes:', ofertasRestantes);
+            if (ofertasRestantes == ''){
+              setMotoristas([]);
+              navigation.navigate('Buscando_Carona', {cidade: cidade, estado:estado});
+            }
             reference_passageiro.update({
               ofertasCaronas: ofertasRestantes,
             })
@@ -125,9 +131,6 @@ function Options({navigation, route}) {
               }
             })
           }
-        }else{
-          console.log('entrou aqui!!!');
-          setMotoristas([]);
         }
       })
     }catch(error){
@@ -156,16 +159,16 @@ function Options({navigation, route}) {
   function aceitarCarona(uidMotorista){
     const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
-        reference_passageiro.update({        
+      reference_passageiro.update({        
         caronasAceitas:uidMotorista,
         ofertasCaronas:''
       });
       navigation.navigate('CaronaEncontrada');
     }catch(error){
         console.log('ERRO:', error.code);
+      }
+      aceitarCarona_(uidMotorista);
     }
-    aceitarCarona_(uidMotorista);
-  }
     
   
   useEffect(()=>{
@@ -184,10 +187,9 @@ function Options({navigation, route}) {
    
           <ScrollView style={[styles.scrollView,{top:-100}]}>
           {
-            vetorMotoristas.map((motorista, uid)=>(
-              <>
+            vetorMotoristas.map(motorista=>(
               <View style={styles.viewMotoristas}
-                  // key={motorista.uid}
+                  key={motorista.uid}
                   >
                   <Image 
                     source={{
@@ -217,7 +219,6 @@ function Options({navigation, route}) {
                   </TouchableOpacity>
                   </View>
                 </View>
-                </>
             ))
           }
             <Text style={styles.text}>

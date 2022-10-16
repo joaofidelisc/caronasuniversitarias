@@ -42,6 +42,7 @@ function Login({navigation}) {
   })
   
   const redirecionamentoLogin = async(emailGoogle)=>{  
+    
     if (email == ''){
       firestore().collection('Users').where('email', '==', emailGoogle).get().then(querySnapshot=>{
         const valor = querySnapshot.docs;
@@ -76,6 +77,8 @@ function Login({navigation}) {
   const SignInGoogle = async() =>{
     try{
       const { idToken } = await GoogleSignin.signIn();
+      // console.log('ID GOOGLE:', idToken);
+      await AsyncStorage.setItem('token', idToken);
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       const res = await auth().signInWithCredential(googleCredential);
       const dominio = res.user.email.split("@");
@@ -123,6 +126,7 @@ function Login({navigation}) {
       })
     }
   }
+
   //https://blog.logrocket.com/email-authentication-react-native-react-navigation-firebase/
   //tratar e-mails e contexto
   const SignInWithEmail = async() =>{

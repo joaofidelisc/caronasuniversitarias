@@ -1,11 +1,11 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {View, Text, SafeAreaView, StatusBar, Button, Image, Dimensions, TextInput, TouchableOpacity, Platform, Modal, StyleSheet} from 'react-native';
-
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
 import { PermissionsAndroid } from 'react-native';
+
 
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
@@ -41,6 +41,8 @@ export default function Buscar({navigation}) {
     
     var cidade = filtro_cidade[0].short_name; 
     var estado = filtro_estado[0].short_name;
+
+    // excluiBancoPassageiroMotorista(estado, cidade, currentUser);
 
     const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
@@ -138,10 +140,24 @@ export default function Buscar({navigation}) {
     }
   }
 
+  // async function excluiBancoPassageiroMotorista(estado, cidade, currentUser){
+  //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+  //   try{
+  //     reference.on('value', snapshot=>{
+  //       if (snapshot.exists()){
+  //         reference.remove();
+  //       }
+  //     })
+  //   }catch(error){
+  //     console.log('excluiBancoMotoristaPassageiro');
+  //   }
+  // }
+
   useEffect(()=>{
     console.log('TELA: Buscar');
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
     ligarLocalizacao();    
+    // excluiBancoPassageiroMotorista();
   }, [])
   
   

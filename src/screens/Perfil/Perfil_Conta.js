@@ -7,6 +7,8 @@ import estilos from '../../estilos/estilos';
 
 import FotoPerfil from '../../components/Perfil/FotoPerfil';
 import auth, { firebase } from '@react-native-firebase/auth'
+import RNRestart from 'react-native-restart';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 function Perfil_Conta({navigation}){
@@ -17,16 +19,19 @@ function Perfil_Conta({navigation}){
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
+
   // //falta implementar aqui
-  // const signOutGoogle = async() =>{
-  //   GoogleSignin.signOut().then(()=>{
-  //     console.log('saiu');
-  //   }).catch(error =>{
-  //     // console.log(error.code);
-  //     setWarning('Algum erro ocorreu.');
-  //     setModalVisible(true);
-  //   })
-  // }
+  const signOutGoogle = async() =>{
+    await AsyncStorage.removeItem("token");
+    await GoogleSignin.signOut().then(()=>{
+      RNRestart.Restart();
+      // console.log('saiu');
+    }).catch(error =>{
+      // console.log(error.code);
+      setWarning('Algum erro ocorreu.');
+      // setModalVisible(true);
+    })
+  }
 
 
   const changePassword = async()=>{
@@ -97,7 +102,7 @@ function Perfil_Conta({navigation}){
               </TouchableOpacity>
             <TouchableOpacity 
               style={[estilos.TouchbleOpct1, {top:640}]}
-              // onPress={}
+              onPress={signOutGoogle}
             >
               <Text style={estilos.Text14}>Sair</Text>
             </TouchableOpacity>
