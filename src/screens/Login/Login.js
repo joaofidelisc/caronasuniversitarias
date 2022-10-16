@@ -33,6 +33,8 @@ function Login({navigation}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [warning, setWarning] = useState('');
 
+  const [senhaVisivel, setSenhaVisivel] = useState(true);
+
   const partesEmail = email.split("@");
   
   useEffect(()=>{
@@ -202,12 +204,18 @@ function Login({navigation}) {
             placeholder='E-mail'
             keyboardType='email-address'
             onChangeText={(email)=>setEmail(email)}
-            />
+          />
+          <TouchableOpacity 
+            style={{top: 273, left: 265}}
+            onPress={()=>{setSenhaVisivel(!senhaVisivel)}}
+          >
+            <Text style={{color: 'black'}}>Ver senha</Text>
+          </TouchableOpacity>
           <TextInput
             style={{width: 291, height: 47, top: 200, alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: 18, lineHeight: 22, borderWidth: 1, color:'black'}}
             placeholderTextColor='black'
             placeholder='Senha'
-            secureTextEntry={true}
+            secureTextEntry={senhaVisivel}
             onChangeText={(password)=>setPassword(password)}
           />
           <TouchableOpacity 

@@ -32,6 +32,7 @@ function Cadastro_Email({navigation}) {
   const [warning, setWarning] = useState('');
   const [emailCadastro, setEmailCadastro] = useState('randomRandomrandomRR');
   const [tokenEmailEnviado, setTokenEmailEnviado] = useState(false);
+  const [senhaVisivel, setSenhaVisivel] = useState(true);
 
   const VerificationCode = async() =>{
     if (email == ''){
@@ -125,11 +126,17 @@ function Cadastro_Email({navigation}) {
             style={{width: 291, height: 47, top: 200, alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: 18, lineHeight: 22, borderWidth:1, color:'black'}}
             placeholderTextColor='black'
             placeholder='Digite aqui a senha'
-            secureTextEntry={true}
+            secureTextEntry={senhaVisivel}
             onChangeText={(password)=>setPassword(password)}
           />
           <TouchableOpacity 
-            style={{position: 'absolute', width: 291, height: 47, top: 332, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
+            style={{top: 205, left: 265}}
+            onPress={()=>{setSenhaVisivel(!senhaVisivel)}}
+          >
+            <Text style={{color: 'black'}}>Ver senha</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={{position: 'absolute', width: 291, height: 47, top: 352, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
             onPress={InsertUserWithEmail}
             >
             <Text style={{color: 'white', fontWeight: '600', fontSize: 20, lineHeight: 24, textAlign: 'center'}}>Continuar</Text>

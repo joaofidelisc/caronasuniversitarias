@@ -23,25 +23,22 @@ function Perfil_Conta({navigation}){
   const signOut = async()=>{
     await AsyncStorage.removeItem('email');
     await AsyncStorage.removeItem('password');
-    // try{
-      
-    // }catch(error){
-
-    // }
+    await AsyncStorage.removeItem("token");
+    RNRestart.Restart();
   }
 
   // //falta implementar aqui
-  const signOutGoogle = async() =>{
-    await AsyncStorage.removeItem("token");
-    await GoogleSignin.signOut().then(()=>{
-      RNRestart.Restart();
-      // console.log('saiu');
-    }).catch(error =>{
-      // console.log(error.code);
-      setWarning('Algum erro ocorreu.');
-      // setModalVisible(true);
-    })
-  }
+  // const signOutGoogle = async() =>{
+  //   await AsyncStorage.removeItem("token");
+  //   await GoogleSignin.signOut().then(()=>{
+  //     RNRestart.Restart();
+  //     // console.log('saiu');
+  //   }).catch(error =>{
+  //     // console.log(error.code);
+  //     setWarning('Algum erro ocorreu.');
+  //     // setModalVisible(true);
+  //   })
+  // }
 
 
   const changePassword = async()=>{
@@ -112,7 +109,7 @@ function Perfil_Conta({navigation}){
               </TouchableOpacity>
             <TouchableOpacity 
               style={[estilos.TouchbleOpct1, {top:640}]}
-              onPress={signOutGoogle}
+              onPress={signOut}
             >
               <Text style={estilos.Text14}>Sair</Text>
             </TouchableOpacity>

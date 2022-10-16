@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image, Modal, StyleSheet} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+
 
 
 function Forms_Motorista_Veiculo({navigation, route}) {
@@ -85,7 +87,6 @@ function Forms_Motorista_Veiculo({navigation, route}) {
                     placeholder='Cor'
                     maxLength={15}
                     onChangeText={(cor_veiculo)=>setCorVeiculo(cor_veiculo)}
-                    // keyboardType='numbers-and-punctuation'
                     />
                 <TextInput
                     style={{position:'absolute', width: 315, height: 39, top: 344, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth: 1, color:'black'}}
