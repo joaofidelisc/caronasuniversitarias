@@ -100,7 +100,8 @@ function FotoPerfil({navigation}){
     if (alterar == false){
       recuperarFotoStorage();
     }
-  })
+  }, []);
+  
   return (
     <SafeAreaView>
         <TouchableOpacity
