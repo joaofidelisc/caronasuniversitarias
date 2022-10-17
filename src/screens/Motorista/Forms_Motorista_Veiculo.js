@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image, Modal, StyleSheet} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-
+import auth from '@react-native-firebase/auth';
 
 
 function Forms_Motorista_Veiculo({navigation, route}) {
@@ -11,6 +12,8 @@ function Forms_Motorista_Veiculo({navigation, route}) {
     const [ano_veiculo, setAnoVeiculo] = useState('');
     const [cor_veiculo, setCorVeiculo] = useState('');
     const [nome_veiculo, setNomeVeiculo] = useState('');
+    const [imagemPlaca, setImagemPlaca] = useState('');
+    const [imagemAnexada, setImagemAnexada] = useState(false);
 
     const [modalVisible, setModalVisible] = useState(false);
     const [warning, setWarning] = useState('');
@@ -37,7 +40,7 @@ function Forms_Motorista_Veiculo({navigation, route}) {
             setModalVisible(true);
         }
         else{
-            firestore().collection('Users').doc(userID).set({
+            await firestore().collection('Users').doc(userID).set({
                 nome: nome,
                 CPF: CPF,
                 data_nasc: data_nasc,
@@ -50,10 +53,33 @@ function Forms_Motorista_Veiculo({navigation, route}) {
                 nome_veiculo: nome_veiculo,
                 motorista: true,
             }).then(()=>{
-                navigation.navigate('MenuPrincipal');
+                enviarFotoStorage(imagemPlaca);
             });
+            navigation.navigate('MenuPrincipal');
         }
     }
+
+    const enviarFotoStorage = async(local)=>{
+        const currentUser = auth().currentUser.uid;
+        var caminhoFirebase = currentUser.concat(`Placa${nome_veiculo}`);    
+        const reference = storage().ref(caminhoFirebase);
+        await reference.putFile(local);
+    }
+
+    const pickImageFromGalery = async()=>{
+        const options = {
+          mediaType: 'photo',
+        }
+        const result = await launchImageLibrary(options);
+        if (result?.assets){
+          setImagemPlaca(result.assets[0].uri);
+          setImagemAnexada(true);
+        }
+    }
+
+    useEffect(()=>{
+
+    },[]);
 
     return (
     <SafeAreaView>
@@ -95,13 +121,23 @@ function Forms_Motorista_Veiculo({navigation, route}) {
                     maxLength={7}
                     onChangeText={(placa_veiculo)=>setPlacaVeiculo(placa_veiculo)}
                 />
-                <TouchableOpacity style={{position: 'absolute', top: 403}}>
+                <TouchableOpacity 
+                    style={{position: 'absolute', top: 403}}
+                    onPress={pickImageFromGalery}
+                >
                     <Text style={{fontWeight: '700', fontSize: 18, color: '#06444C'}}>Anexar foto</Text>
                 </TouchableOpacity>
-                <Image source={
-                    require('../../assets/icons/anexar.png')} 
-                    style={{height:55, width: 54, position: 'absolute', top:442}}  
-                />
+                {
+                    !imagemAnexada && 
+                    <Image source={
+                        require('../../assets/icons/anexar.png')} 
+                        style={{height:55, width: 54, position: 'absolute', top:442}}  
+                        />
+                    }
+                {
+                    imagemAnexada &&
+                    <Text style={{fontWeight: '700', fontSize: 16, lineHeight: 20, textAlign: 'center', color: 'black', marginTop: 150}}>Imagem anexada</Text>
+                }
                 <TouchableOpacity 
                     style={{position: 'absolute', top: 542}}
                     onPress={insertDataNewUser}    
