@@ -1,4 +1,6 @@
 import React, {useEffect} from 'react';
+import { LogBox } from 'react-native';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth, { firebase } from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -17,20 +19,10 @@ import Forms_Motorista from './src/screens/Motorista/Forms_Motorista';
 import Cadastro_Email from './src/screens/Cadastro/Cadastro_Email';
 import BuscandoCarona from './src/screens/Buscar/BuscandoCarona';
 
+LogBox.ignoreAllLogs(['Warning: ...']);
+LogBox.ignoreAllLogs();
+
 export default function App() {
-  // const loginToken = async()=>{
-  //   // const token = await AsyncStorage.getItem("TOKEN");
-  //   // auth().signInWithCustomToken(token).then(()=>{
-  //   //   console.log('LOGOU');
-  //   // }).catch(error =>{
-  //   //   console.log(error.code);
-  //   // })
-  //   // console.log(token);
-  // }
-  // useEffect(()=>{
-  //   loginToken();
-  // })
-  
   return (
     <RotaEntrada/>
   );

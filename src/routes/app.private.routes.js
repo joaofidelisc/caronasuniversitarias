@@ -20,6 +20,7 @@ import CaronaEncontrada from '../screens/Buscar/FimViagem';
 import TelaInfos from '../screens/Buscar/infosMotorista';
 import Classificacao from '../screens/Buscar/Classificacao';
 import ConfirmarSolicitacao from '../screens/Buscar/ConfirmarSolicitacao';
+import ConfigurarCarona from '../screens/Oferecer/ConfigurarCarona';
 
 
 const Tab = createBottomTabNavigator();
@@ -46,11 +47,20 @@ function RotaBuscandoCarona(){
   );
 }
 
-//Tá com problema aqui:
-/**
- * Quando coloco RotaPerfil no component da linha 69, a tela não aparece
- * 
-*/
+function RotaOferecerCarona(){
+  return (
+    <NavigationContainer
+      independent={true}
+    >
+      <Stack.Navigator initialRouteName="ConfigurarCarona" options={{headerShown:false}}>
+        <Stack.Screen name="ConfigurarCarona" component={ConfigurarCarona} options={{headerShown:false}}/>
+        <Stack.Screen name="OferecerCarona" component={Oferecer} options={{headerShown:false}}/>
+      </Stack.Navigator>
+   </NavigationContainer>
+  );
+}
+
+
 function RotaPerfil(){
   return(
     <Tab.Navigator 
@@ -124,7 +134,7 @@ function AppRoutes({route, navigation}) {
               )
           }}
         />
-        <Tab.Screen name="Oferecer" component={Oferecer} 
+        <Tab.Screen name="Oferecer" component={RotaOferecerCarona} 
           options={{
             tabBarIcon:(({color})=>
             <Image source={

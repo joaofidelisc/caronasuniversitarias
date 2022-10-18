@@ -32,17 +32,17 @@ function Options({navigation, route}) {
         reference.on('value', function(snapshot){
           if (snapshot.exists() && snapshot.val().ofertasCaronas != undefined){
             listaCaronas = snapshot.val().ofertasCaronas;
-            console.log('listaCaronas:', listaCaronas);
+            console.log('listaCaronasCaronaEncontrada:', listaCaronas);
           }
           arrayUIDs = listaCaronas.split(', ');
           arrayUIDs.forEach(async uid =>{
             if (vetorMotoristas.length == 0){
               setMotoristas([{
-                url: await recuperarFotoMotorista(uid),
+                url: await getFotoMotorista(uid),
                 uid: uid,
-                nome: await recuperarNomeMotorista(uid),
-                carro:'ATUALIZAR',
-                placa:'ATUALIZAR',
+                nome: await getNomeMotorista(uid),
+                carro: await getNomeCarroMotorista(uid),
+                placa: await getPlacaCarroMotorista(uid),
               }])
             }else{
               vetorMotoristas.some(motorista=>{
@@ -52,11 +52,11 @@ function Options({navigation, route}) {
               })
               if (!jaExiste){
                 setMotoristas([...vetorMotoristas, {
-                  url: await recuperarFotoMotorista(uid),
+                  url: await getFotoMotorista(uid),
                   uid: uid,
-                  nome: await recuperarNomeMotorista(uid),
-                  carro:'ATUALIZAR',
-                  placa:'ATUALIZAR',
+                  nome: await getNomeMotorista(uid),
+                  carro: await getNomeCarroMotorista(uid),
+                  placa: await getPlacaCarroMotorista(uid),
                 }])
               }
             }
@@ -69,8 +69,8 @@ function Options({navigation, route}) {
 
 
 
-  //Função responsável por recuperar o nome do motorista e atualizar no vetor;
-  async function recuperarNomeMotorista(motoristaUID){
+  //Função responsável por get o nome do motorista e atualizar no vetor;
+  async function getNomeMotorista(motoristaUID){
     let nomeMotorista = '';
     let docRef = firestore().collection('Users').doc(motoristaUID);
     return docRef.get().then((doc)=>{
@@ -83,9 +83,37 @@ function Options({navigation, route}) {
     })
   }
 
+  //Função responsável por get o nome do carro do motorista
+  async function getNomeCarroMotorista(motoristaUID){
+    let nomeCarroMotorista = '';
+    let docRef = firestore().collection('Users').doc(motoristaUID);
+    return docRef.get().then((doc)=>{
+      if (doc.exists){
+        nomeCarroMotorista = doc.data().nome_veiculo;
+        return nomeCarroMotorista;
+      }else{
+        return '';
+      }
+    })
+  }
+
+  //Função responsável por get a placa do carro do motorista
+  async function getPlacaCarroMotorista(motoristaUID){
+    let placaCarroMotorista = '';
+    let docRef = firestore().collection('Users').doc(motoristaUID);
+    return docRef.get().then((doc)=>{
+      if (doc.exists){
+        placaCarroMotorista = doc.data().placa_veiculo;
+        return placaCarroMotorista;
+      }else{
+        return '';
+      }
+    })
+  }
+
 
   //Função responsável por receber um UID e retornar a url para a imagem do motorista.
-  const recuperarFotoMotorista = async(motoristaUID)=>{
+  const getFotoMotorista = async(motoristaUID)=>{
     const uidMotorista = motoristaUID;
     var caminhoFirebase = uidMotorista.concat('Perfil');    
     var url = '';
@@ -142,12 +170,23 @@ function Options({navigation, route}) {
   //Função responsável por complementar a função abaixo.
   //Escreve no banco do motorista o UID do passageiro.
   function aceitarCarona_(uidMotorista){
+    let listaCaronasAceitas = '';
     const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
     try{
-        reference_motorista.update({        
-        caronasAceitas:currentUser,
-      });
-    
+        reference_motorista.once('value').then(snapshot=>{
+          listaCaronasAceitas = snapshot.val().caronasAceitas;
+          console.log('CARONAS ACEITAS:', listaCaronasAceitas);
+          if (!listaCaronasAceitas.includes(currentUser)){
+            if (listaCaronasAceitas == ''){
+              listaCaronasAceitas = currentUser;
+            }else{
+              listaCaronasAceitas = listaCaronasAceitas.concat(', ',currentUser);
+            }
+          }
+          reference_motorista.update({        
+            caronasAceitas: listaCaronasAceitas,
+          });
+        })
     }catch(error){
         console.log('ERRO:', error.code);
     }
@@ -198,8 +237,8 @@ function Options({navigation, route}) {
                     style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
                   />
                   <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Nome: {motorista.nome}</Text>
-                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Carro:{motorista.carro}</Text>
-                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Placa:{motorista.placa}</Text>
+                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Carro: {motorista.carro}</Text>
+                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Placa: {motorista.placa}</Text>
                   <View style={{flexDirection:'row', alignSelf:'center'}}>
                   <TouchableOpacity
                     style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginRight: 20}}
