@@ -11,10 +11,10 @@ export function Splash(){
     const navigation = useNavigation()
 
     return(
-        <View style={{flex:1, alignItems:'center', justifyContent:'center', backgroundColor:'white', padding:20}}>
+        <View style={{flex:1, alignItems:'center', justifyContent:'center', backgroundColor:'#F15151', padding:20}}>
         <Lottie 
-            style={{height:height, width:width}}
-            source={require('../../assets/JSON/splash3.json')} 
+            style={{height:height*0.35, width:width*0.35}}
+            source={require('../../assets/JSON/splash5.json')} 
             autoPlay 
             autoSize={false}
             loop = {false}

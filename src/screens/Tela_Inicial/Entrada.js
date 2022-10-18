@@ -6,7 +6,6 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth'
 
 const {height,width}=Dimensions.get('window')
-// let div = height *0.3
 
 function Entrada({navigation}){
   const [falhaLogin, setFalhaLogin] = useState(true);
