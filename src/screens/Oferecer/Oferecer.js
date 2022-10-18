@@ -318,62 +318,33 @@ function Oferecer({route}) {
   const caronasAceitas = async()=>{
     let listaUIDsCaronas = '';
     let arrayUIDs = [];
-
     let jaExiste = false;
-    if (jaExiste == false){
-      jaExiste = true;
-    }
+ 
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`);
     try{
       reference.on('value', function(snapshot){
-        if (snapshot.exists() && snapshot.val().caronasAceitas != undefined){
-          listaUIDsCaronas = snapshot.val();
-          listaUIDsCaronas != ''?setCaronaAceita(true):setCaronaAceita(false);
-          arrayUIDs = listaUIDsCaronas.split(', ');
-          console.log('arrayUIDS:', arrayUIDs);
-          arrayUIDs.forEach(uid=>{
-            console.log('\nuid:', uid);
+        listaUIDsCaronas = snapshot.val();
+        listaUIDsCaronas != ''? setCaronaAceita(true): setCaronaAceita(false);
+        arrayUIDs = listaUIDsCaronas.split(', ');
+        console.log('arrayUIDS:', arrayUIDs);
+        arrayUIDs.forEach(uid=>{
+          passageiros.some(uidPassageiro =>{
+            if (uidPassageiro.uid == uid){
+              jaExiste = true;
+            }
           })
-        }
+          if (!jaExiste){
+            setNumCaronasAceitas(caronasAceitas+1);
+            setPassageiros([...passageiros, {
+              uid: uid,
+            }])
+          }
+          jaExiste = false;
+        })
       })
     }catch(error){
       console.log('erro em caronasAceitas');
     }
-    // try{
-    //   reference.on('value', function(snapshot){
-    //     if (snapshot.exists() && snapshot.val().caronasAceitas != undefined){
-    //       listaUIDsCaronas = snapshot.val().caronasAceitas;
-    //       if (listaUIDsCaronas != ''){
-    //         setCaronaAceita(true);
-    //       }else{
-    //         setCaronaAceita(false);
-    //       }
-    //     }
-    //     arrayUIDs = listaUIDsCaronas.split(', ');
-    //     arrayUIDs.forEach(uid=>{
-    //       if (passageiros.length == 0){
-    //         setNumCaronasAceitas(numCaronasAceitas+1);
-    //         setPassageiros([{
-    //           uid: uid,
-    //         }])
-    //       }else{
-    //         passageiros.some(uidPassageiro=>{
-    //           if (uidPassageiro.uid == uid){
-    //             jaExiste = true;
-    //           }
-    //         })
-    //         if (!jaExiste){
-    //           setNumCaronasAceitas(caronasAceitas+1);
-    //           setPassageiros([...passageiros, {
-    //             uid: uid,
-    //           }])
-    //         }
-    //       }
-    //     })
-    //   })
-    // }catch(error){
-    //   console.log('erro em caronasAceitas()');
-    // }
   }
 
   /*
