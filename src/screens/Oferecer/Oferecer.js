@@ -395,7 +395,7 @@ function Oferecer({route}) {
 
     
   /*
-    A implementação dessa função não está finalizada, mas a ideia é chamá-la sempre que for buscar um passageiro que aceitou uma carona do motorista corrente.
+    A implementação dessa função não está concluída, mas a ideia é chamá-la sempre que for buscar um passageiro que aceitou uma carona do motorista corrente.
   */
   const buscarPassageiro = async()=>{
     console.log('Buscando passageiro...\n');
