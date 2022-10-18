@@ -319,31 +319,36 @@ function Oferecer({route}) {
     let listaUIDsCaronas = '';
     let arrayUIDs = [];
     let jaExiste = false;
+    if (jaExiste == true){
+      jaExiste = false;
+    }
  
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`);
-    try{
-      reference.on('value', function(snapshot){
-        listaUIDsCaronas = snapshot.val();
-        listaUIDsCaronas != ''? setCaronaAceita(true): setCaronaAceita(false);
-        arrayUIDs = listaUIDsCaronas.split(', ');
-        console.log('arrayUIDS:', arrayUIDs);
-        arrayUIDs.forEach(uid=>{
-          passageiros.some(uidPassageiro =>{
-            if (uidPassageiro.uid == uid){
-              jaExiste = true;
+    if (existeBanco){
+      try{
+        reference.on('value', function(snapshot){
+          listaUIDsCaronas = snapshot.val();
+          listaUIDsCaronas != ''? setCaronaAceita(true): setCaronaAceita(false);
+          arrayUIDs = listaUIDsCaronas.split(', ');
+          console.log('arrayUIDS:', arrayUIDs);
+          arrayUIDs.forEach(uid=>{
+            passageiros.some(uidPassageiro =>{
+              if (uidPassageiro.uid == uid){
+                jaExiste = true;
+              }
+            })
+            if (!jaExiste){
+              setNumCaronasAceitas(caronasAceitas+1);
+              setPassageiros([...passageiros, {
+                uid: uid,
+              }])
             }
+            jaExiste = false;
           })
-          if (!jaExiste){
-            setNumCaronasAceitas(caronasAceitas+1);
-            setPassageiros([...passageiros, {
-              uid: uid,
-            }])
-          }
-          jaExiste = false;
         })
-      })
-    }catch(error){
-      console.log('erro em caronasAceitas');
+      }catch(error){
+        console.log('erro em caronasAceitas');
+      }
     }
   }
 

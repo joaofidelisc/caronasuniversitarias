@@ -8,7 +8,7 @@ import auth from '@react-native-firebase/auth'
 const {height,width}=Dimensions.get('window')
 
 function Entrada({navigation}){
-  const [falhaLogin, setFalhaLogin] = useState(true);
+  const [falhaLogin, setFalhaLogin] = useState(false);
 
   const redirecionamentoLogin = async(email)=>{  
     try{
@@ -22,6 +22,7 @@ function Entrada({navigation}){
         }
       })
     }catch(error){
+      setFalhaLogin(true);
       console.log('erro no redirecionamento');
     }   
   }
@@ -30,6 +31,9 @@ function Entrada({navigation}){
     let token = await AsyncStorage.getItem("token");
     let email = await AsyncStorage.getItem('email');
     let password = await AsyncStorage.getItem('password');
+    if (email == null){
+      setFalhaLogin(true);
+    }
     try{
       if (token != null){
         auth().signInWithCustomToken(token);
@@ -43,7 +47,7 @@ function Entrada({navigation}){
         console.log('missing identifier!');
       }
       console.log('erro no login automático');
-      setFalhaLogin(false);
+      setFalhaLogin(true);
     }
   }
 
