@@ -16,11 +16,15 @@ function AguardandoMotorista({navigation, route}){
     const [motoristaAcaminho, setMotoristaAcaminho] = useState(false);
     const [posicaoMotorista, setPosicaoMotorista] = useState(null);
     const [posicaoPassageiro, setPosicaoPassageiro] = useState(null);
+    const [viagemEmAndamento, setViagemEmAndamento] = useState(null);
 
     const cidade = route.params?.cidade;
     const estado = route.params?.estado;
     const uidMotorista = route.params?.uidMotorista;
     const currentUser = route.params?.currentUser;
+    const nomeMotorista = route.params?.nomeMotorista;
+    const veiculoMotorista = route.params?.veiculoMotorista;
+    const placaVeiculoMotorista = route.params?.placaVeiculoMotorista;
 
     //Função responsável por solicitar ao motorista para ligar sua localização.
     const localizacaoLigada = async()=>{
@@ -42,45 +46,43 @@ function AguardandoMotorista({navigation, route}){
     const motoristaMeBuscando = async()=>{
         const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}/buscandoCaronista`);
         reference.on('value', function(snapshot){
-            if (snapshot.exists()){
-                if (snapshot.val().includes(currentUser)){
-                    setMotoristaAcaminho(true);
-                }
+          if (snapshot.exists()){
+            if (snapshot.val().includes(currentUser) && !motoristaAcaminho){
+              setMotoristaAcaminho(true);
             }
+          }
         })
-    }
+      }
+      
     
-    const distanciaPassageiroMotorista = async()=>{
-        const latitudePassageiro = posicaoPassageiro.latitude;
-        const longitudePassageiro = posicaoPassageiro.longitude;
-        const latitudeMotorista = posicaoMotorista.latitude;
-        const longitudeMotorista = posicaoMotorista.longitude;
-        let distancia = 0;
-        var deg2rad = function (deg) { return deg * (Math.PI / 180); },
-        R = 6371,
-        dLat = deg2rad(latitudePassageiro - latitudeMotorista),
-        dLng = deg2rad(longitudePassageiro - longitudeMotorista),
-        a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-            + Math.cos(deg2rad(latitudeMotorista))
-            * Math.cos(deg2rad(latitudeMotorista))
-            * Math.sin(dLng / 2) * Math.sin(dLng / 2),
-            c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            distancia = ((R * c *1000).toFixed());
-            return distancia;
+    const navigateToViagemEmAndamento = async()=>{
+      if (viagemEmAndamento){
+        navigation.navigate('ViagemEmAndamento', {uidMotorista: uidMotorista, currentUser: currentUser, cidade: cidade, estado: estado, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista});
+      }
+    }
+
+    const viagemIniciada = async()=>{
+        const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
+        try{
+          reference.on('value', function(snapshot){
+            if (snapshot.child('caronistasAbordo').exists()){
+              if (snapshot.val().caronistasAbordo.includes(currentUser) && !viagemEmAndamento){
+                setViagemEmAndamento(true);
+                navigateToViagemEmAndamento();
+              }else{
+                console.log('viagem ainda não começou!');
+                if (viagemEmAndamento){
+                  navigateToViagemEmAndamento();
+                }
+              }  
+            }
+          })
+        }catch(error){
+          console.log('erro em viagemIniciada');
         }
 
-    const passageiroAbordo = async()=>{
-        const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
-        const distancia = distanciaPassageiroMotorista();
-        // if (distancia <= 2){
-        //     try{
-        //         reference.set
-        //     }catch(error){
-        //         console.log();
-        //     }
-        // }
-
     }
+    
 
     function atualizaEstado(){
         const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
@@ -133,16 +135,14 @@ function AguardandoMotorista({navigation, route}){
         }
     }
     
-    const getDadosMotorista = async(uidMotorista)=>{
-        console.log('obtendo dados motorista...')
-    }
+
 
     useEffect(()=>{
         getMyLocation();
         getPosicaoMotorista();
         motoristaMeBuscando();
-        passageiroAbordo();
-    }, [motoristaAcaminho])
+        viagemIniciada();
+    }, [motoristaAcaminho, viagemEmAndamento])
 
     return (
       <SafeAreaView>
@@ -176,11 +176,7 @@ function AguardandoMotorista({navigation, route}){
                 <Marker
                     key={uidMotorista}
                     coordinate={{ latitude : posicaoMotorista.latitude , longitude : posicaoMotorista.longitude}}
-                    // tappable={false}
-                    onPress={()=>{
-                        getDadosMotorista(uidMotorista);
-                    }}
-
+                    tappable={false}
                     icon={
                         require('../../assets/icons/motorista.png')
                     }

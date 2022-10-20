@@ -38,8 +38,8 @@ function Oferecer({route}) {
   const [existeCaronaAceita, setExisteCaronaAceita] = useState(false); //Checa se o motorista tem alguma carona aceita;
 
   const [numCaronasAceitas, setNumCaronasAceitas] = useState(0); //Controla o número de caronas que o motorista pode oferecer de acordo com o número de vagas disponíveis;
-  const [buscarPassageiros, setBuscarPassageiros] = useState(false);
-  
+  const [uidPassageiroEmbarque, setUIDPassageiroEmbarque] = useState(null);
+
   const [oferecerMaisCaronas, setOferecerMaisCaronas] = useState(true); //Define se o motorista pode oferecer mais caronas ou não.
   const [exibeModalOferecer, setExibeModalOferecer] = useState(true);
 
@@ -173,7 +173,7 @@ function Oferecer({route}) {
           ativo: true,
           nomeDestino: destino,
           buscandoCaronista: '',
-          caronistaAbordo: '',
+          caronistasAbordo: '',
         });
       }catch(error){
         console.log('atualizaEstado, ERRO:', error.code);
@@ -362,7 +362,7 @@ function Oferecer({route}) {
         console.log('erro em caronasAceitas -> função');
       }
     }
-    console.log('passageiros:', passageiros);
+    // console.log('passageiros:', passageiros);
   }
 
 
@@ -427,23 +427,39 @@ function Oferecer({route}) {
   
   const buscarPassageiro = async(latitude, longitude, nome, uidCaronista)=>{
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-    const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${uidCaronista}`);
-    let buscandoCaronistaAtualizado = '';
     let distPassageiroMotorista = await distanciaPassageiroMotorista(latitude, longitude);
-    //
-   
-    buscandoCaronistaAtualizado = uidCaronista.concat(', ',distPassageiroMotorista);
-    reference.on('value', function(snapshot){
+    
+    reference.once('value', function(snapshot){
       reference.update({
-        buscandoCaronista: buscandoCaronistaAtualizado
-      })
-      //ler do firestore o token do caronista com uid (uidCaronista) e disparar notificação;
-      if (distPassageiroMotorista < 6){
-        reference_passageiro.update({
-          solicitacaoEmbarque: currentUser
-        })
-      }
+        buscandoCaronista: uidCaronista
     })
+      if (distPassageiroMotorista < 6 && !snapshot.val().caronistasAbordo.includes(uidCaronista)){
+        setUIDPassageiroEmbarque(uidCaronista);
+      }
+      })
+    }
+    
+    const embarquePassageiro = async(uidPassageiro)=>{
+      setUIDPassageiroEmbarque(null);
+      let listaPassageirosAbordo = '';
+      let listaPassageirosAtualizada = '';
+      const reference_passageiro = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+      reference_passageiro.once('value', function(snapshot){
+        listaPassageirosAbordo = snapshot.val().caronistasAbordo;
+        if (!listaPassageirosAbordo.includes(uidPassageiro)){
+          if (listaPassageirosAbordo == ''){
+            listaPassageirosAtualizada = uidPassageiro;
+          }else{
+            listaPassageirosAtualizada = listaPassageirosAbordo.concat(', ',uidPassageiro);
+          }     
+        }
+        reference_passageiro.update({
+          caronistasAbordo: listaPassageirosAtualizada,
+          buscandoCaronista: '',
+        });
+        passageiros.splice(passageiros.indexOf(uidPassageiro), 1);
+
+      })
   }
 
   useEffect(()=>{
@@ -456,7 +472,7 @@ function Oferecer({route}) {
     BackHandler.addEventListener('hardwareBackPress', ()=>{
       return true
     })
-  }, [vetorCaronistas, existeBanco, numCaronasAceitas]);
+  }, [vetorCaronistas, existeBanco, numCaronasAceitas, ]);
   
   return (
       <SafeAreaView>
@@ -529,6 +545,20 @@ function Oferecer({route}) {
                 />
             } */}
           </MapView>
+          {
+            uidPassageiroEmbarque &&
+            <TouchableOpacity
+              style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.03, position: 'absolute', bottom: 50}}
+              onPress={()=>{
+                embarquePassageiro(uidPassageiroEmbarque);
+                // setUIDPassageiroEmbarque(null);
+              }}
+            >
+              <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
+                Passageiro(a) a bordo
+              </Text>
+            </TouchableOpacity>
+          }
           
           <Modal
             animationType="fade"

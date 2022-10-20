@@ -17,12 +17,10 @@ import Perfil_Detalhes from '../screens/Perfil/Perfil_Detalhes';
 import BuscandoCarona from '../screens/Buscar/BuscandoCarona'
 import CaronaEncontrada from '../screens/Buscar/CaronaEncontrada';
 import AguardandoMotorista from '../screens/Buscar/AguardandoMotorista';
-import FimViagem from '../screens/Buscar/FimViagem';
-import TelaInfos from '../screens/Buscar/infosMotorista';
 import Classificacao from '../screens/Buscar/Classificacao';
 import ConfirmarSolicitacao from '../screens/Buscar/ConfirmarSolicitacao';
 import ConfigurarCarona from '../screens/Oferecer/ConfigurarCarona';
-
+import ViagemEmAndamento from '../screens/Buscar/ViagemEmAndamento';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -41,8 +39,7 @@ function RotaBuscandoCarona(){
         <Stack.Screen name="Buscando_Carona" component={BuscandoCarona} options={{headerShown:false}} />
         <Stack.Screen name="CaronaEncontrada" component={CaronaEncontrada} options={{headerShown:false}}/>
         <Stack.Screen name="AguardandoMotorista" component={AguardandoMotorista} options={{headerShown:false}}/>
-        <Stack.Screen name="FimViagem" component={FimViagem} options={{headerShown:false}}/>
-        <Stack.Screen name="InfosMotorista" component={TelaInfos} options={{headerShown:false}}/>
+        <Stack.Screen name="ViagemEmAndamento" component={ViagemEmAndamento} options={{headerShown:false}}/>
         <Stack.Screen name="Classificacao" component={Classificacao} options={{headerShown:false}}/>
       </Stack.Navigator>
    </NavigationContainer>
