@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, SafeAreaView, StatusBar, StyleSheet, PermissionsAndroid, Dimensions, Modal, TouchableOpacity, Image, ScrollView, BackHandler} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, StyleSheet, PermissionsAndroid, Dimensions, Modal, TouchableOpacity, Image, ScrollView, BackHandler, Linking, Platform} from 'react-native';
 
 import MapView, { Marker, Callout } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
@@ -25,24 +25,26 @@ function Oferecer({route}) {
   const [imageUser, setImageUser] = useState('');  //Define a url da imagem do possível caronista para cada caronista e para cada vez que é chamada a função buscaUsuario;
   const [nomeCaronista, setNomeCaronista] = useState(''); //Define o nome do caronista para cada caronista e para cada vez que é chamada a função buscaUsuario;
   const [nomeDestinoCaronista, setNomeDestinoCaronista] = useState(''); //Define o nome do destino para cada caronista e para cada vez que é chamada a função buscaUsuario;
+  const [latitudePassageiro, setLatitudePassageiro] = useState('');
+  const [longitudePassageiro, setLongitudePassageiro] = useState('');
+  const [alertaVagas, setAlertaVagas] = useState(true);
 
   const [vetorCaronistas, setCaronistas] = useState([]); //Vetor de todos os caronistas atuais (com caronas aceitas e buscando carona);
   
   const [uidPassageiro, setUidPassageiro] = useState(''); //Contém apenas 1 uid armazenado (o uid do pin clicado no momento);
 
-  const [passageiros, setPassageiros] = useState([]); //Vetor com todos os passageiros que aceitaram a carona do motorista corrente (motorista atual);
+  const [passageiros, setPassageiros] = useState([]); //Vetor com todos os uids dos passageiros que aceitaram a carona do motorista corrente (motorista atual);
+  const [localPassageiros, setlocalPassageiros] = useState([]);
 
   const [caronaAceita, setCaronaAceita] = useState(false); //Checa se o motorista tem alguma carona aceita;
 
   const [numCaronasAceitas, setNumCaronasAceitas] = useState(0); //Controla o número de caronas que o motorista pode oferecer de acordo com o número de vagas disponíveis;
+  const [buscarPassageiro, setBuscarPassageiro] = useState(false);
 
-  const [exibirCaronistas, setExibirCaronistas] = useState(false); //Controla se os caronistas (pessoas que aceitaram a carona do motorista atual) serão exibidas na tela;
-  const [buscandoPassageiro, setBuscandoPassageiro] = useState(false); //Controla se o motorista está buscando algum passageiro;
   const [oferecerMaisCaronas, setOferecerMaisCaronas] = useState(true); //Define se o motorista pode oferecer mais caronas ou não.
+  const [passageirosAtualizados, setPassageirosAtualizados] = useState(false);
 
-
-  const [existeBanco, setExisteBanco] = useState(false);
-
+  const [existeBanco, setExisteBanco] = useState(''); //Controla se o banco de dados existe ou deve ser criado (antes de ser atualizado).
   //Informações do motorista
   const cidade = route.params?.cidade; 
   const estado = route.params?.estado;
@@ -263,9 +265,13 @@ function Oferecer({route}) {
     Função responsável por buscar e exibir o modal do usuário após o motorista clicar no pin do caronista;
     Busca o nome, foto e define o UID no hook para ser possível oferecer carona.
   */
-  const buscaUsuario = async(userUID, caronaAceita)=>{
+  const buscaUsuario = async(userUID, caronaAceita, latitude, longitude)=>{
     if (caronaAceita != ''){
       if (caronaAceita.includes(currentUser)){
+        setModalVisible(true);
+        setLatitudePassageiro(latitude);
+        setLongitudePassageiro(longitude);
+        setBuscarPassageiro(true);
         console.log("o passageiro aceitou sua carona!");
       }
     }else{
@@ -310,54 +316,54 @@ function Oferecer({route}) {
     }
   }
 
-
   /*
     A função abaixo é responsável por criar e atualizar um vetor de caronistas que aceitaram a carona proposta, chamado de passageiros;
     A cada nova carona aceita, o vetor é atualizado.
   */
   const caronasAceitas = async()=>{
-    let listaUIDsCaronas = '';
-    let arrayUIDs = [];
+    let uidsPassageiros = '';
+    let arrayUIDsPassageiros = [];
     let jaExiste = false;
     if (jaExiste == true){
       jaExiste = false;
     }
- 
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`);
     if (existeBanco){
       try{
         reference.on('value', function(snapshot){
-          listaUIDsCaronas = snapshot.val();
-          listaUIDsCaronas != ''? setCaronaAceita(true): setCaronaAceita(false);
-          arrayUIDs = listaUIDsCaronas.split(', ');
-          console.log('arrayUIDS:', arrayUIDs);
-          arrayUIDs.forEach(uid=>{
-            passageiros.some(uidPassageiro =>{
-              if (uidPassageiro.uid == uid){
+          uidsPassageiros = snapshot.val();
+          arrayUIDsPassageiros = uidsPassageiros.split(', ');
+          if (arrayUIDsPassageiros[0] != '' && arrayUIDsPassageiros[0] != undefined && vagasDisponiveis>numCaronasAceitas){
+            arrayUIDsPassageiros.some(passageiro=>{
+              if (passageiro.uid == arrayUIDsPassageiros[arrayUIDsPassageiros.length-1]){
                 jaExiste = true;
               }
             })
-            if (!jaExiste){
-              setNumCaronasAceitas(caronasAceitas+1);
-              setPassageiros([...passageiros, {
-                uid: uid,
-              }])
+            if (!jaExiste && arrayUIDsPassageiros.length>numCaronasAceitas){
+              setPassageiros([...passageiros, arrayUIDsPassageiros[arrayUIDsPassageiros.length-1]]);
             }
-            jaExiste = false;
-          })
+            setNumCaronasAceitas(arrayUIDsPassageiros.length);
+          }else{
+            if (vagasDisponiveis == numCaronasAceitas && oferecerMaisCaronas){
+              setOferecerMaisCaronas(false);
+              setModalVisible(!modalVisible);
+            }
+          }
         })
       }catch(error){
-        console.log('erro em caronasAceitas');
+        console.log('erro em caronasAceitas -> função');
       }
     }
+    console.log('passageiros:', passageiros);
   }
+
 
   /*
     A função abaixo é responsável por impedir que um passageiro dê carona a ele mesmo como motorista;
     Esse 'impedimento' é realizado, verificando o banco de dados dos passageiros e excluindo-o caso o motorista esteja incluso lá.
   */
   const excluiBancoMotoristaPassageiro = async()=>{
-    const currentUser = auth().currentUser.uid;
+    // const currentUser = auth().currentUser.uid;
     const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
       reference.on('child_added', snapshot=>{
@@ -369,15 +375,17 @@ function Oferecer({route}) {
   }
 
 
-    
-  /*
-    A implementação dessa função não está concluída, mas a ideia é chamá-la sempre que for buscar um passageiro que aceitou uma carona do motorista corrente.
-  */
-  const buscarPassageiro = async()=>{
-    console.log('Buscando passageiro...\n');
-    // setBuscandoPassageiro(true);
-  }
 
+  const rotaPassageiro = async (latitude, longitude, nome) => {
+    const scheme = Platform.select({ ios: 'maps:0,0?q=', android: 'geo:0,0?q=' });
+    const latLng = `${latitude},${longitude}`;
+    const label = nome;
+    const url = Platform.select({
+      ios: `${scheme}${label}@${latLng}`,
+      android: `${scheme}${latLng}(${label})`
+    });
+    Linking.openURL(url);
+}
 
   useEffect(()=>{
     console.log('TELA: Oferecer');
@@ -389,7 +397,7 @@ function Oferecer({route}) {
     BackHandler.addEventListener('hardwareBackPress', ()=>{
       return true
     })
-  }, [vetorCaronistas, existeBanco])
+  }, [vetorCaronistas, existeBanco, numCaronasAceitas]);
   
   return (
       <SafeAreaView>
@@ -419,17 +427,56 @@ function Oferecer({route}) {
             }}
           >
             {
-              vetorCaronistas.map(passageiro=>(
+              oferecerMaisCaronas &&
+              vetorCaronistas.map(caronista=>(
                 <Marker
-                  key={passageiro.uid}
-                  coordinate={{ latitude : passageiro.latitude , longitude : passageiro.longitude}}
+                  key={caronista.uid}
+                  coordinate={{ latitude : caronista.latitude , longitude : caronista.longitude}}
+                  tappable={caronista.caronasAceitas.includes(currentUser)?true:false}
                   onPress={()=>{
-                    buscaUsuario(passageiro.uid, passageiro.caronasAceitas);
+                    buscaUsuario(caronista.uid, caronista.caronasAceitas, caronista.latitude, caronista.longitude);
                   }}
-                  icon={passageiro.caronasAceitas==''?require('../../assets/icons/caronista.png'):require('../../assets/icons/carona_aceita.png')}
+                  
+                  icon={
+                    caronista.caronasAceitas==''?require('../../assets/icons/caronista.png'):caronista.caronasAceitas.includes(currentUser)?require('../../assets/icons/carona_aceita.png'):require('../../assets/icons/caronista-nao-clicavel.png')
+                  }
                 />
               ))
-            }          
+            }
+            {
+              !oferecerMaisCaronas &&
+              vetorCaronistas.map(caronista=>(
+                passageiros.includes(caronista.uid)?
+                <Marker
+                  key={caronista.uid}
+                  coordinate={{ latitude : caronista.latitude , longitude : caronista.longitude}}
+                  onPress={()=>{
+                    buscaUsuario(caronista.uid, caronista.caronasAceitas, caronista.latitude, caronista.longitude);
+                  }}
+                  
+                  icon={require('../../assets/icons/carona_aceita.png')}
+                />:null
+              ))
+            }
+            {/* {
+              !oferecerMaisCaronas && 
+              vetorCaronistas.map(passageiro=>{
+                console.log('vetorCaronistasmap:', passageiro.uid);
+                console.log('vetorPassageiros:', passageiros);
+                if (passageiros.includes(passageiro.uid)){
+                  console.log('listou!');
+                    <Marker
+                      key={passageiro.uid}
+                      coordinate={{ latitude : passageiro.latitude , longitude : passageiro.longitude}}
+                      onPress={()=>{
+                        buscaUsuario(passageiro.uid, 'vagasEsgotadas');
+                      }}
+                      icon={require('../../assets/icons/carona_aceita.png')}
+                    />
+                }
+              })
+            } */}
+
             {/* {
               //utilizado para traçar a rota
               destination &&
@@ -442,7 +489,7 @@ function Oferecer({route}) {
                 />
             } */}
           </MapView>
-          {
+          {/* {
             caronaAceita &&
             <TouchableOpacity 
               style={{position: 'absolute', bottom: 15, backgroundColor: '#FF5F55', width: 200, height: 47, borderRadius: 15, justifyContent: 'center'}}
@@ -450,8 +497,8 @@ function Oferecer({route}) {
             >
               <Text style={{color: 'white', fontWeight: '600', fontSize: 16, textAlign: 'center'}}>Exibir caronistas</Text>
             </TouchableOpacity>
-          }
-          {
+          } */}
+          {/* {
             exibirCaronistas &&
             <ScrollView style={{position: 'absolute', bottom: 0, width: '95%', height:'40%', backgroundColor: 'white', borderRadius: 10, flex:1, borderColor: '#FF5F55', borderWidth: 5}}>
               <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, textAlign:'center', marginTop: 12}}>Caronas aceitas</Text>
@@ -476,7 +523,14 @@ function Oferecer({route}) {
                 <Text style={{color: 'white', fontWeight: '600', fontSize: 16, textAlign: 'center'}}>Fechar lista</Text>
               </TouchableOpacity>
             </ScrollView>
-          }
+          } */}
+          {/* <TouchableOpacity 
+          style={{bottom: 15, backgroundColor: '#FF5F55', width: 200, height: 47, borderRadius: 15, justifyContent: 'center', alignSelf: 'center', marginTop: 40}}
+          // onPress={()=>{setExibirCaronistas(!exibirCaronistas)}}
+          onPress ={testeMapa}  
+          >
+            <Text style={{color: 'white', fontWeight: '600', fontSize: 16, textAlign: 'center'}}>Teste Mapa</Text>
+          </TouchableOpacity> */}
        
           <Modal
             animationType="fade"
@@ -509,6 +563,56 @@ function Oferecer({route}) {
                         <Text style={styles.textStyle}>Cancelar</Text>
                     </TouchableOpacity>
                     </>
+                  }
+                  {
+                    !oferecerMaisCaronas && alertaVagas &&
+                    <>
+                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '700'}}>Você atingiu o número máximo de caronistas!</Text>
+                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>
+                        Para buscar um(a) passageiro(a), pressione uma vez no ícone em verde e clique no desenho do mapa no canto direito inferior.
+                      </Text>
+                        {/* <TouchableOpacity
+                            style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
+                            onPress={()=>{oferecerCarona()}}
+                        >
+                            <Text style={styles.textStyle}>Oferecer carona</Text>
+                        </TouchableOpacity> */}
+                      <TouchableOpacity
+                            style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
+                            onPress={() => {
+                              setModalVisible(!modalVisible);
+                              setAlertaVagas(!alertaVagas);
+                            }}
+                        >
+                          <Text style={styles.textStyle}>Entendi</Text>
+                      </TouchableOpacity>
+                    </>
+                  }
+                  {
+                    buscarPassageiro &&
+                    <>
+                      <Image 
+                        source={imageUser!=''?{uri:imageUser}:null}
+                        style={{height:70, width: 70, borderRadius: 100, marginBottom:10}}  
+                      />
+                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{nomeCaronista}</Text>
+                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
+                      <TouchableOpacity
+                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
+                          onPress={()=>{rotaPassageiro(latitudePassageiro, longitudePassageiro, nomeCaronista)}}
+                      >
+                          <Text style={styles.textStyle}>Buscar passageiro</Text>
+                      </TouchableOpacity>
+                    <TouchableOpacity
+                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
+                          onPress={() => {
+                            setModalVisible(!modalVisible);
+                            // setBuscarPassageiro(!buscarPassageiro);
+                          }}
+                      >
+                        <Text style={styles.textStyle}>Cancelar</Text>
+                    </TouchableOpacity>
+                  </>
                   }  
               </View>
             </View>

@@ -37,16 +37,17 @@ function Cadastro_Email({navigation}) {
   const VerificationCode = async() =>{
     if (email == ''){
       setWarning('O campo e-mail \nnão pode estar vazio!');
-      modalVisible(true);
+      setModalVisible(true);
     }
     else{
-      console.log('implementar aqui código de verificação');
-      // auth().sendEmailVerification(email).then(()=>{
-      //   setWarning('Um novo código de verificação foi enviado para');
-      //   modalVisible(true);
-      // }).catch(error =>{
-      //   console.log(error.code);
-      // })
+      console.log('current user:', email);
+      console.log(auth().currentUser);
+      await auth().currentUser.sendEmailVerification().then(()=>{
+        setWarning('Um novo código de verificação foi enviado para');
+        setModalVisible(true);
+      }).catch(error =>{
+        console.log(error.code);
+      })
     }
     // else{
     // }
@@ -142,12 +143,12 @@ function Cadastro_Email({navigation}) {
             <Text style={{color: 'white', fontWeight: '600', fontSize: 20, lineHeight: 24, textAlign: 'center'}}>Continuar</Text>
           </TouchableOpacity>
           <Text style={{color:'#FF5F55', position: 'absolute', top: 460, alignSelf:'center', fontWeight: '600', fontSize: 15}}>Perdeu o código de autenticação?</Text>
-          <TouchableOpacity 
+          {/* <TouchableOpacity 
             style={{position: 'absolute', width: 210, height: 45, top: 500, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
             onPress={VerificationCode}
             >
             <Text style={{color: 'white', fontWeight: '600', fontSize: 15, lineHeight: 24, textAlign: 'center'}}>Obter novo código</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <Modal
               animationType="fade"
               transparent={true}
