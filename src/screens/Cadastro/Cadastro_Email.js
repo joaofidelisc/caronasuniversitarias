@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, } from 'react';
 import {
   SafeAreaView, 
   StatusBar,
@@ -10,7 +10,8 @@ import {
   StyleSheet,
   Alert,
   BackHandler,
-  Image
+  Image,
+  Dimensions
 } from 'react-native';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -101,7 +102,7 @@ function Cadastro_Email({navigation}) {
       }
     }
   }
-
+  const {height, width} = Dimensions.get("screen")
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
@@ -112,37 +113,37 @@ function Cadastro_Email({navigation}) {
           >
              <Image source={
               require('../../assets/icons/close.png')} 
-              style={{height:22, width: 22}}  
+              style={{height:'80%', width: '100%'}}  
             />
           </TouchableOpacity>
-          <Text style={{color: '#06444C', position: 'absolute', top: 65, fontWeight: '700', fontSize: 20, lineHeight: 29, alignSelf: 'center', textAlign: 'center'}}>Digite um e-mail institucional{'\n'}  e uma senha para se cadastrar</Text>
+          <Text style={{color: '#06444C', position: 'absolute', top: '8%', fontWeight: '700', fontSize: height*0.025, lineHeight: height*0.03, alignSelf: 'center', textAlign: 'center'}}>Digite um e-mail institucional{'\n'}  e uma senha para se cadastrar</Text>
           <TextInput
-            style={{width: 291, height: 47, top: 167, alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: 18, lineHeight: 22, borderWidth:1, color:'black'}}
+            style={{width: '75%', height: '6%', top: '22%', alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: height*0.02, lineHeight: 22, borderWidth:1, color:'black'}}
             placeholderTextColor='black'
             placeholder='Digite aqui o e-mail'
             keyboardType='email-address'
             onChangeText={(email)=>setEmail(email)}
             />
           <TextInput
-            style={{width: 291, height: 47, top: 200, alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: 18, lineHeight: 22, borderWidth:1, color:'black'}}
+            style={{width: '75%', height: '6%', top: '26%', alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: height*0.02, lineHeight: height*0.03, borderWidth:1, color:'black'}}
             placeholderTextColor='black'
             placeholder='Digite aqui a senha'
             secureTextEntry={senhaVisivel}
             onChangeText={(password)=>setPassword(password)}
           />
           <TouchableOpacity 
-            style={{top: 205, left: 265}}
+            style={{top: '26.5%', left: '67%'}}
             onPress={()=>{setSenhaVisivel(!senhaVisivel)}}
           >
             <Text style={{color: 'black'}}>Ver senha</Text>
           </TouchableOpacity>
           <TouchableOpacity 
-            style={{position: 'absolute', width: 291, height: 47, top: 352, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
+            style={{position: 'absolute', width: '75%', height: '6%', top: '45%', backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
             onPress={InsertUserWithEmail}
             >
-            <Text style={{color: 'white', fontWeight: '600', fontSize: 20, lineHeight: 24, textAlign: 'center'}}>Continuar</Text>
+            <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.02, lineHeight: height*0.03, textAlign: 'center'}}>Continuar</Text>
           </TouchableOpacity>
-          <Text style={{color:'#FF5F55', position: 'absolute', top: 460, alignSelf:'center', fontWeight: '600', fontSize: 15}}>Perdeu o código de autenticação?</Text>
+          <Text style={{color:'#FF5F55', position: 'absolute', top: '57%', alignSelf:'center', fontWeight: '600', fontSize: height*0.017}}>Perdeu o código de autenticação?</Text>
           {/* <TouchableOpacity 
             style={{position: 'absolute', width: 210, height: 45, top: 500, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
             onPress={VerificationCode}
