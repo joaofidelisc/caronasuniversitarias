@@ -2,6 +2,10 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, SafeAreaView, StatusBar, PermissionsAndroid, Dimensions, Modal} from 'react-native';
 import database from '@react-native-firebase/database';
 import MapView, { Marker, Callout } from 'react-native-maps';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
+
+
 import Geolocation from '@react-native-community/geolocation';
 import storage from '@react-native-firebase/storage';
 
@@ -11,6 +15,7 @@ const {width, height} = Dimensions.get('screen');
 function AguardandoMotorista({navigation, route}){
     const [motoristaAcaminho, setMotoristaAcaminho] = useState(false);
     const [posicaoMotorista, setPosicaoMotorista] = useState(null);
+    const [posicaoPassageiro, setPosicaoPassageiro] = useState(null);
 
     const cidade = route.params?.cidade;
     const estado = route.params?.estado;
@@ -45,11 +50,77 @@ function AguardandoMotorista({navigation, route}){
         })
     }
     
+    const distanciaPassageiroMotorista = async()=>{
+        const latitudePassageiro = posicaoPassageiro.latitude;
+        const longitudePassageiro = posicaoPassageiro.longitude;
+        const latitudeMotorista = posicaoMotorista.latitude;
+        const longitudeMotorista = posicaoMotorista.longitude;
+        let distancia = 0;
+        var deg2rad = function (deg) { return deg * (Math.PI / 180); },
+        R = 6371,
+        dLat = deg2rad(latitudePassageiro - latitudeMotorista),
+        dLng = deg2rad(longitudePassageiro - longitudeMotorista),
+        a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+            + Math.cos(deg2rad(latitudeMotorista))
+            * Math.cos(deg2rad(latitudeMotorista))
+            * Math.sin(dLng / 2) * Math.sin(dLng / 2),
+            c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            distancia = ((R * c *1000).toFixed());
+            return distancia;
+        }
+
+    const passageiroAbordo = async()=>{
+        const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
+        const distancia = distanciaPassageiroMotorista();
+        // if (distancia <= 2){
+        //     try{
+        //         reference.set
+        //     }catch(error){
+        //         console.log();
+        //     }
+        // }
+
+    }
+
+    function atualizaEstado(){
+        const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+        try{
+          reference.update({
+            latitudePassageiro: posicaoPassageiro.latitude,
+            longitudePassageiro: posicaoPassageiro.longitude,
+            ativo: true,
+           });
+         }catch(error){
+           console.log('atualizaEstado, ERRO:', error.code);
+         }
+       }
+
+    function getMyLocation(){
+        try{
+          Geolocation.getCurrentPosition(info=>{
+            setPosicaoPassageiro({
+              latitude: info.coords.latitude,
+              longitude: info.coords.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421
+            })
+          },
+          ()=>{console.log('Atualizando...')}, {
+            enableHighAccuracy:false,
+            timeout:2000,
+          })
+          atualizaEstado();
+        }catch(error){
+          console.log(error.code);
+        }
+      }
+
+   
+    
     function getPosicaoMotorista(){
         const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
         try{
             reference.on('value', function(snapshot){
-                console.log('latitudeMotorista:', snapshot.val().latitudeMotorista);
                 setPosicaoMotorista({
                     latitude: snapshot.val().latitudeMotorista,
                     longitude: snapshot.val().longitudeMotorista,
@@ -67,8 +138,10 @@ function AguardandoMotorista({navigation, route}){
     }
 
     useEffect(()=>{
+        getMyLocation();
         getPosicaoMotorista();
         motoristaMeBuscando();
+        passageiroAbordo();
     }, [motoristaAcaminho])
 
     return (
@@ -87,12 +160,12 @@ function AguardandoMotorista({navigation, route}){
                     })
                 }}
                 style={{width:width, height:height, flex:1}}
-                region={posicaoMotorista}
+                region={posicaoPassageiro}
                 zoomEnabled={true}
                 minZoomLevel={17}
                 showsUserLocation={true}
                 loadingEnabled={true}
-                onRegionChange={getPosicaoMotorista}
+                onRegionChange={getMyLocation}
                 initialRegion={{
                 latitude: -21.983311,
                 longitude: -47.883154,
@@ -107,10 +180,10 @@ function AguardandoMotorista({navigation, route}){
                     onPress={()=>{
                         getDadosMotorista(uidMotorista);
                     }}
-                    
-                    // icon={
-                    //     caronista.caronasAceitas==''?require('../../assets/icons/caronista.png'):caronista.caronasAceitas.includes(currentUser)?require('../../assets/icons/carona_aceita.png'):require('../../assets/icons/caronista-nao-clicavel.png')
-                    // }
+
+                    icon={
+                        require('../../assets/icons/motorista.png')
+                    }
                 />
                 {/* {
                 //utilizado para traçar a rota

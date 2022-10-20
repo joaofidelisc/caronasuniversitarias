@@ -34,15 +34,14 @@ function Oferecer({route}) {
   const [uidPassageiro, setUidPassageiro] = useState(''); //Contém apenas 1 uid armazenado (o uid do pin clicado no momento);
 
   const [passageiros, setPassageiros] = useState([]); //Vetor com todos os uids dos passageiros que aceitaram a carona do motorista corrente (motorista atual);
-  const [localPassageiros, setlocalPassageiros] = useState([]);
 
-  const [caronaAceita, setCaronaAceita] = useState(false); //Checa se o motorista tem alguma carona aceita;
+  const [existeCaronaAceita, setExisteCaronaAceita] = useState(false); //Checa se o motorista tem alguma carona aceita;
 
   const [numCaronasAceitas, setNumCaronasAceitas] = useState(0); //Controla o número de caronas que o motorista pode oferecer de acordo com o número de vagas disponíveis;
-  const [buscarPassageiro, setBuscarPassageiro] = useState(false);
-
+  const [buscarPassageiros, setBuscarPassageiros] = useState(false);
+  
   const [oferecerMaisCaronas, setOferecerMaisCaronas] = useState(true); //Define se o motorista pode oferecer mais caronas ou não.
-  const [passageirosAtualizados, setPassageirosAtualizados] = useState(false);
+  const [exibeModalOferecer, setExibeModalOferecer] = useState(true);
 
   const [existeBanco, setExisteBanco] = useState(''); //Controla se o banco de dados existe ou deve ser criado (antes de ser atualizado).
   //Informações do motorista
@@ -268,24 +267,30 @@ function Oferecer({route}) {
     Busca o nome, foto e define o UID no hook para ser possível oferecer carona.
   */
   const getDadosUsuario = async(userUID, caronaAceita, latitude, longitude)=>{
+    if (exibeModalOferecer == false){
+      setExibeModalOferecer(true);
+    }
     if (caronaAceita != ''){
       if (caronaAceita.includes(currentUser)){
-        setModalVisible(true);
         setLatitudePassageiro(latitude);
         setLongitudePassageiro(longitude);
-        setBuscarPassageiro(true);
+        // setBuscarPassageiro(true);
+        setExibeModalOferecer(false);
+        setModalVisible(true);
         console.log("o passageiro aceitou sua carona!");
       }
     }else{
-      try{
-        await getFotoStorage(userUID);
-        await getNomeCaronista(userUID);
-        await getDestinoCaronista(userUID);
-      }catch(error){
-        console.log('erro em getDadosUsuario');
-      }
-      setUidPassageiro(userUID);
-      setModalVisible(true);
+      if (exibeModalOferecer){
+        try{
+          await getFotoStorage(userUID);
+          await getNomeCaronista(userUID);
+          await getDestinoCaronista(userUID);
+        }catch(error){
+          console.log('erro em getDadosUsuario');
+        }
+        setUidPassageiro(userUID);
+        setModalVisible(true);
+        }
       }
     }
 
@@ -336,6 +341,7 @@ function Oferecer({route}) {
           uidsPassageiros = snapshot.val();
           arrayUIDsPassageiros = uidsPassageiros.split(', ');
           if (arrayUIDsPassageiros[0] != '' && arrayUIDsPassageiros[0] != undefined && vagasDisponiveis>numCaronasAceitas){
+            setExisteCaronaAceita(true);
             arrayUIDsPassageiros.some(passageiro=>{
               if (passageiro.uid == arrayUIDsPassageiros[arrayUIDsPassageiros.length-1]){
                 jaExiste = true;
@@ -393,18 +399,14 @@ function Oferecer({route}) {
       reference.update({
         buscandoCaronista: uidCaronista,
       })
-      passageiroAbordo(latitude, longitude, nome, uidCaronista);
+      buscarPassageiro(latitude, longitude, nome, uidCaronista);
     }catch(error){
       console.log('erro em rotaPassageiro');
     }
     Linking.openURL(url);
   }
-  
-  const passageiroAbordo = async(latitude, longitude, nome, uidCaronista)=>{
-    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-    const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${uidCaronista}`);
-    let buscandoCaronistaAtualizado = '';
-    //
+
+  const distanciaPassageiroMotorista = async(latitude, longitude)=>{
     const latitudePassageiro = latitude;
     const longitudePassageiro = longitude;
     const latitudeMotorista = region.latitude;
@@ -420,12 +422,23 @@ function Oferecer({route}) {
         * Math.sin(dLng / 2) * Math.sin(dLng / 2),
     c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     distancia = ((R * c *1000).toFixed());
-    buscandoCaronistaAtualizado = uidCaronista.concat(', ',distancia);
+    return distancia;
+  }
+  
+  const buscarPassageiro = async(latitude, longitude, nome, uidCaronista)=>{
+    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+    const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${uidCaronista}`);
+    let buscandoCaronistaAtualizado = '';
+    let distPassageiroMotorista = await distanciaPassageiroMotorista(latitude, longitude);
+    //
+   
+    buscandoCaronistaAtualizado = uidCaronista.concat(', ',distPassageiroMotorista);
     reference.on('value', function(snapshot){
       reference.update({
         buscandoCaronista: buscandoCaronistaAtualizado
       })
-      if (distancia < 6){
+      //ler do firestore o token do caronista com uid (uidCaronista) e disparar notificação;
+      if (distPassageiroMotorista < 6){
         reference_passageiro.update({
           solicitacaoEmbarque: currentUser
         })
@@ -505,25 +518,6 @@ function Oferecer({route}) {
               ))
             }
             {/* {
-              !oferecerMaisCaronas && 
-              vetorCaronistas.map(passageiro=>{
-                console.log('vetorCaronistasmap:', passageiro.uid);
-                console.log('vetorPassageiros:', passageiros);
-                if (passageiros.includes(passageiro.uid)){
-                  console.log('listou!');
-                    <Marker
-                      key={passageiro.uid}
-                      coordinate={{ latitude : passageiro.latitude , longitude : passageiro.longitude}}
-                      onPress={()=>{
-                        getDadosUsuario(passageiro.uid, 'vagasEsgotadas');
-                      }}
-                      icon={require('../../assets/icons/carona_aceita.png')}
-                    />
-                }
-              })
-            } */}
-
-            {/* {
               //utilizado para traçar a rota
               destination &&
               <MapViewDirections
@@ -535,49 +529,7 @@ function Oferecer({route}) {
                 />
             } */}
           </MapView>
-          {/* {
-            caronaAceita &&
-            <TouchableOpacity 
-              style={{position: 'absolute', bottom: 15, backgroundColor: '#FF5F55', width: 200, height: 47, borderRadius: 15, justifyContent: 'center'}}
-              onPress={()=>{setExibirCaronistas(!exibirCaronistas)}}  
-            >
-              <Text style={{color: 'white', fontWeight: '600', fontSize: 16, textAlign: 'center'}}>Exibir caronistas</Text>
-            </TouchableOpacity>
-          } */}
-          {/* {
-            exibirCaronistas &&
-            <ScrollView style={{position: 'absolute', bottom: 0, width: '95%', height:'40%', backgroundColor: 'white', borderRadius: 10, flex:1, borderColor: '#FF5F55', borderWidth: 5}}>
-              <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, textAlign:'center', marginTop: 12}}>Caronas aceitas</Text>
-              {
-                passageiros.map(passageiro=>(
-                  <View 
-                    style={styles.viewCaronistas}
-                    key={passageiro.uid}
-                    >
-                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: 16, textAlign:'center'}}>Nome: {passageiro.uid}</Text>
-                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: 16, textAlign:'center'}}>Destino:</Text>
-                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: 16, textAlign:'center'}}>{passageiro.uid}</Text>
-                    <Text>{passageiro.uid}</Text>
-                  </View>
-                ))
-              }
-             
-              <TouchableOpacity 
-              style={{bottom: 15, backgroundColor: '#FF5F55', width: 200, height: 47, borderRadius: 15, justifyContent: 'center', alignSelf: 'center', marginTop: 40}}
-              onPress={()=>{setExibirCaronistas(!exibirCaronistas)}}  
-              >
-                <Text style={{color: 'white', fontWeight: '600', fontSize: 16, textAlign: 'center'}}>Fechar lista</Text>
-              </TouchableOpacity>
-            </ScrollView>
-          } */}
-          {/* <TouchableOpacity 
-          style={{bottom: 15, backgroundColor: '#FF5F55', width: 200, height: 47, borderRadius: 15, justifyContent: 'center', alignSelf: 'center', marginTop: 40}}
-          // onPress={()=>{setExibirCaronistas(!exibirCaronistas)}}
-          onPress ={testeMapa}  
-          >
-            <Text style={{color: 'white', fontWeight: '600', fontSize: 16, textAlign: 'center'}}>Teste Mapa</Text>
-          </TouchableOpacity> */}
-       
+          
           <Modal
             animationType="fade"
             transparent={true}
@@ -587,7 +539,7 @@ function Oferecer({route}) {
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 190, alignSelf: 'center'}}>
                 <View style={styles.modalView}>
                   {
-                    oferecerMaisCaronas &&
+                    oferecerMaisCaronas && exibeModalOferecer &&
                     <>
                       <Image 
                         source={imageUser!=''?{uri:imageUser}:null}
@@ -617,12 +569,6 @@ function Oferecer({route}) {
                       <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>
                         Para buscar um(a) passageiro(a), pressione uma vez no ícone em verde e clique em buscar passageiro(a).
                       </Text>
-                        {/* <TouchableOpacity
-                            style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
-                            onPress={()=>{oferecerCarona()}}
-                        >
-                            <Text style={styles.textStyle}>Oferecer carona</Text>
-                        </TouchableOpacity> */}
                       <TouchableOpacity
                             style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
                             onPress={() => {
@@ -635,7 +581,7 @@ function Oferecer({route}) {
                     </>
                   }
                   {
-                    buscarPassageiro &&
+                    !exibeModalOferecer &&
                     <>
                       <Image 
                         source={imageUser!=''?{uri:imageUser}:null}
@@ -653,7 +599,6 @@ function Oferecer({route}) {
                           style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
                           onPress={() => {
                             setModalVisible(!modalVisible);
-                            // setBuscarPassageiro(!buscarPassageiro);
                           }}
                       >
                         <Text style={styles.textStyle}>Cancelar</Text>
