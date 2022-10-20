@@ -31,6 +31,9 @@ function CustomRatingBar() {
   const starImgFilled = 'https://raw.githubusercontent.com/tranhonghan/images/main/star_filled.png'
   const starImgCorner = 'https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png'
 
+
+
+  //componentizar aqui!
   return (
     <View style={estilos.CustomRatingBarStyle}>
       {
@@ -66,6 +69,8 @@ export default function Classificacao({navigation}){
   const starImgFilled = '../assets/star_filled.png'
   const starImgCorner = '../assets/star_corner.png'
 
+  const uidMotorista = route.params?.uidMotorista;
+  
 
     return(
         <View>
