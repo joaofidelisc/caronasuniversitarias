@@ -43,7 +43,7 @@ function BuscandoCarona({navigation, route}) {
   }
 
   function caronaEncontrada(){
-    navigation.navigate('Options', {cidade: cidade, estado: estado});
+    navigation.navigate('CaronaEncontrada', {cidade: cidade, estado: estado});
   }
 
   function cancelarBusca(){

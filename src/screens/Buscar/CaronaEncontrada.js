@@ -190,7 +190,7 @@ function Options({navigation, route}) {
     }catch(error){
         console.log('ERRO:', error.code);
     }
-    navigation.navigate('CaronaEncontrada');
+    navigation.navigate('AguardandoMotorista', {cidade: cidade, estado: estado, uidMotorista:uidMotorista, currentUser: currentUser});
   }
   
   //Função responsável por aceitar carona - escreve no banco do banco do passageiro o uid do motorista e reseta o vetor de ofertas de caronas;
@@ -202,7 +202,6 @@ function Options({navigation, route}) {
         caronasAceitas:uidMotorista,
         ofertasCaronas:''
       });
-      navigation.navigate('CaronaEncontrada');
     }catch(error){
         console.log('ERRO:', error.code);
       }

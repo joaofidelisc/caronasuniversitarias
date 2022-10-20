@@ -15,8 +15,9 @@ import Mensagens from '../screens/Mensagens/Mensagens';
 import Perfil_Conta from '../screens/Perfil/Perfil_Conta';
 import Perfil_Detalhes from '../screens/Perfil/Perfil_Detalhes';
 import BuscandoCarona from '../screens/Buscar/BuscandoCarona'
-import Options from '../screens/Buscar/CaronaEncontrada';
-import CaronaEncontrada from '../screens/Buscar/FimViagem';
+import CaronaEncontrada from '../screens/Buscar/CaronaEncontrada';
+import AguardandoMotorista from '../screens/Buscar/AguardandoMotorista';
+import FimViagem from '../screens/Buscar/FimViagem';
 import TelaInfos from '../screens/Buscar/infosMotorista';
 import Classificacao from '../screens/Buscar/Classificacao';
 import ConfirmarSolicitacao from '../screens/Buscar/ConfirmarSolicitacao';
@@ -38,8 +39,9 @@ function RotaBuscandoCarona(){
         <Stack.Screen name="Buscar" component={Buscar} options={{headerShown:false}}/>
         <Stack.Screen name="ConfirmarSolicitacao" component={ConfirmarSolicitacao} options={{headerShown:false}}/>
         <Stack.Screen name="Buscando_Carona" component={BuscandoCarona} options={{headerShown:false}} />
-        <Stack.Screen name="Options" component={Options} options={{headerShown:false}}/>
         <Stack.Screen name="CaronaEncontrada" component={CaronaEncontrada} options={{headerShown:false}}/>
+        <Stack.Screen name="AguardandoMotorista" component={AguardandoMotorista} options={{headerShown:false}}/>
+        <Stack.Screen name="FimViagem" component={FimViagem} options={{headerShown:false}}/>
         <Stack.Screen name="InfosMotorista" component={TelaInfos} options={{headerShown:false}}/>
         <Stack.Screen name="Classificacao" component={Classificacao} options={{headerShown:false}}/>
       </Stack.Navigator>

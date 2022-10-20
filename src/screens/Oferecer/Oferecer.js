@@ -172,7 +172,9 @@ function Oferecer({route}) {
           longitudeMotorista: region.longitude,
           caronasAceitas:'',
           ativo: true,
-          nomeDestino: destino
+          nomeDestino: destino,
+          buscandoCaronista: '',
+          caronistaAbordo: '',
         });
       }catch(error){
         console.log('atualizaEstado, ERRO:', error.code);
@@ -265,7 +267,7 @@ function Oferecer({route}) {
     Função responsável por buscar e exibir o modal do usuário após o motorista clicar no pin do caronista;
     Busca o nome, foto e define o UID no hook para ser possível oferecer carona.
   */
-  const buscaUsuario = async(userUID, caronaAceita, latitude, longitude)=>{
+  const getDadosUsuario = async(userUID, caronaAceita, latitude, longitude)=>{
     if (caronaAceita != ''){
       if (caronaAceita.includes(currentUser)){
         setModalVisible(true);
@@ -280,7 +282,7 @@ function Oferecer({route}) {
         await getNomeCaronista(userUID);
         await getDestinoCaronista(userUID);
       }catch(error){
-        console.log('erro em buscaUsuario');
+        console.log('erro em getDadosUsuario');
       }
       setUidPassageiro(userUID);
       setModalVisible(true);
@@ -373,10 +375,12 @@ function Oferecer({route}) {
       console.log('excluiBancoMotoristaPassageiro');
     }
   }
+  
 
-
-
-  const rotaPassageiro = async (latitude, longitude, nome) => {
+  
+  const rotaPassageiro = async (latitude, longitude, nome, uidCaronista) => {
+    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+    //
     const scheme = Platform.select({ ios: 'maps:0,0?q=', android: 'geo:0,0?q=' });
     const latLng = `${latitude},${longitude}`;
     const label = nome;
@@ -384,8 +388,50 @@ function Oferecer({route}) {
       ios: `${scheme}${label}@${latLng}`,
       android: `${scheme}${latLng}(${label})`
     });
+    //
+    try{
+      reference.update({
+        buscandoCaronista: uidCaronista,
+      })
+      passageiroAbordo(latitude, longitude, nome, uidCaronista);
+    }catch(error){
+      console.log('erro em rotaPassageiro');
+    }
     Linking.openURL(url);
-}
+  }
+  
+  const passageiroAbordo = async(latitude, longitude, nome, uidCaronista)=>{
+    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+    const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${uidCaronista}`);
+    let buscandoCaronistaAtualizado = '';
+    //
+    const latitudePassageiro = latitude;
+    const longitudePassageiro = longitude;
+    const latitudeMotorista = region.latitude;
+    const longitudeMotorista = region.longitude;
+    let distancia = 0;
+    var deg2rad = function (deg) { return deg * (Math.PI / 180); },
+    R = 6371,
+    dLat = deg2rad(latitudePassageiro - latitudeMotorista),
+    dLng = deg2rad(longitudePassageiro - longitudeMotorista),
+    a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+        + Math.cos(deg2rad(latitudeMotorista))
+        * Math.cos(deg2rad(latitudeMotorista))
+        * Math.sin(dLng / 2) * Math.sin(dLng / 2),
+    c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    distancia = ((R * c *1000).toFixed());
+    buscandoCaronistaAtualizado = uidCaronista.concat(', ',distancia);
+    reference.on('value', function(snapshot){
+      reference.update({
+        buscandoCaronista: buscandoCaronistaAtualizado
+      })
+      if (distancia < 6){
+        reference_passageiro.update({
+          solicitacaoEmbarque: currentUser
+        })
+      }
+    })
+  }
 
   useEffect(()=>{
     console.log('TELA: Oferecer');
@@ -434,7 +480,7 @@ function Oferecer({route}) {
                   coordinate={{ latitude : caronista.latitude , longitude : caronista.longitude}}
                   tappable={caronista.caronasAceitas.includes(currentUser)?true:false}
                   onPress={()=>{
-                    buscaUsuario(caronista.uid, caronista.caronasAceitas, caronista.latitude, caronista.longitude);
+                    getDadosUsuario(caronista.uid, caronista.caronasAceitas, caronista.latitude, caronista.longitude);
                   }}
                   
                   icon={
@@ -451,7 +497,7 @@ function Oferecer({route}) {
                   key={caronista.uid}
                   coordinate={{ latitude : caronista.latitude , longitude : caronista.longitude}}
                   onPress={()=>{
-                    buscaUsuario(caronista.uid, caronista.caronasAceitas, caronista.latitude, caronista.longitude);
+                    getDadosUsuario(caronista.uid, caronista.caronasAceitas, caronista.latitude, caronista.longitude);
                   }}
                   
                   icon={require('../../assets/icons/carona_aceita.png')}
@@ -469,7 +515,7 @@ function Oferecer({route}) {
                       key={passageiro.uid}
                       coordinate={{ latitude : passageiro.latitude , longitude : passageiro.longitude}}
                       onPress={()=>{
-                        buscaUsuario(passageiro.uid, 'vagasEsgotadas');
+                        getDadosUsuario(passageiro.uid, 'vagasEsgotadas');
                       }}
                       icon={require('../../assets/icons/carona_aceita.png')}
                     />
@@ -569,7 +615,7 @@ function Oferecer({route}) {
                     <>
                       <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '700'}}>Você atingiu o número máximo de caronistas!</Text>
                       <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>
-                        Para buscar um(a) passageiro(a), pressione uma vez no ícone em verde e clique no desenho do mapa no canto direito inferior.
+                        Para buscar um(a) passageiro(a), pressione uma vez no ícone em verde e clique em buscar passageiro(a).
                       </Text>
                         {/* <TouchableOpacity
                             style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
@@ -599,9 +645,9 @@ function Oferecer({route}) {
                       <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
                       <TouchableOpacity
                           style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
-                          onPress={()=>{rotaPassageiro(latitudePassageiro, longitudePassageiro, nomeCaronista)}}
+                          onPress={()=>{rotaPassageiro(latitudePassageiro, longitudePassageiro, nomeCaronista, uidPassageiro)}}
                       >
-                          <Text style={styles.textStyle}>Buscar passageiro</Text>
+                          <Text style={styles.textStyle}>Buscar passageiro(a)</Text>
                       </TouchableOpacity>
                     <TouchableOpacity
                           style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
