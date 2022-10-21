@@ -123,13 +123,13 @@ function Options({navigation, route}) {
           if (classificacaoAtual == undefined){
             classificacaoAtual = 0;
           }
-          return classificacaoAtual;
+          return parseFloat(classificacaoAtual.toFixed(2));
         }
       })
     }catch(error){
       console.log('erro em recuperaClassificacaoMotorista');
     }
-    return classificacaoAtual;
+    return parseFloat(classificacaoAtual.toFixed(2));
   }
 
 
@@ -297,8 +297,6 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
   },
   scrollView: {
-    // backgroundColor: 'white',
-    // flex: 1,
     marginHorizontal: 10,
   },
   text: {
@@ -314,7 +312,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: 330, 
-    height: 220, 
+    height: 250, 
     backgroundColor: 'white', 
     borderRadius: 10, 
     alignSelf:'center', 

@@ -461,7 +461,7 @@ function Oferecer({route}) {
           buscandoCaronista: '',
         });
         passageiros.splice(passageiros.indexOf(uidPassageiro), 1);
-
+        //falta remover do array de caronistas?
       })
   }
 

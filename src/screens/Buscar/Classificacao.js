@@ -12,6 +12,10 @@ function Classificacao({navigation, route}){
 
     const uidMotorista = route.params?.uidMotorista;
     const currentUser = route.params?.currentUser;
+    const cidade = route.params?.cidade;
+    const estado = route.params?.estado;
+
+
 
     function CustomRatingBar() {
       return (
