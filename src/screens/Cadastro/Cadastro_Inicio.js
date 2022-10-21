@@ -90,7 +90,7 @@ function Cadastro_Inicio({navigation}) {
               >
                 <Image source={
                   require('../../assets/icons/close.png')} 
-                  style={{height:22, width: 22}}  
+                  style={{height:'70%', width: '100%'}}  
                 />
             </TouchableOpacity>
             <Text style={styles.txtCadastro}>
@@ -98,7 +98,7 @@ function Cadastro_Inicio({navigation}) {
             </Text>
             <Image source={
               require('../../assets/icons/google-color.png')} 
-              style={{height:22, width: 22, position: 'absolute', left: 30, top: 233}}  
+              style={{height:'3.2%', width: '6.5%', position: 'absolute', left: '8%', top: '29%'}}  
             />
             <TouchableOpacity 
               style={[styles.btnContinuarComRedes]}
@@ -109,17 +109,17 @@ function Cadastro_Inicio({navigation}) {
             <View style={{position: 'absolute',
                 flexDirection: 'row',
                 alignItems: 'center',
-                width: 309,
-                left: 28,
-                top: 266.5}}>
+                width: '75%',
+                left: '7%',
+                top: '33.5%'}}>
                 <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
             </View>
             <Image source={
               require('../../assets/icons/email.png')} 
-              style={{height:22, width: 22, position: 'absolute', left: 30, top: 275}}  
+              style={{height:'3.5%', width: '7%', position: 'absolute', left: '8%', top: '34.5%'}}  
             />
             <TouchableOpacity 
-              style={[styles.btnContinuarComRedes, {width:228, top:279}]}
+              style={[styles.btnContinuarComRedes, {width:'100%', top:'35.2%'}]}
               onPress={()=>navigation.navigate('Cadastro_Email')}  
             >
                 <Text style={styles.txtBtnContinuarComRedes}>Continuar com e-mail</Text>
@@ -188,39 +188,39 @@ const styles = StyleSheet.create({
   },
   btnContinuarComRedes:{
     position: 'absolute',
-    width: 315,
-    height: 18,
-    left:63,
-    top: 236,
+    width: '100%',
+    height: '10%',
+    left:'15%',
+    top: '30%',
   },
   txtBtnContinuarComRedes:{
     fontWeight:'600',
-    fontSize: 12,
+    fontSize: height*0.015,
     lineHeight: 15,
     color: '#06444C',
   },
   btnEntrar:{
     position: 'absolute',
-    width: 53,
-    height: 20,
-    left: 28,
-    top: 374,
+    width: '100%',
+    height: '100%',
+    left: '8%',
+    top: '49%',
   },
   txtBtnEntrar:{
     color: '#FF5F55',
     fontWeight: '700',
-    fontSize: 16,
+    fontSize: height*0.02,
     lineHeight: 20,
   },
   txtCadastrar:{
     color: '#06444C',
     position: 'absolute',
-    width: 315,
-    height: 18,
-    left: 28, 
-    top: 333,
+    width: '100%',
+    height: '100%',
+    left: '8%', 
+    top: '42.5%',
     fontWeight: '700',
-    fontSize: 15,
+    fontSize: height*0.02,
     lineHeight:18,
     alignItems: 'center',
   },
@@ -241,13 +241,13 @@ const styles = StyleSheet.create({
   textoInformativo:{
     color: '#C4C4C4',
     position: 'absolute',
-    width: 315,
-    height: 600,
-    left: 28,
-    top: 417,
+    width: '80%',
+    height: '100%',
+    left: '8%',
+    top: '55%',
     fontWeight: '700',
-    fontSize: 10,
-    lineHeight:12,
+    fontSize: height*0.012,
+    lineHeight:height*0.02,
     alignItems: 'center',
   },
   modalView: {
