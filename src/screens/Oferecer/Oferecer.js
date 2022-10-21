@@ -551,13 +551,13 @@ function Oferecer({route}) {
           {
             uidPassageiroEmbarque &&
             <TouchableOpacity
-              style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.03, position: 'absolute', bottom: 50}}
+              style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.03, position: 'absolute', bottom: 50}}
               onPress={()=>{
                 embarquePassageiro(uidPassageiroEmbarque);
                 // setUIDPassageiroEmbarque(null);
               }}
             >
-              <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
+              <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
                 Passageiro(a) a bordo
               </Text>
             </TouchableOpacity>

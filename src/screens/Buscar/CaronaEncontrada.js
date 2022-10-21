@@ -43,6 +43,7 @@ function Options({navigation, route}) {
                 nome: await getNomeMotorista(uid),
                 carro: await getNomeCarroMotorista(uid),
                 placa: await getPlacaCarroMotorista(uid),
+                classificacao: await getClassificacaoMotorista(uid)
               }])
             }else{
               vetorMotoristas.some(motorista=>{
@@ -57,6 +58,7 @@ function Options({navigation, route}) {
                   nome: await getNomeMotorista(uid),
                   carro: await getNomeCarroMotorista(uid),
                   placa: await getPlacaCarroMotorista(uid),
+                  classificacao: await getClassificacaoMotorista(uid)
                 }])
               }
             }
@@ -109,6 +111,25 @@ function Options({navigation, route}) {
         return '';
       }
     })
+  }
+
+  const getClassificacaoMotorista = async(motoristaUID)=>{
+    let classificacaoAtual = 0;
+    const reference_motorista = firestore().collection('Users').doc(motoristaUID);
+    try{
+      await reference_motorista.get().then((reference)=>{
+        if (reference.exists){
+          classificacaoAtual = reference.data().classificacao;
+          if (classificacaoAtual == undefined){
+            classificacaoAtual = 0;
+          }
+          return classificacaoAtual;
+        }
+      })
+    }catch(error){
+      console.log('erro em recuperaClassificacaoMotorista');
+    }
+    return classificacaoAtual;
   }
 
 
@@ -238,6 +259,7 @@ function Options({navigation, route}) {
                   <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Nome: {motorista.nome}</Text>
                   <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Carro: {motorista.carro}</Text>
                   <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Placa: {motorista.placa}</Text>
+                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Classificação: {motorista.classificacao}</Text>
                   <View style={{flexDirection:'row', alignSelf:'center'}}>
                   <TouchableOpacity
                     style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginRight: 20}}

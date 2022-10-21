@@ -110,7 +110,7 @@ export default StyleSheet.create({
     CustomRatingBarStyle:{
       justifyContent:'center',
       flexDirection:'row',
-      marginTop:20
+      marginTop:40
 
     },
     StarImgStyle:{

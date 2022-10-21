@@ -81,7 +81,11 @@ function ViagemEmAndamento({navigation, route}) {
       await excluiBancoPassageiro();
       await removeUIDCaronista();
       await escreveHistoricoViagem();
-      navigation.navigate('Classificacao', {uidMotorista: uidMotorista, cidade: cidade, estado: estado, currentUser: currentUser});
+      await navigateToClassificacao();
+    }
+    
+    const navigateToClassificacao = async()=>{
+      navigation.navigate('Classificacao', {uidMotorista: uidMotorista, currentUser: currentUser});
     }
 
     useEffect(()=>{
