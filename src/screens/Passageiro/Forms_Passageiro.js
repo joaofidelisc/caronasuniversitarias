@@ -1,7 +1,9 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image, BackHandler, Alert, Modal, StyleSheet} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image, BackHandler, Alert, Modal, StyleSheet, Dimensions} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { TextInputMask } from 'react-native-masked-text'
+
+const {height,width} = Dimensions.get('screen')
 
 function Forms_Passageiro({route, navigation}) {
     const [nome, setNome] = useState('');
@@ -83,23 +85,23 @@ function Forms_Passageiro({route, navigation}) {
     return (
     <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
-            <View style={{backgroundColor: '#FF5F55', width: '100%', height:48, justifyContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
-                <Text style={{fontWeight: '700', fontSize: 16, lineHeight: 20, textAlign: 'center', color: 'white'}}>Formulário do passageiro</Text>
+            <View style={{backgroundColor: '#FF5F55', width: '100%', height:'5%', justifyContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
+                <Text style={{fontWeight: '700', fontSize: height*0.02, lineHeight: 20, textAlign: 'center', color: 'white'}}>Formulário do passageiro</Text>
             </View>
             <View style={{backgroundColor: '#FFF', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                 <Image source={
                     require('../../assets/icons/user_undefined.png')} 
-                    style={{height:63, width: 63, position: 'absolute', top:70}}  
+                    style={{height:'7.5%', width: '15.2%', position: 'absolute', top:'10%'}}  
                 />
-                <Text style={{position: 'absolute', top: 158, textAlign: 'center', fontWeight: '700', fontSize: 18, lineHeight: 20, color: '#06444C'}}>Dados pessoais</Text>
+                <Text style={{position: 'absolute', top: '19%', textAlign: 'center', fontWeight: '700', fontSize: height*0.022, lineHeight: 20, color: '#06444C'}}>Dados pessoais</Text>
                 <TextInput
-                    style={{position:'absolute', width: 315, height: 39, top: 222, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth:1, color:'black'}}
+                    style={{position:'absolute', width: '85%', height: '5%', top: '25%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.02, borderWidth:1, color:'black'}}
                     placeholderTextColor='black'
                     placeholder='Nome'
                     onChangeText={(nome)=>setNome(nome)}
                 />
                 <TextInputMask 
-                    style={{position:'absolute', width: 139, height: 39, top: 280, left:34, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth:1, color:'black'}}
+                    style={{position:'absolute', width: '40%', height: '5%', top: '34%', left:'5%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.02, borderWidth:1, color:'black'}}
                     placeholderTextColor='black'
                     type="cpf"
                     onChangeText={(CPF)=>setCPF(CPF)}
@@ -107,7 +109,7 @@ function Forms_Passageiro({route, navigation}) {
                     ref={CPFRef}
                 />
                 <TextInputMask
-                    style={{position:'absolute', width: 139, height: 39, top: 280, left:210, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth:1, color:'black'}}
+                    style={{position:'absolute', width: '40%', height: '5%', top: '34%', left:'55%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.02, borderWidth:1, color:'black'}}
                     placeholderTextColor='black'
                     type="datetime"
                     options={{
@@ -117,7 +119,7 @@ function Forms_Passageiro({route, navigation}) {
                     onChangeText={(data_nasc)=>setDataNasc(data_nasc)}
                 />
                 <TextInputMask
-                    style={{position:'absolute', width: 315, height: 39, top: 344, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth:1, color:'black'}}
+                    style={{position:'absolute', width: '75%', height: '5%', top: '42%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.02, borderWidth:1, color:'black'}}
                     placeholderTextColor='black'
                     type="cel-phone"
                     options={{
@@ -129,13 +131,13 @@ function Forms_Passageiro({route, navigation}) {
                     onChangeText={(num_cel)=>setNumCel(num_cel)}
                 />
                 <TextInput
-                    style={{position:'absolute', width: 315, height: 39, top: 405, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth:1, color:'black'}}
+                    style={{position:'absolute', width: '75%', height: '5%', top: '50%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.02, borderWidth:1, color:'black'}}
                     placeholderTextColor='black'
                     placeholder='Universidade'
                     onChangeText={(universidade)=>setUniversidade(universidade)}
                     />
                 <TextInput
-                    style={{position:'absolute', width: 315, height: 39, top: 470, backgroundColor: '#D3D3D3', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, color:'black'}}
+                    style={{position:'absolute', width: '85%', height: '5%', top: '58%', backgroundColor: '#D3D3D3', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.019, color:'black'}}
                     placeholderTextColor='black'
                     placeholder='E-mail'
                     keyboardType='email-address'
@@ -143,10 +145,10 @@ function Forms_Passageiro({route, navigation}) {
                     editable={false}
                 />
                 <TouchableOpacity 
-                    style={{position: 'absolute', top: 542}}
+                    style={{position: 'absolute', top: '69%'}}
                     onPress={insertDataNewUser}
                 >
-                    <Text style={{fontWeight: '700', fontSize: 18, color: '#06444C'}}>Salvar</Text>
+                    <Text style={{fontWeight: '700', fontSize: height*0.022, color: '#06444C'}}>Salvar</Text>
                 </TouchableOpacity>
                 <Modal
                     animationType="fade"
