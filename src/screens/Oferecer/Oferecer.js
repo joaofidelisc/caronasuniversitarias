@@ -232,6 +232,9 @@ function Oferecer({route}) {
   /*
     Função responsável por retornar o nome do caronista.
   */
+
+
+  //FUNÇÃO ERRADA, TEM QUE SER COM GET!!
   const getNomeCaronista = async(userUID)=>{
     let nomeCaronista = '';
     try{
