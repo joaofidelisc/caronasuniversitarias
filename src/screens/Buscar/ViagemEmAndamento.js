@@ -81,8 +81,8 @@ function ViagemEmAndamento({navigation, route}) {
 
     const fimDaViagem = async()=>{
       await excluiBancoPassageiro();
-      await escreveHistoricoViagem();
-      await navigateToClassificacao();
+      escreveHistoricoViagem();
+      navigateToClassificacao();
       // await removeUIDCaronista();
     }
     
