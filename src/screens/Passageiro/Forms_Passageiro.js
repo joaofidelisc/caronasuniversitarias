@@ -2,6 +2,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image, BackHandler, Alert, Modal, StyleSheet, Dimensions} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { TextInputMask } from 'react-native-masked-text'
+import { ScrollView } from 'react-native-gesture-handler';
 
 const {height,width} = Dimensions.get('screen')
 
@@ -84,14 +85,15 @@ function Forms_Passageiro({route, navigation}) {
 
     return (
     <SafeAreaView>
+        
         <StatusBar barStyle={'light-content'} />
             <View style={{backgroundColor: '#FF5F55', width: '100%', height:'5%', justifyContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
                 <Text style={{fontWeight: '700', fontSize: height*0.02, lineHeight: 20, textAlign: 'center', color: 'white'}}>Formulário do passageiro</Text>
             </View>
-            <View style={{backgroundColor: '#FFF', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+            <View style={{backgroundColor: '#FFF', height: height, justifyContent: 'center', alignItems: 'center'}}>
                 <Image source={
                     require('../../assets/icons/user_undefined.png')} 
-                    style={{height:'7.5%', width: '15.2%', position: 'absolute', top:'10%'}}  
+                    style={{height:'7.5%', width: width*0.159, position: 'absolute', top:'10%'}}  
                 />
                 <Text style={{position: 'absolute', top: '19%', textAlign: 'center', fontWeight: '700', fontSize: height*0.022, lineHeight: 20, color: '#06444C'}}>Dados pessoais</Text>
                 <TextInput
@@ -169,6 +171,7 @@ function Forms_Passageiro({route, navigation}) {
                     </View>
                 </Modal>
             </View>
+           
     </SafeAreaView>
     );
 }
