@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StatusBar, StyleSheet, TouchableOpacity, SafeAreaView, Modal, Image} from 'react-native';
+import {View, Text, StatusBar, StyleSheet, TouchableOpacity, SafeAreaView, Modal, Image, Dimensions} from 'react-native';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth'
@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 
 const dominios_permitidos = ["estudante.ufscar.br"];
-
+const {height, width} = Dimensions.get('screen')
 
 GoogleSignin.configure({
   webClientId: '97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com',
@@ -78,6 +78,8 @@ function Cadastro_Inicio({navigation}) {
       }
     }
   }
+    
+
     return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -174,13 +176,13 @@ const styles = StyleSheet.create({
   },
   txtCadastro:{
     position: 'absolute',
-    width: 315,
-    height: 51,
-    left: 28,
-    top: 130,
+    width: '75%',
+    height: '15%',
+    left: '10%',
+    top: '15%',
     fontWeight: '700',
-    fontSize: 24,
-    lineHeight: 29,
+    fontSize: height*0.03,
+    lineHeight: height*0.04,
     display: 'flex',
     color: '#06444C',
   },

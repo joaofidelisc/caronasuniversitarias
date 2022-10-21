@@ -171,7 +171,7 @@ export default function Buscar({navigation}) {
         style={{height:350, width: 350, position: 'absolute', top: 260, alignSelf: 'center'}}  
       />
       <Text style={{fontSize:20, color:'#2f4f4f', paddingHorizontal:70, fontWeight:'bold', position: 'absolute', top: 65}}>Para onde pretende ir?</Text>
-      <Text style={{fontSize:15, color:'#c0c0c0', paddingHorizontal:70, fontWeight:'normal', marginVertical:15, position: 'absolute', top: 170, fontWeight: '600'}}>Ex: Universidade fereral de São Carlos</Text>
+      <Text style={{fontSize:15, color:'#c0c0c0', paddingHorizontal:70, fontWeight:'normal', marginVertical:15, position: 'absolute', top: 170, fontWeight: '600'}}>Ex: Universidade federal de São Carlos</Text>
       {
         localizacaoPassageiro &&
         <GooglePlacesAutocomplete
