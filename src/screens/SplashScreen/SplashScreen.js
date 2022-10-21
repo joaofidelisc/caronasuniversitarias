@@ -5,6 +5,8 @@ import { useNavigation } from "@react-navigation/native";
 import LottieView from 'lottie-react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import iconFont from 'react-native-vector-icons/Fonts/FontAwesome.ttf';
+
+
 const {height, width}= Dimensions.get('screen')
 
 export function Splash(){
