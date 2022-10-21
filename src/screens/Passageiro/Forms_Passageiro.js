@@ -87,9 +87,10 @@ function Forms_Passageiro({route, navigation}) {
     <SafeAreaView>
         
         <StatusBar barStyle={'light-content'} />
-            <View style={{backgroundColor: '#FF5F55', width: '100%', height:'5%', justifyContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{backgroundColor: '#FF5F55', width: '100%', height:height*0.05, justifyContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
                 <Text style={{fontWeight: '700', fontSize: height*0.02, lineHeight: 20, textAlign: 'center', color: 'white'}}>Formulário do passageiro</Text>
             </View>
+            <ScrollView>
             <View style={{backgroundColor: '#FFF', height: height, justifyContent: 'center', alignItems: 'center'}}>
                 <Image source={
                     require('../../assets/icons/user_undefined.png')} 
@@ -103,7 +104,7 @@ function Forms_Passageiro({route, navigation}) {
                     onChangeText={(nome)=>setNome(nome)}
                 />
                 <TextInputMask 
-                    style={{position:'absolute', width: '40%', height: '5%', top: '34%', left:'5%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.02, borderWidth:1, color:'black'}}
+                    style={{position:'absolute', width: '40%', height: '5%', top: '33%', left:'5%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.02, borderWidth:1, color:'black'}}
                     placeholderTextColor='black'
                     type="cpf"
                     onChangeText={(CPF)=>setCPF(CPF)}
@@ -111,7 +112,7 @@ function Forms_Passageiro({route, navigation}) {
                     ref={CPFRef}
                 />
                 <TextInputMask
-                    style={{position:'absolute', width: '40%', height: '5%', top: '34%', left:'55%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.02, borderWidth:1, color:'black'}}
+                    style={{position:'absolute', width: '40%', height: '5%', top: '33%', left:'55%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.02, borderWidth:1, color:'black'}}
                     placeholderTextColor='black'
                     type="datetime"
                     options={{
@@ -171,7 +172,7 @@ function Forms_Passageiro({route, navigation}) {
                     </View>
                 </Modal>
             </View>
-           
+            </ScrollView>
     </SafeAreaView>
     );
 }

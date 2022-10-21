@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image, Alert, BackHandler, Modal, StyleSheet, Dimensions} from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { TextInputMask } from 'react-native-masked-text';
 
 const {height, width} = Dimensions.get('screen')
@@ -67,9 +68,10 @@ function Forms_Motorista({route, navigation}) {
     return (
     <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
-            <View style={{backgroundColor: '#FF5F55', width: '100%', height:'5%', justifyContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{backgroundColor: '#FF5F55', width: '100%', height:height*0.05, justifyContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
                 <Text style={{fontWeight: '700', fontSize: height*0.02, lineHeight: 20, textAlign: 'center', color: 'white'}}>Formulário do motorista</Text>
             </View>
+            <ScrollView>
             <View style={{backgroundColor: '#FFF', height: height, justifyContent: 'center', alignItems: 'center'}}>
                 <Image source={
                     require('../../assets/icons/user_undefined.png')} 
@@ -83,14 +85,14 @@ function Forms_Motorista({route, navigation}) {
                     onChangeText={(nome)=>setNome(nome)}
                 />
                 <TextInputMask 
-                    style={{position:'absolute', width: '40%', height: '5%', top: '34%', left:'5%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.02, borderWidth:1, color:'black'}}
+                    style={{position:'absolute', width: '40%', height: '5%', top: '33%', left:'5%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.02, borderWidth:1, color:'black'}}
                     placeholderTextColor='black'
                     type="cpf"
                     onChangeText={(CPF)=>setCPF(CPF)}
                     placeholder='CPF'
                 />
                 <TextInputMask
-                    style={{position:'absolute', width: '40%', height: '5%', top: '34%', left:'55%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.02, borderWidth:1, color:'black'}}
+                    style={{position:'absolute', width: '40%', height: '5%', top: '33%', left:'55%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.02, borderWidth:1, color:'black'}}
                     placeholderTextColor='black'
                     type="datetime"
                     options={{
@@ -151,6 +153,7 @@ function Forms_Motorista({route, navigation}) {
                     </View>
                 </Modal>
             </View>
+            </ScrollView>
     </SafeAreaView>
     );
 }
