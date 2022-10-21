@@ -1,5 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, Dimensions} from 'react-native';
+import database from '@react-native-firebase/database';
+import firestore from '@react-native-firebase/firestore';
+import firebase from "@react-native-firebase/app";
+
 
 const {height, width} = Dimensions.get('screen')
 
@@ -13,15 +17,71 @@ function ViagemEmAndamento({navigation, route}) {
     const veiculoMotorista = route.params?.veiculoMotorista;
     const placaVeiculoMotorista = route.params?.placaVeiculoMotorista;
 
-    const fimDaViagem = async()=>{
-      // o que fazer quando a viagem acaba?
-      console.log('acabou a viagem!');
-      //escrever no histórico de viagens do passageiro;
-      //avaliar o motorista;
-      //remover o uid do passageiro de caronistasAbordo;
-      //apagar o banco de passageiros (tempo real);
-      navigation.navigate('Classificacao', {uidMotorista: uidMotorista, cidade: cidade, estado: estado, currentUser: currentUser});
 
+    const excluiBancoPassageiro = async()=>{
+      const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+      try{
+        reference_passageiro.remove();
+      }catch(error){
+        console.log('excluiBancoPassageiro');
+      }
+    }
+    
+    //remove o uid do passageiro no banco de motoristas, porque por mais que tenha finalizado a minha viagem
+    //as vezes não finalizou a viagem de outro passageiro a bordo.
+    const removeUIDCaronista = async()=>{
+      let todosCaronistasAbordo = '';
+      let arrayCaronistasRestantes = [];
+      let caronistasRestantes = '';
+      const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
+      try{
+        reference_motorista.once('value').then(snapshot=>{
+          todosCaronistasAbordo = snapshot.val().caronistasAbordo;
+          if (todosCaronistasAbordo != '' && todosCaronistasAbordo.split(', '.length>1)){
+            arrayCaronistasRestantes = todosCaronistasAbordo.split(', ');
+            if (todosCaronistasAbordo.includes(currentUser)){
+              arrayCaronistasRestantes.splice(arrayCaronistasRestantes.indexOf(currentUser), 1);
+              caronistasRestantes = arrayCaronistasRestantes.join(', ');
+              reference_motorista.update({
+                caronistasAbordo: caronistasRestantes
+              })
+            }
+          }
+        })
+      }catch(error){
+        console.log('erro em removeUIDCaronista');
+      }
+    }
+
+    const dataAtualFormatada = async()=>{
+        var data = new Date(),
+            dia  = data.getDate().toString().padStart(2, '0'),
+            mes  = (data.getMonth()+1).toString().padStart(2, '0'), //+1 pois no getMonth Janeiro começa com zero.
+            ano  = data.getFullYear();
+        return dia+"/"+mes+"/"+ano;
+    }
+
+    const escreveHistoricoViagem = async()=>{
+      const data = await dataAtualFormatada();
+      const reference_passageiro = firestore().collection('Users').doc(currentUser); 
+      try{
+        reference_passageiro.update({
+          historicoViagens: firebase.firestore.FieldValue.arrayUnion({
+            uidMotorista: uidMotorista,
+            dataViagem: data
+          })
+        })
+      }catch(error){
+        console.log('erro em escreveHistoricoViagem');
+      }
+    }
+
+
+    const fimDaViagem = async()=>{
+      await excluiBancoPassageiro();
+      await removeUIDCaronista();
+      await escreveHistoricoViagem();
+      navigation.navigate('Classificacao', {uidMotorista: uidMotorista, cidade: cidade, estado: estado, currentUser: currentUser});
     }
 
     useEffect(()=>{

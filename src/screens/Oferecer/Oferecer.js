@@ -87,14 +87,16 @@ function Oferecer({route}) {
       filhoRemovido = '';
     }
     try{
-      database().ref().child(`${estado}/${cidade}/Passageiros`).on('child_removed', function(snapshot){
-        filhoRemovido = snapshot.key;
-        vetorCaronistas.some(caronista=>{
-          if (caronista.uid == filhoRemovido){
-            vetorCaronistas.splice(vetorCaronistas.indexOf(caronaAceita), 1);
-          }
-        })
-      })
+      //tratar aqui:
+      //dá problema quando eu aperto em encerrar viagem na tela de ViagemEmandamento
+      // database().ref().child(`${estado}/${cidade}/Passageiros`).on('child_removed', function(snapshot){
+      //   filhoRemovido = snapshot.key;
+      //   vetorCaronistas.some(caronista=>{
+      //     if (caronista.uid == filhoRemovido){
+      //       vetorCaronistas.splice(vetorCaronistas.indexOf(caronaAceita), 1);
+      //     }
+      //   })
+      // })
       database().ref().child(`${estado}/${cidade}/Passageiros`).on('value', function(snapshot){
         snapshot.forEach(function(userSnapshot){       
           if (vetorCaronistas.length == 0){
@@ -435,6 +437,7 @@ function Oferecer({route}) {
     })
       if (distPassageiroMotorista < 6 && !snapshot.val().caronistasAbordo.includes(uidCaronista)){
         setUIDPassageiroEmbarque(uidCaronista);
+        setModalVisible(false);
       }
       })
     }
