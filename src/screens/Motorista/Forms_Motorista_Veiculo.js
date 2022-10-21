@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image, Modal, StyleSheet} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image, Modal, StyleSheet, Dimensions} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import auth from '@react-native-firebase/auth';
+import { ScrollView } from 'react-native-gesture-handler';
 
+const {height, width} = Dimensions.get('screen')
 
 function Forms_Motorista_Veiculo({navigation, route}) {
     
@@ -84,23 +86,24 @@ function Forms_Motorista_Veiculo({navigation, route}) {
     return (
     <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
-            <View style={{backgroundColor: '#FF5F55', width: '100%', height:48, justifyContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{backgroundColor: '#FF5F55', width: '100%', height:height*0.05, justifyContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
                 <Text style={{fontWeight: '700', fontSize: 16, lineHeight: 20, textAlign: 'center', color: 'white'}}>Formulário do motorista</Text>
             </View>
-            <View style={{backgroundColor: '#FFF', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+            <ScrollView>
+            <View style={{backgroundColor: '#FFF', height: height, justifyContent: 'center', alignItems: 'center'}}>
                 <Image source={
-                    require('../../assets/icons/car-icon.png')} 
-                    style={{height:63, width: 63, position: 'absolute', top:70}}  
+                    require('../../assets/icons/car.png')} 
+                    style={{height:'8%', width: '20%', position: 'absolute', top:'8%'}}  
                 />
-                <Text style={{position: 'absolute', top: 158, textAlign: 'center', fontWeight: '700', fontSize: 18, lineHeight: 20, color: '#06444C'}}>Dados do veículo</Text>
+                <Text style={{position: 'absolute', top: '18%', textAlign: 'center', fontWeight: '700', fontSize: height*0.022, lineHeight: 20, color: '#06444C'}}>Dados do veículo</Text>
                 <TextInput
-                    style={{position:'absolute', width: 315, height: 39, top: 222, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth: 1, color:'black'}}
+                    style={{position:'absolute', width: '80%', height: '4.8%', top: '25%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.019, borderWidth: 1, color:'black'}}
                     placeholderTextColor='black'
                     placeholder='Nome do veículo'
                     onChangeText={(nome_veiculo)=>setNomeVeiculo(nome_veiculo)}
                     />
                 <TextInput
-                    style={{position:'absolute', width: 139, height: 39, top: 280, left:34, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth: 1, color:'black'}}
+                    style={{position:'absolute', width: '35%', height: '4.8%', top: '32%', left:'10%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.019, borderWidth: 1, color:'black'}}
                     placeholderTextColor='black'
                     placeholder='Ano'
                     keyboardType='numeric'
@@ -108,41 +111,41 @@ function Forms_Motorista_Veiculo({navigation, route}) {
                     onChangeText={(ano_veiculo)=>setAnoVeiculo(ano_veiculo)}
                 />
                 <TextInput
-                    style={{position:'absolute', width: 139, height: 39, top: 280, left:210, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth: 1, color:'black'}}
+                    style={{position:'absolute', width: '35%', height: '4.8%', top: '32%', left:'54.3%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.019, borderWidth: 1, color:'black'}}
                     placeholderTextColor='black'
                     placeholder='Cor'
                     maxLength={15}
                     onChangeText={(cor_veiculo)=>setCorVeiculo(cor_veiculo)}
                     />
                 <TextInput
-                    style={{position:'absolute', width: 315, height: 39, top: 344, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth: 1, color:'black'}}
+                    style={{position:'absolute', width: '80%', height: '4.8%', top: '39%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.019, borderWidth: 1, color:'black'}}
                     placeholderTextColor='black'
                     placeholder='Placa'
                     maxLength={7}
                     onChangeText={(placa_veiculo)=>setPlacaVeiculo(placa_veiculo)}
                 />
                 <TouchableOpacity 
-                    style={{position: 'absolute', top: 403}}
+                    style={{position: 'absolute', top: '47%'}}
                     onPress={pickImageFromGalery}
                 >
-                    <Text style={{fontWeight: '700', fontSize: 18, color: '#06444C'}}>Anexar foto</Text>
+                    <Text style={{fontWeight: '700', fontSize: height*0.022, color: '#06444C'}}>Anexar foto</Text>
                 </TouchableOpacity>
                 {
                     !imagemAnexada && 
                     <Image source={
                         require('../../assets/icons/anexar.png')} 
-                        style={{height:55, width: 54, position: 'absolute', top:442}}  
+                        style={{height:'7.2%', width: '15%', position: 'absolute', top:'53%'}}  
                         />
                     }
                 {
                     imagemAnexada &&
-                    <Text style={{fontWeight: '700', fontSize: 16, lineHeight: 20, textAlign: 'center', color: 'black', marginTop: 150}}>Imagem anexada</Text>
+                    <Text style={{fontWeight: '700', fontSize: height*0.019, lineHeight: 20, textAlign: 'center', color: 'black', marginTop: 150}}>Imagem anexada</Text>
                 }
                 <TouchableOpacity 
-                    style={{position: 'absolute', top: 542}}
+                    style={{position: 'absolute', top: '65%'}}
                     onPress={insertDataNewUser}    
                 >
-                    <Text style={{fontWeight: '700', fontSize: 18, color: '#06444C'}}>Avançar</Text>
+                    <Text style={{fontWeight: '700', fontSize: height*0.022, color: '#06444C'}}>Avançar</Text>
                 </TouchableOpacity>
                 <Modal
                     animationType="fade"
@@ -163,6 +166,7 @@ function Forms_Motorista_Veiculo({navigation, route}) {
                     </View>
                 </Modal>
             </View>
+            </ScrollView>
     </SafeAreaView>
     );
 }
