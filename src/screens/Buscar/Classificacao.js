@@ -4,6 +4,7 @@ import {View, Text, SafeAreaView, StatusBar, Image, TextInput, TouchableOpacity,
 import firestore from '@react-native-firebase/firestore';
 import firebase from "@react-native-firebase/app";
 import estilos from '../../estilos/estilos';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Classificacao({navigation, route}){
     const [descricaoViagem, setDescricaoViagem] = useState('');
@@ -77,6 +78,7 @@ function Classificacao({navigation, route}){
 
     
     const navigateToBuscar = async()=>{
+      // await AsyncStorage.removeItem('Classificacao');
       navigation.navigate('Buscar')
     }
 

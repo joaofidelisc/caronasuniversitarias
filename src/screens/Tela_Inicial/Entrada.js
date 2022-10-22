@@ -11,6 +11,12 @@ function Entrada({navigation}){
   const [falhaLogin, setFalhaLogin] = useState(false);
 
   const redirecionamentoLogin = async(email)=>{  
+    // let buscandoCarona = await AsyncStorage.getItem("buscandoCarona");
+    // let CaronaEncontrada = await AsyncStorage.getItem("CaronaEncontrada");
+    // let AguardandoMotorista = await AsyncStorage.getItem("AguardandoMotorista");
+    // let ViagemEmAndamento = await AsyncStorage.getItem("ViagemEmAndamento");
+    // let Classificacao = await AsyncStorage.getItem("Classificacao");
+
     try{
       firestore().collection('Users').where('email', '==', email).get().then(querySnapshot=>{
         const valor = querySnapshot.docs;
@@ -18,6 +24,18 @@ function Entrada({navigation}){
           navigation.navigate("Como_Comecar", {email: email});
         }
         else{
+          // if (buscandoCarona != null){
+          //   navigation.navigate("Buscando_Carona");
+          // }else if (CaronaEncontrada != null){
+          //   navigation.navigate("CaronaEncontrada");
+          // }else if (AguardandoMotorista != null){
+          //   navigation.navigate("AguardandoMotorista");
+          // }else if (ViagemEmAndamento != null){
+          //   navigation.navigate("ViagemEmAndamento");
+          // }else if (Classificacao != null){
+          //   navigation.navigate("Classificacao");
+          // }else{
+          // }
           navigation.navigate("MenuPrincipal");
         }
       })

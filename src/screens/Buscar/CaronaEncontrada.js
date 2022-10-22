@@ -5,7 +5,7 @@ import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Options({navigation, route}) {
 
@@ -211,8 +211,14 @@ function Options({navigation, route}) {
     }catch(error){
         console.log('ERRO:', error.code);
     }
+    // defineEstadoAtual();
     navigation.navigate('AguardandoMotorista', {cidade: cidade, estado: estado, uidMotorista:uidMotorista, currentUser: currentUser, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista});
   }
+
+  // async function defineEstadoAtual(){
+  //   // await AsyncStorage.removeItem('CaronaEncontrada');
+  //   // await AsyncStorage.setItem('AguardandoMotorista', true);
+  // }
   
   //Função responsável por aceitar carona - escreve no banco do banco do passageiro o uid do motorista e reseta o vetor de ofertas de caronas;
   //Além disso, invoca a função aceitarCarona_ (complementar desta), que é responsável por escrever no banco do motorista o uid do passageiro;

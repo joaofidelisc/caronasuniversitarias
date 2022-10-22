@@ -5,7 +5,7 @@ import LocationServicesDialogBox from "react-native-android-location-services-di
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
 import { PermissionsAndroid } from 'react-native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
@@ -27,8 +27,9 @@ export default function Buscar({navigation}) {
   const [localizacaoAtiva, setLocalizacaoAtiva] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  
+
   async function enviarLocalizacaoPassageiro(latitude, longitude){
+    // await AsyncStorage.setItem('buscandoCarona', 'true');
     const currentUser = auth().currentUser.uid;
     var response = await Geocoder.from(latitude, longitude);
     var filtro_cidade = response.results[0].address_components.filter(function(address_component){
@@ -140,6 +141,25 @@ export default function Buscar({navigation}) {
     }
   }
 
+
+  //IGNORAR ESSA FUNÇÃO, CRIEI APENAS PARA TESTAR A TELA Oferecer.js
+  const insereBanco = async()=>{
+    const reference = database().ref(`SP/Matão/Passageiros/sqmtE3QOReXfNemiKDZWup00HYo1`);
+    try{
+      reference.set({
+        latitudePassageiro: -21.59371,
+        longitudePassageiro: -21.4835263,
+        latitudeDestino: -21.60082,
+        longitudeDestino: -48.35736,
+        nomeDestino: 'Tenda Atacado',
+        ativo: true,
+        ofertasCaronas:'',
+        caronasAceitas:'',
+      });
+    }catch(error){
+      console.log('atualizaEstado, ERRO:', error.code);
+    }
+  }
   // async function excluiBancoPassageiroMotorista(estado, cidade, currentUser){
   //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
   //   try{
@@ -238,11 +258,9 @@ export default function Buscar({navigation}) {
       
       <View style={{marginVertical:50}}>
       <TouchableOpacity
-        style={{position: 'absolute', backgroundColor: '#FF5F55', top: 260, width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
-        
-        // onPress={()=>navigation.navigate('ConfirmarSolicitacao', {nomeDestino: nomeDestino, localDestino: localDestino})}
+        style={{position: 'absolute', backgroundColor: '#FF5F55', top: 260, width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}        
         onPress={getLocalPassageiro}
-        // onPress={()=>{setModalVisible(true)}}
+        // onPress={insereBanco} //criei apenas para testar a tela Oferecer.js
       >
         <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
           Buscar Carona

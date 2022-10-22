@@ -5,12 +5,13 @@ import MapView, { Marker, Callout } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapViewDirections from 'react-native-maps-directions';
-
+import { StackActions } from '@react-navigation/native';
 import storage from '@react-native-firebase/storage';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import config from '../../config';
 import Geocoder from 'react-native-geocoding';
@@ -18,7 +19,7 @@ import Geocoder from 'react-native-geocoding';
 
 const {width, height} = Dimensions.get('screen');
 
-function Oferecer({route}) {
+function Oferecer({route, navigation}) {
   const [region, setRegion] = useState(null);  //Coordenadsa atuais do motorista (latitude e longitude);
   
   const [modalVisible, setModalVisible] = useState(false); //Define se o modal é mostrado ou não;
@@ -28,9 +29,9 @@ function Oferecer({route}) {
   const [latitudePassageiro, setLatitudePassageiro] = useState('');
   const [longitudePassageiro, setLongitudePassageiro] = useState('');
   const [alertaVagas, setAlertaVagas] = useState(true);
-
+  const [alertaVagasDisponiveis, setAlertaVagasDisponiveis] = useState(false);
+  const [alertaViagem, setAlertaViagem] = useState(false);
   const [vetorCaronistas, setCaronistas] = useState([]); //Vetor de todos os caronistas atuais (com caronas aceitas e buscando carona);
-  
   const [uidPassageiro, setUidPassageiro] = useState(''); //Contém apenas 1 uid armazenado (o uid do pin clicado no momento);
 
   const [passageiros, setPassageiros] = useState([]); //Vetor com todos os uids dos passageiros que aceitaram a carona do motorista corrente (motorista atual);
@@ -42,7 +43,8 @@ function Oferecer({route}) {
 
   const [oferecerMaisCaronas, setOferecerMaisCaronas] = useState(true); //Define se o motorista pode oferecer mais caronas ou não.
   const [exibeModalOferecer, setExibeModalOferecer] = useState(true);
-
+  const [existePassageiroAbordo, setExistePassageiroAbordo] = useState(false);
+  const [passageirosAbordo, setPassageirosAbordo] = useState(0);
   const [existeBanco, setExisteBanco] = useState(''); //Controla se o banco de dados existe ou deve ser criado (antes de ser atualizado).
   //Informações do motorista
   const cidade = route.params?.cidade; 
@@ -98,35 +100,37 @@ function Oferecer({route}) {
       //   })
       // })
       database().ref().child(`${estado}/${cidade}/Passageiros`).on('value', function(snapshot){
-        snapshot.forEach(function(userSnapshot){       
-          if (vetorCaronistas.length == 0){
-            setCaronistas([{
-              latitude: userSnapshot.val().latitudePassageiro,
-              longitude: userSnapshot.val().longitudePassageiro,
-              uid: userSnapshot.key,  
-              caronasAceitas: userSnapshot.val().caronasAceitas,        
-              }
-            ])
-          }
-          else{
-            vetorCaronistas.some(caronista=>{
-              if (caronista.uid === userSnapshot.key){
-                vetorCaronistas[vetorCaronistas.indexOf(caronista)].latitude = userSnapshot.val().latitudePassageiro;
-                vetorCaronistas[vetorCaronistas.indexOf(caronista)].longitude = userSnapshot.val().longitudePassageiro;
-                jaExiste = true;
-              }
-            })
-            if (!jaExiste){
-              setCaronistas([...vetorCaronistas, {
+        if (snapshot.exists()){
+          snapshot.forEach(function(userSnapshot){       
+            if (vetorCaronistas.length == 0){
+              setCaronistas([{
                 latitude: userSnapshot.val().latitudePassageiro,
                 longitude: userSnapshot.val().longitudePassageiro,
-                uid: userSnapshot.key,
-                caronasAceitas: userSnapshot.val().caronasAceitas,      
+                uid: userSnapshot.key,  
+                caronasAceitas: userSnapshot.val().caronasAceitas,        
                 }
               ])
             }
-          }
-        })
+            else{
+              vetorCaronistas.some(caronista=>{
+                if (caronista.uid === userSnapshot.key){
+                  vetorCaronistas[vetorCaronistas.indexOf(caronista)].latitude = userSnapshot.val().latitudePassageiro;
+                  vetorCaronistas[vetorCaronistas.indexOf(caronista)].longitude = userSnapshot.val().longitudePassageiro;
+                  jaExiste = true;
+                }
+              })
+              if (!jaExiste){
+                setCaronistas([...vetorCaronistas, {
+                  latitude: userSnapshot.val().latitudePassageiro,
+                  longitude: userSnapshot.val().longitudePassageiro,
+                  uid: userSnapshot.key,
+                  caronasAceitas: userSnapshot.val().caronasAceitas,      
+                  }
+                ])
+              }
+            }
+          })
+        }
       })
     }catch(error){
     }
@@ -157,7 +161,6 @@ function Oferecer({route}) {
   */
   function estadoInicial(){
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-   
     try{
       reference.once('value').then(function(snapshot){
         setExisteBanco(snapshot.exists());
@@ -213,6 +216,7 @@ function Oferecer({route}) {
     A foto é exibida no modal e na lista de caronas aceitas.
   */
   const getFotoStorage = async(userUID)=>{
+  
     const uidCaronista = userUID;
     var caminhoFirebase = uidCaronista.concat('Perfil');    
     var url = '';
@@ -231,10 +235,8 @@ function Oferecer({route}) {
 
   /*
     Função responsável por retornar o nome do caronista.
+    OBS: tentar implementar essa função com get do firestore.
   */
-
-
-  //FUNÇÃO ERRADA, TEM QUE SER COM GET!!
   const getNomeCaronista = async(userUID)=>{
     let nomeCaronista = '';
     try{
@@ -277,9 +279,11 @@ function Oferecer({route}) {
     }
     if (caronaAceita != ''){
       if (caronaAceita.includes(currentUser)){
+        await getFotoStorage(userUID);
+        await getNomeCaronista(userUID);
+        await getDestinoCaronista(userUID);
         setLatitudePassageiro(latitude);
         setLongitudePassageiro(longitude);
-        // setBuscarPassageiro(true);
         setExibeModalOferecer(false);
         setModalVisible(true);
         console.log("o passageiro aceitou sua carona!");
@@ -343,23 +347,25 @@ function Oferecer({route}) {
     if (existeBanco){
       try{
         reference.on('value', function(snapshot){
-          uidsPassageiros = snapshot.val();
-          arrayUIDsPassageiros = uidsPassageiros.split(', ');
-          if (arrayUIDsPassageiros[0] != '' && arrayUIDsPassageiros[0] != undefined && vagasDisponiveis>numCaronasAceitas){
-            setExisteCaronaAceita(true);
-            arrayUIDsPassageiros.some(passageiro=>{
-              if (passageiro.uid == arrayUIDsPassageiros[arrayUIDsPassageiros.length-1]){
-                jaExiste = true;
+          if (snapshot.exists()){
+            uidsPassageiros = snapshot.val();
+            arrayUIDsPassageiros = uidsPassageiros.split(', ');
+            if (arrayUIDsPassageiros[0] != '' && arrayUIDsPassageiros[0] != undefined && vagasDisponiveis>numCaronasAceitas){
+              setExisteCaronaAceita(true);
+              arrayUIDsPassageiros.some(passageiro=>{
+                if (passageiro.uid == arrayUIDsPassageiros[arrayUIDsPassageiros.length-1]){
+                  jaExiste = true;
+                }
+              })
+              if (!jaExiste && arrayUIDsPassageiros.length>numCaronasAceitas){
+                setPassageiros([...passageiros, arrayUIDsPassageiros[arrayUIDsPassageiros.length-1]]);
               }
-            })
-            if (!jaExiste && arrayUIDsPassageiros.length>numCaronasAceitas){
-              setPassageiros([...passageiros, arrayUIDsPassageiros[arrayUIDsPassageiros.length-1]]);
-            }
-            setNumCaronasAceitas(arrayUIDsPassageiros.length);
-          }else{
-            if (vagasDisponiveis == numCaronasAceitas && oferecerMaisCaronas){
-              setOferecerMaisCaronas(false);
-              setModalVisible(!modalVisible);
+              setNumCaronasAceitas(arrayUIDsPassageiros.length);
+            }else{
+              if (vagasDisponiveis == numCaronasAceitas && oferecerMaisCaronas){
+                setOferecerMaisCaronas(false);
+                setModalVisible(!modalVisible);
+              }
             }
           }
         })
@@ -367,7 +373,6 @@ function Oferecer({route}) {
         console.log('erro em caronasAceitas -> função');
       }
     }
-    // console.log('passageiros:', passageiros);
   }
 
 
@@ -447,6 +452,8 @@ function Oferecer({route}) {
     
     const embarquePassageiro = async(uidPassageiro)=>{
       setUIDPassageiroEmbarque(null);
+      setPassageirosAbordo(passageirosAbordo+1);
+      setExistePassageiroAbordo(true);
       let listaPassageirosAbordo = '';
       let listaPassageirosAtualizada = '';
       const reference_passageiro = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
@@ -468,6 +475,36 @@ function Oferecer({route}) {
       })
   }
 
+
+  const iniciarViagem = async()=>{
+    console.log('iniciando viagem...');
+    console.log('passageiros a bordo:', passageirosAbordo);
+    if (passageirosAbordo < vagasDisponiveis){
+      setAlertaViagem(true)
+    }else{
+      navigation.navigate('ViagemMotorista', {currentUser: currentUser, cidade: cidade, estado: estado});
+    }
+  }
+
+  const desistirDaOferta = async()=>{
+    console.log('desistindo de oferecer carona...');
+    const referece_motorista = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+    let caronasAceitas = '';
+    try{
+      referece_motorista.once('value').then(snapshot=>{
+        caronasAceitas = snapshot.val().caronasAceitas;
+        if (caronasAceitas == '' || caronasAceitas == undefined){
+          referece_motorista.remove();
+          navigation.navigate('ConfigurarCarona');
+        }else{
+        }
+        // console.log('caronasAceitas: ',snapshot.val().caronasAceitas);
+      })
+    }catch(error){
+      console.log('erro em desistirDaOferta');
+    }
+  }
+
   useEffect(()=>{
     console.log('TELA: Oferecer');
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
@@ -478,7 +515,7 @@ function Oferecer({route}) {
     BackHandler.addEventListener('hardwareBackPress', ()=>{
       return true
     })
-  }, [vetorCaronistas, existeBanco, numCaronasAceitas, ]);
+  }, [vetorCaronistas, existeBanco, numCaronasAceitas, existePassageiroAbordo]);
   
   return (
       <SafeAreaView>
@@ -565,6 +602,19 @@ function Oferecer({route}) {
               </Text>
             </TouchableOpacity>
           }
+          {
+            existePassageiroAbordo &&
+            <TouchableOpacity
+              style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.03, position: 'absolute', bottom: 50}}
+              onPress={()=>{
+                iniciarViagem();
+              }}
+            >
+              <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                Iniciar viagem
+              </Text>
+            </TouchableOpacity>
+          }
           
           <Modal
             animationType="fade"
@@ -640,10 +690,48 @@ function Oferecer({route}) {
                         <Text style={styles.textStyle}>Cancelar</Text>
                     </TouchableOpacity>
                   </>
-                  }  
+                  }
               </View>
             </View>
           </Modal>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={alertaViagem}
+            onRequestClose={() => {setAlertaViagem(!alertaViagem)}}
+          >
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 370, alignSelf: 'center'}}>
+              <View style={styles.modalView}>
+                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '700'}}>Ainda tem vagas no seu veículo...</Text>
+                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>
+                      Tem certeza que deseja iniciar a viagem mesmo não tendo preenchido todas as vagas?
+                    </Text>
+                    <TouchableOpacity
+                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
+                          onPress={() => {
+                            setAlertaViagem(!alertaViagem);
+                            navigation.navigate('ViagemMotorista', {currentUser: currentUser, cidade: cidade, estado: estado});
+                          }}
+                      >
+                        <Text style={styles.textStyle}>Sim</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
+                          onPress={() => {
+                            setAlertaViagem(!alertaViagem)
+                          }}
+                      >
+                        <Text style={styles.textStyle}>Não</Text>
+                    </TouchableOpacity>
+                </View>
+                </View>
+          </Modal>
+          <TouchableOpacity
+              style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', position: 'absolute', top: 10, left: 10}}
+              onPress={desistirDaOferta}
+          >
+              <Text style={styles.textStyle}>Voltar</Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );

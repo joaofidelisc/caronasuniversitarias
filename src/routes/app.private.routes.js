@@ -18,9 +18,10 @@ import BuscandoCarona from '../screens/Buscar/BuscandoCarona'
 import CaronaEncontrada from '../screens/Buscar/CaronaEncontrada';
 import AguardandoMotorista from '../screens/Buscar/AguardandoMotorista';
 import Classificacao from '../screens/Buscar/Classificacao';
-import ConfirmarSolicitacao from '../screens/Buscar/ConfirmarSolicitacao';
 import ConfigurarCarona from '../screens/Oferecer/ConfigurarCarona';
 import ViagemEmAndamento from '../screens/Buscar/ViagemEmAndamento';
+import ClassificarPassageiro from '../screens/Oferecer/ClassificarPassageiro';
+import ViagemMotorista from '../screens/Oferecer/ViagemMotorista';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -35,7 +36,6 @@ function RotaBuscandoCarona(){
     >
       <Stack.Navigator initialRouteName="Buscar" options={{headerShown:false}}>
         <Stack.Screen name="Buscar" component={Buscar} options={{headerShown:false}}/>
-        <Stack.Screen name="ConfirmarSolicitacao" component={ConfirmarSolicitacao} options={{headerShown:false}}/>
         <Stack.Screen name="Buscando_Carona" component={BuscandoCarona} options={{headerShown:false}} />
         <Stack.Screen name="CaronaEncontrada" component={CaronaEncontrada} options={{headerShown:false}}/>
         <Stack.Screen name="AguardandoMotorista" component={AguardandoMotorista} options={{headerShown:false}}/>
@@ -54,6 +54,8 @@ function RotaOferecerCarona(){
       <Stack.Navigator initialRouteName="ConfigurarCarona" options={{headerShown:false}}>
         <Stack.Screen name="ConfigurarCarona" component={ConfigurarCarona} options={{headerShown:false}}/>
         <Stack.Screen name="OferecerCarona" component={Oferecer} options={{headerShown:false}}/>
+        <Stack.Screen name="ViagemMotorista" component={ViagemMotorista} options={{headerShown:false}}/>
+        <Stack.Screen name="ClassificarPassageiro" component={ClassificarPassageiro} options={{headerShown:false}}/>
       </Stack.Navigator>
    </NavigationContainer>
   );

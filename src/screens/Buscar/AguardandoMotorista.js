@@ -4,7 +4,7 @@ import database from '@react-native-firebase/database';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Geolocation from '@react-native-community/geolocation';
 import storage from '@react-native-firebase/storage';
@@ -57,6 +57,8 @@ function AguardandoMotorista({navigation, route}){
     
     const navigateToViagemEmAndamento = async()=>{
       if (viagemEmAndamento){
+        // await AsyncStorage.removeItem('AguardandoMotorista');
+        // await AsyncStorage.setItem('ViagemEmAndamento', true);
         navigation.navigate('ViagemEmAndamento', {uidMotorista: uidMotorista, currentUser: currentUser, cidade: cidade, estado: estado, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista});
       }
     }

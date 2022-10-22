@@ -7,7 +7,7 @@ import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import Geocoder from 'react-native-geocoding';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {height, width} = Dimensions.get('screen')
 
@@ -42,7 +42,9 @@ function BuscandoCarona({navigation, route}) {
     }
   }
 
-  function caronaEncontrada(){
+  async function caronaEncontrada(){
+    // await AsyncStorage.removeItem('buscandoCarona');
+    // await AsyncStorage.setItem('CaronaEncontrada', true);
     navigation.navigate('CaronaEncontrada', {cidade: cidade, estado: estado});
   }
 

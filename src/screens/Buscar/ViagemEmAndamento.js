@@ -3,7 +3,7 @@ import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, Dimensions
 import database from '@react-native-firebase/database';
 import firestore from '@react-native-firebase/firestore';
 import firebase from "@react-native-firebase/app";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {height, width} = Dimensions.get('screen')
 
@@ -78,9 +78,15 @@ function ViagemEmAndamento({navigation, route}) {
       }
     }
 
+    
+  // async function defineEstadoAtual(){
+  //   await AsyncStorage.removeItem('ViagemEmAndamento');
+  //   await AsyncStorage.setItem('Classificacao', true);
+  // }
 
     const fimDaViagem = async()=>{
       await excluiBancoPassageiro();
+      // await defineEstadoAtual();
       escreveHistoricoViagem();
       navigateToClassificacao();
       // await removeUIDCaronista();

@@ -8,6 +8,7 @@ import auth from '@react-native-firebase/auth'
 
 const {height, width} = Dimensions.get('screen')
 
+//O motorista tem um histórico de viagem diferente?
 
 function Suas_Viagens() {
     const [arrayHistoricoViagens, setArrayHistoricoViagens] = useState([]);
