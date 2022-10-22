@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, Dimensions, KeyboardAvoidingView} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, Dimensions, Modal, StyleSheet} from 'react-native';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
@@ -14,7 +14,7 @@ function ConfigurarCarona({navigation}) {
     const [localizacaoAtiva, setLocalizacaoAtiva] = useState(false);
     const [localizacaoMotorista, setlocalizacaoMotorista] = useState(null);
     const [nomeDestino, setNomeDestino] = useState('');
-    
+    const [modalVisible, setModalVisible] = useState(false);
     
     const ligarLocalizacao = async()=>{
       LocationServicesDialogBox.checkLocationServicesIsEnabled({
@@ -68,8 +68,12 @@ function ConfigurarCarona({navigation}) {
       var filtro_estado = response.results[0].address_components.filter(function(address_component){
         return address_component.types.includes("administrative_area_level_1");
       });
+      if (nomeDestino != ''){
+        navigation.navigate('OferecerCarona', {cidade:filtro_cidade[0].short_name, estado:filtro_estado[0].short_name, destino:nomeDestino, vagas:vagas})
+      }else{
+        setModalVisible(true);
+      }
 
-      navigation.navigate('OferecerCarona', {cidade:filtro_cidade[0].short_name, estado:filtro_estado[0].short_name, destino:nomeDestino, vagas:vagas})
     }
 
 
@@ -185,9 +189,66 @@ function ConfigurarCarona({navigation}) {
               Avançar
             </Text>
           </TouchableOpacity>
+          <Modal
+              animationType="fade"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {setModalVisible(!modalVisible);}}
+          >
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 190, alignSelf: 'center'}}>
+                <View style={styles.modalView}>
+                    <Text style={{color: 'black', textAlign: 'center', marginBottom: 15, fontWeight:'600'}}>Informações incompletas</Text>
+                    <Text style={{color: 'black', textAlign: 'center', marginBottom: 15}}>Preencha o local de destino antes de prosseguir para a próxima etapa!</Text>
+                    <TouchableOpacity
+                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
+                        onPress={() => setModalVisible(!modalVisible)}
+                        // onPress={buscarCarona}
+                    >
+                        <Text style={styles.textStyle}>Entendi</Text>
+                    </TouchableOpacity>
+              </View>
+            </View>
+        </Modal>
         </View>
       </SafeAreaView>
     );
 }
+
+const styles = StyleSheet.create({
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  btnFechar:{
+    position: 'absolute',
+    width: 14,
+    height: 29,
+    left: 22,
+    top: 20,
+  },
+  txtBtnFechar:{
+    fontWeight: '600',
+    fontSize: 24,
+    lineHeight: 29,
+    alignItems: 'center',
+    color: '#FF5F55',
+  },
+});
 
 export default ConfigurarCarona;

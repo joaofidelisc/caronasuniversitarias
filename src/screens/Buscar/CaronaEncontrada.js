@@ -190,7 +190,7 @@ function Options({navigation, route}) {
 
   //Função responsável por complementar a função abaixo.
   //Escreve no banco do motorista o UID do passageiro.
-  function aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista){
+  function aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL){
     let listaCaronasAceitas = '';
     const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
     try{
@@ -212,7 +212,7 @@ function Options({navigation, route}) {
         console.log('ERRO:', error.code);
     }
     // defineEstadoAtual();
-    navigation.navigate('AguardandoMotorista', {cidade: cidade, estado: estado, uidMotorista:uidMotorista, currentUser: currentUser, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista});
+    navigation.navigate('AguardandoMotorista', {cidade: cidade, estado: estado, uidMotorista:uidMotorista, currentUser: currentUser, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, urlIMG: motoristaURL});
   }
 
   // async function defineEstadoAtual(){
@@ -222,7 +222,7 @@ function Options({navigation, route}) {
   
   //Função responsável por aceitar carona - escreve no banco do banco do passageiro o uid do motorista e reseta o vetor de ofertas de caronas;
   //Além disso, invoca a função aceitarCarona_ (complementar desta), que é responsável por escrever no banco do motorista o uid do passageiro;
-  function aceitarCarona(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista){
+  function aceitarCarona(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL){
     const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
       reference_passageiro.update({        
@@ -232,7 +232,7 @@ function Options({navigation, route}) {
     }catch(error){
         console.log('ERRO:', error.code);
       }
-      aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista);
+      aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL);
     }
     
   
@@ -269,7 +269,7 @@ function Options({navigation, route}) {
                   <View style={{flexDirection:'row', alignSelf:'center'}}>
                   <TouchableOpacity
                     style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginRight: 20}}
-                    onPress={()=>{aceitarCarona(motorista.uid, motorista.nome, motorista.carro, motorista.placa)}}
+                    onPress={()=>{aceitarCarona(motorista.uid, motorista.nome, motorista.carro, motorista.placa, motorista.url)}}
                   >
                     <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
                       Aceitar

@@ -40,14 +40,17 @@ function ViagemMotorista({route, navigation}){
             console.log('arrayUIDS:', arrayUIDsCaronistas);
             console.log('caronistas a bordo:', listaCaronistasAbordo);
             arrayUIDsCaronistas.forEach(async uid=>{
-              setNumPassageirosABordo(numPassageirosABordo+1);
+              console.log('uid::::::::', uid);
+              if (uid != ''){
+                setNumPassageirosABordo(numPassageirosABordo+1);
+              }
               setPassageirosABordo([...passageirosABordo, {
                 uid: uid,
                 url: await getFotoPassageiro(uid),
                 nome: await getNomePassageiro(uid),
                 // destino: await getDestinoPassageiro(uid),
                 destino: 'TESTE',
-                classificacao: 5
+                classificacao: await getClassificacaoPassageiro(uid)
               }])
             })
             setAtualizouPassageiros(true);
@@ -98,7 +101,51 @@ function ViagemMotorista({route, navigation}){
       return destino;
     }
 
+    const getClassificacaoPassageiro = async(uidPassageiro)=>{
+      let classificacaoAtual = 0;
+      const reference_passageiro = firestore().collection('Users').doc(uidPassageiro);
+      try{
+        await reference_passageiro.get().then((reference)=>{
+          if (reference.exists){
+            classificacaoAtual = reference.data().classificacao;
+            if (classificacaoAtual == undefined){
+              classificacaoAtual = 0;
+            }
+            return parseFloat(classificacaoAtual.toFixed(2));
+          }
+        })
+      }catch(error){
+        console.log('erro em recuperaClassificacaoMotorista');
+      }
+      return parseFloat(classificacaoAtual.toFixed(2));
+    }
+
+    const dataAtualFormatada = async()=>{
+      var data = new Date(),
+          dia  = data.getDate().toString().padStart(2, '0'),
+          mes  = (data.getMonth()+1).toString().padStart(2, '0'), //+1 pois no getMonth Janeiro começa com zero.
+          ano  = data.getFullYear();
+      return dia+"/"+mes+"/"+ano;
+    }
+
+    //por algum motivo tá com problema essa função
+    // const escreveHistoricoViagem = async(uidPassageiro)=>{
+    //   const data = await dataAtualFormatada();
+    //   const reference_passageiro = firestore().collection('Users').doc(uidPassageiro); 
+    //   try{
+    //     reference_passageiro.update({
+    //       historicoViagens: firebase.firestore.FieldValue.arrayUnion({
+    //         uidMotorista: currentUser,
+    //         dataViagem: data
+    //       })
+    //     })
+    //   }catch(error){
+    //     console.log('erro em escreveHistoricoViagem');
+    //   }
+    // }
+
     const finalizarViagemPassageiro = async(uidPassageiro)=>{
+      // await escreveHistoricoViagem(uidPassageiro);
       console.log('numero de passageiros a bordo:', numPassageirosABordo);
       console.log('finalizando viagem do passageiro...');
     }
@@ -143,6 +190,7 @@ function ViagemMotorista({route, navigation}){
                     <TouchableOpacity
                       style={{backgroundColor: '#FF5F55', width: 180, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginRight: 20}}
                       onPress={()=>{
+                        finalizarViagemPassageiro(passageiro.uid);
                         if (numPassageirosABordo == 1){
                           setExistePassageiroABordo(false);
                           navigation.navigate('ClassificarPassageiro', {cidade: cidade, estado: estado, currentUser: currentUser, passageiros: passageirosABordo});
@@ -150,9 +198,8 @@ function ViagemMotorista({route, navigation}){
                         }else{
                           setNumPassageirosABordo(numPassageirosABordo-1);
                         }
-                        finalizarViagemPassageiro(passageiro.uid)}
+                        }
                       }
-                      // onPress={()=>{aceitarCarona(motorista.uid, motorista.nome, motorista.carro, motorista.placa)}}
                     >
                       <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
                         Finalizar viagem
@@ -163,22 +210,11 @@ function ViagemMotorista({route, navigation}){
               ))
             }
               <Text style={styles.text}>
-              
               {'\n\n\n\n'}
               {'\n\n\n\n\n'}
               </Text>
             </ScrollView>
           }
-          {/* <TouchableOpacity
-            style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', position: 'absolute', bottom: 50}}
-            onPress={()=>{
-              getDadosPassageiros();
-            }}
-          >
-            <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
-              Teste banco
-            </Text>
-          </TouchableOpacity> */}
         </View>
       </SafeAreaView>
     );
@@ -186,7 +222,6 @@ function ViagemMotorista({route, navigation}){
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     paddingTop: StatusBar.currentHeight,
   },
   scrollView: {

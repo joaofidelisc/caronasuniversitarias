@@ -119,26 +119,42 @@ function AguardandoMotorista({navigation, route}){
         }
       }
 
-   
-    
-    function getPosicaoMotorista(){
-        const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
-        try{
-            reference.on('value', function(snapshot){
-                setPosicaoMotorista({
-                    latitude: snapshot.val().latitudeMotorista,
-                    longitude: snapshot.val().longitudeMotorista,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421
-                })
-            })
-        }catch(error){
-            console.log('erro em getPosicaoMotorista');
-        }
+    function bancoRemovido(uidMotorista){
+      let filhoRemovido = '';
+      try{
+        database().ref().child(`${estado}/${cidade}/Motoristas`).on('child_removed', function(snapshot){
+          filhoRemovido = snapshot.key;
+          if (filhoRemovido == uidMotorista){
+            console.log('BANCO REMOVIDO DENTRO DA FUNÇÃO:', filhoRemovido);
+            return true;
+          }
+        })
+      }catch(error){
+        console.log('erro em bancoRemovido')
+      }
+      return false;
     }
     
-
-
+    function getPosicaoMotorista(){
+      const bancoFoiRemovido = bancoRemovido(uidMotorista);  
+      console.log('banco foi removido???', bancoFoiRemovido);
+      const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
+      if (bancoFoiRemovido == false){
+        try{
+            reference.on('value', function(snapshot){
+              setPosicaoMotorista({
+                  latitude: snapshot.val().latitudeMotorista,
+                  longitude: snapshot.val().longitudeMotorista,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421
+              })
+            })
+          }catch(error){
+              console.log('erro em getPosicaoMotorista');
+          }
+      }  
+    }
+    
     useEffect(()=>{
         getMyLocation();
         getPosicaoMotorista();

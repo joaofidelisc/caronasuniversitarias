@@ -18,8 +18,8 @@ function ViagemEmAndamento({navigation, route}) {
     const nomeMotorista = route.params?.nomeMotorista;
     const veiculoMotorista = route.params?.veiculoMotorista;
     const placaVeiculoMotorista = route.params?.placaVeiculoMotorista;
-
-
+    const motoristaURL = route.params?.motoristaURL;
+  
     const excluiBancoPassageiro = async()=>{
       const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
       try{
@@ -112,7 +112,7 @@ function ViagemEmAndamento({navigation, route}) {
         <Image source={
               require('../../assets/images/viagem-em-andamento.png')} 
               style={{height:300, width: width }}  
-          />
+        />
 
           <Modal
             animationType="fade"
@@ -120,9 +120,15 @@ function ViagemEmAndamento({navigation, route}) {
             visible={modalVisible}
             onRequestClose={() => {setModalVisible(!modalVisible);}}
           >
-            <View style={{justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 280, alignSelf: 'center'}}>
+            <View style={{justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 268, alignSelf: 'center'}}>
                 <View style={styles.modalView}>
                 <Text style={{color:'#06444C', fontWeight:'700', fontSize: 20, lineHeight:24}}>Viagem em andamento...</Text>
+                <Image 
+                    source={{
+                      uri: motoristaURL
+                    }}
+                    style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18, backgroundColor: 'gray'}}  
+                />
                 <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, lineHeight:24, marginTop: 18}}>Motorista: {nomeMotorista}</Text>
                 <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, lineHeight:24, marginTop: 6}}>Veículo: {veiculoMotorista}</Text>
                 <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, lineHeight:24, marginTop: 6}}>Placa: {placaVeiculoMotorista}</Text>

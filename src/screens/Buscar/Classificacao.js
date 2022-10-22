@@ -59,7 +59,7 @@ function Classificacao({navigation, route}){
             classificacaoAtual = reference.data().classificacao;
             if (numViagens != undefined && classificacaoAtual != undefined){
               reference_motorista.update({
-                classificacao: (defaultRating+classificacaoAtual)/(numViagens+1),
+                classificacao: (defaultRating+classificacaoAtual)/2,
                 numViagensRealizadas: numViagens+1
               })
             }else{
