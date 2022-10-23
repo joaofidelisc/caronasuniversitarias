@@ -3,7 +3,7 @@ const sendSingleDeviceNotification = data => {
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append(
       'Authorization',
-      'key=',
+      'key=AAAAFrUbP_c:APA91bHWUpnHEgGUrHl0ZhJDOlAdF1cJSlZYbwlo5avmuybQH6aHDgKlLeesxtm2NgYNNXeKm6Z4vd-Ue9HMaBsgBkANPiK4rPYpwiGHs60Uz-a3vA0k9DvPihr-MQMU2fNHIjrBONZi',
     );
   
     var raw = JSON.stringify({

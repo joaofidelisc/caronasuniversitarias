@@ -8,10 +8,12 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import Geocoder from 'react-native-geocoding';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
 
 const {height, width} = Dimensions.get('screen')
 
 function BuscandoCarona({navigation, route}) {
+  const [token,setToken] = useState("");
   const localizacaoPassageiro = route.params?.localizacao;
   const destinoPassageiro = route.params?.destino;
 
@@ -58,12 +60,48 @@ function BuscandoCarona({navigation, route}) {
     navigation.navigate('Buscar');
   }
 
+  //Verificação de permissão para envio de mensagens (geralmente no android a permissão é concedida por padrão)
+  const requestPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+  };
+
+  const getFCMToken = async() => {
+    await messaging()
+       .getToken()
+       .then(token => {
+         console.log('token=>>>', token); //armazenar token na string //esse token é o token do motorista;
+         setToken(token)
+       });
+   };
+
+  //enviar notificação para o motorista????
+  const armazenaToken = async()=>{
+    let docRef = firestore().collection('Users').doc(currentUser);
+    try{
+      docRef.get().then((doc)=>{
+        if (doc.exists){
+          if (doc.data().token == undefined || doc.data().token == ''){
+            docRef.update({
+              token: token
+            })
+          }
+          console.log('TELA DE BUSCANDO CARONA:');
+          console.log('token armazenado:', doc.data().token);
+        }
+      })
+    }catch(error){
+      console.log('erro em armazenaToken');
+    }
+  }
 
 
   useEffect(()=>{
     console.log('Tela: BuscandoCarona');
+    getFCMToken();
+    requestPermission();
+    armazenaToken();
     buscarCarona();
-  })
+  }, [token])
 
   return (
     <SafeAreaView>

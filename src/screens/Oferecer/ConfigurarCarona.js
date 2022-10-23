@@ -202,9 +202,8 @@ function ConfigurarCarona({navigation}) {
                     <TouchableOpacity
                         style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
                         onPress={() => setModalVisible(!modalVisible)}
-                        // onPress={buscarCarona}
                     >
-                        <Text style={styles.textStyle}>Entendi</Text>
+                        <Text style={{color: 'white', fontWeight:'bold', textAlign: 'center'}}>Entendi</Text>
                     </TouchableOpacity>
               </View>
             </View>

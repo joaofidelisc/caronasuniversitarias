@@ -37,6 +37,10 @@ function ViagemMotorista({route, navigation}){
       if (!atualizouPassageiros){
         try{
           reference.once('value').then(function(snapshot){
+            // 'joao, guilherme, maria, felipe'
+            // ['joao', ...]
+            //['joao', ''];
+
             listaCaronistasAbordo = snapshot.val().caronistasAbordo;
             arrayUIDsCaronistas = listaCaronistasAbordo.split(', ');
             console.log('arrayUIDS:', arrayUIDsCaronistas);
@@ -103,6 +107,7 @@ function ViagemMotorista({route, navigation}){
       return destino;
     }
 
+    //exibir a classificação do passageiro ao oferecer carona!!!!!!!!!!!!!!!!!1111
     const getClassificacaoPassageiro = async(uidPassageiro)=>{
       let classificacaoAtual = 0;
       const reference_passageiro = firestore().collection('Users').doc(uidPassageiro);

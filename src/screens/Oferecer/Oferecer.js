@@ -317,6 +317,8 @@ function Oferecer({route, navigation}) {
     de carona.
   */
   function oferecerCarona(){
+    let tituloNotificacao = 'Opa! Um motorista te ofereceu carona!';
+    let mensagemNotificacao = 'Encontramos uma carona para você!';
     let listaCaronas = '';
     setModalVisible(false);
     try{
@@ -328,6 +330,7 @@ function Oferecer({route, navigation}) {
           }else{
             listaCaronas = listaCaronas.concat(', ',currentUser); 
           }
+          sendNotification(uidPassageiro, tituloNotificacao, mensagemNotificacao);
         }        
         database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).update({
           ofertasCaronas: listaCaronas
@@ -444,13 +447,18 @@ function Oferecer({route, navigation}) {
   const buscarPassageiro = async(latitude, longitude, nome, uidCaronista)=>{
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
     let distPassageiroMotorista = await distanciaPassageiroMotorista(latitude, longitude);
-    
+    let tituloNotificacao = '';
+    let mensagemNotificacao = '';    
     reference.once('value', function(snapshot){
       reference.update({
         buscandoCaronista: uidCaronista
     })
       if (distPassageiroMotorista < 6 && !snapshot.val().caronistasAbordo.includes(uidCaronista)){
         setUIDPassageiroEmbarque(uidCaronista);
+        tituloNotificacao = 'Seu motorista chegou!';
+        mensagemNotificacao = 'Embarque no veículo.';
+        // mensagem = 'Seu motorista chegou!';
+        sendNotification(uidCaronista, tituloNotificacao, mensagemNotificacao);
         setModalVisible(false);
       }
       })
@@ -539,6 +547,7 @@ function Oferecer({route, navigation}) {
       DisplayNotification(remoteMessage);
       // Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
     });
+    armazenaToken(); //
     return unsubscribe;
   }, [token]);
 
@@ -546,7 +555,7 @@ function Oferecer({route, navigation}) {
    await messaging()
       .getToken()
       .then(token => {
-        console.log('token=>>>', token); //armazenar token na string
+        console.log('token=>>>', token); //armazenar token na string //esse token é o token do motorista;
         setToken(token)
       });
   };
@@ -579,16 +588,48 @@ function Oferecer({route, navigation}) {
   }
   
   //função envio de notificação simples. Deve-se determinar o título da notificação, corpo e passar o token de destino
-  const sendNotification = async () => {
-    let notificationData = {
-      title: '<p style="color: #f44336;"><b>Opa! Um motorista te ofereceu carona!</b> &#128557;</p>',
-      body: 'Encontramos uma carona para você!',
-      token:
-       token,
-    };
-    //chama a função sendSingleDeviceNotification do servidor de notificações (NotificationService), importado no ínicio (PushNotifications.js)
-    await NotificationService.sendSingleDeviceNotification(notificationData);
+  const sendNotification = async (uidPassageiro, tituloNotificacao, mensagemNotificacao) => {
+    let docRef = firestore().collection('Users').doc(uidPassageiro);
+    try{
+      docRef.get().then((doc)=>{
+        if (doc.exists){
+          if (doc.data().token != undefined){
+            let notificationData = {
+              title: tituloNotificacao,
+              body: mensagemNotificacao,
+              token:
+                doc.data().token
+            };
+            //chama a função sendSingleDeviceNotification do servidor de notificações (NotificationService), importado no ínicio (PushNotifications.js)
+            NotificationService.sendSingleDeviceNotification(notificationData);
+          }
+          // console.log('token armazenado:', doc.data().token);
+        }
+      })
+    }catch(error){
+      console.log('erro em armazenaToken');
+    }
   };
+
+
+  //enviar notificação para o motorista????
+  const armazenaToken = async()=>{
+    let docRef = firestore().collection('Users').doc(currentUser);
+    try{
+      docRef.get().then((doc)=>{
+        if (doc.exists){
+          if (doc.data().token == undefined || doc.data().token == ''){
+            docRef.update({
+              token: token
+            })
+          }
+          console.log('token armazenado:', doc.data().token);
+        }
+      })
+    }catch(error){
+      console.log('erro em armazenaToken');
+    }
+  }
 
 
   return (
@@ -694,6 +735,18 @@ function Oferecer({route, navigation}) {
                   Iniciar viagem
                 </Text>
               </TouchableOpacity>
+
+              {/* <TouchableOpacity
+                style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
+                onPress={()=>{
+                  // armazenaToken()
+                  sendNotification();
+                }}
+              >
+                <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                  Teste token
+                </Text>
+              </TouchableOpacity> */}
               <Text style={{color:'#06444C', fontWeight: '600', fontSize: 12, lineHeight: 24, textAlign: 'center'}}>
                   Pronto para iniciar a viagem...{'\n'}Pressione no botão acima para começar.
               </Text>
@@ -717,10 +770,12 @@ function Oferecer({route, navigation}) {
                       />
                       <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{nomeCaronista}</Text>
                       <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
+                      {/* escrever a classificação do caronista */}
+                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Classificação</Text>
                       <TouchableOpacity
                           style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
                           onPress={()=>{oferecerCarona()}}
-                          onPressOut={sendNotification}
+                          // onPressOut={sendNotification}
                       >
                           <Text style={styles.textStyle}>Oferecer carona</Text>
                       </TouchableOpacity>
