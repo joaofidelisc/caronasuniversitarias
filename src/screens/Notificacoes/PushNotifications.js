@@ -1,10 +1,12 @@
+import config from '../../config';
+
 const sendSingleDeviceNotification = data => {
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append(
       'Authorization',
-      'key=AAAAFrUbP_c:APA91bHWUpnHEgGUrHl0ZhJDOlAdF1cJSlZYbwlo5avmuybQH6aHDgKlLeesxtm2NgYNNXeKm6Z4vd-Ue9HMaBsgBkANPiK4rPYpwiGHs60Uz-a3vA0k9DvPihr-MQMU2fNHIjrBONZi',
-    );
+      `key=${config.keyNotification}`
+      );
   
     var raw = JSON.stringify({
       data: {},

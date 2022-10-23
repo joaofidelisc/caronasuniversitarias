@@ -63,4 +63,4 @@ buck-out/
 /vendor/bundle/
 
 #Arquivo API
-/config/*
+src/config/*
