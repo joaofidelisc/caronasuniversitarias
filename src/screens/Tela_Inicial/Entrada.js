@@ -149,12 +149,6 @@ const styles = StyleSheet.create({
       alignItems:'center',
       alignSelf:'center'
     },
-    txtBtnCadastrar:{
-      fontWeight: 'bold',
-      textAlign: 'center',
-      fontSize: 10,
-      color: 'white',
-    },
     txtBtnEntrar:{
       paddingTop: height*0.0005,
       fontSize: height*0.02,
@@ -163,21 +157,5 @@ const styles = StyleSheet.create({
       color: '#FF5F55',
       alignItems:'center',
       textAlign: 'center',
-    },
-    txtCaronas: {
-      color: '#06444C',
-      fontWeight: '700',
-      fontSize: 24,
-      lineHeight: height - 570,
-      textAlign: 'center',
-      alignItems: 'center',
-      paddingTop: height - 550,
-      paddingBottom: height - 560,
-    },
-    retangulo:{
-      backgroundColor: 'gray',
-      width:'100%',
-      height: height - 200,
-      marginTop:-175,
     }
   });

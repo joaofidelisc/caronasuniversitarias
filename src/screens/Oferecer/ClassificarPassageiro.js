@@ -118,7 +118,7 @@ function ClassificarPassageiro({route, navigation}) {
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
-          <ScrollView style={[styles.scrollView,{top:100}]}>
+          <ScrollView style={[styles.scrollView]}>
           {
               passageiros.map(passageiro=>(
                 <View style={styles.viewPassageiros}
@@ -180,17 +180,10 @@ function ClassificarPassageiro({route, navigation}) {
 
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    paddingTop: StatusBar.currentHeight,
-  },
   scrollView: {
     marginHorizontal: 10,
     width: width,
     height: height
-  },
-  text: {
-    fontSize: 42,
   },
   viewPassageiros:{
     shadowColor: "#000",
@@ -218,7 +211,6 @@ const styles = StyleSheet.create({
     height:30,
     resizeMode:'cover'
   },
-
 });
 
 

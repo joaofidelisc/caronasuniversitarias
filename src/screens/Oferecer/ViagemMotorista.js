@@ -6,6 +6,8 @@ import firestore from '@react-native-firebase/firestore';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 /*
 Ideias para essa tela:
   Aparecer modal com todos os passageiros a bordo;
@@ -185,7 +187,10 @@ function ViagemMotorista({route, navigation}){
                     />
                     <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Nome: {passageiro.nome}</Text>
                     <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Destino: {passageiro.destino}</Text>
-                    <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Classificação: {passageiro.classificacao}</Text>
+                    <View style={{flexDirection:'row'}}>
+                      <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Classificação: {passageiro.classificacao}</Text>
+                      <Icon name="star" size={18} color="#06444C" style={{alignSelf:'center', marginLeft: 25}}/>
+                    </View>
                     <View style={{flexDirection:'row', alignSelf:'center'}}>
                     <TouchableOpacity
                       style={{backgroundColor: '#FF5F55', width: 180, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginRight: 20}}
@@ -221,14 +226,9 @@ function ViagemMotorista({route, navigation}){
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: StatusBar.currentHeight,
-  },
   scrollView: {
     marginHorizontal: 10,
-  },
-  text: {
-    fontSize: 42,
+    width: '100%'
   },
   viewPassageiros:{
     shadowColor: "#000",

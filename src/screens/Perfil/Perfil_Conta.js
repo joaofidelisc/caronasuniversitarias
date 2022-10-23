@@ -176,21 +176,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     textAlign: "center"
-  },
-  btnFechar:{
-    position: 'absolute',
-    width: 14,
-    height: 29,
-    left: 22,
-    top: 20,
-  },
-  txtBtnFechar:{
-    fontWeight: '600',
-    fontSize: 24,
-    lineHeight: 29,
-    alignItems: 'center',
-    color: '#FF5F55',
-  },
+  }
 });
 
 export default Perfil_Conta;

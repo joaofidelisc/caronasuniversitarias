@@ -229,26 +229,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center"
-  },
-  btnFechar:{
-    position: 'absolute',
-    width: 14,
-    height: 29,
-    left: 22,
-    top: 20,
-  },
-  txtBtnFechar:{
-    fontWeight: '600',
-    fontSize: 24,
-    lineHeight: 29,
-    alignItems: 'center',
-    color: '#FF5F55',
-  },
+  }
 });
 
 export default ConfigurarCarona;
