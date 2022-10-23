@@ -12,6 +12,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import config from '../../config';
 import Geocoder from 'react-native-geocoding';
@@ -727,10 +728,10 @@ function Oferecer({route, navigation}) {
                 </View>
           </Modal>
           <TouchableOpacity
-              style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', position: 'absolute', top: 10, left: 10}}
+              style={{backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, justifyContent: 'center', position: 'absolute', top: 10, left: 10, borderWidth: 1, borderColor: '#FF5F55'}}
               onPress={desistirDaOferta}
           >
-              <Text style={styles.textStyle}>Voltar</Text>
+             <Icon name="arrow-left" size={30} color="#FF5F55" style={{alignSelf:'center'}}/>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
