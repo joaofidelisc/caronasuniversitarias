@@ -49,18 +49,18 @@ function Suas_Viagens() {
               require('../../assets/images/viagens-futuras.png')} 
               style={{height:'40%', width: '70%', position: 'absolute', top: '10%', alignSelf: 'center'}}  
               />
-            <Text style={{color:'#06444C', position: 'absolute', top:380, left: 24, fontWeight:'700', fontSize: 20, lineHeight:24}}>Suas viagens futuras{'\n'}aparecerão aqui</Text>
-            <Text style={{color: '#C4C4C4', position: 'absolute', top:470, left: 24, fontWeight: '600', fontSize: 14, lineHeight:17}}>
+            <Text style={{color:'#06444C', position: 'absolute', top:'50%', left: '5%', fontWeight:'700', fontSize: height*0.0225, lineHeight:24}}>Suas viagens futuras{'\n'}aparecerão aqui</Text>
+            <Text style={{color: '#C4C4C4', position: 'absolute', top:'63%', left: '5%', fontWeight: '600', fontSize: height*0.017, lineHeight:17}}>
               Encontre a viagem para a sua cidade entre{'\n'}milhares de destinos ou publique sua{'\n'}carona para dividir os custos.
             </Text>
             <Image source={
               require('../../assets/icons/mask-covid.png')} 
-              style={{height:60, width: 60, position: 'absolute', top: 582, left:24}}  
+              style={{height:'9%', width: '15%', position: 'absolute', top: '78%', left:'5%'}}  
               />
-            <Text style={{color: '#06444C', position: 'absolute', top:598, left: 84, fontWeight: '600', fontSize: 14, lineHeight:17}}>
+            <Text style={{color: '#06444C', position: 'absolute', top:'80%', left: '20%', fontWeight: '600', fontSize: height*0.016, lineHeight:17}}>
             COVID-19: Seja consciente, siga{'\n'} as orientações da universidade!
             </Text>
-            <View style={{position: 'absolute', top: 562, width:300, height: 100, left:24, borderWidth:1}}>
+            <View style={{position: 'absolute', top: '76%', width:'72%', height: '15%', left:'5%', borderWidth:1}}>
             </View>
             </>
           }
