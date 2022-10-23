@@ -95,6 +95,7 @@ function Suas_Viagens() {
 const styles = StyleSheet.create({
   scrollView: {
     marginHorizontal: 10,
+    width:'100%'
   },
   viewViagens:{
     shadowColor: "#000",
