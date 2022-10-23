@@ -664,30 +664,40 @@ function Oferecer({route, navigation}) {
           </MapView>
           {
             uidPassageiroEmbarque &&
-            <TouchableOpacity
-              style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.03, position: 'absolute', bottom: 50}}
-              onPress={()=>{
-                embarquePassageiro(uidPassageiroEmbarque);
-                // setUIDPassageiroEmbarque(null);
-              }}
-            >
-              <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
-                Passageiro(a) a bordo
+            <View style={[styles.viewCaronistas, {position: 'absolute', bottom: 10, height: 120, justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
+              <TouchableOpacity
+                style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
+                onPress={()=>{
+                  embarquePassageiro(uidPassageiroEmbarque);
+                  // setUIDPassageiroEmbarque(null);
+                }}
+              >
+                <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                  Passageiro(a) a bordo
+                </Text>
+              </TouchableOpacity>
+              <Text style={{color:'#06444C', fontWeight: '600', fontSize: 12, lineHeight: 24, textAlign: 'center'}}>
+                  Você chegou até o seu passageiro!{'\n'}Pressione no botão acima para embarcá-lo.
               </Text>
-            </TouchableOpacity>
+            </View>
           }
           {
             existePassageiroAbordo &&
-            <TouchableOpacity
-              style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.03, position: 'absolute', bottom: 50}}
-              onPress={()=>{
-                iniciarViagem();
-              }}
-            >
-              <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
-                Iniciar viagem
+            <View style={[styles.viewCaronistas, {position: 'absolute', bottom: 10, height: 120, justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
+              <TouchableOpacity
+                style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
+                onPress={()=>{
+                  iniciarViagem();
+                }}
+              >
+                <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                  Iniciar viagem
+                </Text>
+              </TouchableOpacity>
+              <Text style={{color:'#06444C', fontWeight: '600', fontSize: 12, lineHeight: 24, textAlign: 'center'}}>
+                  Pronto para iniciar a viagem...{'\n'}Pressione no botão acima para começar.
               </Text>
-            </TouchableOpacity>
+            </View>
           }
           
           <Modal
@@ -775,7 +785,7 @@ function Oferecer({route, navigation}) {
             visible={alertaViagem}
             onRequestClose={() => {setAlertaViagem(!alertaViagem)}}
           >
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 370, alignSelf: 'center'}}>
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 260, alignSelf: 'center'}}>
               <View style={styles.modalView}>
                     <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '700'}}>Ainda tem vagas no seu veículo...</Text>
                     <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>
@@ -853,13 +863,12 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    width: 330, 
-    height: 150, 
+    shadowOpacity: 1,
+    shadowRadius: 25,
+    elevation: 20,
+    width: 330,
     backgroundColor: 'white', 
-    borderRadius: 10, 
+    borderRadius: 15, 
     alignSelf:'center', 
     marginTop: 50,
     alignContent:'center'
