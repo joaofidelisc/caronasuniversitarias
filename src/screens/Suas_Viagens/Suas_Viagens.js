@@ -47,7 +47,7 @@ function Suas_Viagens() {
             <>
             <Image source={
               require('../../assets/images/viagens-futuras.png')} 
-              style={{height:300, width: 300, position: 'absolute', top: 80, alignSelf: 'center'}}  
+              style={{height:'40%', width: '70%', position: 'absolute', top: '10%', alignSelf: 'center'}}  
               />
             <Text style={{color:'#06444C', position: 'absolute', top:380, left: 24, fontWeight:'700', fontSize: 20, lineHeight:24}}>Suas viagens futuras{'\n'}aparecerão aqui</Text>
             <Text style={{color: '#C4C4C4', position: 'absolute', top:470, left: 24, fontWeight: '600', fontSize: 14, lineHeight:17}}>
@@ -64,7 +64,7 @@ function Suas_Viagens() {
             </View>
             </>
           }
-          <Text style={{color:'#06444C', fontWeight:'700', fontSize: 20, lineHeight:24, textAlign: 'center', marginTop: 50, marginBottom: 25}}>Seu histórico de viagens</Text>
+          <Text style={{color:'#06444C', fontWeight:'700', fontSize: height*0.0225, lineHeight:24, textAlign: 'center', marginTop: '10%',}}>Seu histórico de viagens</Text>
           <ScrollView style={[styles.scrollView]}>
           {
             existeViagem &&
