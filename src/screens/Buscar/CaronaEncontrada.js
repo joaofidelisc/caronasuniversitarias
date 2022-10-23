@@ -6,6 +6,8 @@ import firestore from '@react-native-firebase/firestore';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 function Options({navigation, route}) {
 
@@ -265,7 +267,10 @@ function Options({navigation, route}) {
                   <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Nome: {motorista.nome}</Text>
                   <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Carro: {motorista.carro}</Text>
                   <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Placa: {motorista.placa}</Text>
-                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Classificação: {motorista.classificacao}</Text>
+                  <View style={{flexDirection:'row'}}>
+                    <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Classificação: {motorista.classificacao}</Text>
+                    <Icon name="star" size={18} color="#06444C" style={{alignSelf:'center', marginLeft: 25}}/>
+                  </View>
                   <View style={{flexDirection:'row', alignSelf:'center'}}>
                   <TouchableOpacity
                     style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginRight: 20}}
