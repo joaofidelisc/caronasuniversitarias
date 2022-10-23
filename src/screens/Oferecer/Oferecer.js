@@ -17,6 +17,11 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import config from '../../config';
 import Geocoder from 'react-native-geocoding';
 
+import notifee, { AndroidColor } from '@notifee/react-native';
+import messaging from '@react-native-firebase/messaging';
+import NotificationService from '../Notificacoes/PushNotifications';
+import { AndroidImportance } from '@notifee/react-native';
+
 
 const {width, height} = Dimensions.get('screen');
 
@@ -517,7 +522,75 @@ function Oferecer({route, navigation}) {
       return true
     })
   }, [vetorCaronistas, existeBanco, numCaronasAceitas, existePassageiroAbordo]);
+
+  //Notificações
+
+
+  //Hook para setar o token em string que será posteriormente utilizada 
+  //** ALTERAR ** O token que está sendo salvo é o do próprio usuário, mas tal token só deve ser salvo no banco
+  //A string de token usada para as notificações deve ser a do passageiro/motorista que está interagindo com o usuário atual
+  const [token,setToken] = useState("")
+
+  useEffect(() => {
+    getFCMToken();
+    requestPermission();
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log('remoteMessage', JSON.stringify(remoteMessage));
+      DisplayNotification(remoteMessage);
+      // Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+    return unsubscribe;
+  }, [token]);
+
+  const getFCMToken = async() => {
+   await messaging()
+      .getToken()
+      .then(token => {
+        console.log('token=>>>', token); //armazenar token na string
+        setToken(token)
+      });
+  };
+
+  //Verificação de permissão para envio de mensagens (geralmente no android a permissão é concedida por padrão)
+  const requestPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+  };
+
+  async function DisplayNotification(remoteMessage) {
+    //Função para criar canal de notificações com o notifee
+    const channelId = await notifee.createChannel({
+      id: 'default',
+      name: 'Canal oferecer',
+      importance: AndroidImportance.HIGH,
+    });
+
+    // Notifee muda a interface da notificação. Mude aqui para alterar a notificação única
+    await notifee.displayNotification({
+      title: remoteMessage.notification.title,
+      body: remoteMessage.notification.body,
+      android: {
+        channelId,
+        largeIcon: 'https://img.icons8.com/plasticine/344/car--v1.png',
+        color: '#E8210C',
+        importance: AndroidImportance.HIGH,
+        smallIcon: 'ic_launcher', // optional, defaults to 'ic_launcher'.
+      },
+    });
+  }
   
+  //função envio de notificação simples. Deve-se determinar o título da notificação, corpo e passar o token de destino
+  const sendNotification = async () => {
+    let notificationData = {
+      title: '<p style="color: #f44336;"><b>Opa! Um motorista te ofereceu carona!</b> &#128557;</p>',
+      body: 'Encontramos uma carona para você!',
+      token:
+       token,
+    };
+    //chama a função sendSingleDeviceNotification do servidor de notificações (NotificationService), importado no ínicio (PushNotifications.js)
+    await NotificationService.sendSingleDeviceNotification(notificationData);
+  };
+
+
   return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -637,6 +710,7 @@ function Oferecer({route, navigation}) {
                       <TouchableOpacity
                           style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
                           onPress={()=>{oferecerCarona()}}
+                          onPressOut={sendNotification}
                       >
                           <Text style={styles.textStyle}>Oferecer carona</Text>
                       </TouchableOpacity>
