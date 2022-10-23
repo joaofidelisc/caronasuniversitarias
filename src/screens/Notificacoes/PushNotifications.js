@@ -5,7 +5,7 @@ const sendSingleDeviceNotification = data => {
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append(
       'Authorization',
-      `key=${config.keyNotification}`
+      `key=${config.keyNotification}`,
       );
   
     var raw = JSON.stringify({
