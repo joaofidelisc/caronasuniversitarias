@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, StatusBar, Image, StyleSheet, Dimensions, ScrollView} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, Image, StyleSheet, Dimensions, ScrollView, TouchableOpacity} from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
 import firebase from "@react-native-firebase/app";
@@ -17,7 +17,6 @@ function Suas_Viagens() {
     const currentUser = auth().currentUser.uid;
 
     const defineArrayHistoricoViagens = async()=>{
-      console.log('teste vetor...');
       let historicoViagens = []
       let reference = firestore().collection('Users').doc(currentUser);
       try{
@@ -31,6 +30,10 @@ function Suas_Viagens() {
       }catch(error){
         console.log('erro em testeVetor');
       }
+    }
+
+    const entrarEmContato = async(uidMotorista)=>{
+      console.log('entrando em contato com motorista...');
     }
 
     useEffect(()=>{
@@ -72,16 +75,23 @@ function Suas_Viagens() {
               <View style={styles.viewViagens}
               // key={motorista.uid}
                   >
-                  {/* <Image 
+                  <Text style={{color:'#06444C', fontWeight:'600', fontSize: 16, textAlign: 'center', marginTop: 10}}>{viagem.dataViagem}</Text>
+                  <Image 
                     source={{
-                      uri: motorista.url
+                      uri: viagem.fotoPerfil
                     }}
                     style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
-                  /> */}
-                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Data Viagem: {viagem.dataViagem}</Text>
-                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>UID motorista: {viagem.uidMotorista}</Text>
-                  <View style={{flexDirection:'row', alignSelf:'center'}}>
-                  </View>
+                  />
+                  <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, textAlign:'center', marginTop: 10}}>{viagem.nomeMotorista}</Text>
+                  <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, textAlign:'center', marginTop: 10}}>{viagem.destino}</Text>
+                  <TouchableOpacity
+                    style={{width: 130, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10}}
+                    onPress={()=>{entrarEmContato(viagem.uidMotorista)}}
+                  >
+                    <Text style={{color: '#FF5F55', fontWeight: '800', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                      Entrar em contato
+                    </Text>
+                  </TouchableOpacity>
                 </View>
             ))
           }
@@ -111,7 +121,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white', 
     borderRadius: 10, 
     alignSelf:'center', 
-    marginTop: 10
+    marginTop: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#FF5F55'
   }
 });
 

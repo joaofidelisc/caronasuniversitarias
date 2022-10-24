@@ -10,17 +10,19 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 function Options({navigation, route}) {
-    const [vetorMotoristas, setMotoristas] = useState([]); //Armazena as informações dos motoristas que ofereceram carona para o caronista atual.    
+
+    const [vetorMotoristas, setMotoristas] = useState([]);    
 
     const currentUser = auth().currentUser.uid;
+    
     const cidade = route.params?.cidade;
     const estado = route.params?.estado;
-
+    const nomeDestino = route.params?.nomeDestino;
 
     /*
-      Função responsável por definir o vetor de motoristas e atualizar em tempo real conforme mais caronas sejam oferecidas.
+    Função responsável por definir o vetor de motoristas e atualizar em tempo real conforme mais caronas forem oferecidas.
     */
-    const getDadosMotorista = async()=>{
+    async function getDadosMotorista(){
       let listaCaronas = '';
       let arrayUIDs = [];
       let jaExiste = false;
@@ -32,6 +34,7 @@ function Options({navigation, route}) {
         reference.on('value', function(snapshot){
           if (snapshot.exists() && snapshot.val().ofertasCaronas != undefined){
             listaCaronas = snapshot.val().ofertasCaronas;
+            // console.log('listaCaronasCaronaEncontrada:', listaCaronas);
           }
           arrayUIDs = listaCaronas.split(', ');
           arrayUIDs.forEach(async uid =>{
@@ -70,10 +73,8 @@ function Options({navigation, route}) {
 
 
 
-  /*
-    Função responsável por obter o nome do motorista.
-  */
-  const getNomeMotorista = async(motoristaUID)=>{
+  //Função responsável por get o nome do motorista e atualizar no vetor;
+  async function getNomeMotorista(motoristaUID){
     let nomeMotorista = '';
     let docRef = firestore().collection('Users').doc(motoristaUID);
     return docRef.get().then((doc)=>{
@@ -86,10 +87,8 @@ function Options({navigation, route}) {
     })
   }
 
-  /*
-    Função responsável por obter o nome do carro do motorista.
-  */
-  const getNomeCarroMotorista = async(motoristaUID)=>{
+  //Função responsável por get o nome do carro do motorista
+  async function getNomeCarroMotorista(motoristaUID){
     let nomeCarroMotorista = '';
     let docRef = firestore().collection('Users').doc(motoristaUID);
     return docRef.get().then((doc)=>{
@@ -102,10 +101,8 @@ function Options({navigation, route}) {
     })
   }
 
-  /*
-    Função responsável por obter a placa do carro do motorista.
-  */
-  const getPlacaCarroMotorista = async(motoristaUID)=>{
+  //Função responsável por get a placa do carro do motorista
+  async function getPlacaCarroMotorista(motoristaUID){
     let placaCarroMotorista = '';
     let docRef = firestore().collection('Users').doc(motoristaUID);
     return docRef.get().then((doc)=>{
@@ -118,11 +115,6 @@ function Options({navigation, route}) {
     })
   }
 
-
-  /*
-    Função responsável por obter a classificação atual do motorista;
-    Se esse não tem classificação, ela é exibida como 0 e, caso tenha, ela é arredondada e exibida com duas casas decimais.
-  */
   const getClassificacaoMotorista = async(motoristaUID)=>{
     let classificacaoAtual = 0;
     const reference_motorista = firestore().collection('Users').doc(motoristaUID);
@@ -143,9 +135,7 @@ function Options({navigation, route}) {
   }
 
 
-  /*
-    Função responsável por receber um UID e retornar a url para a imagem do motorista.
-  */
+  //Função responsável por receber um UID e retornar a url para a imagem do motorista.
   const getFotoMotorista = async(motoristaUID)=>{
     const uidMotorista = motoristaUID;
     var caminhoFirebase = uidMotorista.concat('Perfil');    
@@ -160,15 +150,13 @@ function Options({navigation, route}) {
    return url;
   }
 
-  /* 
-    Função responsável por recusar carona;
-    O ato de recusar carona de um motorista, implica em remover o UID do motorista das ofertas de carona do caronista;
-    Além disso, é necessário remover o motorista do vetor corrente de motoristas.
-  */
-  const recusarCarona = (motoristaUID)=>{
+
+  //Função responsável por recusar carona. O ato de recusar carona de um motorista, implica em remover o seu UID do banco de dados e do vetor corrente de motoristas.
+  function recusarCarona(motoristaUID){
     let totalOfertas = '';
     let arrayOfertasRestantes = [];
     let ofertasRestantes = '';
+
     const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
       reference_passageiro.once('value').then(snapshot=>{
@@ -180,6 +168,7 @@ function Options({navigation, route}) {
           if (totalOfertas.includes(motoristaUID)){
             arrayOfertasRestantes.splice(arrayOfertasRestantes.indexOf(motoristaUID), 1);
             ofertasRestantes = arrayOfertasRestantes.join(', ');
+            console.log('ofertas restantes:', ofertasRestantes);
             if (ofertasRestantes == ''){
               setMotoristas([]);
               navigation.navigate('Buscando_Carona', {cidade: cidade, estado:estado});
@@ -201,12 +190,9 @@ function Options({navigation, route}) {
     console.log('Carona recusada!');
   }
 
-
-  /* 
-    Função responsável por complementar a função abaixo (aceitarCarona);
-    Escreve no banco do motorista o UID do passageiro, na parte de caronasAceitas.
-  */
-  const aceitarCarona_ = (uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL)=>{
+  //Função responsável por complementar a função abaixo.
+  //Escreve no banco do motorista o UID do passageiro.
+  function aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL){
     let listaCaronasAceitas = '';
     const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
     try{
@@ -227,15 +213,18 @@ function Options({navigation, route}) {
     }catch(error){
         console.log('ERRO:', error.code);
     }
-    navigation.navigate('AguardandoMotorista', {cidade: cidade, estado: estado, uidMotorista:uidMotorista, currentUser: currentUser, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, urlIMG: motoristaURL});
+    // defineEstadoAtual();
+    navigation.navigate('AguardandoMotorista', {cidade: cidade, estado: estado, uidMotorista:uidMotorista, currentUser: currentUser, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, urlIMG: motoristaURL, nomeDestino: nomeDestino});
   }
 
-  /* 
-    Função responsável por realizar o ato de aceitar carona;
-    Escreve no banco de dados do passageiro o uid do motorista e define como vazio o vetor de ofertas de caronas do passageiro;
-    Além disso, invoca a função aceitarCarona_ (complementar desta), que é responsável por escrever no banco do motorista o uid do passageiro;
-  */  
-  const aceitarCarona = (uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL)=>{
+  // async function defineEstadoAtual(){
+  //   // await AsyncStorage.removeItem('CaronaEncontrada');
+  //   // await AsyncStorage.setItem('AguardandoMotorista', true);
+  // }
+  
+  //Função responsável por aceitar carona - escreve no banco do banco do passageiro o uid do motorista e reseta o vetor de ofertas de caronas;
+  //Além disso, invoca a função aceitarCarona_ (complementar desta), que é responsável por escrever no banco do motorista o uid do passageiro;
+  function aceitarCarona(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL){
     const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
       reference_passageiro.update({        
@@ -243,19 +232,17 @@ function Options({navigation, route}) {
         ofertasCaronas:''
       });
     }catch(error){
-      console.log('ERRO:', error.code);
+        console.log('ERRO:', error.code);
+      }
+      aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL);
     }
-    aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL);
-  }
     
-  /*
-    Ao renderizar a tela, é necessário obter as informações dos motoristas que ofertaram carona e acompanhar o Hook.
-  */
+  
   useEffect(()=>{
     getDadosMotorista();
   }, [vetorMotoristas]);
 
-  return (
+    return (
        <SafeAreaView style={styles.container}>
         <StatusBar barStyle={'light-content'} />
           <Image source={
