@@ -1,25 +1,52 @@
-import React from 'react';
-import {View, Text, SafeAreaView, StatusBar, Image} from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react'
+import { GiftedChat, InputToolbar } from 'react-native-gifted-chat'
+import { StyleSheet } from 'react-native'
+import database from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
 
-function Mensagens() {
+
+export default function Mensagens() {
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    setMessages([
+      {
+        _id: 1,
+        text: 'Bem vindo ao aplicativo caronas universitárias!',
+        createdAt: new Date(),
+        user: {
+          _id: 2,
+          name: 'João',
+          avatar: 'https://placeimg.com/140/140/any',
+        },
+      },
+    ])
+  }, [])
+
+  const onSend = useCallback((messages = []) => {
+    setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
+  }, [])
+
+  function renderInputToolbar (props) {
     return (
-      <SafeAreaView>
-        <StatusBar barStyle={'light-content'} />
-        <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
-          <Text style={{color:'#06444C', position: 'absolute', top:100, left: 24, fontWeight:'600', fontSize: 18, lineHeight:24, textAlign:'left'}}>Você conseguirá enviar mensagens para{'\n'} passageiros ou motoristas, assim que{'\n'} fizer sua primeira viagem.</Text>
-          <Image source={
-            require('../../assets/images/message.png')} 
-            style={{height:350, width: 350, position: 'absolute', top: 220, alignSelf: 'center'}}  
-          />
-          {/* <Text style={{color:'#06444C', position: 'absolute', top:570, left: 24, fontWeight:'600', fontSize: 18, lineHeight:24, textAlign:'left'}}>
-            E aí, o que está esperando?
-          </Text>
-          <Text style={{color:'#06444C', position: 'absolute', top:610, left: 24, fontWeight:'500', fontSize: 18, lineHeight:24, textAlign: 'center'}}>
-            Procure já por uma carona ou ofereça{'\n'} uma para destinos próximos!
-          </Text> */}
-        </View>
-      </SafeAreaView>
-    );
+      <InputToolbar {...props} containerStyle={styles.toolbar} />
+    )
+  }
+
+  return (
+    <GiftedChat
+      renderInputToolbar={renderInputToolbar}
+      messages={messages}
+      onSend={messages => onSend(messages)}
+      user={{
+        _id: 1,
+      }}
+    />
+  )
 }
 
-export default Mensagens;
+const styles = StyleSheet.create({
+  toolbar: {
+    backgroundColor: '#FF5F55',
+  }
+})
