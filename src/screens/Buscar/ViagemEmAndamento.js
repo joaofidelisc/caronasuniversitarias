@@ -8,8 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const {height, width} = Dimensions.get('screen')
 
 function ViagemEmAndamento({navigation, route}) {
-    
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false); //Apagar depois de separar o aplicativo em 'Modo Motorista e Modo Passageiro'.
 
     const uidMotorista = route.params?.uidMotorista;
     const currentUser = route.params?.currentUser;
@@ -18,8 +17,11 @@ function ViagemEmAndamento({navigation, route}) {
     const nomeMotorista = route.params?.nomeMotorista;
     const veiculoMotorista = route.params?.veiculoMotorista;
     const placaVeiculoMotorista = route.params?.placaVeiculoMotorista;
-    const motoristaURL = route.params?.motoristaURL;
-  
+    const motoristaURL = route.params?.urlMotorista;
+
+    /*
+      Função responsável por excluir o banco de dados do passageiro corrente.
+    */
     const excluiBancoPassageiro = async()=>{
       const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
       try{
@@ -28,9 +30,11 @@ function ViagemEmAndamento({navigation, route}) {
         console.log('excluiBancoPassageiro');
       }
     }
-    
-    //remove o uid do passageiro no banco de motoristas, porque por mais que tenha finalizado a minha viagem
-    //as vezes não finalizou a viagem de outro passageiro a bordo.
+
+
+    /* 
+      Função responsável por remover o uid do passageiro do banco de motoristas, porque por mais que tenha finalizado a viagem deste passageiro, pode haver outros a bordo.
+    */
     const removeUIDCaronista = async()=>{
       let todosCaronistasAbordo = '';
       let arrayCaronistasRestantes = [];
@@ -55,6 +59,9 @@ function ViagemEmAndamento({navigation, route}) {
       }
     }
 
+    /*
+      Função responsável por retornar a data atual formatada.
+    */
     const dataAtualFormatada = async()=>{
         var data = new Date(),
             dia  = data.getDate().toString().padStart(2, '0'),
@@ -63,6 +70,9 @@ function ViagemEmAndamento({navigation, route}) {
         return dia+"/"+mes+"/"+ano;
     }
 
+    /*
+      Função responsável por escrever no histórico de viagem do passageiro essa viagem que acabou de ser finalizada.
+    */
     const escreveHistoricoViagem = async()=>{
       const data = await dataAtualFormatada();
       const reference_passageiro = firestore().collection('Users').doc(currentUser); 
@@ -86,6 +96,9 @@ function ViagemEmAndamento({navigation, route}) {
   //   await AsyncStorage.setItem('Classificacao', true);
   // }
 
+    /*
+      Função responsável por declarar o fim da viagem e executar todas as ações necessárias.
+    */
     const fimDaViagem = async()=>{
       await excluiBancoPassageiro();
       // await defineEstadoAtual();
@@ -94,13 +107,21 @@ function ViagemEmAndamento({navigation, route}) {
       // await removeUIDCaronista();
     }
     
+    /*
+      Função responsável por navegar para a tela de classificação.
+    */
     const navigateToClassificacao = async()=>{
       navigation.navigate('Classificacao', {uidMotorista: uidMotorista, currentUser: currentUser, cidade: cidade, estado: estado});
     }
 
+    /* 
+      Função responsável por entrar em contato com o motorista ao finalizar a viagem.
+      OBS: Essa funcionalidade só funcionará quando o chat estiver implementado.
+    */
     const entrarEmContatoMotorista = async()=>{
       console.log('entrando em contato com o motorista...');
     }
+
 
     return (
       <SafeAreaView>
@@ -124,7 +145,7 @@ function ViagemEmAndamento({navigation, route}) {
                     source={{
                       uri: motoristaURL
                     }}
-                    style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18, backgroundColor: 'gray'}}  
+                    style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
                 />
                 <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, lineHeight:24, marginTop: 18}}>Motorista: {nomeMotorista}</Text>
                 <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, lineHeight:24, marginTop: 6}}>Veículo: {veiculoMotorista}</Text>

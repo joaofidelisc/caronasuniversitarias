@@ -197,7 +197,7 @@ export default function Buscar({navigation}) {
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
     ligarLocalizacao();    
     // excluiBancoPassageiroMotorista(); //Essa função deve ser chamada aqui;
-  })
+  }, [])
   
   
   return (

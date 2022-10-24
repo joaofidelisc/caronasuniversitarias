@@ -47,8 +47,8 @@ function BuscandoCarona({navigation, route}) {
     Função responsável para navegar até a tela de Carona Encontrada.
   */
   const navigateToCaronaEncontrada = async()=>{  
-    await AsyncStorage.removeItem('buscandoCarona');
-    await AsyncStorage.setItem('CaronaEncontrada', true);
+    // await AsyncStorage.removeItem('buscandoCarona');
+    // await AsyncStorage.setItem('CaronaEncontrada', 'true');;
     navigation.navigate('CaronaEncontrada', {cidade: cidade, estado: estado});
   }
 

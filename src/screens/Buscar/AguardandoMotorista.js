@@ -2,21 +2,21 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, SafeAreaView, StatusBar, PermissionsAndroid, Dimensions, Modal} from 'react-native';
 import database from '@react-native-firebase/database';
 import MapView, { Marker, Callout } from 'react-native-maps';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import Geolocation from '@react-native-community/geolocation';
+
+import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import storage from '@react-native-firebase/storage';
 
 const {width, height} = Dimensions.get('screen');
 
 
 function AguardandoMotorista({navigation, route}){
-    const [motoristaAcaminho, setMotoristaAcaminho] = useState(false);
-    const [posicaoMotorista, setPosicaoMotorista] = useState(null);
-    const [posicaoPassageiro, setPosicaoPassageiro] = useState(null);
-    const [viagemEmAndamento, setViagemEmAndamento] = useState(null);
+    const [motoristaAcaminho, setMotoristaAcaminho] = useState(false); //Utilizado para definir se o motorista está a caminho do passageiro;
+    const [posicaoMotorista, setPosicaoMotorista] = useState(null); //Utilizado para atualizar a posição do motorista em tempo real;
+    const [posicaoPassageiro, setPosicaoPassageiro] = useState(null); //Utilizado para atualizar a posição do passageiro em tempo real;
+    const [viagemEmAndamento, setViagemEmAndamento] = useState(null); //Utilizado para definir se a viagem começou ou não.
 
     const cidade = route.params?.cidade;
     const estado = route.params?.estado;
@@ -25,8 +25,11 @@ function AguardandoMotorista({navigation, route}){
     const nomeMotorista = route.params?.nomeMotorista;
     const veiculoMotorista = route.params?.veiculoMotorista;
     const placaVeiculoMotorista = route.params?.placaVeiculoMotorista;
+    const urlMotorista = route.params?.urlIMG;
 
-    //Função responsável por solicitar ao motorista para ligar sua localização.
+    /*
+      Função responsável por solicitar ao passageiro para ligar sua localização.
+    */
     const localizacaoLigada = async()=>{
         LocationServicesDialogBox.checkLocationServicesIsEnabled({
             message: "<h2 style='color: #0af13e'>Usar localização</h2><br/>Deseja permitir que o aplicativo <b>Caronas Universitárias</b> acesse a sua localização?<br/><br/>",
@@ -43,6 +46,10 @@ function AguardandoMotorista({navigation, route}){
         });
     }
 
+    /*
+      Função responsável por definir se o motorista está indo até o passageiro ou não.
+      OBS: Ainda não foi foi utilizada em alguma funcionalidade desta tela.
+    */
     const motoristaMeBuscando = async()=>{
         const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}/buscandoCaronista`);
         reference.on('value', function(snapshot){
@@ -54,15 +61,22 @@ function AguardandoMotorista({navigation, route}){
         })
       }
       
-    
+    /*
+      Função responsável para navegar para a tela de Viagem Em Andamento, passando os parâmetros necessários.
+    */
     const navigateToViagemEmAndamento = async()=>{
       if (viagemEmAndamento){
         // await AsyncStorage.removeItem('AguardandoMotorista');
         // await AsyncStorage.setItem('ViagemEmAndamento', true);
-        navigation.navigate('ViagemEmAndamento', {uidMotorista: uidMotorista, currentUser: currentUser, cidade: cidade, estado: estado, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista});
+        navigation.navigate('ViagemEmAndamento', {uidMotorista: uidMotorista, currentUser: currentUser, cidade: cidade, estado: estado, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, urlMotorista: urlMotorista});
       }
     }
 
+    /*
+      Função responsável por definir se a viagem foi iniciada ou não;
+      A viagem é definida como iniciada para um caronista, quando ele está a bordo do veículo;
+      Quando a viagem é iniciada, o aplicativo redirecionada para a tela de Viagem Em Andamento.
+    */
     const viagemIniciada = async()=>{
         const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
         try{
@@ -72,7 +86,6 @@ function AguardandoMotorista({navigation, route}){
                 setViagemEmAndamento(true);
                 navigateToViagemEmAndamento();
               }else{
-                console.log('viagem ainda não começou!');
                 if (viagemEmAndamento){
                   navigateToViagemEmAndamento();
                 }
@@ -82,44 +95,53 @@ function AguardandoMotorista({navigation, route}){
         }catch(error){
           console.log('erro em viagemIniciada');
         }
-
     }
     
-
-    function atualizaEstado(){
-        const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
-        try{
-          reference.update({
-            latitudePassageiro: posicaoPassageiro.latitude,
-            longitudePassageiro: posicaoPassageiro.longitude,
-            ativo: true,
-           });
-         }catch(error){
-           console.log('atualizaEstado, ERRO:', error.code);
-         }
-       }
-
-    function getMyLocation(){
-        try{
-          Geolocation.getCurrentPosition(info=>{
-            setPosicaoPassageiro({
-              latitude: info.coords.latitude,
-              longitude: info.coords.longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421
-            })
-          },
-          ()=>{console.log('Atualizando...')}, {
-            enableHighAccuracy:false,
-            timeout:2000,
-          })
-          atualizaEstado();
+    /*
+      Função responsável por atualizar o local do caronista em tempo real.
+    */
+    const atualizaEstado = ()=>{
+      const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+      try{
+        reference.update({
+          latitudePassageiro: posicaoPassageiro.latitude,
+          longitudePassageiro: posicaoPassageiro.longitude,
+          ativo: true,
+          });
         }catch(error){
-          console.log(error.code);
-        }
+          console.log('atualizaEstado, ERRO:', error.code);
       }
+    }
 
-    function bancoRemovido(uidMotorista){
+    /*
+      Função responsável por obter a posição do passageiro em tempo real.
+    */
+    const getMyLocation = ()=>{
+      try{
+        Geolocation.getCurrentPosition(info=>{
+          setPosicaoPassageiro({
+            latitude: info.coords.latitude,
+            longitude: info.coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421
+          })
+        },
+        ()=>{console.log('Atualizando...')}, {
+          enableHighAccuracy:false,
+          timeout:2000,
+        })
+        atualizaEstado();
+      }catch(error){
+        console.log(error.code);
+      }
+    }
+
+
+    /*
+      Função responsável por testar se o banco de dados do motorista foi removido;
+      OBS: Esta tela estava dando erro ao apagar o banco dos motoristas.
+    */
+    const bancoRemovido = ()=>{
       let filhoRemovido = '';
       try{
         database().ref().child(`${estado}/${cidade}/Motoristas`).on('child_removed', function(snapshot){
@@ -135,32 +157,35 @@ function AguardandoMotorista({navigation, route}){
       return false;
     }
     
-    function getPosicaoMotorista(){
+    /*
+      Função responsável por obter a posição do motorista em tempo real.
+    */
+    const getPosicaoMotorista = ()=>{
       const bancoFoiRemovido = bancoRemovido(uidMotorista);  
-      console.log('banco foi removido???', bancoFoiRemovido);
       const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
       if (bancoFoiRemovido == false){
         try{
-            reference.on('value', function(snapshot){
-              setPosicaoMotorista({
-                  latitude: snapshot.val().latitudeMotorista,
-                  longitude: snapshot.val().longitudeMotorista,
-                  latitudeDelta: 0.0922,
-                  longitudeDelta: 0.0421
-              })
+          reference.on('value', function(snapshot){
+            setPosicaoMotorista({
+              latitude: snapshot.val().latitudeMotorista,
+              longitude: snapshot.val().longitudeMotorista,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421
             })
-          }catch(error){
-              console.log('erro em getPosicaoMotorista');
-          }
+          })
+        }catch(error){
+            console.log('erro em getPosicaoMotorista');
+        }
       }  
     }
+
     
     useEffect(()=>{
         getMyLocation();
         getPosicaoMotorista();
         motoristaMeBuscando();
         viagemIniciada();
-    }, [motoristaAcaminho, viagemEmAndamento])
+    });
 
     return (
       <SafeAreaView>
