@@ -11,25 +11,27 @@ import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 
 
-import config from '../../config';
-import { onChange, set } from 'react-native-reanimated'; //?
 import Geocoder from 'react-native-geocoding';
+import config from '../../config';
 
 const {width, height} = Dimensions.get('screen');
 
 
 export default function Buscar({navigation}) {
 
+  const [localDestino, setLocalDestino] = useState(null); //Utilizado para armazenar as coordenadas de destino do caronista;
+  const [nomeDestino, setNomeDestino] = useState(''); //Utilizado para armazenar o nome do destino que o caronista quer ir;
+  const [localizacaoPassageiro, setlocalizacaoPassageiro] = useState(null); //Armazena as coordenadas do local atual do caronista;
+  const [localizacaoAtiva, setLocalizacaoAtiva] = useState(false); //Define se o usuário está com a localização ativa ou não;
+  const [modalVisible, setModalVisible] = useState(false); //Utilizado para controle do modal que é exibido ao não preencher o local de destino.
 
-  const [localDestino, setLocalDestino] = useState(null);
-  const [nomeDestino, setNomeDestino] = useState('');
-  const [localizacaoPassageiro, setlocalizacaoPassageiro] = useState(null);
-  const [localizacaoAtiva, setLocalizacaoAtiva] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
 
-
-  async function enviarLocalizacaoPassageiro(latitude, longitude){
-    // await AsyncStorage.setItem('buscandoCarona', 'true');
+  /*
+    Função responsável por enviar a localização do passageiro(a) ao banco de dados, com sua cidade/estado corrente;
+    Além disso, navega para a tela de 'Buscando Carona', passando as informações necessárias como parâmetro.
+  */
+  const enviarLocalizacaoPassageiro = async(latitude, longitude)=>{
+    await AsyncStorage.setItem('buscandoCarona', 'true');
     const currentUser = auth().currentUser.uid;
     var response = await Geocoder.from(latitude, longitude);
     var filtro_cidade = response.results[0].address_components.filter(function(address_component){
@@ -43,8 +45,6 @@ export default function Buscar({navigation}) {
     var cidade = filtro_cidade[0].short_name; 
     var estado = filtro_estado[0].short_name;
 
-    // excluiBancoPassageiroMotorista(estado, cidade, currentUser);
-
     const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
       reference.set({
@@ -57,13 +57,18 @@ export default function Buscar({navigation}) {
         ofertasCaronas:'',
         caronasAceitas:'',
       }).then(()=>console.log('coordenadas passageiro enviadas!'));
-      navigation.navigate('Buscando_Carona', {nomeDestino: nomeDestino, localDestino: localDestino, cidade: cidade, estado: estado})
+      navigation.navigate('Buscando_Carona', {cidade: cidade, estado: estado});
     }catch(error){
       console.log('ERRO:', error.code);
     }
   }
 
-  async function getLocalPassageiro(){
+
+  /*
+    Função responsável por obter o local atual do passageiro e definir esse no array localizaçãoPassageiro;
+    Caso o usuário não tenha ligado a localização, é solicitado ao mesmo.
+  */
+  const getLocalPassageiro = async()=>{
     PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
       .then(()=>{
@@ -98,29 +103,34 @@ export default function Buscar({navigation}) {
       console.log('localizacao desativada');
     }
   }
-  
-  //implementando
+
+  /*
+    Função responsável por solicitar ao usuário ligar a sua localização.
+  */
   const ligarLocalizacao = async()=>{
     LocationServicesDialogBox.checkLocationServicesIsEnabled({
       message: "<h2 style='color: #0af13e'>Usar localização</h2><br/>Deseja permitir que o aplicativo <b>Caronas Universitárias</b> acesse a sua localização?<br/><br/>",
       ok: "Permitir",
       cancel: "Negar",
-      enableHighAccuracy: true, // true => GPS AND NETWORK PROVIDER, false => GPS OR NETWORK PROVIDER
-      showDialog: true, // false => Opens the Location access page directly
-        openLocationServices: true, // false => Directly catch method is called if location services are turned off
-        preventOutSideTouch: false, // true => To prevent the location services window from closing when it is clicked outside
-        preventBackClick: false, // true => To prevent the location services popup from closing when it is clicked back button
-        providerListener: false // true ==> Trigger locationProviderStatusChange listener when the location state changes
+      enableHighAccuracy: true,
+      showDialog: true, 
+        openLocationServices: true, 
+        preventOutSideTouch: false, 
+        preventBackClick: false, 
+        providerListener: false 
       }).then(function(success) {
         setLocalizacaoAtiva(true);
         estadoInicial();
-        // console.log(success); // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
       }).catch((error) => {
         setLocalizacaoAtiva(false);  
-        console.log(error.message); // error.message => "disabled"
+        console.log(error.message); 
       });
     }
-    
+  
+  /*
+    Função responsável por definir a localização atual do passageiro, na tentativa de definir um estado inicial;
+    Caso o usuário se mova do local atual ao solicitar carona, a localização do mesmo é atualizada com getLocalPassageiro(), enviando o estado mais atualizado ao banco de dados.
+  */
   const estadoInicial = async()=>{
     try{
       Geolocation.getCurrentPosition(info=>{
@@ -142,7 +152,10 @@ export default function Buscar({navigation}) {
   }
 
 
-  //IGNORAR ESSA FUNÇÃO, CRIEI APENAS PARA TESTAR A TELA Oferecer.js
+  /* 
+    Função utilizada apenas para teste da tela Oferecer.js;
+    Um caronista é inserido no banco de Passageiros para teste das funções da tela.
+  */
   const insereBanco = async()=>{
     const reference = database().ref(`SP/Matão/Passageiros/sqmtE3QOReXfNemiKDZWup00HYo1`);
     try{
@@ -160,25 +173,31 @@ export default function Buscar({navigation}) {
       console.log('atualizaEstado, ERRO:', error.code);
     }
   }
-  // async function excluiBancoPassageiroMotorista(estado, cidade, currentUser){
-  //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-  //   try{
-  //     reference.on('value', snapshot=>{
-  //       if (snapshot.exists()){
-  //         reference.remove();
-  //       }
-  //     })
-  //   }catch(error){
-  //     console.log('excluiBancoMotoristaPassageiro');
-  //   }
-  // }
+
+  /* 
+    Função utilizada para impedir que um passageiro dê carona a si mesmo como motorista;
+    Quando o banco de Motoristas é criado com o uid do passageiro, ele é automaticamente deletado.
+  */
+  const excluiBancoPassageiroMotorista = async(estado, cidade, currentUser)=>{
+    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+    try{
+      reference.on('value', snapshot=>{
+        if (snapshot.exists()){
+          reference.remove();
+        }
+      })
+    }catch(error){
+      console.log('excluiBancoMotoristaPassageiro');
+    }
+  }
+
 
   useEffect(()=>{
     console.log('TELA: Buscar');
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
     ligarLocalizacao();    
-    // excluiBancoPassageiroMotorista();
-  }, [])
+    // excluiBancoPassageiroMotorista(); //Essa função deve ser chamada aqui;
+  })
   
   
   return (
@@ -217,8 +236,8 @@ export default function Buscar({navigation}) {
             key: config.googleAPI,
             language: 'pt-br',
             components: 'country:br',
-            location: `${localizacaoPassageiro.latitude}, ${localizacaoPassageiro.longitude}`, //alterar aqui para coordenadas atuais
-            radius: "15000", //15km
+            location: `${localizacaoPassageiro.latitude}, ${localizacaoPassageiro.longitude}`,
+            radius: "15000", //Define um raio de 15km em torno da localização atual do passageiro dos locais que devem ser exibidos na pesquisa;
             strictbounds: true
           }}
     
@@ -260,7 +279,7 @@ export default function Buscar({navigation}) {
       <TouchableOpacity
         style={{position: 'absolute', backgroundColor: '#FF5F55', top: 260, width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}        
         onPress={getLocalPassageiro}
-        // onPress={insereBanco} //criei apenas para testar a tela Oferecer.js
+        // onPress={insereBanco} //Função para teste na tela Oferecer.js
       >
         <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
           Buscar Carona
@@ -280,14 +299,12 @@ export default function Buscar({navigation}) {
                     <TouchableOpacity
                         style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
                         onPress={() => setModalVisible(!modalVisible)}
-                        // onPress={buscarCarona}
                     >
                         <Text style={styles.textStyle}>Entendi</Text>
                     </TouchableOpacity>
               </View>
             </View>
         </Modal>
-
       </View>
     </SafeAreaView>
   );

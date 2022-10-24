@@ -70,7 +70,9 @@ function ViagemEmAndamento({navigation, route}) {
         reference_passageiro.update({
           historicoViagens: firebase.firestore.FieldValue.arrayUnion({
             uidMotorista: uidMotorista,
-            dataViagem: data
+            dataViagem: data,
+            nomeMotorista: nomeMotorista,
+            destino: 'ALTERAR',
           })
         })
       }catch(error){
@@ -99,11 +101,6 @@ function ViagemEmAndamento({navigation, route}) {
     const entrarEmContatoMotorista = async()=>{
       console.log('entrando em contato com o motorista...');
     }
-
-    useEffect(()=>{
-
-    }, []);
-
 
     return (
       <SafeAreaView>

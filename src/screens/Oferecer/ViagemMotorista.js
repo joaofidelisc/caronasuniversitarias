@@ -39,45 +39,47 @@ function ViagemMotorista({route, navigation}){
         jaExiste = false;
       }
       const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-      try{
-        reference.once('value', function(snapshot){
-          if (snapshot.exists() && snapshot.val().caronistasAbordo != undefined){
-            listaPassageiros = snapshot.val().caronistasAbordo;
-          }
-          arrayUIDs = listaPassageiros.split(', ');
-          setNumPassageirosABordo(arrayUIDs.length);
-          setUIDsPassageiros(arrayUIDs);
-          arrayUIDs.forEach(async uid =>{
-            if (passageirosABordo.length == 0){
-              setPassageirosABordo([{
-                url: await getFotoPassageiro(uid),
-                uid: uid,
-                nome: await getNomePassageiro(uid),
-                classificacao: await getClassificacaoPassageiro(uid),
-                destino: 'ALTERAR'
-              }])
-            }else{
-              passageirosABordo.some(motorista=>{
-                if (motorista.uid == uid){
-                  jaExiste = true;
-                }
-              })
-              if (!jaExiste){
-                setPassageirosABordo([...passageirosABordo, {
+      // if (!atualizouPassageiros){
+        try{
+          reference.once('value', function(snapshot){
+            if (snapshot.exists() && snapshot.val().caronistasAbordo != undefined){
+              listaPassageiros = snapshot.val().caronistasAbordo;
+            }
+            arrayUIDs = listaPassageiros.split(', ');
+            setNumPassageirosABordo(arrayUIDs.length);
+            setUIDsPassageiros(arrayUIDs);
+            arrayUIDs.forEach(async uid =>{
+              if (passageirosABordo.length == 0){
+                setPassageirosABordo([{
                   url: await getFotoPassageiro(uid),
                   uid: uid,
                   nome: await getNomePassageiro(uid),
                   classificacao: await getClassificacaoPassageiro(uid),
-                  destino: 'ALTERAR'  
+                  destino: await getDestinoPassageiro(uid)
                 }])
+              }else{
+                passageirosABordo.some(motorista=>{
+                  if (motorista.uid == uid){
+                    jaExiste = true;
+                  }
+                })
+                if (!jaExiste){
+                  setPassageirosABordo([...passageirosABordo, {
+                    url: await getFotoPassageiro(uid),
+                    uid: uid,
+                    nome: await getNomePassageiro(uid),
+                    classificacao: await getClassificacaoPassageiro(uid),
+                    destino: await getDestinoPassageiro(uid) 
+                  }])
+                }
               }
-            }
-          });
-        })
-        setAtualizouPassageiros(true);
-      } catch(error){
-        console.log('error.code:', error.code);
-      }
+            });
+          })
+          setAtualizouPassageiros(true);
+        } catch(error){
+          console.log('error.code:', error.code);
+        }
+      // }
     }
 
     const getNomePassageiro = async(uidPassageiro)=>{
@@ -108,15 +110,15 @@ function ViagemMotorista({route, navigation}){
 
     const getDestinoPassageiro = async(uidPassageiro)=>{
       let destino = '';
-      try{
-        database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).once('value').then(snapshot=>{
+      let docRef = database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`);
+      return docRef.once('value').then(snapshot=>{
+        if (snapshot.exists){
           destino = snapshot.val().nomeDestino;
           return destino;
-        })
-      }catch(error){
-        console.log(error.code);
-      }
-      return destino;
+        }else{
+          return '';
+        }
+      }) 
     }
 
     //exibir a classificação do passageiro ao oferecer carona!!!!!!!!!!!!!!!!!1111
@@ -147,7 +149,6 @@ function ViagemMotorista({route, navigation}){
       return dia+"/"+mes+"/"+ano;
     }
 
-    //por algum motivo tá com problema essa função
     const escreveHistoricoViagem = async(uidPassageiro)=>{
       const data = await dataAtualFormatada();
       const reference_passageiro = firestore().collection('Users').doc(uidPassageiro); 
@@ -164,8 +165,9 @@ function ViagemMotorista({route, navigation}){
     }
 
     const finalizarViagemPassageiro = async(uidPassageiro)=>{
+      console.log('num passageiros a bordo:', numPassageirosABordo);
+      setPassageirosABordo(passageirosABordo.filter((uid)=>(uid.uid != uidPassageiro)));
       await escreveHistoricoViagem(uidPassageiro);
-      UIDsPassageiros.splice(UIDsPassageiros.indexOf(uidPassageiro), 1);
       if (numPassageirosABordo == 1){
         navigation.navigate('ClassificarPassageiro', {cidade: cidade, estado: estado, currentUser: currentUser, passageiros: passageirosABordo, arrayClassificar: UIDsClassificar});
       }else{
@@ -175,12 +177,15 @@ function ViagemMotorista({route, navigation}){
 
     useEffect(()=>{
       getDadosPassageiros();
-    }, [numPassageirosABordo, passageirosABordo]);
+    }, [passageirosABordo]);
 
     return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
+          <Text style={{fontSize:20, color:'#2f4f4f', paddingHorizontal:70, fontWeight:'bold', marginTop: 30, marginBottom: 30}}>Passageiros(as) a bordo...</Text>
+          {/* <Text style={{fontSize:20, color:'#2f4f4f', paddingHorizontal:70, fontWeight:'600', marginTop: 30, marginBottom: 30}}>Ao finalizar a viagem de todos os passageiros(as), você será redirecionado(a) para a tela de classificação</Text> */}
+
           {
             !atualizouPassageiros &&
             <>
@@ -192,28 +197,24 @@ function ViagemMotorista({route, navigation}){
             </>
           }
           {
-            atualizouPassageiros &&
             <ScrollView style={styles.scrollView}>
             {
               passageirosABordo.map(passageiro=>(
-                UIDsPassageiros.includes(passageiro.uid)?
                 <View style={styles.viewPassageiros}
                     key={passageiro.uid}
                 >
-                  <View style={{flex: 1, flexDirection: 'row', alignItems:'center', justifyContent: 'center', marginTop: 10}}>
+                  <View style={{flex: 1, flexDirection: 'row', alignItems:'center', marginTop: 10}}>
                     <Image 
                       source={{
                         uri: passageiro.url
                       }}
-                      style={{height:70, width: 70, borderRadius: 100, marginBottom:10, marginTop: 18}}  
+                      style={{height:70, width: 70, borderRadius: 100, marginBottom:10, marginTop: 18, marginLeft: 15}}  
                       />
-                    <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>{passageiro.nome}</Text>
-                    {/* <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>{'\n'}Destino:</Text> */}
-                  </View>
-                    <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
+                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, marginLeft: 10}}>{passageiro.nome}</Text>
                       <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18}}>{passageiro.classificacao}</Text>
                       <Icon name="star" size={18} color="#06444C" style={{alignSelf:'center', marginLeft: 25}}/>
                     </View>
+                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: 16, textAlign: 'center', marginTop: 10}}>{passageiro.destino}</Text>
                     <View style={{flexDirection:'row', alignSelf:'center'}}>
                     <TouchableOpacity
                       style={{backgroundColor: '#FF5F55', width: 180, height: 30, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginBottom: 10}}
@@ -227,7 +228,7 @@ function ViagemMotorista({route, navigation}){
                       </Text>
                     </TouchableOpacity>
                     </View>
-                  </View>:null
+                  </View>
               ))
             }
               <Text style={styles.text}>
@@ -255,11 +256,13 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: 330, 
-    height: 140, 
+    height: 155, 
     backgroundColor: 'white', 
     borderRadius: 10, 
     alignSelf:'center', 
-    marginTop: 10
+    marginTop: 10,
+    borderBottomWidth: 1, 
+    borderBottomColor: '#FF5F55'
   }
 });
 
