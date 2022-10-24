@@ -80,11 +80,11 @@ function BuscandoCarona({navigation, route}) {
     try{
       docRef.get().then((doc)=>{
         if (doc.exists){
-          if (doc.data().token == undefined || doc.data().token == ''){
-            docRef.update({
-              token: token
-            })
-          }
+          // if (doc.data().token == undefined || doc.data().token == ''){
+          docRef.update({
+            token: token
+          })
+          // }
           console.log('TELA DE BUSCANDO CARONA:');
           console.log('token armazenado:', doc.data().token);
         }

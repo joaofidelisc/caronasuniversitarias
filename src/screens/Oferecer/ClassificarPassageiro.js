@@ -4,26 +4,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 import database from '@react-native-firebase/database';
 
-// import { StackActions, NavigationActions } from 'react-navigation';
 
 const {width, height} = Dimensions.get('screen');
-
 
 function ClassificarPassageiro({route, navigation}) {
     const [descricaoViagem, setDescricaoViagem] = useState('');
     const [defaultRating, setDefaultRating] = useState(2); 
     const [maxRating, setMaxRating] = useState([1, 2, 3, 4, 5]);
-    
+
     const passageiros = route.params?.passageiros;
     const currentUser = route.params?.currentUser;
     const cidade = route.params?.cidade;
     const estado = route.params?.estado;
 
-    // const resetAction = StackActions.reset({
-    //   index: 0,
-    //   actions: [NavigationActions.navigate({ routeName: 'ConfigurarCarona' })],
-    // })
-    //classificação vale para como motorista e como passageiro;
 
     const classificarPassageiro = async(uidPassageiro)=>{
       let numViagens = 0;
@@ -47,7 +40,6 @@ function ClassificarPassageiro({route, navigation}) {
             }
           }
         })
-        // await navigateToBuscar();
       }catch(error){
         console.log('erro em getClassificacao');
       }

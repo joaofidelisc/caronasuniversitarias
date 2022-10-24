@@ -5,6 +5,8 @@ import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
+import firebase from "@react-native-firebase/app";
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -19,53 +21,63 @@ Ideias para essa tela:
 
 
 function ViagemMotorista({route, navigation}){
-    const [passageirosABordo, setPassageirosABordo] = useState([]);
     const [atualizouPassageiros, setAtualizouPassageiros] = useState(false);
     const [numPassageirosABordo, setNumPassageirosABordo] = useState(0);
-    const [existePassageiroABordo, setExistePassageiroABordo] = useState(false);
+    const [passageirosABordo, setPassageirosABordo] = useState([]);
+    const [UIDsPassageiros, setUIDsPassageiros] = useState([]);
+    const [UIDsClassificar, setUIDsClassificar] = useState([]); //utilizado na próxima tela;
 
     const currentUser = auth().currentUser.uid;
     const cidade = route.params?.cidade;
     const estado = route.params?.estado;
 
-
-    const getDadosPassageiros = async()=>{
-      let listaCaronistasAbordo = '';
-      let arrayUIDsCaronistas = [];
-
-      const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-      if (!atualizouPassageiros){
-        try{
-          reference.once('value').then(function(snapshot){
-            // 'joao, guilherme, maria, felipe'
-            // ['joao', ...]
-            //['joao', ''];
-
-            listaCaronistasAbordo = snapshot.val().caronistasAbordo;
-            arrayUIDsCaronistas = listaCaronistasAbordo.split(', ');
-            console.log('arrayUIDS:', arrayUIDsCaronistas);
-            console.log('caronistas a bordo:', listaCaronistasAbordo);
-            arrayUIDsCaronistas.forEach(async uid=>{
-              console.log('uid::::::::', uid);
-              if (uid != ''){
-                setNumPassageirosABordo(numPassageirosABordo+1);
-              }
-              setPassageirosABordo([...passageirosABordo, {
-                uid: uid,
-                url: await getFotoPassageiro(uid),
-                nome: await getNomePassageiro(uid),
-                // destino: await getDestinoPassageiro(uid),
-                destino: 'TESTE',
-                classificacao: await getClassificacaoPassageiro(uid)
-              }])
-            })
-            setAtualizouPassageiros(true);
-          })
-        }catch(error){
-          console.log('erro em getDadosPassageiro');
-        }
+    async function getDadosPassageiros(){
+      let listaPassageiros = '';
+      let arrayUIDs = [];
+      let jaExiste = false;
+      if (jaExiste == true){
+        jaExiste = false;
       }
-      console.log('passageiros:', passageirosABordo);
+      const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+      try{
+        reference.once('value', function(snapshot){
+          if (snapshot.exists() && snapshot.val().caronistasAbordo != undefined){
+            listaPassageiros = snapshot.val().caronistasAbordo;
+          }
+          arrayUIDs = listaPassageiros.split(', ');
+          setNumPassageirosABordo(arrayUIDs.length);
+          setUIDsPassageiros(arrayUIDs);
+          arrayUIDs.forEach(async uid =>{
+            if (passageirosABordo.length == 0){
+              setPassageirosABordo([{
+                url: await getFotoPassageiro(uid),
+                uid: uid,
+                nome: await getNomePassageiro(uid),
+                classificacao: await getClassificacaoPassageiro(uid),
+                destino: 'ALTERAR'
+              }])
+            }else{
+              passageirosABordo.some(motorista=>{
+                if (motorista.uid == uid){
+                  jaExiste = true;
+                }
+              })
+              if (!jaExiste){
+                setPassageirosABordo([...passageirosABordo, {
+                  url: await getFotoPassageiro(uid),
+                  uid: uid,
+                  nome: await getNomePassageiro(uid),
+                  classificacao: await getClassificacaoPassageiro(uid),
+                  destino: 'ALTERAR'  
+                }])
+              }
+            }
+          });
+        })
+        setAtualizouPassageiros(true);
+      } catch(error){
+        console.log('error.code:', error.code);
+      }
     }
 
     const getNomePassageiro = async(uidPassageiro)=>{
@@ -136,31 +148,34 @@ function ViagemMotorista({route, navigation}){
     }
 
     //por algum motivo tá com problema essa função
-    // const escreveHistoricoViagem = async(uidPassageiro)=>{
-    //   const data = await dataAtualFormatada();
-    //   const reference_passageiro = firestore().collection('Users').doc(uidPassageiro); 
-    //   try{
-    //     reference_passageiro.update({
-    //       historicoViagens: firebase.firestore.FieldValue.arrayUnion({
-    //         uidMotorista: currentUser,
-    //         dataViagem: data
-    //       })
-    //     })
-    //   }catch(error){
-    //     console.log('erro em escreveHistoricoViagem');
-    //   }
-    // }
+    const escreveHistoricoViagem = async(uidPassageiro)=>{
+      const data = await dataAtualFormatada();
+      const reference_passageiro = firestore().collection('Users').doc(uidPassageiro); 
+      try{
+        reference_passageiro.update({
+          historicoViagens: firebase.firestore.FieldValue.arrayUnion({
+            uidMotorista: currentUser,
+            dataViagem: data
+          })
+        })
+      }catch(error){
+        console.log('erro em escreveHistoricoViagem');
+      }
+    }
 
     const finalizarViagemPassageiro = async(uidPassageiro)=>{
-      // await escreveHistoricoViagem(uidPassageiro);
-      console.log('numero de passageiros a bordo:', numPassageirosABordo);
-      console.log('finalizando viagem do passageiro...');
+      await escreveHistoricoViagem(uidPassageiro);
+      UIDsPassageiros.splice(UIDsPassageiros.indexOf(uidPassageiro), 1);
+      if (numPassageirosABordo == 1){
+        navigation.navigate('ClassificarPassageiro', {cidade: cidade, estado: estado, currentUser: currentUser, passageiros: passageirosABordo, arrayClassificar: UIDsClassificar});
+      }else{
+        setNumPassageirosABordo(numPassageirosABordo-1);
+      } 
     }
 
     useEffect(()=>{
       getDadosPassageiros();
-    }, [numPassageirosABordo])
-
+    }, [numPassageirosABordo, passageirosABordo]);
 
     return (
       <SafeAreaView>
@@ -178,36 +193,32 @@ function ViagemMotorista({route, navigation}){
           }
           {
             atualizouPassageiros &&
-            <ScrollView style={[styles.scrollView,{top:0}]}>
+            <ScrollView style={styles.scrollView}>
             {
               passageirosABordo.map(passageiro=>(
+                UIDsPassageiros.includes(passageiro.uid)?
                 <View style={styles.viewPassageiros}
                     key={passageiro.uid}
-                    >
+                >
+                  <View style={{flex: 1, flexDirection: 'row', alignItems:'center', justifyContent: 'center', marginTop: 10}}>
                     <Image 
                       source={{
                         uri: passageiro.url
                       }}
-                      style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
-                    />
-                    <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Nome: {passageiro.nome}</Text>
-                    <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Destino: {passageiro.destino}</Text>
-                    <View style={{flexDirection:'row'}}>
-                      <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Classificação: {passageiro.classificacao}</Text>
+                      style={{height:70, width: 70, borderRadius: 100, marginBottom:10, marginTop: 18}}  
+                      />
+                    <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>{passageiro.nome}</Text>
+                    {/* <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>{'\n'}Destino:</Text> */}
+                  </View>
+                    <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
+                      <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18}}>{passageiro.classificacao}</Text>
                       <Icon name="star" size={18} color="#06444C" style={{alignSelf:'center', marginLeft: 25}}/>
                     </View>
                     <View style={{flexDirection:'row', alignSelf:'center'}}>
                     <TouchableOpacity
-                      style={{backgroundColor: '#FF5F55', width: 180, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginRight: 20}}
+                      style={{backgroundColor: '#FF5F55', width: 180, height: 30, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginBottom: 10}}
                       onPress={()=>{
                         finalizarViagemPassageiro(passageiro.uid);
-                        if (numPassageirosABordo == 1){
-                          setExistePassageiroABordo(false);
-                          navigation.navigate('ClassificarPassageiro', {cidade: cidade, estado: estado, currentUser: currentUser, passageiros: passageirosABordo});
-                          console.log('você entregou todos os seus passageiros!');
-                        }else{
-                          setNumPassageirosABordo(numPassageirosABordo-1);
-                        }
                         }
                       }
                     >
@@ -216,12 +227,10 @@ function ViagemMotorista({route, navigation}){
                       </Text>
                     </TouchableOpacity>
                     </View>
-                  </View>
+                  </View>:null
               ))
             }
               <Text style={styles.text}>
-              {'\n\n\n\n'}
-              {'\n\n\n\n\n'}
               </Text>
             </ScrollView>
           }
@@ -233,7 +242,8 @@ function ViagemMotorista({route, navigation}){
 const styles = StyleSheet.create({
   scrollView: {
     marginHorizontal: 10,
-    width: '100%'
+    width: '100%',
+    height: '50%'
   },
   viewPassageiros:{
     shadowColor: "#000",
@@ -245,7 +255,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: 330, 
-    height: 250, 
+    height: 140, 
     backgroundColor: 'white', 
     borderRadius: 10, 
     alignSelf:'center', 

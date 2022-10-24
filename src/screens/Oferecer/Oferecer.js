@@ -274,6 +274,24 @@ function Oferecer({route, navigation}) {
     return destino;
   }
 
+  const getClassificacaoCaronista = async(caronistaUID)=>{
+    let classificacaoAtual = 0;
+    const reference_caronista = firestore().collection('Users').doc(caronistaUID);
+    try{
+      await reference_caronista.get().then((reference)=>{
+        if (reference.exists){
+          classificacaoAtual = reference.data().classificacao;
+          if (classificacaoAtual == undefined){
+            classificacaoAtual = 0;
+          }
+          return parseFloat(classificacaoAtual.toFixed(2));
+        }
+      })
+    }catch(error){
+      console.log('erro em recuperaClassificacaoMotorista');
+    }
+    return parseFloat(classificacaoAtual.toFixed(2));
+  }
 
   /*
     Função responsável por buscar e exibir o modal do usuário após o motorista clicar no pin do caronista;
@@ -359,17 +377,18 @@ function Oferecer({route, navigation}) {
           if (snapshot.exists()){
             uidsPassageiros = snapshot.val();
             arrayUIDsPassageiros = uidsPassageiros.split(', ');
+            console.log('------------------------------------------------');
+            console.log('FUNÇÃO caronasAceitas()');
+            console.log('TELA OFERECER CARONA\n\n\n\n');
+            console.log('uidsPassageiros:', uidsPassageiros);
+            console.log('arrayUIDsPassageiros:', arrayUIDsPassageiros);
+            console.log('------------------------------------------------');
             if (arrayUIDsPassageiros[0] != '' && arrayUIDsPassageiros[0] != undefined && vagasDisponiveis>numCaronasAceitas){
               setExisteCaronaAceita(true);
-              arrayUIDsPassageiros.some(passageiro=>{
-                if (passageiro.uid == arrayUIDsPassageiros[arrayUIDsPassageiros.length-1]){
-                  jaExiste = true;
-                }
-              })
-              if (!jaExiste && arrayUIDsPassageiros.length>numCaronasAceitas){
+              setNumCaronasAceitas(arrayUIDsPassageiros.length);
+              if (!passageiros.includes(arrayUIDsPassageiros[arrayUIDsPassageiros.length-1])){
                 setPassageiros([...passageiros, arrayUIDsPassageiros[arrayUIDsPassageiros.length-1]]);
               }
-              setNumCaronasAceitas(arrayUIDsPassageiros.length);
             }else{
               if (vagasDisponiveis == numCaronasAceitas && oferecerMaisCaronas){
                 setOferecerMaisCaronas(false);
@@ -618,11 +637,11 @@ function Oferecer({route, navigation}) {
     try{
       docRef.get().then((doc)=>{
         if (doc.exists){
-          if (doc.data().token == undefined || doc.data().token == ''){
-            docRef.update({
-              token: token
-            })
-          }
+          // if (doc.data().token == undefined || doc.data().token == ''){
+          docRef.update({
+            token: token
+          })
+          // }
           console.log('token armazenado:', doc.data().token);
         }
       })
