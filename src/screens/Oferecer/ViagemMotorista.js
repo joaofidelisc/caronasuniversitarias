@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo, useCallback} from 'react';
 import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, ScrollView, StyleSheet} from 'react-native';
 
 import auth from '@react-native-firebase/auth'
@@ -56,6 +56,7 @@ function ViagemMotorista({route, navigation}){
                   nome: await getNomePassageiro(uid),
                   classificacao: await getClassificacaoPassageiro(uid),
                   destino: await getDestinoPassageiro(uid)
+                  // destino: 'teste',
                 }])
               }else{
                 passageirosABordo.some(motorista=>{
@@ -109,17 +110,20 @@ function ViagemMotorista({route, navigation}){
     }
 
     const getDestinoPassageiro = async(uidPassageiro)=>{
-      let destino = '';
+      console.log('rodando função getDestinoPassageiro');
+      let destino = null;
       let docRef = database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`);
       return docRef.once('value').then(snapshot=>{
-        if (snapshot.exists){
-          destino = snapshot.val().nomeDestino;
-          return destino;
-        }else{
-          return '';
+        if (snapshot.exists()){  
+          if (snapshot.val().nomeDestino != null){
+            destino = snapshot.val().nomeDestino;
+            return destino;
+          }
         }
-      }) 
+        return '';
+      })
     }
+
 
     //exibir a classificação do passageiro ao oferecer carona!!!!!!!!!!!!!!!!!1111
     const getClassificacaoPassageiro = async(uidPassageiro)=>{
@@ -149,14 +153,19 @@ function ViagemMotorista({route, navigation}){
       return dia+"/"+mes+"/"+ano;
     }
 
-    const escreveHistoricoViagem = async(uidPassageiro)=>{
+    //finalizar essa função passando como parametro o nome do passageiro, o url para a foto de perfil, e o destino.
+    const escreveHistoricoViagem = async(uidPassageiro, destinoPassageiro, nomePassageiro, passageiroIMG)=>{
       const data = await dataAtualFormatada();
       const reference_passageiro = firestore().collection('Users').doc(uidPassageiro); 
       try{
         reference_passageiro.update({
           historicoViagens: firebase.firestore.FieldValue.arrayUnion({
-            uidMotorista: currentUser,
-            dataViagem: data
+            uidMotorista: uidPassageiro,
+            dataViagem: data,
+            nome: nomePassageiro,
+            destino: destinoPassageiro,
+            fotoPerfil: passageiroIMG,
+            refViagem: Date.now()
           })
         })
       }catch(error){
@@ -164,20 +173,38 @@ function ViagemMotorista({route, navigation}){
       }
     }
 
-    const finalizarViagemPassageiro = async(uidPassageiro)=>{
+    // historicoViagens: firebase.firestore.FieldValue.arrayUnion({
+    //   uidMotorista: uidMotorista,
+    //   dataViagem: data,
+    //   nomeMotorista: nomeMotorista,
+    //   destino: nomeDestino,
+    //   fotoPerfil: motoristaURL,
+    //   refViagem: Date.now()
+    // })
+    const finalizarViagemPassageiro = async(uidPassageiro, destinoPassageiro, nomePassageiro, passageiroIMG)=>{
       const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`);
       reference_passageiro.update({
         viagemTerminou: true,
       })
       console.log('num passageiros a bordo:', numPassageirosABordo);
       setPassageirosABordo(passageirosABordo.filter((uid)=>(uid.uid != uidPassageiro)));
-      await escreveHistoricoViagem(uidPassageiro);
+      await escreveHistoricoViagem(uidPassageiro, destinoPassageiro, nomePassageiro, passageiroIMG);
       if (numPassageirosABordo == 1){
         navigation.navigate('ClassificarPassageiro', {cidade: cidade, estado: estado, currentUser: currentUser, passageiros: passageirosABordo, arrayClassificar: UIDsClassificar});
       }else{
         setNumPassageirosABordo(numPassageirosABordo-1);
       } 
     }
+
+    function removeListeners(){
+      database().ref().child(`${estado}/${cidade}/Passageiros`).off('value');
+      database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`).off('value');
+      database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`).off('child_added');
+    }
+
+    useEffect(()=>{
+      removeListeners();
+    })
 
     useEffect(()=>{
       getDadosPassageiros();
@@ -223,7 +250,7 @@ function ViagemMotorista({route, navigation}){
                     <TouchableOpacity
                       style={{backgroundColor: '#FF5F55', width: 180, height: 30, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginBottom: 10}}
                       onPress={()=>{
-                        finalizarViagemPassageiro(passageiro.uid);
+                        finalizarViagemPassageiro(passageiro.uid, passageiro.destino, passageiro.nome, passageiro.url);
                         }
                       }
                     >

@@ -60,7 +60,7 @@ function AguardandoMotorista({navigation, route}){
     const navigateToViagemEmAndamento = async()=>{
       const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
       if (viagemEmAndamento){
-        reference_motorista.off();
+        reference_motorista.off('value');
         // await AsyncStorage.removeItem('AguardandoMotorista');
         // await AsyncStorage.setItem('ViagemEmAndamento', true);
         navigation.navigate('ViagemEmAndamento', {uidMotorista: uidMotorista, currentUser: currentUser, cidade: cidade, estado: estado, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, motoristaUrl: motoristaUrl, nomeDestino: nomeDestino});

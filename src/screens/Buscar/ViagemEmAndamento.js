@@ -36,14 +36,14 @@ function ViagemEmAndamento({navigation, route}) {
       }  
     }
 
-    const excluiBancoPassageiro = async()=>{
-      const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
-      try{
-        reference_passageiro.remove();
-      }catch(error){
-        console.log('excluiBancoPassageiro');
-      }
-    }
+    // const excluiBancoPassageiro = async()=>{
+    //   const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+    //   try{
+    //     reference_passageiro.remove();
+    //   }catch(error){
+    //     console.log('excluiBancoPassageiro');
+    //   }
+    // }
     
     //remove o uid do passageiro no banco de motoristas, porque por mais que tenha finalizado a minha viagem
     //as vezes não finalizou a viagem de outro passageiro a bordo.
@@ -87,9 +87,10 @@ function ViagemEmAndamento({navigation, route}) {
           historicoViagens: firebase.firestore.FieldValue.arrayUnion({
             uidMotorista: uidMotorista,
             dataViagem: data,
-            nomeMotorista: nomeMotorista,
+            nome: nomeMotorista,
             destino: nomeDestino,
             fotoPerfil: motoristaURL,
+            refViagem: Date.now()
           })
         })
       }catch(error){
@@ -104,7 +105,7 @@ function ViagemEmAndamento({navigation, route}) {
   // }
 
     const fimDaViagem = async()=>{
-      await excluiBancoPassageiro();
+      // await excluiBancoPassageiro();
       // await defineEstadoAtual();
       escreveHistoricoViagem();
       navigateToClassificacao();

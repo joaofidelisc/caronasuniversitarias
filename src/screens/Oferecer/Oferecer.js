@@ -7,7 +7,7 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import MapViewDirections from 'react-native-maps-directions';
 import { StackActions } from '@react-navigation/native';
 import storage from '@react-native-firebase/storage';
-import database from '@react-native-firebase/database';
+import database, {firebase} from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
@@ -51,6 +51,7 @@ function Oferecer({route, navigation}) {
   const [exibeModalOferecer, setExibeModalOferecer] = useState(true);
   const [existePassageiroAbordo, setExistePassageiroAbordo] = useState(false);
   const [passageirosAbordo, setPassageirosAbordo] = useState(0);
+  const [iniciouViagem, setIniciouViagem] = useState(false);
   const [existeBanco, setExisteBanco] = useState(''); //Controla se o banco de dados existe ou deve ser criado (antes de ser atualizado).
   //Informações do motorista
   const cidade = route.params?.cidade; 
@@ -63,6 +64,7 @@ function Oferecer({route, navigation}) {
 
   //Função responsável por solicitar ao motorista para ligar sua localização.
   const localizacaoLigada = async()=>{
+    console.log("OFERECER!!!!!!!!!!!!! - localizacaoLigada");
     LocationServicesDialogBox.checkLocationServicesIsEnabled({
         message: "<h2 style='color: #0af13e'>Usar localização</h2><br/>Deseja permitir que o aplicativo <b>Caronas Universitárias</b> acesse a sua localização?<br/><br/>",
         ok: "Permitir",
@@ -86,6 +88,7 @@ function Oferecer({route, navigation}) {
   */
   
   function getCaronistasMarker(){
+    console.log("OFERECER!!!!!!!!!!!!! - getCaronistasMarker");
     let jaExiste = false;
     if (jaExiste == true){
       jaExiste = false;
@@ -106,7 +109,6 @@ function Oferecer({route, navigation}) {
       //   })
       // })
 
-        
       database().ref().child(`${estado}/${cidade}/Passageiros`).on('value', function(snapshot){
         if (snapshot.exists()){
           snapshot.forEach(function(userSnapshot){       
@@ -143,13 +145,19 @@ function Oferecer({route, navigation}) {
     }catch(error){
     }
   }
-
+  
+function removeListeners(){
+    database().ref().child(`${estado}/${cidade}/Passageiros`).off('value');
+    database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`).off('value');
+    database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`).off('child_added');
+  }
 
   /*
     Função responsável por atualizar o estado (latitude e longitude) do motorista em tempo real;
     Atualiza no banco de dados essa posição.
   */
   function atualizaEstado(){
+  console.log("OFERECER!!!!!!!!!!!!! - atualizaEstado");
    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
    try{
      reference.update({
@@ -170,13 +178,16 @@ function Oferecer({route, navigation}) {
     O banco de dados nessa parte utilizado é em tempo real (Realtime Database).
   */
   function estadoInicial(){
+    console.log("OFERECER!!!!!!!!!!!!! - estadoInicial");
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-    try{
-      reference.once('value').then(function(snapshot){
-        setExisteBanco(snapshot.exists());
-      })
-    }catch(error){
-      console.log('erro em estadoInicial()');
+    if (!existeBanco){
+      try{
+        reference.once('value').then(function(snapshot){
+          setExisteBanco(snapshot.exists());
+        })
+      }catch(error){
+        console.log('erro em estadoInicial()');
+      }
     }
 
     if (!existeBanco){
@@ -198,6 +209,7 @@ function Oferecer({route, navigation}) {
   
   //Função responsável por obter a localização do motorista em tempo real.
   function getMyLocation(){
+    console.log("OFERECER!!!!!!!!!!!!! - getMyLocation");
     try{
       Geolocation.getCurrentPosition(info=>{
         setRegion({
@@ -226,7 +238,7 @@ function Oferecer({route, navigation}) {
     A foto é exibida no modal e na lista de caronas aceitas.
   */
   const getFotoStorage = async(userUID)=>{
-  
+    console.log("OFERECER!!!!!!!!!!!!! - getFotoStorage");
     const uidCaronista = userUID;
     var caminhoFirebase = uidCaronista.concat('Perfil');    
     var url = '';
@@ -248,6 +260,7 @@ function Oferecer({route, navigation}) {
     OBS: tentar implementar essa função com get do firestore.
   */
   const getNomeCaronista = async(userUID)=>{
+    console.log("OFERECER!!!!!!!!!!!!! - getNomeCaronista");
     let nomeCaronista = '';
     try{
       firestore().collection('Users').doc(userUID).onSnapshot(documentSnapshot=>{
@@ -266,6 +279,8 @@ function Oferecer({route, navigation}) {
     Essa função é chamada apenas quando um marcador é pressionado.
   */
   const getDestinoCaronista =  async(userUID)=>{
+    console.log("OFERECER!!!!!!!!!!!!! - getDestinoCaronista");
+    console.log('deu pal aqui!!!!!!!!!!!');
     let destino = '';
     try{
       database().ref(`${estado}/${cidade}/Passageiros/${userUID}`).once('value').then(snapshot=>{
@@ -279,6 +294,7 @@ function Oferecer({route, navigation}) {
   }
 
   const getClassificacaoCaronista = async(caronistaUID)=>{
+    console.log("OFERECER!!!!!!!!!!!!! - getClassificacaoCaronista");
     let classificacaoAtual = 0;
     const reference_caronista = firestore().collection('Users').doc(caronistaUID);
     try{
@@ -302,6 +318,7 @@ function Oferecer({route, navigation}) {
     Busca o nome, foto e define o UID no hook para ser possível oferecer carona.
   */
   const getDadosUsuario = async(userUID, caronaAceita, latitude, longitude)=>{
+    console.log("OFERECER!!!!!!!!!!!!! - getDadosUsuario");
     if (exibeModalOferecer == false){
       setExibeModalOferecer(true);
     }
@@ -339,6 +356,7 @@ function Oferecer({route, navigation}) {
     de carona.
   */
   function oferecerCarona(){
+    console.log("OFERECER!!!!!!!!!!!!! - oferecerCarona");
     let tituloNotificacao = 'Opa! Um motorista te ofereceu carona!';
     let mensagemNotificacao = 'Encontramos uma carona para você!';
     let listaCaronas = '';
@@ -368,6 +386,7 @@ function Oferecer({route, navigation}) {
     A cada nova carona aceita, o vetor é atualizado.
   */
   const caronasAceitas = async()=>{
+    console.log("OFERECER!!!!!!!!!!!!! - caronasAceitas");
     let uidsPassageiros = '';
     let arrayUIDsPassageiros = [];
     let jaExiste = false;
@@ -381,12 +400,6 @@ function Oferecer({route, navigation}) {
           if (snapshot.exists()){
             uidsPassageiros = snapshot.val();
             arrayUIDsPassageiros = uidsPassageiros.split(', ');
-            console.log('------------------------------------------------');
-            console.log('FUNÇÃO caronasAceitas()');
-            console.log('TELA OFERECER CARONA\n\n\n\n');
-            console.log('uidsPassageiros:', uidsPassageiros);
-            console.log('arrayUIDsPassageiros:', arrayUIDsPassageiros);
-            console.log('------------------------------------------------');
             if (arrayUIDsPassageiros[0] != '' && arrayUIDsPassageiros[0] != undefined && vagasDisponiveis>numCaronasAceitas){
               setExisteCaronaAceita(true);
               setNumCaronasAceitas(arrayUIDsPassageiros.length);
@@ -413,6 +426,7 @@ function Oferecer({route, navigation}) {
     Esse 'impedimento' é realizado, verificando o banco de dados dos passageiros e excluindo-o caso o motorista esteja incluso lá.
   */
   const excluiBancoMotoristaPassageiro = async()=>{
+    console.log("OFERECER!!!!!!!!!!!!! - excluiBancoMotoristaPassageiro");
     // const currentUser = auth().currentUser.uid;
     const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
@@ -427,6 +441,7 @@ function Oferecer({route, navigation}) {
 
   
   const rotaPassageiro = async (latitude, longitude, nome, uidCaronista) => {
+    console.log("OFERECER!!!!!!!!!!!!! - rotaPassageiro");
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
     //
     const scheme = Platform.select({ ios: 'maps:0,0?q=', android: 'geo:0,0?q=' });
@@ -449,6 +464,7 @@ function Oferecer({route, navigation}) {
   }
 
   const distanciaPassageiroMotorista = async(latitude, longitude)=>{
+    console.log("OFERECER!!!!!!!!!!!!!");
     const latitudePassageiro = latitude;
     const longitudePassageiro = longitude;
     const latitudeMotorista = region.latitude;
@@ -468,6 +484,7 @@ function Oferecer({route, navigation}) {
   }
   
   const buscarPassageiro = async(latitude, longitude, nome, uidCaronista)=>{
+    console.log("OFERECER!!!!!!!!!!!!!");
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
     let distPassageiroMotorista = await distanciaPassageiroMotorista(latitude, longitude);
     let tituloNotificacao = '';
@@ -488,6 +505,7 @@ function Oferecer({route, navigation}) {
     }
     
     const embarquePassageiro = async(uidPassageiro)=>{
+      console.log("OFERECER!!!!!!!!!!!!! - embarquePassageiro");
       setUIDPassageiroEmbarque(null);
       setPassageirosAbordo(passageirosAbordo+1);
       setExistePassageiroAbordo(true);
@@ -514,20 +532,26 @@ function Oferecer({route, navigation}) {
 
 
   const iniciarViagem = async()=>{
+    console.log("OFERECER!!!!!!!!!!!!! - iniciarViagem");
     console.log('iniciando viagem...');
     console.log('passageiros a bordo:', passageirosAbordo);
     if (passageirosAbordo < vagasDisponiveis){
       setAlertaViagem(true)
     }else{
-      const reference_motoristas = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-      const reference_passageiros = database().ref(`${estado}/${cidade}/Passageiros`);
-      reference_motoristas.off();
-      reference_passageiros.off();
+      // const reference_motoristas = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+      // const reference_motorista_caronas = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`);
+      // reference_motoristas.off('value');
+      // reference_passageiros.off('value');
+      // reference_motorista_caronas.off('value');
+      removeListeners();
+      setIniciouViagem(true);
       navigation.navigate('ViagemMotorista', {currentUser: currentUser, cidade: cidade, estado: estado});
     }
   }
+  
 
   const desistirDaOferta = async()=>{
+    console.log("OFERECER!!!!!!!!!!!!! - desistirDaOferta");
     console.log('desistindo de oferecer carona...');
     const referece_motorista = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
     const reference_passageiros = database().ref(`${estado}/${cidade}/Passageiros`);
@@ -537,7 +561,7 @@ function Oferecer({route, navigation}) {
         caronasAceitas = snapshot.val().caronasAceitas;
         if (caronasAceitas == '' || caronasAceitas == undefined){
           referece_motorista.remove();
-          reference_passageiros.off();
+          // reference_passageiros.off('value');
           navigation.navigate('ConfigurarCarona');
         }else{
         }
@@ -551,13 +575,16 @@ function Oferecer({route, navigation}) {
     console.log('TELA: Oferecer');
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
     estadoInicial();
+  })
+
+  useEffect(()=>{
     getMyLocation();
     getCaronistasMarker();
     caronasAceitas();
     BackHandler.addEventListener('hardwareBackPress', ()=>{
       return true
     })
-  }, [vetorCaronistas, existeBanco, numCaronasAceitas, existePassageiroAbordo]);
+  }, [vetorCaronistas, existeBanco]);
 
   //Notificações
 

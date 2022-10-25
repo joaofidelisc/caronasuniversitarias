@@ -3,7 +3,7 @@ import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, ScrollView
 
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore';
-import database from '@react-native-firebase/database';
+import database, {firebase} from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -171,7 +171,7 @@ function Options({navigation, route}) {
             console.log('ofertas restantes:', ofertasRestantes);
             if (ofertasRestantes == ''){
               setMotoristas([]);
-              reference_passageiro.off();
+              reference_passageiro.off('value');
               // voltouTela();
               navigation.navigate('Buscando_Carona', {cidade: cidade, estado:estado});
             }
@@ -217,7 +217,7 @@ function Options({navigation, route}) {
     }
     // defineEstadoAtual();
     const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
-    reference_passageiro.off();
+    reference_passageiro.off('value');
     navigation.navigate('AguardandoMotorista', {cidade: cidade, estado: estado, uidMotorista:uidMotorista, currentUser: currentUser, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, urlIMG: motoristaURL, nomeDestino: nomeDestino});
   }
 

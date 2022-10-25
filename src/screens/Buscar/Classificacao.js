@@ -5,6 +5,8 @@ import firestore from '@react-native-firebase/firestore';
 import firebase from "@react-native-firebase/app";
 import estilos from '../../estilos/estilos';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import database from '@react-native-firebase/database';
+
 
 function Classificacao({navigation, route}){
     const [descricaoViagem, setDescricaoViagem] = useState('');
@@ -81,6 +83,19 @@ function Classificacao({navigation, route}){
       // await AsyncStorage.removeItem('Classificacao');
       navigation.navigate('Buscar')
     }
+
+    const excluiBancoPassageiro = async()=>{
+      const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+      try{
+        reference_passageiro.remove();
+      }catch(error){
+        console.log('excluiBancoPassageiro');
+      }
+    }
+
+    useEffect(()=>{
+      excluiBancoPassageiro();
+    })
 
 
     // useEffect(()=>{

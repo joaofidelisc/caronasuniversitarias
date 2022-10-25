@@ -73,7 +73,7 @@ function Suas_Viagens() {
             existeViagem &&
             arrayHistoricoViagens.map(viagem=>(
               <View style={styles.viewViagens}
-              // key={motorista.uid}
+              key={viagem.refViagem}
                   >
                   <Text style={{color:'#06444C', fontWeight:'600', fontSize: 16, textAlign: 'center', marginTop: 10}}>{viagem.dataViagem}</Text>
                   <Image 
@@ -82,7 +82,7 @@ function Suas_Viagens() {
                     }}
                     style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
                   />
-                  <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, textAlign:'center', marginTop: 10}}>{viagem.nomeMotorista}</Text>
+                  <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, textAlign:'center', marginTop: 10}}>{viagem.nome}</Text>
                   <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, textAlign:'center', marginTop: 10}}>{viagem.destino}</Text>
                   <TouchableOpacity
                     style={{width: 130, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10}}

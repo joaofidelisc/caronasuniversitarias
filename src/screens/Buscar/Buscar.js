@@ -301,6 +301,7 @@ export default function Buscar({navigation}) {
       <TouchableOpacity
         style={{position: 'absolute', backgroundColor: '#FF5F55', top: 260, width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}        
         onPress={getLocalPassageiro}
+        // onPress={()=>{console.log('DATE:', Date.now())}}
         // onPress={insereBanco} //criei apenas para testar a tela Oferecer.js
       >
         <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
