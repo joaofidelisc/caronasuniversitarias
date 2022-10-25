@@ -165,6 +165,10 @@ function ViagemMotorista({route, navigation}){
     }
 
     const finalizarViagemPassageiro = async(uidPassageiro)=>{
+      const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`);
+      reference_passageiro.update({
+        viagemTerminou: true,
+      })
       console.log('num passageiros a bordo:', numPassageirosABordo);
       setPassageirosABordo(passageirosABordo.filter((uid)=>(uid.uid != uidPassageiro)));
       await escreveHistoricoViagem(uidPassageiro);

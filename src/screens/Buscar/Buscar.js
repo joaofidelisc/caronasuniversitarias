@@ -26,7 +26,7 @@ export default function Buscar({navigation}) {
   const [localizacaoPassageiro, setlocalizacaoPassageiro] = useState(null);
   const [localizacaoAtiva, setLocalizacaoAtiva] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-
+  // const [aplicativoEstavaAtivo, setAplicativoEstavaAtivo] = useState(true);
 
   async function enviarLocalizacaoPassageiro(latitude, longitude){
     // await AsyncStorage.setItem('buscandoCarona', 'true');
@@ -160,6 +160,7 @@ export default function Buscar({navigation}) {
       console.log('atualizaEstado, ERRO:', error.code);
     }
   }
+
   // async function excluiBancoPassageiroMotorista(estado, cidade, currentUser){
   //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
   //   try{
@@ -173,6 +174,46 @@ export default function Buscar({navigation}) {
   //   }
   // }
 
+  
+  //PARA A VERSÃO PASSAGEIRO:
+
+  // useEffect(()=>{
+  //   const recuperaEstadoApp = async()=>{
+  //     let BuscandoCarona = await AsyncStorage.getItem("BuscandoCarona");
+  //     let CaronaEncontrada = await AsyncStorage.getItem("CaronaEncontrada");
+  //     let AguardandoMotorista = await AsyncStorage.getItem("AguardandoMotorista");
+  //     let ViagemEmAndamento = await AsyncStorage.getItem("ViagemEmAndamento");
+  //     let Classificacao = await AsyncStorage.getItem("Classificacao");
+      
+  //     (BuscandoCarona!=null && BuscandoCarona!=undefined || 
+  //     CaronaEncontrada!=null && CaronaEncontrada!=undefined ||
+  //     AguardandoMotorista!=null && AguardandoMotorista!=undefined ||
+  //     ViagemEmAndamento !=null && ViagemEmAndamento!=undefined ||
+  //     Classificacao!=null && Classificacao !=undefined
+  //     )?setAplicativoEstavaAtivo(true):setAplicativoEstavaAtivo(false);
+      
+  //     if (BuscandoCarona != null && BuscandoCarona != undefined){
+  //       navigation.navigate('Buscando_Carona');
+  //     }else if (CaronaEncontrada != null && CaronaEncontrada !=undefined){
+  //       navigation.navigate('CaronaEncontrada');
+  //     }else if (AguardandoMotorista != null && AguardandoMotorista !=undefined){
+  //       navigation.navigate('AguardandoMotorista');
+  //     }else if (ViagemEmAndamento != null && ViagemEmAndamento != undefined){
+  //       navigation.navigate('ViagemEmAndamento');
+  //     }else if (Classificacao != null && Classificacao != undefined){
+  //       navigation.navigate('Classificacao');
+  //     }
+  //   }
+  //   recuperaEstadoApp().catch(console.error);
+  // })
+
+  // useEffect(()=>{
+  //   const defineEstadoAtual = async()=>{
+  //     await AsyncStorage.removeItem('BuscandoCarona');
+  //   }
+  //   defineEstadoAtual().catch(console.error);
+  // }, [])
+
   useEffect(()=>{
     console.log('TELA: Buscar');
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
@@ -184,76 +225,76 @@ export default function Buscar({navigation}) {
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
-      <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%',}}>
+        <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%',}}>
 
-      <Image source={
-        require('../../assets/images/buscar-carona.png')} 
-        style={{height:350, width: 350, position: 'absolute', top: 260, alignSelf: 'center'}}  
-      />
-      <Text style={{fontSize:20, color:'#2f4f4f', paddingHorizontal:70, fontWeight:'bold', position: 'absolute', top: 65}}>Para onde pretende ir?</Text>
-      <Text style={{fontSize:15, color:'#c0c0c0', paddingHorizontal:70, fontWeight:'normal', marginVertical:15, position: 'absolute', top: 170, fontWeight: '600'}}>Ex: Universidade federal de São Carlos</Text>
-      {
-        localizacaoPassageiro &&
-        <GooglePlacesAutocomplete
-          minLength={2}
-          autoFocus={false}
-          fetchDetails={true}
-          onPress={(data, details = null) => {
-            setNomeDestino(data.description);
-            setLocalDestino({
-              latitude: details.geometry.location.lat,
-              longitude: details.geometry.location.lng,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421
-            })
-          }}
-          textInputProps={{
-            onChangeText: (nomeDestino) =>{
-              setNomeDestino(nomeDestino)
-            }
-          }}
-          
-          query={{
-            key: config.googleAPI,
-            language: 'pt-br',
-            components: 'country:br',
-            location: `${localizacaoPassageiro.latitude}, ${localizacaoPassageiro.longitude}`, //alterar aqui para coordenadas atuais
-            radius: "15000", //15km
-            strictbounds: true
-          }}
-    
-          GooglePlacesSearchQuery={{
-            rankby: 'distance',
-          }}
-          styles={{
-            container: {
-              position:'absolute',
-              alignItems: 'center',
-              top: 120,                   
-              width: width,
-              justifyContent: 'center',
-            },
-            textInputContainer: {
-              width: 312,
-              height: 50,
-              borderColor: 'rgba(83, 83, 83, 0.8)',
-              borderWidth:2,
-              borderRadius: 8,
-              backgroundColor: 'white',
-            },
-            textInput:{
-              color: 'black',
-            },
-            description: {
-              color: 'black'
-            },
-            listView: {
-              elevation: 1,
-              height: 100,
-              width: 312
-            },
-          }}
+        <Image source={
+          require('../../assets/images/buscar-carona.png')} 
+          style={{height:350, width: 350, position: 'absolute', top: 260, alignSelf: 'center'}}  
         />
+        <Text style={{fontSize:20, color:'#2f4f4f', paddingHorizontal:70, fontWeight:'bold', position: 'absolute', top: 65}}>Para onde pretende ir?</Text>
+        <Text style={{fontSize:15, color:'#c0c0c0', paddingHorizontal:70, fontWeight:'normal', marginVertical:15, position: 'absolute', top: 170, fontWeight: '600'}}>Ex: Universidade federal de São Carlos</Text>
+        {
+          localizacaoPassageiro &&
+          <GooglePlacesAutocomplete
+            minLength={2}
+            autoFocus={false}
+            fetchDetails={true}
+            onPress={(data, details = null) => {
+              setNomeDestino(data.description);
+              setLocalDestino({
+                latitude: details.geometry.location.lat,
+                longitude: details.geometry.location.lng,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421
+              })
+            }}
+            textInputProps={{
+              onChangeText: (nomeDestino) =>{
+                setNomeDestino(nomeDestino)
+              }
+            }}
+            
+            query={{
+              key: config.googleAPI,
+              language: 'pt-br',
+              components: 'country:br',
+              location: `${localizacaoPassageiro.latitude}, ${localizacaoPassageiro.longitude}`, //alterar aqui para coordenadas atuais
+              radius: "15000", //15km
+              strictbounds: true
+            }}
+      
+            GooglePlacesSearchQuery={{
+              rankby: 'distance',
+            }}
+            styles={{
+              container: {
+                position:'absolute',
+                alignItems: 'center',
+                top: 120,                   
+                width: width,
+                justifyContent: 'center',
+              },
+              textInputContainer: {
+                width: 312,
+                height: 50,
+                borderColor: 'rgba(83, 83, 83, 0.8)',
+                borderWidth:2,
+                borderRadius: 8,
+                backgroundColor: 'white',
+              },
+              textInput:{
+                color: 'black',
+              },
+              description: {
+                color: 'black'
+              },
+              listView: {
+                elevation: 1,
+                height: 100,
+                width: 312
+              },
+            }}
+          />
       }
       
       <View style={{marginVertical:50}}>
@@ -287,7 +328,6 @@ export default function Buscar({navigation}) {
               </View>
             </View>
         </Modal>
-
       </View>
     </SafeAreaView>
   );

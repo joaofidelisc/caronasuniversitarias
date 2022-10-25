@@ -105,6 +105,8 @@ function Oferecer({route, navigation}) {
       //     }
       //   })
       // })
+
+        
       database().ref().child(`${estado}/${cidade}/Passageiros`).on('value', function(snapshot){
         if (snapshot.exists()){
           snapshot.forEach(function(userSnapshot){       
@@ -159,6 +161,8 @@ function Oferecer({route, navigation}) {
       console.log('atualizaEstado, ERRO:', error.code);
     }
   }
+
+
   
   /*
     Função responsável por definir um estado inicial para o motorista, ou seja, sua posição inicial ao iniciar o App;
@@ -327,7 +331,7 @@ function Oferecer({route, navigation}) {
       }
     }
 
- 
+
   /*
     Função responsável por oferecer carona a um possível passageiro;
     Essa função, escreve no banco de dados do Passageiro em 'ofertasCaronas' o UID do motorista;
@@ -515,6 +519,10 @@ function Oferecer({route, navigation}) {
     if (passageirosAbordo < vagasDisponiveis){
       setAlertaViagem(true)
     }else{
+      const reference_motoristas = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+      const reference_passageiros = database().ref(`${estado}/${cidade}/Passageiros`);
+      reference_motoristas.off();
+      reference_passageiros.off();
       navigation.navigate('ViagemMotorista', {currentUser: currentUser, cidade: cidade, estado: estado});
     }
   }
@@ -522,16 +530,17 @@ function Oferecer({route, navigation}) {
   const desistirDaOferta = async()=>{
     console.log('desistindo de oferecer carona...');
     const referece_motorista = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+    const reference_passageiros = database().ref(`${estado}/${cidade}/Passageiros`);
     let caronasAceitas = '';
     try{
       referece_motorista.once('value').then(snapshot=>{
         caronasAceitas = snapshot.val().caronasAceitas;
         if (caronasAceitas == '' || caronasAceitas == undefined){
           referece_motorista.remove();
+          reference_passageiros.off();
           navigation.navigate('ConfigurarCarona');
         }else{
         }
-        // console.log('caronasAceitas: ',snapshot.val().caronasAceitas);
       })
     }catch(error){
       console.log('erro em desistirDaOferta');

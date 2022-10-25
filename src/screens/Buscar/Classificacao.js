@@ -82,9 +82,14 @@ function Classificacao({navigation, route}){
       navigation.navigate('Buscar')
     }
 
-    useEffect(()=>{
 
-    }, [defaultRating]);
+    // useEffect(()=>{
+    //   const defineEstadoAtual = async()=>{
+    //     await AsyncStorage.removeItem('ViagemEmAndamento');
+    //     await AsyncStorage.setItem('Classificacao', 'true');
+    //   }
+    //   defineEstadoAtual().catch(console.error);
+    // }, [])
 
     return (
       <SafeAreaView>

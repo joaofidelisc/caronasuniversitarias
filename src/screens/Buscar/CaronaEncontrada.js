@@ -171,6 +171,8 @@ function Options({navigation, route}) {
             console.log('ofertas restantes:', ofertasRestantes);
             if (ofertasRestantes == ''){
               setMotoristas([]);
+              reference_passageiro.off();
+              // voltouTela();
               navigation.navigate('Buscando_Carona', {cidade: cidade, estado:estado});
             }
             reference_passageiro.update({
@@ -214,6 +216,8 @@ function Options({navigation, route}) {
         console.log('ERRO:', error.code);
     }
     // defineEstadoAtual();
+    const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+    reference_passageiro.off();
     navigation.navigate('AguardandoMotorista', {cidade: cidade, estado: estado, uidMotorista:uidMotorista, currentUser: currentUser, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, urlIMG: motoristaURL, nomeDestino: nomeDestino});
   }
 
@@ -229,14 +233,26 @@ function Options({navigation, route}) {
     try{
       reference_passageiro.update({        
         caronasAceitas:uidMotorista,
-        ofertasCaronas:''
+        ofertasCaronas:'',
+        viagemTerminou: false,
       });
     }catch(error){
         console.log('ERRO:', error.code);
-      }
-      aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL);
     }
-    
+    aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL);
+  }
+
+  // const voltouTela = async()=>{
+  //   await AsyncStorage.removeItem('CaronaEncontrada');
+  // }
+
+  // useEffect(()=>{
+  //   const defineEstadoAtual = async()=>{
+  //     await AsyncStorage.removeItem('BuscandoCarona');
+  //     await AsyncStorage.setItem('CaronaEncontrada', 'true');
+  //   }
+  //   defineEstadoAtual().catch(console.error);
+  // }, [])
   
   useEffect(()=>{
     getDadosMotorista();

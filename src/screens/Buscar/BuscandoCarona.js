@@ -46,13 +46,15 @@ function BuscandoCarona({navigation, route}) {
   }
 
   async function caronaEncontrada(){
-    // await AsyncStorage.removeItem('buscandoCarona');
-    // await AsyncStorage.setItem('CaronaEncontrada', true);
+    const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
+    reference.off();
     navigation.navigate('CaronaEncontrada', {cidade: cidade, estado: estado, nomeDestino: nomeDestino});
   }
 
   function cancelarBusca(){
     const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+    const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
+    reference.off();
     try{
       reference_passageiro.remove();
     }catch(error){
@@ -95,6 +97,12 @@ function BuscandoCarona({navigation, route}) {
     }
   }
 
+  // useEffect(()=>{
+  //   const defineEstadoAtual = async()=>{
+  //     await AsyncStorage.setItem('BuscandoCarona', 'true');
+  //   }
+  //   defineEstadoAtual().catch(console.error);
+  // }, [])
 
   useEffect(()=>{
     console.log('Tela: BuscandoCarona');

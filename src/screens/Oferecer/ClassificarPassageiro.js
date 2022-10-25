@@ -17,7 +17,7 @@ function ClassificarPassageiro({route, navigation}) {
     const cidade = route.params?.cidade;
     const estado = route.params?.estado;
 
-
+    
     const classificarPassageiro = async(uidPassageiro)=>{
       let numViagens = 0;
       let classificacaoAtual = 0;
@@ -54,21 +54,10 @@ function ClassificarPassageiro({route, navigation}) {
       }
     }
     
-    const teste = async()=>{
-      database().ref().child(`${estado}/${cidade}/Passageiros`).on('child_removed', function(snapshot){
-        filhoRemovido = snapshot.key;
-        console.log('removido!!!!:::', filhoRemovido);
-        // vetorCaronistas.some(caronista=>{
-        // if (caronista.uid == filhoRemovido){
-          // vetorCaronistas.splice(vetorCaronistas.indexOf(caronaAceita), 1);
-        // }
-      // })
-      })
-    }
+ 
 
     const finalizarViagem = async()=>{
       excluiBancoMotorista();
-      // navigation.dispatch(resetAction);
       navigation.navigate('ConfigurarCarona');
     }
 
@@ -106,6 +95,7 @@ function ClassificarPassageiro({route, navigation}) {
       console.log('tela classificar passageiros:');
       console.log('passageiros:', passageiros);
     })
+
     return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />

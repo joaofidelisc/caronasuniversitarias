@@ -20,7 +20,22 @@ function ViagemEmAndamento({navigation, route}) {
     const placaVeiculoMotorista = route.params?.placaVeiculoMotorista;
     const motoristaURL = route.params?.motoristaUrl;
     const nomeDestino = route.params?.nomeDestino;
-  
+    
+    const viagemTerminou = async()=>{
+      const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
+      try{
+        reference.on('value', function(snapshot){
+          if(snapshot.child('viagemTerminou').exists()){
+            if (snapshot.val().viagemTerminou != false && snapshot.val().viagemTerminou != undefined){
+              fimDaViagem();
+            } 
+          }
+        })
+      } catch(error){
+        console.log('Error', error.code);
+      }  
+    }
+
     const excluiBancoPassageiro = async()=>{
       const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
       try{
@@ -102,7 +117,20 @@ function ViagemEmAndamento({navigation, route}) {
 
     const entrarEmContatoMotorista = async()=>{
       console.log('entrando em contato com o motorista...');
+      setModalVisible(!modalVisible);
     }
+
+    // useEffect(()=>{
+    //   const defineEstadoAtual = async()=>{
+    //     await AsyncStorage.removeItem('AguardandoMotorista');
+    //     await AsyncStorage.setItem('ViagemEmAndamento', 'true');
+    //   }
+    //   defineEstadoAtual().catch(console.error);
+    // }, [])
+
+    useEffect(()=>{
+      viagemTerminou();
+    })
 
     return (
       <SafeAreaView>
@@ -141,15 +169,15 @@ function ViagemEmAndamento({navigation, route}) {
                   </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: 18}}
                   onPress={fimDaViagem}
                 >
                   <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
                     Confirmar fim da viagem
                   </Text>
+                </TouchableOpacity> */}
                   {/* Esse botão de fechar modal não vai ter, só coloquei porque tava dando bug ao renderizar a tela de Oferecer.js */}
-                </TouchableOpacity>
                 {/* <TouchableOpacity
                     style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: 18}}
                     onPress={()=>{
