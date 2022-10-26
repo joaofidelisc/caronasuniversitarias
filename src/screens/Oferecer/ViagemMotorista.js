@@ -173,14 +173,7 @@ function ViagemMotorista({route, navigation}){
       }
     }
 
-    // historicoViagens: firebase.firestore.FieldValue.arrayUnion({
-    //   uidMotorista: uidMotorista,
-    //   dataViagem: data,
-    //   nomeMotorista: nomeMotorista,
-    //   destino: nomeDestino,
-    //   fotoPerfil: motoristaURL,
-    //   refViagem: Date.now()
-    // })
+   
     const finalizarViagemPassageiro = async(uidPassageiro, destinoPassageiro, nomePassageiro, passageiroIMG)=>{
       const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`);
       reference_passageiro.update({
@@ -197,9 +190,9 @@ function ViagemMotorista({route, navigation}){
     }
 
     function removeListeners(){
-      database().ref().child(`${estado}/${cidade}/Passageiros`).off('value');
       database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`).off('value');
       database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`).off('child_added');
+      database().ref().child(`${estado}/${cidade}/Passageiros`).off('value');
     }
 
     useEffect(()=>{

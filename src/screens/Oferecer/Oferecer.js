@@ -5,7 +5,6 @@ import MapView, { Marker, Callout } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapViewDirections from 'react-native-maps-directions';
-import { StackActions } from '@react-navigation/native';
 import storage from '@react-native-firebase/storage';
 import database, {firebase} from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
@@ -26,68 +25,65 @@ import { AndroidImportance } from '@notifee/react-native';
 const {width, height} = Dimensions.get('screen');
 
 function Oferecer({route, navigation}) {
-  const [region, setRegion] = useState(null);  //Coordenadsa atuais do motorista (latitude e longitude);
-  
-  const [modalVisible, setModalVisible] = useState(false); //Define se o modal é mostrado ou não;
-  const [imageUser, setImageUser] = useState('');  //Define a url da imagem do possível caronista para cada caronista e para cada vez que é chamada a função buscaUsuario;
-  const [nomeCaronista, setNomeCaronista] = useState(''); //Define o nome do caronista para cada caronista e para cada vez que é chamada a função buscaUsuario;
-  const [nomeDestinoCaronista, setNomeDestinoCaronista] = useState(''); //Define o nome do destino para cada caronista e para cada vez que é chamada a função buscaUsuario;
-  const [latitudePassageiro, setLatitudePassageiro] = useState('');
-  const [longitudePassageiro, setLongitudePassageiro] = useState('');
-  const [alertaVagas, setAlertaVagas] = useState(true);
-  const [alertaVagasDisponiveis, setAlertaVagasDisponiveis] = useState(false);
-  const [alertaViagem, setAlertaViagem] = useState(false);
-  const [vetorCaronistas, setCaronistas] = useState([]); //Vetor de todos os caronistas atuais (com caronas aceitas e buscando carona);
-  const [uidPassageiro, setUidPassageiro] = useState(''); //Contém apenas 1 uid armazenado (o uid do pin clicado no momento);
-
-  const [passageiros, setPassageiros] = useState([]); //Vetor com todos os uids dos passageiros que aceitaram a carona do motorista corrente (motorista atual);
-
-  const [existeCaronaAceita, setExisteCaronaAceita] = useState(false); //Checa se o motorista tem alguma carona aceita;
-
-  const [numCaronasAceitas, setNumCaronasAceitas] = useState(0); //Controla o número de caronas que o motorista pode oferecer de acordo com o número de vagas disponíveis;
-  const [uidPassageiroEmbarque, setUIDPassageiroEmbarque] = useState(null);
-
-  const [oferecerMaisCaronas, setOferecerMaisCaronas] = useState(true); //Define se o motorista pode oferecer mais caronas ou não.
-  const [exibeModalOferecer, setExibeModalOferecer] = useState(true);
-  const [existePassageiroAbordo, setExistePassageiroAbordo] = useState(false);
-  const [passageirosAbordo, setPassageirosAbordo] = useState(0);
-  const [iniciouViagem, setIniciouViagem] = useState(false);
-  const [existeBanco, setExisteBanco] = useState(''); //Controla se o banco de dados existe ou deve ser criado (antes de ser atualizado).
-  //Informações do motorista
-  const cidade = route.params?.cidade; 
-  const estado = route.params?.estado;
-  const destino = route.params?.destino;
-  const vagasDisponiveis = route.params?.vagas;
-
-  const currentUser = auth().currentUser.uid;
+    const [region, setRegion] = useState(null);  //Coordenadsa atuais do motorista (latitude e longitude);
+    const [modalVisible, setModalVisible] = useState(false); //Define se o modal é mostrado ou não;
+    const [imageUser, setImageUser] = useState('');  //Define a url da imagem do possível caronista para cada caronista e para cada vez que é chamada a função buscaUsuario;
+    const [nomeCaronista, setNomeCaronista] = useState(''); //Define o nome do caronista para cada caronista e para cada vez que é chamada a função buscaUsuario;
+    const [nomeDestinoCaronista, setNomeDestinoCaronista] = useState(''); //Define o nome do destino para cada caronista e para cada vez que é chamada a função buscaUsuario;
+    const [classificacaoCaronista, setClassificacaoCaronista] = useState(''); //Define a classificação de cada caronista para cada vez que é chamada a função buscaUsuario;
+    const [vetorCaronistas, setCaronistas] = useState([]); //Vetor de todos os caronistas atuais (com caronas aceitas e buscando carona);
+    const [uidPassageiro, setUidPassageiro] = useState(''); //Contém apenas 1 uid armazenado (o uid do pin clicado no momento);
+    const [latitudePassageiro, setLatitudePassageiro] = useState(''); //Passado como parâmetro na função RotaPassageiro(), para calcular a distância entre o motorista/caronista;
+    const [longitudePassageiro, setLongitudePassageiro] = useState(''); //Passado como parâmetro na função RotaPassageiro(), para calcular a distância entre o motorista/caronista;
+    const [numCaronasAceitas, setNumCaronasAceitas] = useState(0); //Controla o número de caronas que o motorista pode oferecer de acordo com o número de vagas disponíveis;
+    const [oferecerMaisCaronas, setOferecerMaisCaronas] = useState(true); //Define se o motorista pode oferecer mais caronas ou não;
+    const [existeBanco, setExisteBanco] = useState(''); //Controla se o banco de dados existe ou deve ser criado (antes de ser atualizado);
+    const [alertaVagas, setAlertaVagas] = useState(true); //Define se o modal com o alerta de número máximo de vagas é exibido;
+    const [alertaViagem, setAlertaViagem] = useState(false);  //Quando o motorista quer iniciar a viagem com menos vagas do que ofertou, é exibido um modal de alerta dizendo que ainda há vagas disponíveis;
+    const [embarcarPassageiro, setEmbarcarPassageiro] = useState(null); //Implica que o motorista chegou ao passageiro e este pode embarcar no veículo (a mensagem passageiro(a) a bordo é exibida);
+    const [exibeModalOferecer, setExibeModalOferecer] = useState(true); //Controla se o modal com o texto de oferecer carona para o caronista é exibido ou não;
+    const [existePassageiroAbordo, setExistePassageiroAbordo] = useState(false); //Se existe algum passageiro a bordo, o botão de iniciar viagem é exibido;
+    const [numPassageirosABordo, setNumPassageirosABordo] = useState(0); //Controla o número de passageiros que estão a bordo do veículo;
+    const [ofertasAceitas, setOfertasAceitas] = useState([]); ////Vetor com todos os uids dos passageiros que aceitaram a carona do motorista corrente (motorista atual);
+    const [arrayOfertasAceitas, setArrayOfertasAceitas] = useState([]);
+    const [passageiros, setPassageiros] = useState([]);
+    const [token, setToken] = useState(""); //Armazena o token atual obtido do dispositivo do usuário.
+    
+    //Informações do motorista e banco de dados
+    const currentUser = auth().currentUser.uid;
+    const cidade = route.params?.cidade; 
+    const estado = route.params?.estado;
+    const destino = route.params?.destino;
+    const vagasDisponiveis = route.params?.vagas;
 
 
-  //Função responsável por solicitar ao motorista para ligar sua localização.
-  const localizacaoLigada = async()=>{
-    console.log("OFERECER!!!!!!!!!!!!! - localizacaoLigada");
-    LocationServicesDialogBox.checkLocationServicesIsEnabled({
-        message: "<h2 style='color: #0af13e'>Usar localização</h2><br/>Deseja permitir que o aplicativo <b>Caronas Universitárias</b> acesse a sua localização?<br/><br/>",
-        ok: "Permitir",
-        cancel: "Negar",
-        enableHighAccuracy: true, 
-        showDialog: true,
-        openLocationServices: true, 
-        preventOutSideTouch: false,
-        preventBackClick: false, 
-        providerListener: false
-    }).catch((error) => {
-        console.log(error.message); // error.message => "disabled"
-    });
-  }
+    /*
+      Função responsável por solicitar ao motorista para ligar sua localização.
+    */
+    const localizacaoLigada = async()=>{
+      console.log("OFERECER!!!!!!!!!!!!! - localizacaoLigada");
+      LocationServicesDialogBox.checkLocationServicesIsEnabled({
+          message: "<h2 style='color: #0af13e'>Usar localização</h2><br/>Deseja permitir que o aplicativo <b>Caronas Universitárias</b> acesse a sua localização?<br/><br/>",
+          ok: "Permitir",
+          cancel: "Negar",
+          enableHighAccuracy: true, 
+          showDialog: true,
+          openLocationServices: true, 
+          preventOutSideTouch: false,
+          preventBackClick: false, 
+          providerListener: false
+      }).catch((error) => {
+          console.log(error.message); // error.message => "disabled"
+      });
+    }
 
   
-  /*
-    Função responsável por 'desenhar' os marcadores (caronistas) no mapa;
-    A lógica empregada é iterar por todos os marcadores na primeira vez e caso tenha algum marcador a ser inserido, apenas inserimos; 
-    caso um marcador mude de posição, ele é apenas atualizado e, caso um caronista desista de buscar carona, o marcador é removido.
-  */
-  
-  function getCaronistasMarker(){
+    /*
+      Função responsável por 'desenhar' os marcadores (caronistas) no mapa;
+      A lógica empregada é iterar por todos os marcadores na primeira vez e caso tenha algum marcador a ser inserido, apenas inserimos; 
+      caso um marcador mude de posição, ele é apenas atualizado e, caso um caronista desista de buscar carona, o marcador é removido.
+    */
+    function getCaronistasMarker(){
     console.log("OFERECER!!!!!!!!!!!!! - getCaronistasMarker");
     let jaExiste = false;
     if (jaExiste == true){
@@ -98,17 +94,6 @@ function Oferecer({route, navigation}) {
       filhoRemovido = '';
     }
     try{
-      //tratar aqui:
-      //dá problema quando eu aperto em encerrar viagem na tela de ViagemEmandamento
-      // database().ref().child(`${estado}/${cidade}/Passageiros`).on('child_removed', function(snapshot){
-      //   filhoRemovido = snapshot.key;
-      //   vetorCaronistas.some(caronista=>{
-      //     if (caronista.uid == filhoRemovido){
-      //       vetorCaronistas.splice(vetorCaronistas.indexOf(caronaAceita), 1);
-      //     }
-      //   })
-      // })
-
       database().ref().child(`${estado}/${cidade}/Passageiros`).on('value', function(snapshot){
         if (snapshot.exists()){
           snapshot.forEach(function(userSnapshot){       
@@ -145,12 +130,7 @@ function Oferecer({route, navigation}) {
     }catch(error){
     }
   }
-  
-function removeListeners(){
-    database().ref().child(`${estado}/${cidade}/Passageiros`).off('value');
-    database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`).off('value');
-    database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`).off('child_added');
-  }
+
 
   /*
     Função responsável por atualizar o estado (latitude e longitude) do motorista em tempo real;
@@ -171,7 +151,6 @@ function removeListeners(){
   }
 
 
-  
   /*
     Função responsável por definir um estado inicial para o motorista, ou seja, sua posição inicial ao iniciar o App;
     Quando o app é iniciado, é necessário verificar se o banco de dados para esse motorista já existe e, caso contrário, ele deve ser criado;
@@ -207,7 +186,10 @@ function removeListeners(){
     }
   }
   
-  //Função responsável por obter a localização do motorista em tempo real.
+
+  /*
+    Função responsável por obter a localização do motorista em tempo real.
+  */
   function getMyLocation(){
     console.log("OFERECER!!!!!!!!!!!!! - getMyLocation");
     try{
@@ -233,6 +215,7 @@ function removeListeners(){
     }
   }
   
+
   /*
     Função responsável por recuperar o url da foto do passageiro no banco de dados;
     A foto é exibida no modal e na lista de caronas aceitas.
@@ -257,20 +240,18 @@ function removeListeners(){
 
   /*
     Função responsável por retornar o nome do caronista.
-    OBS: tentar implementar essa função com get do firestore.
   */
   const getNomeCaronista = async(userUID)=>{
     console.log("OFERECER!!!!!!!!!!!!! - getNomeCaronista");
-    let nomeCaronista = '';
     try{
-      firestore().collection('Users').doc(userUID).onSnapshot(documentSnapshot=>{
-        setNomeCaronista(documentSnapshot.data().nome)
-      });
-      nomeCaronista = documentSnapshot.data().nome;
+      await firestore().collection('Users').doc(userUID).get().then((doc)=>{
+        if (doc.exists){
+          setNomeCaronista(doc.data().nome);
+        }
+      })
     }catch(error){
       console.log('erro em getNomeCaronista');
     }
-    return nomeCaronista;
   }
 
   
@@ -280,22 +261,22 @@ function removeListeners(){
   */
   const getDestinoCaronista =  async(userUID)=>{
     console.log("OFERECER!!!!!!!!!!!!! - getDestinoCaronista");
-    console.log('deu pal aqui!!!!!!!!!!!');
-    let destino = '';
     try{
-      database().ref(`${estado}/${cidade}/Passageiros/${userUID}`).once('value').then(snapshot=>{
+      await database().ref(`${estado}/${cidade}/Passageiros/${userUID}`).once('value').then(snapshot=>{
         setNomeDestinoCaronista(snapshot.val().nomeDestino);
       })
-      destino = snapshot.val().nomeDestino;
     }catch(error){
       console.log(error.code);
     }
-    return destino;
   }
 
+  /*
+    Função responsável por recuperar a classificação do caronista.
+  */
   const getClassificacaoCaronista = async(caronistaUID)=>{
     console.log("OFERECER!!!!!!!!!!!!! - getClassificacaoCaronista");
     let classificacaoAtual = 0;
+    let classificacaoAtualizada = 0;
     const reference_caronista = firestore().collection('Users').doc(caronistaUID);
     try{
       await reference_caronista.get().then((reference)=>{
@@ -303,19 +284,21 @@ function removeListeners(){
           classificacaoAtual = reference.data().classificacao;
           if (classificacaoAtual == undefined){
             classificacaoAtual = 0;
+            setClassificacaoCaronista(classificacaoAtual);
           }
-          return parseFloat(classificacaoAtual.toFixed(2));
+          classificacaoAtualizada = parseFloat(classificacaoAtual.toFixed(2)); 
+          setClassificacaoCaronista(classificacaoAtualizada);
         }
       })
     }catch(error){
       console.log('erro em recuperaClassificacaoMotorista');
     }
-    return parseFloat(classificacaoAtual.toFixed(2));
   }
+
 
   /*
     Função responsável por buscar e exibir o modal do usuário após o motorista clicar no pin do caronista;
-    Busca o nome, foto e define o UID no hook para ser possível oferecer carona.
+    Busca o nome, foto de perfil, destino e classificação e define o UID no hook para ser possível oferecer carona.
   */
   const getDadosUsuario = async(userUID, caronaAceita, latitude, longitude)=>{
     console.log("OFERECER!!!!!!!!!!!!! - getDadosUsuario");
@@ -327,6 +310,7 @@ function removeListeners(){
         await getFotoStorage(userUID);
         await getNomeCaronista(userUID);
         await getDestinoCaronista(userUID);
+        await getClassificacaoCaronista(userUID);
         setLatitudePassageiro(latitude);
         setLongitudePassageiro(longitude);
         setExibeModalOferecer(false);
@@ -339,14 +323,15 @@ function removeListeners(){
           await getFotoStorage(userUID);
           await getNomeCaronista(userUID);
           await getDestinoCaronista(userUID);
+          await getClassificacaoCaronista(userUID);
         }catch(error){
           console.log('erro em getDadosUsuario');
         }
         setUidPassageiro(userUID);
         setModalVisible(true);
-        }
       }
     }
+  }
 
 
   /*
@@ -381,44 +366,75 @@ function removeListeners(){
     }
   }
 
+
   /*
     A função abaixo é responsável por criar e atualizar um vetor de caronistas que aceitaram a carona proposta, chamado de passageiros;
     A cada nova carona aceita, o vetor é atualizado.
   */
-  const caronasAceitas = async()=>{
-    console.log("OFERECER!!!!!!!!!!!!! - caronasAceitas");
-    let uidsPassageiros = '';
-    let arrayUIDsPassageiros = [];
-    let jaExiste = false;
-    if (jaExiste == true){
-      jaExiste = false;
-    }
-    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`);
-    if (existeBanco){
-      try{
+  // const caronasAceitas = async()=>{
+  //   console.log("OFERECER!!!!!!!!!!!!! - caronasAceitas");
+  //   let uidsPassageiros = '';
+  //   let arrayUIDsPassageiros = [];
+  //   let jaExiste = false;
+  //   if (jaExiste == true){
+  //     jaExiste = false;
+  //   }
+  //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`);
+  //   if (existeBanco){
+    //     try{
+  //       reference.on('value', function(snapshot){
+    //         if (snapshot.exists()){
+  //           uidsPassageiros = snapshot.val();
+  //           arrayUIDsPassageiros = uidsPassageiros.split(', ');
+  //           if (arrayUIDsPassageiros[0] != '' && arrayUIDsPassageiros[0] != undefined && vagasDisponiveis>numCaronasAceitas){
+  //             setNumCaronasAceitas(arrayUIDsPassageiros.length);
+  //             if (!ofertasAceitas.includes(arrayUIDsPassageiros[arrayUIDsPassageiros.length-1])){
+  //               setOfertasAceitas([...ofertasAceitas, arrayUIDsPassageiros[arrayUIDsPassageiros.length-1]]);
+  //             }
+  //           }else{
+    //             if (vagasDisponiveis == numCaronasAceitas && oferecerMaisCaronas){
+  //               setOferecerMaisCaronas(false);
+  //               setModalVisible(!modalVisible);
+  //             }
+  //           }
+  //         }
+  //       })
+  //     }catch(error){
+    //       console.log('erro em caronasAceitas -> função');
+    //     }
+    //   }
+    // }
+    
+    const caronasAceitas = async()=>{
+      let strUIDs = '';
+      let arrayUIDs = [];
+      const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`);
+      if (oferecerMaisCaronas){
         reference.on('value', function(snapshot){
-          if (snapshot.exists()){
-            uidsPassageiros = snapshot.val();
-            arrayUIDsPassageiros = uidsPassageiros.split(', ');
-            if (arrayUIDsPassageiros[0] != '' && arrayUIDsPassageiros[0] != undefined && vagasDisponiveis>numCaronasAceitas){
-              setExisteCaronaAceita(true);
-              setNumCaronasAceitas(arrayUIDsPassageiros.length);
-              if (!passageiros.includes(arrayUIDsPassageiros[arrayUIDsPassageiros.length-1])){
-                setPassageiros([...passageiros, arrayUIDsPassageiros[arrayUIDsPassageiros.length-1]]);
+          if (snapshot.val() != '' && snapshot.val() != undefined){
+            if (vagasDisponiveis>numCaronasAceitas){
+              if (!ofertasAceitas.includes(snapshot.val())){
+                strUIDs = snapshot.val();
+                arrayUIDs = strUIDs.split(', ');
+                setArrayOfertasAceitas(arrayUIDs);
+                setOfertasAceitas(snapshot.val());
+                setNumCaronasAceitas(arrayUIDs.length);
+              }else if (vagasDisponiveis == numCaronasAceitas){
+                console.log('vagas esgotadas!');
               }
             }else{
-              if (vagasDisponiveis == numCaronasAceitas && oferecerMaisCaronas){
-                setOferecerMaisCaronas(false);
-                setModalVisible(!modalVisible);
-              }
+              setOferecerMaisCaronas(false);
+              setExibeModalOferecer(false);
+              setModalVisible(!modalVisible);
             }
+          }else{
+            //complementar essa função aqui;
+            //não vai acontecer essa situação, mas quando zerar o vetor de caronasAceitas?
+            setNumCaronasAceitas(0);
           }
-        })
-      }catch(error){
-        console.log('erro em caronasAceitas -> função');
+        })  
       }
     }
-  }
 
 
   /*
@@ -439,11 +455,13 @@ function removeListeners(){
   }
   
 
-  
+  /*
+    Função responsável por realizar uma chamada externa a algum aplicativo de rotas disponível no dispositivo do usuário;
+    Após realizada essa chamada, é passado o nome e coordenadas do passageiro.
+  */
   const rotaPassageiro = async (latitude, longitude, nome, uidCaronista) => {
     console.log("OFERECER!!!!!!!!!!!!! - rotaPassageiro");
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-    //
     const scheme = Platform.select({ ios: 'maps:0,0?q=', android: 'geo:0,0?q=' });
     const latLng = `${latitude},${longitude}`;
     const label = nome;
@@ -463,6 +481,10 @@ function removeListeners(){
     Linking.openURL(url);
   }
 
+
+  /*
+    Função responsável por calcular a distância entre o passageiro e o motorista (em metros).
+  */
   const distanciaPassageiroMotorista = async(latitude, longitude)=>{
     console.log("OFERECER!!!!!!!!!!!!!");
     const latitudePassageiro = latitude;
@@ -483,6 +505,11 @@ function removeListeners(){
     return distancia;
   }
   
+
+  /*
+    Função responsável por analisar a distância entre o motorista e o caronista e determinar se o motorista chegou até o passageiro ou não;
+    Ao chegar no passageiro, é possível embarcá-lo, pressionando no botão passageiro(a) a bordo.
+  */
   const buscarPassageiro = async(latitude, longitude, nome, uidCaronista)=>{
     console.log("OFERECER!!!!!!!!!!!!!");
     const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
@@ -494,20 +521,23 @@ function removeListeners(){
         buscandoCaronista: uidCaronista
     })
       if (distPassageiroMotorista < 6 && !snapshot.val().caronistasAbordo.includes(uidCaronista)){
-        setUIDPassageiroEmbarque(uidCaronista);
+        setEmbarcarPassageiro(uidCaronista);
         tituloNotificacao = 'Seu motorista chegou!';
-        mensagemNotificacao = 'Embarque no veículo.';
-        // mensagem = 'Seu motorista chegou!';
+        mensagemNotificacao = 'Embarque no veículo';
         sendNotification(uidCaronista, tituloNotificacao, mensagemNotificacao);
         setModalVisible(false);
       }
       })
     }
     
+
+    /*
+      Função responsável por iniciar a viagem do passageiro e atualizar os caronistas a bordo no carro do motorista.
+    */
     const embarquePassageiro = async(uidPassageiro)=>{
       console.log("OFERECER!!!!!!!!!!!!! - embarquePassageiro");
-      setUIDPassageiroEmbarque(null);
-      setPassageirosAbordo(passageirosAbordo+1);
+      setEmbarcarPassageiro(null);
+      setNumPassageirosABordo(numPassageirosABordo+1);
       setExistePassageiroAbordo(true);
       let listaPassageirosAbordo = '';
       let listaPassageirosAtualizada = '';
@@ -525,45 +555,43 @@ function removeListeners(){
           caronistasAbordo: listaPassageirosAtualizada,
           buscandoCaronista: '',
         });
-        passageiros.splice(passageiros.indexOf(uidPassageiro), 1);
-        //falta remover do array de caronistas?
+        // setCaronistas(vetorCaronistas.filter((uid)=>(uid.uid != uidPassageiro)));
+        setPassageiros([...passageiros, uidPassageiro]);
+        setArrayOfertasAceitas(arrayOfertasAceitas.filter((uid)=>(uid != uidPassageiro)));
       })
   }
 
 
+  /*
+    Função responsável por iniciar a viagem do motorista e navegar para a próxima tela de viagem em andamento;
+  */
   const iniciarViagem = async()=>{
     console.log("OFERECER!!!!!!!!!!!!! - iniciarViagem");
-    console.log('iniciando viagem...');
-    console.log('passageiros a bordo:', passageirosAbordo);
-    if (passageirosAbordo < vagasDisponiveis){
+    if (numCaronasAceitas < vagasDisponiveis){
       setAlertaViagem(true)
     }else{
-      // const reference_motoristas = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-      // const reference_motorista_caronas = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`);
-      // reference_motoristas.off('value');
-      // reference_passageiros.off('value');
-      // reference_motorista_caronas.off('value');
-      removeListeners();
-      setIniciouViagem(true);
       navigation.navigate('ViagemMotorista', {currentUser: currentUser, cidade: cidade, estado: estado});
     }
   }
   
 
+  /*
+    Função responsável para voltar a tela de configurar carona;
+    Implica que o motorista desistiu de oferecer carona.
+  */
   const desistirDaOferta = async()=>{
     console.log("OFERECER!!!!!!!!!!!!! - desistirDaOferta");
     console.log('desistindo de oferecer carona...');
     const referece_motorista = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-    const reference_passageiros = database().ref(`${estado}/${cidade}/Passageiros`);
     let caronasAceitas = '';
     try{
       referece_motorista.once('value').then(snapshot=>{
         caronasAceitas = snapshot.val().caronasAceitas;
         if (caronasAceitas == '' || caronasAceitas == undefined){
           referece_motorista.remove();
-          // reference_passageiros.off('value');
-          navigation.navigate('ConfigurarCarona');
+          navigation.navigate('ConfigurarCarona'); //só consigo navegar para a tela inicial se o número de caronas aceitas é vazio;
         }else{
+          //como tratar o cancelamento de carona?
         }
       })
     }catch(error){
@@ -571,8 +599,102 @@ function removeListeners(){
     }
   }
 
+
+  /*
+    Função responsável por obter o token atual do usuário (o qual será utilizado nas notificações);
+    Além de obter o token, ele é armazendo no hook token para ser salvo (ou atualizado) posteriormente, no banco de dados.
+  */
+  const getFCMToken = async() => {
+    await messaging()
+       .getToken()
+       .then(token => {
+         console.log('token=>>>', token); //armazenar token na string //esse token é o token do motorista;
+         setToken(token)
+    });
+  }
+ 
+
+   /*
+     Verificação de permissão para envio de mensagens (geralmente no android a permissão é concedida por padrão)
+   */
+   const requestPermission = async () => {
+     const authStatus = await messaging().requestPermission();
+   }
+   
+   /*
+    Função utilizada para criar o canal de notificações com o notifee.
+   */
+   async function DisplayNotification(remoteMessage) {
+     const channelId = await notifee.createChannel({
+       id: 'default',
+       name: 'Canal oferecer',
+       importance: AndroidImportance.HIGH,
+     });
+ 
+     // Notifee muda a interface da notificação. Mude aqui para alterar a notificação única
+     await notifee.displayNotification({
+       title: remoteMessage.notification.title,
+       body: remoteMessage.notification.body,
+       android: {
+         channelId,
+         largeIcon: 'https://img.icons8.com/plasticine/344/car--v1.png',
+         color: '#E8210C',
+         importance: AndroidImportance.HIGH,
+         smallIcon: 'ic_launcher', // optional, defaults to 'ic_launcher'.
+       },
+     });
+   }
+
+
+   /*
+     Função responsável por obter o token do passageiro armazenado no banco de dados e enviar a notificação de carona encontrada ou motorista está chegando.
+   */
+   const sendNotification = async (uidPassageiro, tituloNotificacao, mensagemNotificacao) => {
+     let docRef = firestore().collection('Users').doc(uidPassageiro);
+     try{
+       docRef.get().then((doc)=>{
+         if (doc.exists){
+           if (doc.data().token != undefined){
+             let notificationData = {
+               title: tituloNotificacao,
+               body: mensagemNotificacao,
+               token:
+                 doc.data().token
+             };
+             //chama a função sendSingleDeviceNotification do servidor de notificações (NotificationService), importado no ínicio (PushNotifications.js)
+             NotificationService.sendSingleDeviceNotification(notificationData);
+           }
+         }
+       })
+     }catch(error){
+       console.log('erro em armazenaToken');
+     }
+   };
+ 
+   
+   /*
+    Função responsável por atualizar o token armazenado no hook no banco de dados do motorista.
+    Dúvida: devemos enviar notificação para o motorista?
+   */
+   const armazenaToken = async()=>{
+     let docRef = firestore().collection('Users').doc(currentUser);
+     try{
+       docRef.get().then((doc)=>{
+         if (doc.exists){
+           docRef.update({
+             token: token
+           })
+         }
+       })
+     }catch(error){
+       console.log('erro em armazenaToken');
+     }
+   }
+ 
   useEffect(()=>{
     console.log('TELA: Oferecer');
+    console.log('vagas ofertas:', vagasDisponiveis);
+    console.log('vagas ocupadas:', numCaronasAceitas);
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
     estadoInicial();
   })
@@ -580,20 +702,17 @@ function removeListeners(){
   useEffect(()=>{
     getMyLocation();
     getCaronistasMarker();
-    caronasAceitas();
     BackHandler.addEventListener('hardwareBackPress', ()=>{
       return true
     })
   }, [vetorCaronistas, existeBanco]);
 
-  //Notificações
+  
+  useEffect(()=>{
+    caronasAceitas();
+  }, [ofertasAceitas, numCaronasAceitas]);
 
-
-  //Hook para setar o token em string que será posteriormente utilizada 
-  //** ALTERAR ** O token que está sendo salvo é o do próprio usuário, mas tal token só deve ser salvo no banco
-  //A string de token usada para as notificações deve ser a do passageiro/motorista que está interagindo com o usuário atual
-  const [token,setToken] = useState("")
-
+  
   useEffect(() => {
     getFCMToken();
     requestPermission();
@@ -605,86 +724,6 @@ function removeListeners(){
     armazenaToken(); //
     return unsubscribe;
   }, [token]);
-
-  const getFCMToken = async() => {
-   await messaging()
-      .getToken()
-      .then(token => {
-        console.log('token=>>>', token); //armazenar token na string //esse token é o token do motorista;
-        setToken(token)
-      });
-  };
-
-  //Verificação de permissão para envio de mensagens (geralmente no android a permissão é concedida por padrão)
-  const requestPermission = async () => {
-    const authStatus = await messaging().requestPermission();
-  };
-
-  async function DisplayNotification(remoteMessage) {
-    //Função para criar canal de notificações com o notifee
-    const channelId = await notifee.createChannel({
-      id: 'default',
-      name: 'Canal oferecer',
-      importance: AndroidImportance.HIGH,
-    });
-
-    // Notifee muda a interface da notificação. Mude aqui para alterar a notificação única
-    await notifee.displayNotification({
-      title: remoteMessage.notification.title,
-      body: remoteMessage.notification.body,
-      android: {
-        channelId,
-        largeIcon: 'https://img.icons8.com/plasticine/344/car--v1.png',
-        color: '#E8210C',
-        importance: AndroidImportance.HIGH,
-        smallIcon: 'ic_launcher', // optional, defaults to 'ic_launcher'.
-      },
-    });
-  }
-  
-  //função envio de notificação simples. Deve-se determinar o título da notificação, corpo e passar o token de destino
-  const sendNotification = async (uidPassageiro, tituloNotificacao, mensagemNotificacao) => {
-    let docRef = firestore().collection('Users').doc(uidPassageiro);
-    try{
-      docRef.get().then((doc)=>{
-        if (doc.exists){
-          if (doc.data().token != undefined){
-            let notificationData = {
-              title: tituloNotificacao,
-              body: mensagemNotificacao,
-              token:
-                doc.data().token
-            };
-            //chama a função sendSingleDeviceNotification do servidor de notificações (NotificationService), importado no ínicio (PushNotifications.js)
-            NotificationService.sendSingleDeviceNotification(notificationData);
-          }
-          // console.log('token armazenado:', doc.data().token);
-        }
-      })
-    }catch(error){
-      console.log('erro em armazenaToken');
-    }
-  };
-
-
-  //enviar notificação para o motorista????
-  const armazenaToken = async()=>{
-    let docRef = firestore().collection('Users').doc(currentUser);
-    try{
-      docRef.get().then((doc)=>{
-        if (doc.exists){
-          // if (doc.data().token == undefined || doc.data().token == ''){
-          docRef.update({
-            token: token
-          })
-          // }
-          console.log('token armazenado:', doc.data().token);
-        }
-      })
-    }catch(error){
-      console.log('erro em armazenaToken');
-    }
-  }
 
 
   return (
@@ -717,6 +756,7 @@ function removeListeners(){
             {
               oferecerMaisCaronas &&
               vetorCaronistas.map(caronista=>(
+                !passageiros.includes(caronista.uid)?
                 <Marker
                   key={caronista.uid}
                   coordinate={{ latitude : caronista.latitude , longitude : caronista.longitude}}
@@ -728,13 +768,13 @@ function removeListeners(){
                   icon={
                     caronista.caronasAceitas==''?require('../../assets/icons/caronista.png'):caronista.caronasAceitas.includes(currentUser)?require('../../assets/icons/carona_aceita.png'):require('../../assets/icons/caronista-nao-clicavel.png')
                   }
-                />
+                />:null
               ))
             }
             {
               !oferecerMaisCaronas &&
               vetorCaronistas.map(caronista=>(
-                passageiros.includes(caronista.uid)?
+                arrayOfertasAceitas.includes(caronista.uid)?
                 <Marker
                   key={caronista.uid}
                   coordinate={{ latitude : caronista.latitude , longitude : caronista.longitude}}
@@ -759,13 +799,12 @@ function removeListeners(){
             } */}
           </MapView>
           {
-            uidPassageiroEmbarque &&
+            embarcarPassageiro &&
             <View style={[styles.viewCaronistas, {position: 'absolute', bottom: 10, height: 120, justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
               <TouchableOpacity
                 style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
                 onPress={()=>{
-                  embarquePassageiro(uidPassageiroEmbarque);
-                  // setUIDPassageiroEmbarque(null);
+                  embarquePassageiro(embarcarPassageiro);
                 }}
               >
                 <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
@@ -825,8 +864,7 @@ function removeListeners(){
                       />
                       <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{nomeCaronista}</Text>
                       <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
-                      {/* escrever a classificação do caronista */}
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Classificação</Text>
+                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{classificacaoCaronista}</Text>
                       <TouchableOpacity
                           style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
                           onPress={()=>{oferecerCarona()}}
@@ -862,7 +900,7 @@ function removeListeners(){
                     </>
                   }
                   {
-                    !exibeModalOferecer &&
+                    !exibeModalOferecer && !alertaVagas &&
                     <>
                       <Image 
                         source={imageUser!=''?{uri:imageUser}:null}
