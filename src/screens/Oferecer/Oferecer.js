@@ -46,7 +46,9 @@ function Oferecer({route, navigation}) {
     const [numPassageirosABordo, setNumPassageirosABordo] = useState(0); //Controla o número de passageiros que estão a bordo do veículo;
     const [ofertasAceitas, setOfertasAceitas] = useState([]); ////Vetor com todos os uids dos passageiros que aceitaram a carona do motorista corrente (motorista atual);
     const [arrayOfertasAceitas, setArrayOfertasAceitas] = useState([]);
+    const [modalBuscarPassageiro, setModalBuscarPassageiro] = useState(false);
     const [passageiros, setPassageiros] = useState([]);
+    const [faltaPassageiros, setFaltaPassageiros] = useState(false);
     const [token, setToken] = useState(""); //Armazena o token atual obtido do dispositivo do usuário.
     
     //Informações do motorista e banco de dados
@@ -314,7 +316,8 @@ function Oferecer({route, navigation}) {
         setLatitudePassageiro(latitude);
         setLongitudePassageiro(longitude);
         setExibeModalOferecer(false);
-        setModalVisible(true);
+        setModalBuscarPassageiro(true);
+        // setModalVisible(true);
         console.log("o passageiro aceitou sua carona!");
       }
     }else{
@@ -567,10 +570,15 @@ function Oferecer({route, navigation}) {
   */
   const iniciarViagem = async()=>{
     console.log("OFERECER!!!!!!!!!!!!! - iniciarViagem");
-    if (numCaronasAceitas < vagasDisponiveis){
-      setAlertaViagem(true)
+    if(numCaronasAceitas>numPassageirosABordo){
+      console.log('você não buscou todos os seus passageiros!!!');
+      setFaltaPassageiros(true);
     }else{
-      navigation.navigate('ViagemMotorista', {currentUser: currentUser, cidade: cidade, estado: estado});
+      if (numCaronasAceitas < vagasDisponiveis){
+        setAlertaViagem(true);
+      }else{
+        navigation.navigate('ViagemMotorista', {currentUser: currentUser, cidade: cidade, estado: estado});
+      }
     }
   }
   
@@ -801,6 +809,9 @@ function Oferecer({route, navigation}) {
           {
             embarcarPassageiro &&
             <View style={[styles.viewCaronistas, {position: 'absolute', bottom: 10, height: 120, justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
+              <Text style={{color:'#06444C', fontWeight: '600', fontSize: 12, lineHeight: 24, textAlign: 'center'}}>
+                  Passageiro(a) próximo!{'\n'}Assim que ele estiver no carro, pressione no botão abaixo.
+              </Text>
               <TouchableOpacity
                 style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
                 onPress={()=>{
@@ -811,14 +822,14 @@ function Oferecer({route, navigation}) {
                   Passageiro(a) a bordo
                 </Text>
               </TouchableOpacity>
-              <Text style={{color:'#06444C', fontWeight: '600', fontSize: 12, lineHeight: 24, textAlign: 'center'}}>
-                  Você chegou até o seu passageiro!{'\n'}Pressione no botão acima para embarcá-lo.
-              </Text>
             </View>
           }
           {
             existePassageiroAbordo &&
             <View style={[styles.viewCaronistas, {position: 'absolute', bottom: 10, height: 120, justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
+              <Text style={{color:'#06444C', fontWeight: '600', fontSize: 12, lineHeight: 24, textAlign: 'center'}}>
+                  Pronto para iniciar a viagem...{'\n'}Pressione no botão abaixo para começar.
+              </Text>
               <TouchableOpacity
                 style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
                 onPress={()=>{
@@ -829,21 +840,6 @@ function Oferecer({route, navigation}) {
                   Iniciar viagem
                 </Text>
               </TouchableOpacity>
-
-              {/* <TouchableOpacity
-                style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
-                onPress={()=>{
-                  // armazenaToken()
-                  sendNotification();
-                }}
-              >
-                <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
-                  Teste token
-                </Text>
-              </TouchableOpacity> */}
-              <Text style={{color:'#06444C', fontWeight: '600', fontSize: 12, lineHeight: 24, textAlign: 'center'}}>
-                  Pronto para iniciar a viagem...{'\n'}Pressione no botão acima para começar.
-              </Text>
             </View>
           }
           
@@ -855,6 +851,19 @@ function Oferecer({route, navigation}) {
           >
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 190, alignSelf: 'center'}}>
                 <View style={styles.modalView}>
+                      {/* <TouchableOpacity
+                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
+                          onPress={()=>{
+
+                            console.log('teste');
+                            console.log('oferecerMaisCaronas:', oferecerMaisCaronas);
+                            console.log('exibeModalOferecer:', exibeModalOferecer);
+                            console.log('alertaVagas:', alertaVagas)
+                          }}
+                          // onPressOut={sendNotification}
+                      >
+                          <Text style={styles.textStyle}>TESTE</Text>
+                      </TouchableOpacity> */}
                   {
                     oferecerMaisCaronas && exibeModalOferecer &&
                     <>
@@ -899,31 +908,6 @@ function Oferecer({route, navigation}) {
                       </TouchableOpacity>
                     </>
                   }
-                  {
-                    !exibeModalOferecer && !alertaVagas &&
-                    <>
-                      <Image 
-                        source={imageUser!=''?{uri:imageUser}:null}
-                        style={{height:70, width: 70, borderRadius: 100, marginBottom:10}}  
-                      />
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{nomeCaronista}</Text>
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
-                      <TouchableOpacity
-                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
-                          onPress={()=>{rotaPassageiro(latitudePassageiro, longitudePassageiro, nomeCaronista, uidPassageiro)}}
-                      >
-                          <Text style={styles.textStyle}>Buscar passageiro(a)</Text>
-                      </TouchableOpacity>
-                    <TouchableOpacity
-                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
-                          onPress={() => {
-                            setModalVisible(!modalVisible);
-                          }}
-                      >
-                        <Text style={styles.textStyle}>Cancelar</Text>
-                    </TouchableOpacity>
-                  </>
-                  }
               </View>
             </View>
           </Modal>
@@ -958,6 +942,65 @@ function Oferecer({route, navigation}) {
                     </TouchableOpacity>
                 </View>
                 </View>
+          </Modal>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalBuscarPassageiro}
+            onRequestClose={() => {setModalBuscarPassageiro(!modalBuscarPassageiro)}}
+          >
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 260, alignSelf: 'center'}}>
+              <View style={styles.modalView}>
+              {
+                    !exibeModalOferecer &&
+                    <>
+                      <Image 
+                        source={imageUser!=''?{uri:imageUser}:null}
+                        style={{height:70, width: 70, borderRadius: 100, marginBottom:10}}  
+                      />
+                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{nomeCaronista}</Text>
+                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
+                      <TouchableOpacity
+                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
+                          onPress={()=>{rotaPassageiro(latitudePassageiro, longitudePassageiro, nomeCaronista, uidPassageiro)}}
+                      >
+                          <Text style={styles.textStyle}>Buscar passageiro(a)</Text>
+                      </TouchableOpacity>
+                    <TouchableOpacity
+                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
+                          onPress={() => {
+                            setModalBuscarPassageiro(false);
+                          }}
+                      >
+                        <Text style={styles.textStyle}>Cancelar</Text>
+                    </TouchableOpacity>
+                  </>
+                  }
+              </View>
+              </View>
+          </Modal>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={faltaPassageiros}
+            onRequestClose={() => {setFaltaPassageiros(!faltaPassageiros)}}
+          >
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 260, alignSelf: 'center'}}>
+              <View style={styles.modalView}>
+              <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '700'}}>Você não buscou todos os seus passageiros...</Text>
+                  <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>
+                    Busque os passageiros que aceitaram a sua carona para iniciar a viagem.
+                  </Text>
+                  <TouchableOpacity
+                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
+                        onPress={() => {
+                          setFaltaPassageiros(!faltaPassageiros);
+                        }}
+                    >
+                      <Text style={styles.textStyle}>Entendi</Text>
+                  </TouchableOpacity>
+              </View>
+            </View>
           </Modal>
           <TouchableOpacity
               style={{backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, justifyContent: 'center', position: 'absolute', top: 10, left: 10, borderWidth: 1, borderColor: '#FF5F55'}}

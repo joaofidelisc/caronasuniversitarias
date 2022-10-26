@@ -26,6 +26,7 @@ function ViagemMotorista({route, navigation}){
     const [passageirosABordo, setPassageirosABordo] = useState([]);
     const [UIDsPassageiros, setUIDsPassageiros] = useState([]);
     const [UIDsClassificar, setUIDsClassificar] = useState([]); //utilizado na próxima tela;
+    const [atualizarNumPassageiros, setAtualizarNumPassageiros] = useState(true);
 
     const currentUser = auth().currentUser.uid;
     const cidade = route.params?.cidade;
@@ -39,15 +40,17 @@ function ViagemMotorista({route, navigation}){
         jaExiste = false;
       }
       const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-      // if (!atualizouPassageiros){
         try{
           reference.once('value', function(snapshot){
-            if (snapshot.exists() && snapshot.val().caronistasAbordo != undefined){
+            if (snapshot.exists() && snapshot.val().caronistasAbordo != undefined && snapshot.val().caronistasAbordo != ''){
               listaPassageiros = snapshot.val().caronistasAbordo;
             }
             arrayUIDs = listaPassageiros.split(', ');
-            setNumPassageirosABordo(arrayUIDs.length);
-            setUIDsPassageiros(arrayUIDs);
+            if (atualizarNumPassageiros){
+              setNumPassageirosABordo(arrayUIDs.length);
+              setAtualizarNumPassageiros(false);
+              setUIDsPassageiros(arrayUIDs);
+            }
             arrayUIDs.forEach(async uid =>{
               if (passageirosABordo.length == 0){
                 setPassageirosABordo([{
@@ -56,7 +59,6 @@ function ViagemMotorista({route, navigation}){
                   nome: await getNomePassageiro(uid),
                   classificacao: await getClassificacaoPassageiro(uid),
                   destino: await getDestinoPassageiro(uid)
-                  // destino: 'teste',
                 }])
               }else{
                 passageirosABordo.some(motorista=>{
@@ -175,6 +177,7 @@ function ViagemMotorista({route, navigation}){
 
    
     const finalizarViagemPassageiro = async(uidPassageiro, destinoPassageiro, nomePassageiro, passageiroIMG)=>{
+      setUIDsPassageiros(UIDsPassageiros.filter((uid)=>(uid != uidPassageiro)));
       const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`);
       reference_passageiro.update({
         viagemTerminou: true,
@@ -194,6 +197,10 @@ function ViagemMotorista({route, navigation}){
       database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`).off('child_added');
       database().ref().child(`${estado}/${cidade}/Passageiros`).off('value');
     }
+
+    useEffect(()=>{
+      console.log('numero de passageiros a bordo:', numPassageirosABordo);
+    })
 
     useEffect(()=>{
       removeListeners();
@@ -224,6 +231,7 @@ function ViagemMotorista({route, navigation}){
             <ScrollView style={styles.scrollView}>
             {
               passageirosABordo.map(passageiro=>(
+                UIDsPassageiros.includes(passageiro.uid)?
                 <View style={styles.viewPassageiros}
                     key={passageiro.uid}
                 >
@@ -252,7 +260,7 @@ function ViagemMotorista({route, navigation}){
                       </Text>
                     </TouchableOpacity>
                     </View>
-                  </View>
+                  </View>:null
               ))
             }
               <Text style={styles.text}>
