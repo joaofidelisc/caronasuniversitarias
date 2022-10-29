@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, Modal, PermissionsAndroid} from 'react-native';
+import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, Modal, PermissionsAndroid, Dimensions} from 'react-native';
 
 
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
@@ -8,6 +8,8 @@ import estilos from '../../estilos/estilos';
 
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
+
+const {height,width} = Dimensions.get('screen')
 
 function FotoPerfil({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
@@ -105,13 +107,13 @@ function FotoPerfil({navigation}){
   return (
     <SafeAreaView>
         <TouchableOpacity
-          style={{position: 'absolute', top:30, alignSelf: 'center'}}
+          style={{position: 'absolute', top:height*0.05, alignSelf: 'center'}}
           onPress={receberFoto}  
         >
           <Image 
               source={
                 imageUser!=''?{uri:imageUser}:null}
-              style={{height:100, width: 100, borderRadius: 100}}  
+              style={{height:height*0.1, width: width*0.22, borderRadius: 100}}  
           />
         </TouchableOpacity>
         <Modal
@@ -120,22 +122,22 @@ function FotoPerfil({navigation}){
           visible={modalVisible}
           onRequestClose={() => {setModalVisible(!modalVisible);}}
         >
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: -10, left:210, alignSelf: 'center'}}>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center',  position: 'absolute', top: '2%', left:'60%', alignSelf: 'center'}}>
                 <Text style={{color: 'white', textAlign: 'center', marginBottom: 5, fontSize:12, fontWeight: '500'}}>{message}</Text>
                 <TouchableOpacity
-                    style={{backgroundColor:'#FF5F55', width: 120, height: 30, borderRadius: 15, justifyContent: 'center', borderColor:'white', borderWidth:1}}
+                    style={{backgroundColor:'#FF5F55', width: '85%', height: '25%', borderRadius: 15, justifyContent: 'center', borderColor:'white', borderWidth:1}}
                     onPress={pickImageFromGalery}
                 >
                     <Text style={styles.textStyle}>+ Carregar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={{backgroundColor:'#FF5F55', width: 120, height: 30, borderRadius: 15, justifyContent: 'center', borderColor:'white', borderWidth:1, marginTop:5}}
+                    style={{backgroundColor:'#FF5F55', width: '85%', height: '25%', borderRadius: 15, justifyContent: 'center', borderColor:'white', borderWidth:1, marginTop:5}}
                     onPress={pickImageFromCamera}
                 >
                     <Text style={styles.textStyle}>Tirar foto</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={{backgroundColor:'#FF5F55', width: 120, height: 30, borderRadius: 15, justifyContent: 'center', marginTop: 5, borderColor:'white', borderWidth:1}}
+                    style={{backgroundColor:'#FF5F55', width: '85%', height: '25%', borderRadius: 15, justifyContent: 'center', marginTop: 5, borderColor:'white', borderWidth:1}}
                     onPress={() => setModalVisible(!modalVisible)}
                 >
                     <Text style={styles.textStyle}>Confirmar</Text>

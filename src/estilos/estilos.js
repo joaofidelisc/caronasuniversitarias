@@ -1,7 +1,9 @@
 import {
-    StyleSheet, 
+    StyleSheet, Dimensions 
   } 
   from 'react-native';
+
+  const {height,width} = Dimensions.get('screen')
 
 export default StyleSheet.create({
     imagem:{
@@ -122,7 +124,7 @@ export default StyleSheet.create({
       flex: 1, justifyContent: 'center', alignItems: 'center'
     },
     Style2:{
-      position: 'absolute', top: 24, left: 26, fontWeight: '700', fontSize: 12, lineHeight: 15, color:'#06444C'
+      position: 'absolute', top: '3%', left: '5%', fontWeight: '700', fontSize: height*0.017, lineHeight: 15, color:'#06444C'
     },
     Text1:{
       position: 'absolute', left: 61, top: 166, fontWeight: '800', fontSize: 12, lineHeight: 15, color:'#F9FEFF'
@@ -131,28 +133,28 @@ export default StyleSheet.create({
       position: 'absolute', left: 252, top: 141, fontWeight: '800', fontSize: 12, lineHeight: 15, color:'#F9FEFF'
     },
     Text3:{
-      position: 'absolute', left: 25, top: 200, fontWeight: '700', fontSize: 15, lineHeight: 18, color: '#06444C'
+      position: 'absolute', left: '5%', top: '28%', fontWeight: '700', fontSize: height*0.017, lineHeight: 18, color: '#06444C'
     },
     Text4:{
-      position: 'absolute', left: 40, top: 230, fontWeight: '600', fontSize: 12, lineHeight: 15, color:'#06444C'
+      position: 'absolute', left: '10%', top: '32%', fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color:'#06444C'
     },
     Text5:{
-      position: 'absolute', left: 60, top: 255, fontWeight: '600', fontSize: 12, lineHeight: 15, color:'#FF5F55'
+      position: 'absolute', left: '15%', top: '35%', fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color:'#FF5F55'
     },
     Text6:{
-      position: 'absolute', left: 40, top: 280, fontWeight: '600', fontSize: 12, lineHeight: 15, color:'#06444C'
+      position: 'absolute', left: '10%', top: '38%', fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color:'#06444C'
     },
     Text7:{
-      position: 'absolute', left: 60, top: 305, fontWeight: '600', fontSize: 12, lineHeight: 15, color:'#FF5F55'
+      position: 'absolute', left: '15%', top: '41%', fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color:'#FF5F55'
     },
     Text8:{
-      position: 'absolute', left: 25, top: 325, fontWeight: '700', fontSize: 15, lineHeight: 18, color:'#06444C'
+      position: 'absolute', left: '5%', top: '44%', fontWeight: '700', fontSize: height*0.017, lineHeight: 18, color:'#06444C'
     },
     Text9:{
-      fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'
+      fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color: '#06444C'
     },
     Text10:{
-      position: 'absolute', left: 60, top: 385, fontWeight: '600', fontSize: 12, lineHeight: 15, color:'#FF5F55'
+      position: 'absolute', left: '15%', top: '51%', fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color:'#FF5F55'
     },
     Text11:{
       fontWeight: '600', fontSize: 12, lineHeight: 15, color: '#06444C'
@@ -161,13 +163,13 @@ export default StyleSheet.create({
       position: 'absolute', left: 60, top: 445, fontWeight: '600', fontSize: 12, lineHeight: 15, color:'#FF5F55'
     },
     Text13:{
-      position: 'absolute', left: 25, top: 475, fontWeight: '600', fontSize: 15, lineHeight: 18, color: '#06444C'
+      position: 'absolute', left: '5%', top: '55%', fontWeight: '600', fontSize: height*0.017, lineHeight: 18, color: '#06444C'
     },
     Text14:{
       color: 'white', fontWeight: 'bold'
     },
     TouchbleOpct1:{
-      position: 'absolute', width: 133, height: 31, left: 28, top:508, backgroundColor: '#FF5F55', borderRadius: 57, alignItems: 'center', justifyContent: 'center'
+      position: 'absolute', width: '20%', height: '4%', left: '5%', top:'85%', backgroundColor: '#FF5F55', borderRadius: 57, alignItems: 'center', justifyContent: 'center'
     },
     retangulo:{
       position: 'absolute',
