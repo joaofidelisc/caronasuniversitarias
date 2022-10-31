@@ -2,11 +2,15 @@ import React, {useEffect, useState} from 'react';
 import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, Modal, TextInput, Dimensions} from 'react-native';
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import firestore from '@react-native-firebase/firestore';
+
 
 import estilos from '../../estilos/estilos';
 
 import FotoPerfil from '../../components/Perfil/FotoPerfil';
-import auth, { firebase } from '@react-native-firebase/auth'
+import ModoAplicativo from '../../components/Perfil/ModoAplicativo';
+
+import auth from '@react-native-firebase/auth'
 import RNRestart from 'react-native-restart';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -19,7 +23,21 @@ function Perfil_Conta({navigation}){
   const [aviso, setAviso] = useState('');
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [modoApp, setModoApp] = useState('');
+  const [modalModo, setModalModo] = useState(false);
 
+  const modoAtuacao = async()=>{
+    const userID = auth().currentUser.uid;
+    firestore().collection('Users').doc(userID).get().then(doc=>{
+      if (doc && doc.exists){
+        if (doc.data().motorista == true){
+          setModoApp('motorista');
+        }else{
+          setModoApp('passageiro');
+        }
+      }
+    })
+  }
 
   const signOut = async()=>{
     const providerID = auth().currentUser?.providerData[0].providerId;
@@ -60,55 +78,48 @@ function Perfil_Conta({navigation}){
 
   useEffect(()=>{
     console.log('Perfil_Conta');
+    modoAtuacao();
   })
   
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
           <View style={[estilos.styleOne, {flex:0, backgroundColor:'white', height: '100%'}]}>           
-            <View style={estilos.retangulo}>
+            <View style={[estilos.retangulo]}>
               <FotoPerfil/>
+              <ModoAplicativo/>
             </View>
+    
             <Text style={[estilos.Style2, {color:'white', fontSize: height*0.016 }]}>Perfil</Text>
-            <Text style={{position: 'absolute', left: '5%', top: '28%', fontWeight: '700', fontSize: height*0.017, lineHeight: 15, color: '#06444C'}}>Avaliação</Text>
-              <TouchableOpacity style={{position: 'absolute', left: '10%', top: '32%'}}>
+            <Text style={{position: 'absolute', left: '5%', top: '36%', fontWeight: '700', fontSize: height*0.017, lineHeight: 15, color: '#06444C'}}>Avaliação</Text>
+              <TouchableOpacity style={{position: 'absolute', left: '10%', top: '40%'}}>
                 <Text style={{fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color: '#06444C'}}>Avaliações</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{position: 'absolute', left: '10%', top: '36%'}}>
+              <TouchableOpacity style={{position: 'absolute', left: '10%', top: '44%'}}>
                 <Text style={{fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color: '#06444C'}}>Feedback</Text>
               </TouchableOpacity>
-            <Text style={{position: 'absolute', left: '5%', top: '40%', fontWeight: '700', fontSize: height*0.017, lineHeight: 15, color: '#06444C'}}>Preferências</Text>
+            <Text style={{position: 'absolute', left: '5%', top: '48%', fontWeight: '700', fontSize: height*0.017, lineHeight: 15, color: '#06444C'}}>Preferências</Text>
               <TouchableOpacity 
-                style={{position: 'absolute', left: '10%', top: '44%'}}
+                style={{position: 'absolute', left: '10%', top: '52%'}}
                 onPress={changePassword}
                 >
                 <Text style={{fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color: '#06444C'}}>Alterar senha</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{position: 'absolute', left: '10%', top: '48%'}}>
+              <TouchableOpacity style={{position: 'absolute', left: '10%', top: '56%'}}>
                 <Text style={{fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color: '#06444C'}}>Notificações</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{position: 'absolute', left: '10%', top: '52%'}}>
-                <Text style={{fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color: '#06444C'}}>Endereço</Text>
-              </TouchableOpacity>
-            <Text style={{position: 'absolute', left: '5%', top: '56%', fontWeight: '700', fontSize: height*0.017, lineHeight: 15, color: '#06444C'}}>Dinheiro</Text>
-              <TouchableOpacity style={{position: 'absolute', left: '10%', top: '60%'}}>
-                <Text style={{fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color: '#06444C'}}>Métodos de pagamento</Text>
-              </TouchableOpacity>
+            <Text style={{position: 'absolute', left: '5%', top: '60%', fontWeight: '700', fontSize: height*0.017, lineHeight: 15, color: '#06444C'}}>Sobre</Text>
               <TouchableOpacity style={{position: 'absolute', left: '10%', top: '64%'}}>
-                <Text style={{fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color: '#06444C'}}>Dinheiro</Text>
-              </TouchableOpacity>
-            <Text style={{position: 'absolute', left: '5%', top: '68%', fontWeight: '700', fontSize: height*0.017, lineHeight: 15, color: '#06444C'}}>Sobre</Text>
-              <TouchableOpacity style={{position: 'absolute', left: '10%', top: '72%'}}>
                 <Text style={{fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color: '#06444C'}}>Ajuda</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{position: 'absolute', left: '10%', top: '76%'}}>
+              <TouchableOpacity style={{position: 'absolute', left: '10%', top: '68%'}}>
                 <Text style={{fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color: '#06444C'}}>Termos de uso</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{position: 'absolute', left: '10%', top: '80%'}}>
+              <TouchableOpacity style={{position: 'absolute', left: '10%', top: '72%'}}>
                 <Text style={{fontWeight: '600', fontSize: height*0.014, lineHeight: 15, color: '#06444C'}}>Licença</Text>      
               </TouchableOpacity>
             <TouchableOpacity 
-              style={[estilos.TouchbleOpct1, {top:'85%'}]}
+              style={[estilos.TouchbleOpct1, {top:'76%'}]}
               onPress={signOut}
             >
               <Text style={estilos.Text14}>Sair</Text>

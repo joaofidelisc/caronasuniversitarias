@@ -173,7 +173,7 @@ export default StyleSheet.create({
     },
     retangulo:{
       position: 'absolute',
-      height: 167,
+      height: '28%',
       left: 0,
       right: 0,
       top: 0,

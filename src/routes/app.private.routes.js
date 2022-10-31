@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import { BackHandler } from 'react-native';
+import { BackHandler, Dimensions } from 'react-native';
 import { Image } from 'react-native';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -28,6 +28,7 @@ const Stack = createNativeStackNavigator();
 // const DrawerNavigationMethod = createDrawerNavigator();
 
 //nested navigation https://www.youtube.com/watch?v=SPzjttByz6E
+// const {height, width} = Dimensions.get('screen');
 
 function RotaBuscandoCarona(){
   return (
@@ -70,7 +71,7 @@ function RotaPerfil(){
       headerShown: false,
       tabBarActiveTintColor: '#FF5F55',
       tabBarInactiveTintColor: 'gray',
-      tabBarStyle: {position:'absolute', top:141}
+      tabBarStyle: {position:'absolute', top: '28%'}
     }}  
     >
       <Tab.Screen name="Conta" component={Perfil_Conta} 

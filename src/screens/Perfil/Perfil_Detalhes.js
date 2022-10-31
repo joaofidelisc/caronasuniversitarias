@@ -6,6 +6,7 @@ import firestore from '@react-native-firebase/firestore';
 
 import auth from '@react-native-firebase/auth'
 import FotoPerfil from '../../components/Perfil/FotoPerfil';
+import ModoAplicativo from '../../components/Perfil/ModoAplicativo';
 
 const {height,width} = Dimensions.get('screen')
 
@@ -16,7 +17,7 @@ function Perfil_Detalhes({navigation, route}){
   const [universidade, setUniversidade] = useState('');
   
   const recuperarDados = async()=>{
-    const userID = await auth().currentUser.uid;
+    const userID = auth().currentUser.uid;
     firestore().collection('Users').doc(userID).get().then(doc=>{
       if (doc && doc.exists){
         const nome_usuario = doc.data().nome;
@@ -42,43 +43,36 @@ function Perfil_Detalhes({navigation, route}){
       <View style={[estilos.styleOne, {flex:0, backgroundColor: 'white', height: '100%'}]}>
         <View style={estilos.retangulo}>
           <FotoPerfil/>
+          <ModoAplicativo/>
         </View>
         <Text style={[estilos.Style2, {color:'white', fontSize: height*0.016 }]}>Perfil</Text>
-        <Text style={estilos.Text3}>
+        <Text style={[estilos.Text3, {top: '36%'}]}>
           Confirme seus dados
         </Text>
-        <Text style={estilos.Text4}>
+        <Text style={[estilos.Text4, {top: '40%'}]}>
           Número cadastrado
         </Text>
-        <Text style={estilos.Text5}>
+        <Text style={[estilos.Text5, {top: '44%'}]}>
           {celular}
         </Text>
-        <Text style={estilos.Text6}>
+        <Text style={[estilos.Text6, {top: '48%'}]}>
           Endereço de e-mail
         </Text>
-        <Text style={estilos.Text7}>
+        <Text style={[estilos.Text7, {top: '52%'}]}>
           {email}
         </Text>
-        <Text style={estilos.Text8}>
+        <Text style={[estilos.Text8, {top: '56%'}]}>
           Sobre você
         </Text>
-        <TouchableOpacity style={{position: 'absolute', left: '10%', top: '48%'}}>
+        <TouchableOpacity style={{position: 'absolute', left: '10%', top: '60%'}}>
           <Text style={estilos.Text9}>
             Universidade/Campus
           </Text>
         </TouchableOpacity>
-        <Text style={estilos.Text10}>
+        <Text style={[estilos.Text10, {top: '64%'}]}>
           {universidade}
         </Text>
-        {/* <TouchableOpacity style={{ position: 'absolute', left: 40, top: 415}}>
-          <Text style={estilos.Text11}>
-            Preferências
-          </Text>
-        </TouchableOpacity>
-        <Text style={[estilos.Text10, {top: 440}]}>
-          Sr. João
-        </Text> */}
-        <Text style={[estilos.Text13, {top: '55%'}]}>
+        <Text style={[estilos.Text13, {top: '68%'}]}>
           Carros
         </Text>
       </View>
