@@ -112,8 +112,8 @@ function ClassificarPassageiro({route, navigation}) {
                       }}
                       style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
                     />
-                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, textAlign:'center'}}>Nome: {passageiro.nome}</Text>
-                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, textAlign:'center', marginTop: 10}}>Classificação</Text>
+                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: height*0.02, textAlign:'center'}}>Nome: {passageiro.nome}</Text>
+                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: height*0.02, textAlign:'center', marginTop: 10}}>Classificação:</Text>
                        {
                           maxRating.map((item, key) => {
                             <TouchableOpacity
@@ -135,10 +135,10 @@ function ClassificarPassageiro({route, navigation}) {
                         <CustomRatingBar/>
                     <View style={{flexDirection:'row', alignSelf:'center'}}>
                     <TouchableOpacity
-                      style={{backgroundColor: '#FF5F55', width: 180, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10}}
+                      style={{backgroundColor: '#FF5F55', width: '65%', height: '40%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:'2%'}}
                       onPress={()=>{classificarPassageiro(passageiro.uid)}}
                     >
-                      <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                      <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.019, lineHeight: 24, textAlign: 'center'}}>
                         Avaliar
                       </Text>
                     </TouchableOpacity>
