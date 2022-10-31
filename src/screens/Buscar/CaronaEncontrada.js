@@ -281,27 +281,27 @@ function Options({navigation, route}) {
                     }}
                     style={{height:'26%', width: '20%', borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: '5%'}}  
                   />
-                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Nome: {motorista.nome}</Text>
-                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Carro: {motorista.carro}</Text>
-                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Placa: {motorista.placa}</Text>
+                  <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>Nome: {motorista.nome}</Text>
+                  <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>Carro: {motorista.carro}</Text>
+                  <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>Placa: {motorista.placa}</Text>
                   <View style={{flexDirection:'row'}}>
-                    <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Classificação: {motorista.classificacao}</Text>
-                    <Icon name="star" size={18} color="#06444C" style={{alignSelf:'center', marginLeft: 25}}/>
+                    <Text style={{color:'#06444C', left:'100%' , fontWeight:'600', fontSize: 18, textAlign:'left', top:'3%'}}>Classificação: {motorista.classificacao}</Text>
+                    <Icon name="star" size={18} color="#06444C" style={{alignSelf:'center', left:'150%', top:'3%'}}/>
                   </View>
                   <View style={{flexDirection:'row', alignSelf:'center'}}>
                   <TouchableOpacity
-                    style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginRight: 20}}
+                    style={{backgroundColor: '#FF5F55', width: '30%', height: '38%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginRight: 20}}
                     onPress={()=>{aceitarCarona(motorista.uid, motorista.nome, motorista.carro, motorista.placa, motorista.url)}}
                   >
-                    <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.017, lineHeight: 24, textAlign: 'center'}}>
                       Aceitar
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: 10}}
+                    style={{backgroundColor: '#FF5F55', width: '30%', height: '38%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: 10}}
                     onPress={()=>{recusarCarona(motorista.uid)}}
                     >
-                    <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.017, lineHeight: 24, textAlign: 'center'}}>
                       Recusar
                     </Text>
                   </TouchableOpacity>
@@ -332,12 +332,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: 330, 
-    height: 250, 
+    width: '85%', 
+    height: '75%', 
     backgroundColor: 'white', 
     borderRadius: 10, 
     alignSelf:'center', 
-    marginTop: 10
+    marginTop: '1%'
   }
 });
 
