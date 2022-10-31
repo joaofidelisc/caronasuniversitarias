@@ -116,7 +116,7 @@ function BuscandoCarona({navigation, route}) {
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
       <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
-        <Text style={{fontSize:height*0.03, color:'#2f4f4f', paddingHorizontal:20, fontWeight:'bold', marginVertical:10, marginTop: height*0.03}}>
+        <Text style={{fontSize:height*0.025, color:'#2f4f4f', fontWeight:'bold', marginVertical:'1%', marginTop: height*0.03}}>
           Buscando caronas para você. Isso pode levar alguns minutos...
         </Text>
         
@@ -127,16 +127,16 @@ function BuscandoCarona({navigation, route}) {
         loop />
 
         
-        <Text style={{fontSize:height*0.025, color:'#c0c0c0', paddingHorizontal:10, fontWeight:'normal',marginVertical:35 }}>
+        <Text style={{fontSize:height*0.022, color:'#c0c0c0', paddingHorizontal:10, fontWeight:'normal',marginVertical:'9%', marginHorizontal:'5%' }}>
           Exibiremos uma lista de propostas assim que possível!
         </Text>
         {
           !encontrouCarona && 
           <TouchableOpacity
-            style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.03}}
+            style={{backgroundColor: '#FF5F55', width: '66%', height: '6.5%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.03}}
             onPress={cancelarBusca}
             >
-            <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
+            <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.019, lineHeight: 24, textAlign: 'center'}}>
               Cancelar busca
             </Text>
           </TouchableOpacity>
@@ -145,10 +145,10 @@ function BuscandoCarona({navigation, route}) {
         {
           encontrouCarona && 
           <TouchableOpacity
-            style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.03}}
+            style={{backgroundColor: '#FF5F55', width: '66%', height: '6.5%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.03}}
             onPress={caronaEncontrada}
           >
-            <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
+            <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.019, lineHeight: 24, textAlign: 'center'}}>
               Exibir lista
             </Text>
           </TouchableOpacity>

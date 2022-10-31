@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar} from 'react-native';
+import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, Dimensions} from 'react-native';
 import estilos from '../../estilos/estilos';
 
 import firestore from '@react-native-firebase/firestore';
 
 import auth from '@react-native-firebase/auth'
 import FotoPerfil from '../../components/Perfil/FotoPerfil';
+
+const {height,width} = Dimensions.get('screen')
 
 function Perfil_Detalhes({navigation, route}){
   const [nome, setNome] = useState('');
@@ -41,7 +43,7 @@ function Perfil_Detalhes({navigation, route}){
         <View style={estilos.retangulo}>
           <FotoPerfil/>
         </View>
-        <Text style={[estilos.Style2, {color:'white', fontSize: 15}]}>Perfil</Text>
+        <Text style={[estilos.Style2, {color:'white', fontSize: height*0.016 }]}>Perfil</Text>
         <Text style={estilos.Text3}>
           Confirme seus dados
         </Text>
@@ -60,7 +62,7 @@ function Perfil_Detalhes({navigation, route}){
         <Text style={estilos.Text8}>
           Sobre você
         </Text>
-        <TouchableOpacity style={{position: 'absolute', left: 40, top: 355}}>
+        <TouchableOpacity style={{position: 'absolute', left: '10%', top: '48%'}}>
           <Text style={estilos.Text9}>
             Universidade/Campus
           </Text>
@@ -76,7 +78,7 @@ function Perfil_Detalhes({navigation, route}){
         <Text style={[estilos.Text10, {top: 440}]}>
           Sr. João
         </Text> */}
-        <Text style={[estilos.Text13, {top: 415}]}>
+        <Text style={[estilos.Text13, {top: '55%'}]}>
           Carros
         </Text>
       </View>

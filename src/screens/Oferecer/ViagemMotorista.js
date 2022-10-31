@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useMemo, useCallback} from 'react';
-import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, ScrollView, StyleSheet} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, ScrollView, StyleSheet, Dimensions} from 'react-native';
 
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore';
@@ -9,6 +9,7 @@ import firebase from "@react-native-firebase/app";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Lottie from 'lottie-react-native';
 
 /*
 Ideias para essa tela:
@@ -19,6 +20,8 @@ Ideias para essa tela:
   
 */
 
+
+const {height,width} = Dimensions.get('screen')
 
 function ViagemMotorista({route, navigation}){
     const [atualizouPassageiros, setAtualizouPassageiros] = useState(false);
@@ -214,7 +217,18 @@ function ViagemMotorista({route, navigation}){
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
-          <Text style={{fontSize:20, color:'#2f4f4f', paddingHorizontal:70, fontWeight:'bold', marginTop: 30, marginBottom: 30}}>Passageiros(as) a bordo...</Text>
+        <Text style={{fontSize:height*0.025, color:'#2f4f4f', fontWeight:'bold', marginTop: '5%', marginBottom: 30}}>Finalização da viagem <Icon name="car" size={18} color="#06444C"> </Icon></Text>
+        <Lottie 
+            style={{height:height*0.31, width:width*0.20}}
+            source={require('../../assets/JSON/passageiro3.json')} 
+            autoPlay 
+            autoSize={false}
+            loop = {true}
+            speed = {1.1}
+
+            
+        />
+          <Text style={{fontSize:height*0.025, color:'#2f4f4f', fontWeight:'bold', marginTop: '5%', marginBottom: 30}}>Passageiros(as) a bordo...</Text>
           {/* <Text style={{fontSize:20, color:'#2f4f4f', paddingHorizontal:70, fontWeight:'600', marginTop: 30, marginBottom: 30}}>Ao finalizar a viagem de todos os passageiros(as), você será redirecionado(a) para a tela de classificação</Text> */}
 
           {
@@ -235,27 +249,27 @@ function ViagemMotorista({route, navigation}){
                 <View style={styles.viewPassageiros}
                     key={passageiro.uid}
                 >
-                  <View style={{flex: 1, flexDirection: 'row', alignItems:'center', marginTop: 10}}>
+                  <View style={{flex: 1, flexDirection: 'row', alignItems:'center', marginTop: '1%',}}>
                     <Image 
                       source={{
                         uri: passageiro.url
                       }}
-                      style={{height:70, width: 70, borderRadius: 100, marginBottom:10, marginTop: 18, marginLeft: 15}}  
+                      style={{height:'100%', width: '20%', borderRadius: 100, marginBottom:10, marginTop: '5%', marginLeft: '5%'}}  
                       />
-                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, marginLeft: 10}}>{passageiro.nome}</Text>
-                      <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18}}>{passageiro.classificacao}</Text>
-                      <Icon name="star" size={18} color="#06444C" style={{alignSelf:'center', marginLeft: 25}}/>
+                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: height*0.02, marginLeft: 10}}>{passageiro.nome}</Text>
+                      <Text style={{color:'#06444C', left: '30%', fontWeight:'600', fontSize: height*0.02}}>{passageiro.classificacao}</Text>
+                      <Icon name="star" size={18} color="#06444C" style={{alignSelf:'center', marginLeft: '10%'}}/>
                     </View>
-                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: 16, textAlign: 'center', marginTop: 10}}>{passageiro.destino}</Text>
+                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: height*0.017, textAlign: 'center', marginTop: 10}}>{passageiro.destino}</Text>
                     <View style={{flexDirection:'row', alignSelf:'center'}}>
                     <TouchableOpacity
-                      style={{backgroundColor: '#FF5F55', width: 180, height: 30, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginBottom: 10}}
+                      style={{backgroundColor: '#FF5F55', width: '65%', height: '50%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginBottom: 10}}
                       onPress={()=>{
                         finalizarViagemPassageiro(passageiro.uid, passageiro.destino, passageiro.nome, passageiro.url);
                         }
                       }
                     >
-                      <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                      <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.019, lineHeight: 24, textAlign: 'center'}}>
                         Finalizar viagem
                       </Text>
                     </TouchableOpacity>
@@ -274,7 +288,7 @@ const styles = StyleSheet.create({
   scrollView: {
     marginHorizontal: 10,
     width: '100%',
-    height: '50%'
+    height: '100%'
   },
   viewPassageiros:{
     shadowColor: "#000",
@@ -285,8 +299,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: 330, 
-    height: 155, 
+    width: '85%', 
+    height: height*0.22, 
     backgroundColor: 'white', 
     borderRadius: 10, 
     alignSelf:'center', 

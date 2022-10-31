@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, ScrollView, StyleSheet, CameraRoll} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, ScrollView, StyleSheet, CameraRoll, Dimensions} from 'react-native';
 
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore';
@@ -8,6 +8,7 @@ import storage from '@react-native-firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+const {height,width} = Dimensions.get('screen')
 
 function Options({navigation, route}) {
 
@@ -259,16 +260,16 @@ function Options({navigation, route}) {
   }, [vetorMotoristas]);
 
     return (
-       <SafeAreaView style={styles.container}>
+       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
           <Image source={
               require('../../assets/images/carona-encontrada.png')} 
-              style={{height:450, width: 450, alignSelf: 'center', top: -80}}  
+              style={{height:'40%', width: '100%',}}  
           />
-          <Text style={{color:'#06444C', left: 24, fontWeight:'700', fontSize: 20, lineHeight:24, textAlign:'left', top: -120}}>Carona encontrada!</Text>
-          <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 20, lineHeight:24, textAlign:'left', top: -110}}>Motoristas disponíveis:</Text>
+          <Text style={{color:'#06444C', left: '5%', fontWeight:'700', fontSize: height*0.022, lineHeight:24, textAlign:'left', top: '1%'}}>Carona encontrada!</Text>
+          <Text style={{color:'#06444C', left: '5%', fontWeight:'600', fontSize: height*0.022, lineHeight:24, textAlign:'left', top: '3%'}}>Motoristas disponíveis:</Text>
    
-          <ScrollView style={[styles.scrollView,{top:-100}]}>
+          <ScrollView style={[styles.scrollView,{top:'5%'}]}>
           {
             vetorMotoristas.map(motorista=>(
               <View style={styles.viewMotoristas}
@@ -278,29 +279,29 @@ function Options({navigation, route}) {
                     source={{
                       uri: motorista.url
                     }}
-                    style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
+                    style={{height:'26%', width: '20%', borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: '5%'}}  
                   />
-                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Nome: {motorista.nome}</Text>
-                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Carro: {motorista.carro}</Text>
-                  <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Placa: {motorista.placa}</Text>
+                  <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>Nome: {motorista.nome}</Text>
+                  <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>Carro: {motorista.carro}</Text>
+                  <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>Placa: {motorista.placa}</Text>
                   <View style={{flexDirection:'row'}}>
-                    <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Classificação: {motorista.classificacao}</Text>
-                    <Icon name="star" size={18} color="#06444C" style={{alignSelf:'center', marginLeft: 25}}/>
+                    <Text style={{color:'#06444C', left:'100%' , fontWeight:'600', fontSize: 18, textAlign:'left', top:'3%'}}>Classificação: {motorista.classificacao}</Text>
+                    <Icon name="star" size={18} color="#06444C" style={{alignSelf:'center', left:'150%', top:'3%'}}/>
                   </View>
                   <View style={{flexDirection:'row', alignSelf:'center'}}>
                   <TouchableOpacity
-                    style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginRight: 20}}
+                    style={{backgroundColor: '#FF5F55', width: '30%', height: '38%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10, marginRight: 20}}
                     onPress={()=>{aceitarCarona(motorista.uid, motorista.nome, motorista.carro, motorista.placa, motorista.url)}}
                   >
-                    <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.017, lineHeight: 24, textAlign: 'center'}}>
                       Aceitar
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={{backgroundColor: '#FF5F55', width: 80, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: 10}}
+                    style={{backgroundColor: '#FF5F55', width: '30%', height: '38%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: 10}}
                     onPress={()=>{recusarCarona(motorista.uid)}}
                     >
-                    <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                    <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.017, lineHeight: 24, textAlign: 'center'}}>
                       Recusar
                     </Text>
                   </TouchableOpacity>
@@ -331,12 +332,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: 330, 
-    height: 250, 
+    width: '85%', 
+    height: '75%', 
     backgroundColor: 'white', 
     borderRadius: 10, 
     alignSelf:'center', 
-    marginTop: 10
+    marginTop: '1%'
   }
 });
 

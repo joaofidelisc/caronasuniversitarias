@@ -143,7 +143,7 @@ function ClassificarPassageiro({route, navigation}) {
                         <CustomRatingBar/>
                     <View style={{flexDirection:'row', alignSelf:'center'}}>
                     <TouchableOpacity
-                      style={{backgroundColor: '#FF5F55', width: 180, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10}}
+                      style={{backgroundColor: '#FF5F55', width: '65%', height: '40%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:'2%'}}
                       onPress={()=>{classificarPassageiro(passageiro.uid)}}
                       >
                       <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
