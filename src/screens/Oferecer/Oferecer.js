@@ -808,17 +808,17 @@ function Oferecer({route, navigation}) {
           </MapView>
           {
             embarcarPassageiro &&
-            <View style={[styles.viewCaronistas, {position: 'absolute', bottom: 10, height: 120, justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
-              <Text style={{color:'#06444C', fontWeight: '600', fontSize: 12, lineHeight: 24, textAlign: 'center'}}>
+            <View style={[styles.viewCaronistas, {position: 'absolute', bottom: 10, height: '28%', justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
+              <Text style={{color:'#06444C', fontWeight: '600', fontSize: height*0.015, lineHeight: 24, textAlign: 'center'}}>
                   Passageiro(a) próximo!{'\n'}Assim que ele estiver no carro, pressione no botão abaixo.
               </Text>
               <TouchableOpacity
-                style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
+                style={{backgroundColor: '#FF5F55', width: '75%', height:'22%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', top:'5%'}}
                 onPress={()=>{
                   embarquePassageiro(embarcarPassageiro);
                 }}
               >
-                <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.019, lineHeight: 24, textAlign: 'center'}}>
                   Passageiro(a) a bordo
                 </Text>
               </TouchableOpacity>
@@ -826,17 +826,17 @@ function Oferecer({route, navigation}) {
           }
           {
             existePassageiroAbordo &&
-            <View style={[styles.viewCaronistas, {position: 'absolute', bottom: 10, height: 120, justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
-              <Text style={{color:'#06444C', fontWeight: '600', fontSize: 12, lineHeight: 24, textAlign: 'center'}}>
+            <View style={[styles.viewCaronistas, {position: 'absolute', bottom: 10, height: '28%', justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
+              <Text style={{color:'#06444C', fontWeight: '600', fontSize: height*0.015, lineHeight: 24, textAlign: 'center'}}>
                   Pronto para iniciar a viagem...{'\n'}Pressione no botão abaixo para começar.
               </Text>
               <TouchableOpacity
-                style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}
+                style={{backgroundColor: '#FF5F55', width: '75%', height: '22%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', top:'5%'}}
                 onPress={()=>{
                   iniciarViagem();
                 }}
               >
-                <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.019, lineHeight: 24, textAlign: 'center'}}>
                   Iniciar viagem
                 </Text>
               </TouchableOpacity>
