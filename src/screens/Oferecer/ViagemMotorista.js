@@ -263,8 +263,6 @@ function ViagemMotorista({route, navigation}){
                   </View>:null
               ))
             }
-              <Text style={styles.text}>
-              </Text>
             </ScrollView>
           }
         </View>

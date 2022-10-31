@@ -572,7 +572,9 @@ function Oferecer({route, navigation}) {
     console.log("OFERECER!!!!!!!!!!!!! - iniciarViagem");
     if(numCaronasAceitas>numPassageirosABordo){
       console.log('você não buscou todos os seus passageiros!!!');
-      setFaltaPassageiros(true);
+      navigation.navigate('ViagemMotorista', {currentUser: currentUser, cidade: cidade, estado: estado});
+      // setFaltaPassageiros(true);
+      //descomentar a linha de cima - comentei apenas para teste
     }else{
       if (numCaronasAceitas < vagasDisponiveis){
         setAlertaViagem(true);
