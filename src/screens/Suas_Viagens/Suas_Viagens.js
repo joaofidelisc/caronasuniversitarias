@@ -75,20 +75,20 @@ function Suas_Viagens() {
               <View style={styles.viewViagens}
               key={viagem.refViagem}
                   >
-                  <Text style={{color:'#06444C', fontWeight:'600', fontSize: 16, textAlign: 'center', marginTop: 10}}>{viagem.dataViagem}</Text>
+                  <Text style={{color:'#06444C', fontWeight:'600', fontSize: width*0.045, textAlign: 'center', marginTop: 10}}>{viagem.dataViagem}</Text>
                   <Image 
                     source={{
                       uri: viagem.fotoPerfil
                     }}
-                    style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
+                    style={{height:width*0.9*0.2, width: width*0.9*0.2, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
                   />
-                  <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, textAlign:'center', marginTop: 10}}>{viagem.nome}</Text>
-                  <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, textAlign:'center', marginTop: 10}}>{viagem.destino}</Text>
+                  <Text style={{color:'#06444C', fontWeight:'600', fontSize: width*0.9*0.06, textAlign:'center', marginTop: 10, marginLeft: width*0.9*0.04, marginRight:width*0.9*0.04}}>{viagem.nome}</Text>
+                  <Text style={{color:'#06444C', fontWeight:'600', fontSize: width*0.9*0.038, textAlign:'center', marginTop: 10, marginLeft: width*0.9*0.04, marginRight:width*0.9*0.04}}>{viagem.destino}</Text>
                   <TouchableOpacity
                     style={{width: 130, height: 25, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:10}}
                     onPress={()=>{entrarEmContato(viagem.uidMotorista)}}
                   >
-                    <Text style={{color: '#FF5F55', fontWeight: '800', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                    <Text style={{color: '#FF5F55', fontWeight: '800', fontSize: width*0.9*0.04, lineHeight: 24, textAlign: 'center'}}>
                       Entrar em contato
                     </Text>
                   </TouchableOpacity>
@@ -116,8 +116,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: 330, 
-    height: 250, 
+    width: width*0.9, 
+    height: height*0.3, 
     backgroundColor: 'white', 
     borderRadius: 10, 
     alignSelf:'center', 
