@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, ScrollView, StyleSheet, CameraRoll} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, ScrollView, StyleSheet, CameraRoll, Dimensions} from 'react-native';
 
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore';
@@ -8,6 +8,7 @@ import storage from '@react-native-firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+const {height,width} = Dimensions.get('screen')
 
 function Options({navigation, route}) {
 
@@ -259,16 +260,16 @@ function Options({navigation, route}) {
   }, [vetorMotoristas]);
 
     return (
-       <SafeAreaView style={styles.container}>
+       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
           <Image source={
               require('../../assets/images/carona-encontrada.png')} 
-              style={{height:450, width: 450, alignSelf: 'center', top: -80}}  
+              style={{height:'40%', width: '100%',}}  
           />
-          <Text style={{color:'#06444C', left: 24, fontWeight:'700', fontSize: 20, lineHeight:24, textAlign:'left', top: -120}}>Carona encontrada!</Text>
-          <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 20, lineHeight:24, textAlign:'left', top: -110}}>Motoristas disponíveis:</Text>
+          <Text style={{color:'#06444C', left: '5%', fontWeight:'700', fontSize: height*0.022, lineHeight:24, textAlign:'left', top: '1%'}}>Carona encontrada!</Text>
+          <Text style={{color:'#06444C', left: '5%', fontWeight:'600', fontSize: height*0.022, lineHeight:24, textAlign:'left', top: '3%'}}>Motoristas disponíveis:</Text>
    
-          <ScrollView style={[styles.scrollView,{top:-100}]}>
+          <ScrollView style={[styles.scrollView,{top:'5%'}]}>
           {
             vetorMotoristas.map(motorista=>(
               <View style={styles.viewMotoristas}
@@ -278,7 +279,7 @@ function Options({navigation, route}) {
                     source={{
                       uri: motorista.url
                     }}
-                    style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
+                    style={{height:'26%', width: '20%', borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: '5%'}}  
                   />
                   <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Nome: {motorista.nome}</Text>
                   <Text style={{color:'#06444C', left: 24, fontWeight:'600', fontSize: 18, textAlign:'left'}}>Carro: {motorista.carro}</Text>
