@@ -36,8 +36,22 @@ export default function Mensagens() {
     return url;
   }
 
-  const renderMessages = useCallback((msgs)=>{
-    console.log('secondUser:', secondUser);
+  // const renderMessages = useCallback((msgs)=>{
+  //   console.log('secondUser:', secondUser);
+  //   return msgs != undefined? (
+  //     msgs.reverse().map((msg, index)=>({
+  //       ...msg,
+  //       _id: index,
+  //       user: {
+  //         _id: msg.sender == currentUser? currentUser:secondUser,
+  //         name: msg.sender == currentUser? currentUser:secondUser,
+  //         avatar:'',
+  //       }
+  //     }))
+  //     ):[];    
+  // })
+  
+  const renderMessages = msgs =>{
     return msgs != undefined? (
       msgs.reverse().map((msg, index)=>({
         ...msg,
@@ -48,25 +62,8 @@ export default function Mensagens() {
           avatar:'',
         }
       }))
-      ):[];    
-  })
-  
-  // const renderMessages = (msgs, firstUser, secondUser) =>{
-  //   const anotherUser = firstUser != currentUser? firstUser:secondUser;
-  //   console.log('secondUSER:', secondUser);
-  //   console.log('anotherUSER:', anotherUser);
-  //   return msgs != undefined? (
-  //     msgs.reverse().map((msg, index)=>({
-  //       ...msg,
-  //       _id: index,
-  //       user: {
-  //         _id: msg.sender == currentUser? currentUser:anotherUser,
-  //         name: msg.sender == currentUser? currentUser:anotherUser,
-  //         avatar:'',
-  //       }
-  //     }))
-  //     ):[];
-  //   }
+      ):[];
+    }
     
     //ok
     const fetchMessages = useCallback(async(chatroomID)=>{
@@ -171,6 +168,8 @@ export default function Mensagens() {
 
   //ok
   const onSend = useCallback(async (messages = []) => {
+    console.log('currentCHAT:', currentChatID);
+    console.log('enviando!');
     const ref = database().ref(`chatrooms/${currentChatID}`);
     console.log('currentChatID:', currentChatID);
     const currentChatroom = await fetchMessages(currentChatID);
@@ -198,8 +197,9 @@ export default function Mensagens() {
     )
   }
 
-  const abrirConversa = (chatroomID)=>{
-    setCurrentChatID(chatroomID);
+  const abrirConversa = async(chatroomID)=>{
+    // setCurrentChatID(chatroomID);
+    setOcultarChat(!ocultarChat);
     loadData(chatroomID);
     listenerChatroom(chatroomID);
   }
@@ -210,6 +210,12 @@ export default function Mensagens() {
     setCurrentChatID(null);
     setSecondUser(null);
   }
+
+  useEffect(()=>{
+    if (currentChatID != null && ocultarChat){
+      abrirConversa(currentChatID);
+    }
+  }, [currentChatID])
 
   return (
     <>
@@ -245,9 +251,9 @@ export default function Mensagens() {
                 onPress={()=>{
                   let anotherUser = currentUser==id.firstUser?id.secondUser:id.firstUser;
                   setSecondUser(anotherUser);
-                  abrirConversa(id.idChat);
-                  setOcultarChat(!ocultarChat);
-                  // attSecondUser(anotherUser);
+                  setCurrentChatID(id.idChat);
+                  // abrirConversa(id.idChat, anotherUser);
+                  // setOcultarChat(!ocultarChat);
                 }}
               >
                 <Text style={{color: '#FF5F55', textAlign: 'center', fontSize: height*0.02, fontWeight: 'bold'}}>Abrir conversa</Text>
