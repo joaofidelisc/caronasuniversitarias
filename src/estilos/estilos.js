@@ -116,9 +116,10 @@ export default StyleSheet.create({
 
     },
     StarImgStyle:{
-      width:40,
-      height:40,
-      resizeMode:'cover'
+      width:height*0.06,
+      height:height*0.06,
+      resizeMode:'cover',
+      top:'50%'
     },
     styleOne:{
       flex: 1, justifyContent: 'center', alignItems: 'center'
