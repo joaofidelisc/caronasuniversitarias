@@ -229,10 +229,10 @@ export default function Buscar({navigation}) {
 
         <Image source={
           require('../../assets/images/buscar-carona.png')} 
-          style={{height:350, width: 350, position: 'absolute', top: 260, alignSelf: 'center'}}  
+          style={{height:'50%', width: '90%', position: 'absolute', top: '32%', alignSelf: 'center'}}  
         />
-        <Text style={{fontSize:20, color:'#2f4f4f', paddingHorizontal:70, fontWeight:'bold', position: 'absolute', top: 65}}>Para onde pretende ir?</Text>
-        <Text style={{fontSize:15, color:'#c0c0c0', paddingHorizontal:70, fontWeight:'normal', marginVertical:15, position: 'absolute', top: 170, fontWeight: '600'}}>Ex: Universidade federal de São Carlos</Text>
+        <Text style={{fontSize:height*0.025, color:'#2f4f4f', paddingHorizontal:70, fontWeight:'bold', position: 'absolute', top: '8%', textDecorationLine:'underline'}}>Para onde pretende ir?</Text>
+        <Text style={{fontSize:height*0.019, color:'#c0c0c0', paddingHorizontal:70, fontWeight:'normal', marginVertical:'2%', position: 'absolute', top: '23%', fontWeight: '600'}}>Ex: Universidade federal de São Carlos</Text>
         {
           localizacaoPassageiro &&
           <GooglePlacesAutocomplete
@@ -270,13 +270,13 @@ export default function Buscar({navigation}) {
               container: {
                 position:'absolute',
                 alignItems: 'center',
-                top: 120,                   
+                top: '16%',                   
                 width: width,
                 justifyContent: 'center',
               },
               textInputContainer: {
-                width: 312,
-                height: 50,
+                width: '75%',
+                height: '100%',
                 borderColor: 'rgba(83, 83, 83, 0.8)',
                 borderWidth:2,
                 borderRadius: 8,
@@ -299,12 +299,12 @@ export default function Buscar({navigation}) {
       
       <View style={{marginVertical:50}}>
       <TouchableOpacity
-        style={{position: 'absolute', backgroundColor: '#FF5F55', top: 260, width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}        
+        style={{position: 'absolute', backgroundColor: '#FF5F55', top: height*0.3, width: '70%', height: height*0.055, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}        
         onPress={getLocalPassageiro}
         // onPress={()=>{console.log('DATE:', Date.now())}}
         // onPress={insereBanco} //criei apenas para testar a tela Oferecer.js
       >
-        <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
+        <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.02, lineHeight: 24, textAlign: 'center'}}>
           Buscar Carona
         </Text>
       </TouchableOpacity>
@@ -315,12 +315,12 @@ export default function Buscar({navigation}) {
               visible={modalVisible}
               onRequestClose={() => {setModalVisible(!modalVisible);}}
             >
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 190, alignSelf: 'center'}}>
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: '50%', position: 'absolute', alignSelf: 'center'}}>
                 <View style={styles.modalView}>
-                    <Text style={{color: 'black', textAlign: 'center', marginBottom: 15, fontWeight:'600'}}>Informações incompletas</Text>
-                    <Text style={{color: 'black', textAlign: 'center', marginBottom: 15}}>Preencha o local de destino antes de prosseguir para a próxima etapa!</Text>
+                    <Text style={{color: 'black', textAlign: 'center', marginBottom: '5%', fontWeight:'600'}}>Informações incompletas</Text>
+                    <Text style={{color: 'black', textAlign: 'center', marginBottom: '5%'}}>Preencha o local de destino antes de prosseguir para a próxima etapa!</Text>
                     <TouchableOpacity
-                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
+                        style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.04, borderRadius: 15, justifyContent: 'center'}}
                         onPress={() => setModalVisible(!modalVisible)}
                         // onPress={buscarCarona}
                     >
@@ -353,6 +353,7 @@ const styles = StyleSheet.create({
   textStyle: {
     color: "white",
     fontWeight: "bold",
-    textAlign: "center"
+    textAlign: "center",
+    fontSize:height*0.015
   }
 });
