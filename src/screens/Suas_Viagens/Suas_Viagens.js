@@ -4,13 +4,14 @@ import {View, Text, SafeAreaView, StatusBar, Image, StyleSheet, Dimensions, Scro
 import firestore from '@react-native-firebase/firestore';
 import firebase from "@react-native-firebase/app";
 import auth from '@react-native-firebase/auth'
+import database from '@react-native-firebase/database';
 
 
 const {height, width} = Dimensions.get('screen')
 
 //O motorista tem um histórico de viagem diferente?
 
-function Suas_Viagens() {
+function Suas_Viagens({route, navigation}) {
     const [arrayHistoricoViagens, setArrayHistoricoViagens] = useState([]);
     const [existeViagem, setExisteViagem] = useState(false);
 
@@ -32,8 +33,50 @@ function Suas_Viagens() {
       }
     }
 
-    const entrarEmContato = async(uidMotorista)=>{
-      console.log('entrando em contato com motorista...');
+
+  const buscaChat = async(secondUser)=>{
+    let idChatKey = null;
+    try{
+      await database().ref().child('chatrooms/').once('value', snapshot=>{
+        if (snapshot.exists()){
+          snapshot.forEach(idChat=>{
+            if (idChat.val().firstUser == currentUser && idChat.val().secondUser == secondUser || idChat.val().firstUser == secondUser && idChat.val().secondUser == currentUser){
+              idChatKey = idChat.key;
+              return idChatKey;
+            }
+          })
+        }
+      })
+    }catch(error){
+      console.log('erro em buscaChat');
+    }
+    return idChatKey;
+  }
+  
+  //ref.push cria um chat com uma chave única
+  const newChatroom = (user2)=>{
+    const ref = database().ref(`chatrooms/`);
+    try{
+      ref.push({
+        firstUser: currentUser,
+        secondUser: user2,
+        messages: [],
+      })
+    }catch(error){
+      console.log('erro em newChatRoom');
+    }
+  }
+  
+  
+  const entrarEmContato = async(uidUserContato)=>{
+      let idChat = null;
+      idChat = await buscaChat(uidUserContato);
+      if (idChat == null){
+          newChatroom(uidUserContato);
+          navigation.navigate('Mensagens');
+        }else{
+          navigation.navigate('Mensagens', {ocultarChat: false, idChat: idChat});
+        }
     }
 
     useEffect(()=>{

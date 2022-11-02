@@ -116,8 +116,8 @@ function BuscandoCarona({navigation, route}) {
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
       <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
-        <Text style={{fontSize:height*0.025, color:'#2f4f4f', fontWeight:'bold', marginVertical:'1%', marginTop: height*0.03}}>
-          Buscando caronas para você. Isso pode levar alguns minutos...
+        <Text style={{fontSize:height*0.025, color:'#2f4f4f', fontWeight:'bold', marginVertical:'1%', marginTop: height*0.03, marginRight: height*0.01, marginLeft: height*0.01}}>
+          Buscando caronas para você!{'\n'}Isso pode levar alguns minutos...
         </Text>
         
         <Lottie 

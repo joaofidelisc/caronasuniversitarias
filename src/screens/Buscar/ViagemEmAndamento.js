@@ -20,6 +20,40 @@ function ViagemEmAndamento({navigation, route}) {
     const placaVeiculoMotorista = route.params?.placaVeiculoMotorista;
     const motoristaURL = route.params?.motoristaUrl;
     const nomeDestino = route.params?.nomeDestino;
+
+    
+    const buscaChat = async(secondUser)=>{
+      let idChatKey = null;
+      try{
+        await database().ref().child('chatrooms/').once('value', snapshot=>{
+          if (snapshot.exists()){
+            snapshot.forEach(idChat=>{
+              if (idChat.val().firstUser == currentUser && idChat.val().secondUser == secondUser || idChat.val().firstUser == secondUser && idChat.val().secondUser == currentUser){
+                idChatKey = idChat.key;
+                return idChatKey;
+              }
+            })
+          }
+        })
+      }catch(error){
+        console.log('erro em buscaChat');
+      }
+      return idChatKey;
+    }
+
+     //ref.push cria um chat com uma chave única
+    const newChatroom = (user2)=>{
+      const ref = database().ref(`chatrooms/`);
+      try{
+        ref.push({
+          firstUser: currentUser,
+          secondUser: user2,
+          messages: [],
+        })
+      }catch(error){
+        console.log('erro em newChatRoom');
+      }
+    }
     
     const viagemTerminou = async()=>{
       const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
@@ -117,7 +151,14 @@ function ViagemEmAndamento({navigation, route}) {
     }
 
     const entrarEmContatoMotorista = async()=>{
-      console.log('entrando em contato com o motorista...');
+      let idChat = null;
+      idChat = await buscaChat(uidMotorista);
+      if (idChat == null){
+          newChatroom(uidMotorista);
+          navigation.navigate('Mensagens');
+      }else{
+          navigation.navigate('Mensagens', {ocultarChat: false, idChat: idChat});
+      }
       setModalVisible(!modalVisible);
     }
 
@@ -147,6 +188,7 @@ function ViagemEmAndamento({navigation, route}) {
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {setModalVisible(!modalVisible);}}
+            
           >
             <View style={{justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 268, alignSelf: 'center'}}>
                 <View style={styles.modalView}>

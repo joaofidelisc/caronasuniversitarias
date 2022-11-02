@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { GiftedChat, InputToolbar } from 'react-native-gifted-chat'
-import { StyleSheet, Text, View, Dimensions, Image, StatusBar, TouchableOpacity, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, Dimensions, Image, StatusBar, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native'
 import storage from '@react-native-firebase/storage';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 const {height,width} = Dimensions.get('screen');
 
-export default function Mensagens() {
+export default function Mensagens({route, navigation}) {
   const [messages, setMessages] = useState([]);
   const [currentChatID, setCurrentChatID] = useState(null);
   const [imageUser, setImageUser] = useState('');
@@ -17,9 +17,22 @@ export default function Mensagens() {
   const [ocultarChat, setOcultarChat] = useState(true);
   const [listener, setListener] = useState(null);
   const [secondUser, setSecondUser] = useState(null);
-
+  const [reference, setReference] = useState(null);
+  
   const currentUser = auth().currentUser.uid;
-  const uidGuilherme = '24Yqq2s4auM58cVGSrLfre2fHqo2';
+  
+  useEffect(()=>{
+    const exibirChat = route.params?.ocultarChat;
+    const idChat = route.params?.idChat;
+    if (exibirChat != null && exibirChat != undefined && idChat != null && idChat != undefined){
+      setOcultarChat(exibirChat);
+      setCurrentChatID(idChat);
+    }  
+  }, [])
+  
+  useEffect(()=>{
+    buscaChat();
+  })
 
   const getFotoStorage = async(userUID)=>{
     var caminhoFirebase = userUID.concat('Perfil');    
@@ -52,6 +65,10 @@ export default function Mensagens() {
   // })
   
   const renderMessages = msgs =>{
+    // console.log('---------------------------------')
+    // console.log('dentro de renderMessages:');
+    // console.log('currentCHAT:', chatroomID);
+    // console.log('---------------------------------')
     return msgs != undefined? (
       msgs.reverse().map((msg, index)=>({
         ...msg,
@@ -67,15 +84,24 @@ export default function Mensagens() {
     
     //ok
     const fetchMessages = useCallback(async(chatroomID)=>{
-      const ref = database().ref(`chatrooms/${chatroomID}`);
-      const snapshot = await ref.once('value').then(snapshot=>{
+      // const ref = database().ref(`chatrooms/${chatroomID}`);
+      // const ref = database().ref(`chatrooms/${chatroomID}`);
+      const snapshot = await reference.once('value').then(snapshot=>{
         return snapshot.val();
       });
+      console.log('---------------------------------')
+      console.log('dentro de fetchMessages:');
+      console.log('currentCHAT:', chatroomID);
+      console.log('---------------------------------')
       return snapshot;
     });
 
     //ok
     const loadData = async(chatroomID)=>{
+      console.log('---------------------------------')
+      console.log('dentro de loadData:');
+      console.log('currentCHAT:', chatroomID);
+      console.log('---------------------------------')
       const myChatroom = await fetchMessages(chatroomID);
       setMessages(renderMessages(myChatroom.messages));
     }
@@ -104,19 +130,7 @@ export default function Mensagens() {
   }
   
 
-  //ref.push cria um chat com uma chave única
-  const newChatroom = (user2)=>{
-    const ref = database().ref(`chatrooms/`);
-    try{
-      const newChatroomRef = ref.push({
-        firstUser: currentUser,
-        secondUser: user2,
-        messages: [],
-      })
-    }catch(error){
-      console.log('erro em newChatRoom');
-    }
-  }
+
 
   //ok
   const buscaChat = ()=>{
@@ -154,10 +168,6 @@ export default function Mensagens() {
   }
 
 
-  useEffect(()=>{
-    buscaChat();
-    console.log('ids chats:', infoChatrooms);
-  })
 
   // const attSecondUser = (user)=>{
   //   if (secondUser == null && !ocultarChat){
@@ -168,14 +178,14 @@ export default function Mensagens() {
 
   //ok
   const onSend = useCallback(async (messages = []) => {
-    console.log('currentCHAT:', currentChatID);
-    console.log('enviando!');
-    const ref = database().ref(`chatrooms/${currentChatID}`);
-    console.log('currentChatID:', currentChatID);
+    // const ref = database().ref(`chatrooms/${currentChatID}`);
+    console.log('onSend:--------------------------');
+    console.log('currentCHATID:', currentChatID);
+    // const lastMessages = currentChatroom.messages || [];
     const currentChatroom = await fetchMessages(currentChatID);
-    const lastMessages = currentChatroom.messages || [];
+    console.log('onSend:--------------------------');
     try{
-      ref.update({
+      reference.update({
         messages: [
           ...lastMessages, {
             text: messages[0].text,
@@ -198,6 +208,10 @@ export default function Mensagens() {
   }
 
   const abrirConversa = async(chatroomID)=>{
+    console.log('---------------------------------')
+    console.log('dentro de abrir conversa:');
+    console.log('currentCHAT:', chatroomID);
+    console.log('---------------------------------')
     // setCurrentChatID(chatroomID);
     setOcultarChat(!ocultarChat);
     loadData(chatroomID);
@@ -212,14 +226,18 @@ export default function Mensagens() {
   }
 
   useEffect(()=>{
+    console.log('--------------------------------------------------')
+    console.log('currentChatID:', currentChatID);
     if (currentChatID != null && ocultarChat){
+      console.log('entrou na conversa!!!');
       abrirConversa(currentChatID);
     }
+    console.log('--------------------------------------------------')
   }, [currentChatID])
 
   return (
     <>
-        <StatusBar barStyle={'light-content'} />
+      <StatusBar barStyle={'light-content'} />
         {
           !existeChat &&
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
@@ -228,47 +246,52 @@ export default function Mensagens() {
             require('../../assets/images/message.png')} 
             style={{height:350, width: 350, position: 'absolute', top: 220, alignSelf: 'center'}}  
             />
-      </View>
+        </View>
       }
       {
         existeChat && ocultarChat &&
-        <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
-        <Text style={{color:'#06444C', position: 'absolute', top:100, left: 24, fontWeight:'600', fontSize: 18, lineHeight:24, textAlign:'left'}}>Aqui estão suas conversas recentes</Text>
-        <ScrollView style={styles.scrollView}>
-        {
-          infoChatrooms && infoChatrooms.map(id=>(
-            <View style={styles.viewMensagens}
-              key={id.idChat}
-            >
-              <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>ID CHAT:</Text>
-              <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>{id.idChat}:</Text>
-              <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>First User:</Text>
-              <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>{id.firstUser}</Text>
-              <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>secondUser:</Text>
-              <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>{id.secondUser}</Text>
-              <TouchableOpacity 
-                style={{width: '90%', justifyContent: 'center', alignSelf:'center'}}
-                onPress={()=>{
-                  let anotherUser = currentUser==id.firstUser?id.secondUser:id.firstUser;
-                  setSecondUser(anotherUser);
-                  setCurrentChatID(id.idChat);
-                  // abrirConversa(id.idChat, anotherUser);
-                  // setOcultarChat(!ocultarChat);
-                }}
-              >
-                <Text style={{color: '#FF5F55', textAlign: 'center', fontSize: height*0.02, fontWeight: 'bold'}}>Abrir conversa</Text>
-              </TouchableOpacity>
-            </View>
+        <SafeAreaView>
 
-          ))
-        }
+        <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
+          <Text style={{color:'#06444C', position: 'absolute', top:100, left: 24, fontWeight:'600', fontSize: 18, lineHeight:24, textAlign:'left'}}>Aqui estão suas conversas recentes</Text>
+          <ScrollView style={styles.scrollView}>
+          {
+            infoChatrooms && infoChatrooms.map(id=>(
+              <View style={styles.viewMensagens}
+              key={id.idChat}
+              >
+                <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>ID CHAT:</Text>
+                <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>{id.idChat}:</Text>
+                <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>First User:</Text>
+                <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>{id.firstUser}</Text>
+                <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>secondUser:</Text>
+                <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>{id.secondUser}</Text>
+                <TouchableOpacity 
+                  style={{width: '90%', justifyContent: 'center', alignSelf:'center'}}
+                  onPress={()=>{
+                    let anotherUser = currentUser==id.firstUser?id.secondUser:id.firstUser;
+                    setSecondUser(anotherUser);
+                    if (currentChatID == null){
+                      setCurrentChatID(id.idChat);
+                      setReference(database().ref(`chatrooms/${id.idChat}`));
+                    }
+                    // abrirConversa(id.idChat, anotherUser);
+                    // setOcultarChat(!ocultarChat);
+                  }}
+                >
+                  <Text style={{color: '#FF5F55', textAlign: 'center', fontSize: height*0.02, fontWeight: 'bold'}}>Abrir conversa</Text>
+                </TouchableOpacity>
+              </View>
+            ))
+          }
         </ScrollView>
-      
         </View>
+        </SafeAreaView>
+
       
       }
       {
-        existeChat && !ocultarChat &&
+        existeChat && !ocultarChat && currentChatID &&
         <>
         <GiftedChat
         renderInputToolbar={renderInputToolbar}
@@ -315,6 +338,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white', 
     borderRadius: 10, 
     alignSelf:'center', 
-    marginTop: '1%'
+    marginTop: '1%',
+    borderBottomWidth: 1,
+    borderBottomColor: '#FF5F55'
   }
 })

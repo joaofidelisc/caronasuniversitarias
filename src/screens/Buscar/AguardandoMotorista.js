@@ -63,6 +63,7 @@ function AguardandoMotorista({navigation, route}){
         reference_motorista.off('value');
         // await AsyncStorage.removeItem('AguardandoMotorista');
         // await AsyncStorage.setItem('ViagemEmAndamento', true);
+        console.log('uidMOTORISTA::::', uidMotorista);
         navigation.navigate('ViagemEmAndamento', {uidMotorista: uidMotorista, currentUser: currentUser, cidade: cidade, estado: estado, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, motoristaUrl: motoristaUrl, nomeDestino: nomeDestino});
       }
     }
