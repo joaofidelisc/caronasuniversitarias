@@ -116,8 +116,10 @@ export default StyleSheet.create({
 
     },
     StarImgStyle:{
-      width:height*0.06,
-      height:height*0.06,
+      // width:height*0.06,
+      // height:height*0.06,
+      width:40,
+      height:40,
       resizeMode:'cover',
       top:'50%'
     },

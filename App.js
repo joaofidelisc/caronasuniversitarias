@@ -8,9 +8,9 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import Perfil_Conta from './src/screens/Perfil/Perfil_Conta';
 import Perfil_Detalhes from './src/screens/Perfil/Perfil_Detalhes';
 
-import Menu from './src/routes/app.private.routes';
+// import Menu from './src/routes/app.private.routes';
 import RotaEntrada from './src/routes/app.public.routes';
-import RotaBuscandoCarona from './src/routes/app.private.routes';
+// import RotaBuscandoCarona from './src/routes/app.private.routes';
 import Classificacao from './src/screens/Buscar/Classificacao';
 import Como_Comecar from './src/screens/Cadastro/Como_Comecar';
 import Forms_Passageiro from './src/screens/Passageiro/Forms_Passageiro';

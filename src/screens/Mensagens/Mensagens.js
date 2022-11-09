@@ -1,74 +1,62 @@
-import React, { useState, useCallback, useEffect } from 'react'
-import { GiftedChat, InputToolbar } from 'react-native-gifted-chat'
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react'
+import { DATE_FORMAT, GiftedChat, InputToolbar } from 'react-native-gifted-chat'
 import { StyleSheet, Text, View, Dimensions, Image, StatusBar, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native'
 import storage from '@react-native-firebase/storage';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import firestore from '@react-native-firebase/firestore';
+import { ReactNativeFirebase } from '@react-native-firebase/app';
+
 
 const {height,width} = Dimensions.get('screen');
 
 export default function Mensagens({route, navigation}) {
   const [messages, setMessages] = useState([]);
   const [currentChatID, setCurrentChatID] = useState(null);
-  const [imageUser, setImageUser] = useState('');
   const [existeChat, setExisteChat] = useState(false);
   const [infoChatrooms, setinfoChatrooms] = useState([]);
   const [ocultarChat, setOcultarChat] = useState(true);
-  const [listener, setListener] = useState(null);
   const [secondUser, setSecondUser] = useState(null);
-  const [reference, setReference] = useState(null);
-  
-  const currentUser = auth().currentUser.uid;
-  
-  useEffect(()=>{
-    const exibirChat = route.params?.ocultarChat;
-    const idChat = route.params?.idChat;
-    if (exibirChat != null && exibirChat != undefined && idChat != null && idChat != undefined){
-      setOcultarChat(exibirChat);
-      setCurrentChatID(idChat);
-    }  
-  }, [])
-  
-  useEffect(()=>{
-    buscaChat();
-  })
+  const [avatarAnotherUser, setAvatarAnotherUser] = useState(null);
 
-  const getFotoStorage = async(userUID)=>{
+  const currentUser = auth().currentUser.uid;
+  const chatIDRef = useRef(null);
+  
+
+  const getFotoStorage = async(userUID1, userUID2)=>{
+    const userUID = userUID1==currentUser?userUID2:userUID1;
     var caminhoFirebase = userUID.concat('Perfil');    
     var url = '';
     try{
       url = await storage().ref(caminhoFirebase).getDownloadURL();
-      setImageUser(url); 
+      // setImageUser(url); 
     } catch (error){
       if (error.code == 'storage/object-not-found'){
         url = await storage().ref('user_undefined.png').getDownloadURL(); 
-        setImageUser(url); 
+        // setImageUser(url); 
       }
     }
     return url;
   }
-
-  // const renderMessages = useCallback((msgs)=>{
-  //   console.log('secondUser:', secondUser);
-  //   return msgs != undefined? (
-  //     msgs.reverse().map((msg, index)=>({
-  //       ...msg,
-  //       _id: index,
-  //       user: {
-  //         _id: msg.sender == currentUser? currentUser:secondUser,
-  //         name: msg.sender == currentUser? currentUser:secondUser,
-  //         avatar:'',
-  //       }
-  //     }))
-  //     ):[];    
-  // })
   
-  const renderMessages = msgs =>{
-    // console.log('---------------------------------')
-    // console.log('dentro de renderMessages:');
-    // console.log('currentCHAT:', chatroomID);
-    // console.log('---------------------------------')
+  //Função responsável por get o nome do motorista e atualizar no vetor;
+  async function getNomeStorage(userUID1, userUID2){
+      const userUID = userUID1==currentUser?userUID2:userUID1;
+      let nomeUsuario = '';
+      let docRef = firestore().collection('Users').doc(userUID);
+      return docRef.get().then((doc)=>{
+        if (doc.exists){
+          nomeUsuario = doc.data().nome;
+          return nomeUsuario;
+        }else{
+          return '';
+        }
+      })
+    }
+  
+
+  const renderMessages = useCallback((msgs)=>{
     return msgs != undefined? (
       msgs.reverse().map((msg, index)=>({
         ...msg,
@@ -76,35 +64,28 @@ export default function Mensagens({route, navigation}) {
         user: {
           _id: msg.sender == currentUser? currentUser:secondUser,
           name: msg.sender == currentUser? currentUser:secondUser,
-          avatar:'',
+          avatar: avatarAnotherUser,
         }
       }))
-      ):[];
-    }
+      ):[];    
+  })
+  
     
-    //ok
-    const fetchMessages = useCallback(async(chatroomID)=>{
-      // const ref = database().ref(`chatrooms/${chatroomID}`);
-      // const ref = database().ref(`chatrooms/${chatroomID}`);
-      const snapshot = await reference.once('value').then(snapshot=>{
-        return snapshot.val();
-      });
-      console.log('---------------------------------')
-      console.log('dentro de fetchMessages:');
-      console.log('currentCHAT:', chatroomID);
-      console.log('---------------------------------')
-      return snapshot;
+  //ok
+  const fetchMessages = useCallback(async(chatroomID)=>{
+    const ref = database().ref(`chatrooms/${chatroomID}`);
+    const snapshot = await ref.once('value').then(snapshot=>{
+      return snapshot.val();
     });
+    return snapshot;
+  });
 
-    //ok
-    const loadData = async(chatroomID)=>{
-      console.log('---------------------------------')
-      console.log('dentro de loadData:');
-      console.log('currentCHAT:', chatroomID);
-      console.log('---------------------------------')
-      const myChatroom = await fetchMessages(chatroomID);
-      setMessages(renderMessages(myChatroom.messages));
-    }
+  
+  //ok
+  const loadData = async(chatroomID)=>{
+    const myChatroom = await fetchMessages(chatroomID);
+    setMessages(renderMessages(myChatroom.messages));
+  }
 
 
   //ok
@@ -121,19 +102,16 @@ export default function Mensagens({route, navigation}) {
   }
   
   //ok
-  const removeListener = (ref)=>{
+  const removeListener = ()=>{
     try{
-      database().ref(`chatrooms/${currentChatID}`).off('value');
+      database().ref(`chatrooms/${chatIDRef.current}`).off('value');
     }catch(error){
       console.log('erro em removeListener')
     }
   }
   
-
-
-
   //ok
-  const buscaChat = ()=>{
+  const buscaChat = useCallback(async()=>{
     let jaExiste = false;
     if (jaExiste == true){
       jaExiste = false;
@@ -141,7 +119,7 @@ export default function Mensagens({route, navigation}) {
     try{
       database().ref().child('chatrooms/').on('value', snapshot=>{
         if (snapshot.exists()){
-          snapshot.forEach(idChat=>{
+          snapshot.forEach(async idChat=>{
             if (idChat.val().firstUser == currentUser || idChat.val().secondUser == currentUser){
               if (!existeChat){
                 setExisteChat(true);
@@ -156,6 +134,8 @@ export default function Mensagens({route, navigation}) {
                   idChat:idChat.key,
                   firstUser:idChat.val().firstUser,
                   secondUser:idChat.val().secondUser,
+                  urlIMG: await getFotoStorage(idChat.val().firstUser, idChat.val().secondUser),
+                  name: await getNomeStorage(idChat.val().firstUser, idChat.val().secondUser),
                 }])
               }
             }
@@ -165,32 +145,22 @@ export default function Mensagens({route, navigation}) {
     }catch(error){
       console.log('erro em buscaChat');
     }
-  }
-
-
-
-  // const attSecondUser = (user)=>{
-  //   if (secondUser == null && !ocultarChat){
-  //     setSecondUser(user);
-  //   }
-  // }
+  });
 
 
   //ok
   const onSend = useCallback(async (messages = []) => {
-    // const ref = database().ref(`chatrooms/${currentChatID}`);
-    console.log('onSend:--------------------------');
-    console.log('currentCHATID:', currentChatID);
-    // const lastMessages = currentChatroom.messages || [];
-    const currentChatroom = await fetchMessages(currentChatID);
-    console.log('onSend:--------------------------');
+    const data = new Date().toString();
+    const ref = database().ref(`chatrooms/${chatIDRef.current}`);
+    const currentChatroom = await fetchMessages(chatIDRef.current);
+    const lastMessages = currentChatroom.messages || [];
     try{
-      reference.update({
+      ref.update({
         messages: [
           ...lastMessages, {
             text: messages[0].text,
             sender: currentUser,
-            createdAt: new Date(),
+            createdAt: data,
           }
         ]
       })
@@ -208,11 +178,7 @@ export default function Mensagens({route, navigation}) {
   }
 
   const abrirConversa = async(chatroomID)=>{
-    console.log('---------------------------------')
-    console.log('dentro de abrir conversa:');
-    console.log('currentCHAT:', chatroomID);
-    console.log('---------------------------------')
-    // setCurrentChatID(chatroomID);
+    database().ref().child('chatrooms/').off('value');
     setOcultarChat(!ocultarChat);
     loadData(chatroomID);
     listenerChatroom(chatroomID);
@@ -222,19 +188,35 @@ export default function Mensagens({route, navigation}) {
     removeListener();
     setOcultarChat(true);
     setCurrentChatID(null);
+    chatIDRef.current = null;
     setSecondUser(null);
+    setAvatarAnotherUser(null);
   }
 
   useEffect(()=>{
-    console.log('--------------------------------------------------')
-    console.log('currentChatID:', currentChatID);
+    buscaChat();
+  })
+
+
+  useEffect(()=>{
     if (currentChatID != null && ocultarChat){
-      console.log('entrou na conversa!!!');
       abrirConversa(currentChatID);
     }
-    console.log('--------------------------------------------------')
   }, [currentChatID])
 
+
+  //Vem da tela de Suas Viagens
+  useEffect(()=>{
+    const exibirChat = route.params?.ocultarChat;
+    const idChat = route.params?.idChat;
+    if (exibirChat != null && exibirChat != undefined && idChat != null && idChat != undefined){
+      setCurrentChatID(idChat);
+      chatIDRef.current = idChat;
+      setOcultarChat(exibirChat);
+    }  
+  }, [])
+    
+  
   return (
     <>
       <StatusBar barStyle={'light-content'} />
@@ -260,23 +242,21 @@ export default function Mensagens({route, navigation}) {
               <View style={styles.viewMensagens}
               key={id.idChat}
               >
-                <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>ID CHAT:</Text>
-                <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>{id.idChat}:</Text>
-                <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>First User:</Text>
-                <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>{id.firstUser}</Text>
-                <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>secondUser:</Text>
-                <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>{id.secondUser}</Text>
+                 <Image 
+                    source={id.urlIMG!=''?{uri:id.urlIMG}:null}
+                    style={{height:70, width: 70, borderRadius: 100, backgroundColor:'gray', alignSelf:'center', marginBottom:'4%', marginTop:'4%'}}  
+                  />
+                <Text style={{color:'#06444C', fontWeight:'600', fontSize: height*0.02, textAlign:'center', marginBottom:'4%'}}>{id.name}</Text>
                 <TouchableOpacity 
                   style={{width: '90%', justifyContent: 'center', alignSelf:'center'}}
                   onPress={()=>{
                     let anotherUser = currentUser==id.firstUser?id.secondUser:id.firstUser;
                     setSecondUser(anotherUser);
+                    setAvatarAnotherUser(id.urlIMG);
                     if (currentChatID == null){
                       setCurrentChatID(id.idChat);
-                      setReference(database().ref(`chatrooms/${id.idChat}`));
+                      chatIDRef.current = id.idChat;
                     }
-                    // abrirConversa(id.idChat, anotherUser);
-                    // setOcultarChat(!ocultarChat);
                   }}
                 >
                   <Text style={{color: '#FF5F55', textAlign: 'center', fontSize: height*0.02, fontWeight: 'bold'}}>Abrir conversa</Text>

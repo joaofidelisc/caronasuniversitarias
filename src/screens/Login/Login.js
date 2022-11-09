@@ -52,6 +52,13 @@ function Login({navigation}) {
           navigation.navigate("Como_Comecar", {email: emailGoogle});
         }
         else{
+          try{
+            //recuperar aqui!!
+
+          }catch(error){
+            console.log('erro aqui!');
+          }
+          //aqui tem que ter outra verificação se ele é motorista ou passageiro
           navigation.navigate("MenuPrincipal");
         }
       })
@@ -64,6 +71,12 @@ function Login({navigation}) {
           navigation.navigate("Como_Comecar", {email: email});
         }
         else{
+          try{
+            //recuperar aqui!!
+          }catch(error){
+            console.log('erro aqui!');
+          }
+          //aqui tem que ter outra verificação se ele é motorista ou passageiro
           navigation.navigate("MenuPrincipal");
         }
       })

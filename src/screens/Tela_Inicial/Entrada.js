@@ -36,6 +36,7 @@ function Entrada({navigation}){
           //   navigation.navigate("Classificacao");
           // }else{
           // }
+          //tratar aqui se ele é motorista ou passageiro!!;
           navigation.navigate("MenuPrincipal");
         }
       })

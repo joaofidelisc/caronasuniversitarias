@@ -287,7 +287,7 @@ function Options({navigation, route}) {
                   <Text style={{color:'#06444C', left: '10%', fontWeight:'600', fontSize: height*0.02, textAlign:'left'}}>Placa: {motorista.placa}</Text>
                   <View style={{flexDirection:'row'}}>
                     <Text style={{color:'#06444C', left:'100%' , fontWeight:'600', fontSize: 18, textAlign:'left', top:'3%'}}>Classificação: {motorista.classificacao}</Text>
-                    <Icon name="star" size={18} color="#06444C" style={{alignSelf:'center', left:'150%', top:'3%'}}/>
+                    <Icon name="star" size={18} color="#06444C" style={{alignSelf:'center', left:'101%', top:'3%'}}/>
                   </View>
                   <View style={{flexDirection:'row', alignSelf:'center'}}>
                   <TouchableOpacity

@@ -96,6 +96,8 @@ function Classificacao({navigation, route}){
     }
 
     useEffect(()=>{
+      console.log('largura:', width);
+      console.log('altura:', height);
       excluiBancoPassageiro();
     })
 

@@ -7,7 +7,7 @@ import auth from '@react-native-firebase/auth';
 
 const {height,width} = Dimensions.get('screen')
 
-function ModoAplicativo(){
+function ModoAplicativo({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState('');
   const [modoApp, setModoApp] = useState('');
@@ -38,7 +38,10 @@ function ModoAplicativo(){
     <SafeAreaView>
       <TouchableOpacity 
         style={{position: 'absolute', top:height*0.17, backgroundColor: '#FF5F55', width: width*0.5, height: height*0.05, borderWidth: 1, borderColor: 'white', borderRadius: 10, justifyContent: 'center', alignItems:'center', alignSelf: 'center'}}
-        onPress={()=>{setModalVisible(!modalVisible)}}  
+        onPress={()=>{
+          setModalVisible(!modalVisible)
+          console.log('modoApp:', modoApp);
+        }}  
       >
         <Text style={{color: 'white', fontWeight: 'bold', fontSize: width*0.04}}>Modo {modoApp}</Text>
       </TouchableOpacity>
@@ -50,13 +53,23 @@ function ModoAplicativo(){
         >
           <TouchableOpacity 
             style={{position: 'absolute', top:height*0.223, backgroundColor: '#FF5F55', width: width*0.5, height: height*0.05, borderWidth: 1, borderColor: 'white', borderRadius: 10, justifyContent: 'center', alignItems:'center', alignSelf: 'center'}}
-            // onPress={()=>{setModalVisible(!modalVisible)}}  
+            onPress={()=>{
+              console.log('modo app!', message);
+              if (message == 'passageiro'){
+                // console.log('AAAAA');
+                console.log('navegar para passageiro!');
+                // navigation.navigate("MenuPassageiro");
+              }else{
+                console.log('navegar para motorista!');
+              }
+            }}  
           >
             <Text style={{color: 'white', fontWeight: 'bold', fontSize: width*0.04}}>Modo {message}</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={{position: 'absolute', top:height*0.273, backgroundColor: '#FF5F55', width: width*0.5, height: height*0.05, borderWidth: 1, borderColor: 'white', borderRadius: 10, justifyContent: 'center', alignItems:'center', alignSelf: 'center'}}
-            onPress={()=>{setModalVisible(!modalVisible)}}  
+            onPress={()=>{
+              setModalVisible(!modalVisible)}}  
           >
             <Text style={{color: 'white', fontWeight: 'bold', fontSize: width*0.04}}>Fechar</Text>
           </TouchableOpacity>
