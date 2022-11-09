@@ -3,7 +3,7 @@ import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, ScrollView
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 import database from '@react-native-firebase/database';
-
+import Lottie from 'lottie-react-native';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -103,10 +103,18 @@ function ClassificarPassageiro({route, navigation}) {
     })
 
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{marginHorizontal:'2%'}}>
         <StatusBar barStyle={'light-content'} />
         
-        <Text style={{color:'#06444C', fontWeight:'700', fontSize: 20, lineHeight:24, marginTop: 20, marginBottom: 20, alignSelf:'center'}}>Você viajou com o(s) passageiro(s) abaixo.</Text>
+        <Text style={{color:'#06444C', fontWeight:'700',textAlign:'center', fontSize: height*0.025, lineHeight:24, top:'2.5%', alignSelf:'center',textDecorationLine:'underline'}}>Você viajou com o(s) passageiro(s) abaixo. Classifique-os!</Text>
+        <Lottie 
+                    style={{height:height*0.5, width:width, top:'-9%', alignSelf:'center', position:'relative', }}
+                    source={require('../../assets/JSON/star.json')} 
+                    autoPlay 
+                    autoSize={false}
+                    loop = {true}
+                    speed = {1}
+                />
           <ScrollView style={styles.scrollView}>
           {
               passageiros.map(passageiro=>(
@@ -118,10 +126,10 @@ function ClassificarPassageiro({route, navigation}) {
                       source={{
                         uri: passageiro.url
                       }}
-                      style={{height:70, width: 70, borderRadius: 100, marginBottom:5, alignSelf:'center', marginTop: 8}}  
+                      style={{height:'30%', width: '30%', borderRadius: 100, alignSelf:'center', marginTop: '5%'}}  
                       />
-                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, textAlign:'center'}}>Nome: {passageiro.nome}</Text>
-                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, textAlign:'center', marginTop: 10}}>Classificação</Text>
+                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: height*0.02, textAlign:'center'}}>Nome: {passageiro.nome}</Text>
+                    <Text style={{color:'#06444C', fontWeight:'600', fontSize: height*0.02, textAlign:'center', marginTop: 10}}>Classificação</Text>
                        {
                           maxRating.map((item, key) => {
                             <TouchableOpacity
@@ -146,7 +154,7 @@ function ClassificarPassageiro({route, navigation}) {
                       style={{backgroundColor: '#FF5F55', width: '65%', height: '40%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop:'2%'}}
                       onPress={()=>{classificarPassageiro(passageiro.uid)}}
                       >
-                      <Text style={{color: 'white', fontWeight: '600', fontSize: 16, lineHeight: 24, textAlign: 'center'}}>
+                      <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.019, lineHeight: 24, textAlign: 'center'}}>
                         Avaliar
                       </Text>
                     </TouchableOpacity>
@@ -155,12 +163,12 @@ function ClassificarPassageiro({route, navigation}) {
               ))
             }
             </ScrollView>
-            <Text style={{color:'#06444C', fontWeight:'700', fontSize: 20, lineHeight:24, alignSelf:'center', marginBottom: 20, marginTop: 180}}>Caso não queira classificar o(s) passageiro(s), finalize a viagem pressionando no botão abaixo.</Text>
+            <Text style={{color:'#06444C', fontWeight:'700', fontSize: height*0.02, lineHeight:24, alignSelf:'center', top:'-29%', }}>Caso não queira classificar o(s) passageiro(s), finalize a viagem pressionando no botão abaixo.</Text>
             <TouchableOpacity
-              style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: 50}}
+              style={{backgroundColor: '#FF5F55', width: '50%', height: '5%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center',top:'-26%'}}
               onPress={finalizarViagem}
               >
-            <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
+            <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.02, lineHeight: 24, textAlign: 'center'}}>
               Finalizar
             </Text>
           </TouchableOpacity>
@@ -172,25 +180,27 @@ function ClassificarPassageiro({route, navigation}) {
 const styles = StyleSheet.create({
   scrollView: {
     width: '100%',
-    height: 300,
+    height: '50%',
+    top:'-28%'
   },
   viewPassageiros:{
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
+      
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: 320, 
-    height: 230, 
+    width: '75%', 
+    height: height*0.35, 
     backgroundColor: 'white', 
     borderRadius: 10, 
     alignSelf:'center', 
-    marginTop: 10,
     borderBottomWidth: 1, 
-    borderBottomColor: '#FF5F55'
+    borderBottomColor: '#FF5F55',
+    marginTop:'0%',
   },
   CustomRatingBarStyle:{
     justifyContent:'center',

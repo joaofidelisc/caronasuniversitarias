@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, SafeAreaView, StatusBar, Image, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, Image, TextInput, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
 import firebase from "@react-native-firebase/app";
 import estilos from '../../estilos/estilos';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import database from '@react-native-firebase/database';
+import Lottie from 'lottie-react-native';
 
+const {height,width} = Dimensions.get('screen')
 
 function Classificacao({navigation, route}){
     const [descricaoViagem, setDescricaoViagem] = useState('');
@@ -110,16 +112,24 @@ function Classificacao({navigation, route}){
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
         <View style={{alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
-          <Text style={{color:'#06444C', fontWeight:'700', fontSize: 24, lineHeight:29, top: 52}}>Como foi sua viagem?</Text>
-          <Text style={{color:'#C4C4C4', fontWeight:'600', fontSize: 16, lineHeight:20, marginTop: 64, width: 292, textAlign: 'center'}}>Feedback sobre como foi sua experiência durante a viagem.</Text>
+          <Text style={{color:'#06444C', fontWeight:'700', fontSize: height*0.03, lineHeight:29, top: '5%',textDecorationLine:'underline'}}>Como foi sua viagem?</Text>
+          <Text style={{color:'#C4C4C4', fontWeight:'600', fontSize: height*0.018, lineHeight:20, marginTop: '15%', width:'75%', textAlign: 'center', top:'0%'}}>Feedback sobre como foi sua experiência durante a viagem.</Text>
           <TextInput
-              style={{width: 315, height: 80, borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: 16, borderWidth: 1, color:'black', marginTop: 15}}
+              style={{width: '75%', height: '10%', borderRadius: 12, textAlign: 'center', fontWeight: '400', fontSize: height*0.018, borderWidth: 2, color:'black',marginTop:'5%'}}
               placeholderTextColor='gray'
               placeholder='Digite aqui sua avaliação...'
               keyboardType='default'
               onChangeText={(descricaoViagem)=>setDescricaoViagem(descricaoViagem)}
           />
-          <Text style={{color:'#06444C', fontWeight:'700', fontSize: 24, lineHeight:29, marginTop: 52}}>Classifique o(a) motorista</Text>
+          <Lottie 
+                    style={{height:height*0.5, width:width, top:'7%', alignSelf:'center', position:'absolute', }}
+                    source={require('../../assets/JSON/star.json')} 
+                    autoPlay 
+                    autoSize={false}
+                    loop = {true}
+                    speed = {1}
+                />
+          <Text style={{color:'#06444C', fontWeight:'700', fontSize: height*0.028, lineHeight:29, marginTop: '35%'}}>Classifique o(a) motorista</Text>
           {
             maxRating.map((item, key) => {
               <TouchableOpacity
@@ -140,10 +150,10 @@ function Classificacao({navigation, route}){
           }
           <CustomRatingBar/>
           <TouchableOpacity
-            style={{backgroundColor: '#FF5F55', width: 240, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: 100}}
+            style={{backgroundColor: '#FF5F55', width: '70%', height: '6%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', top:'15%'}}
             onPress={classificarMotorista}
           >
-            <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
+            <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.02, lineHeight: 24, textAlign: 'center'}}>
               Finalizar
             </Text>
           </TouchableOpacity>
