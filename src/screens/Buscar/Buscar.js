@@ -276,7 +276,7 @@ export default function Buscar({navigation}) {
               },
               textInputContainer: {
                 width: '75%',
-                height: '100%',
+                height: 50,
                 borderColor: 'rgba(83, 83, 83, 0.8)',
                 borderWidth:2,
                 borderRadius: 8,

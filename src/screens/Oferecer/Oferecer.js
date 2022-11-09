@@ -875,7 +875,10 @@ function Oferecer({route, navigation}) {
                       />
                       <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{nomeCaronista}</Text>
                       <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{classificacaoCaronista}</Text>
+                      <View style={{flexDirection:'row', justifyContent:'center'}}>
+                        <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{classificacaoCaronista}</Text>
+                        <Icon name="star" size={18} color="#06444C" style={{marginLeft:'1%'}}/>
+                      </View>
                       <TouchableOpacity
                           style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
                           onPress={()=>{oferecerCarona()}}
