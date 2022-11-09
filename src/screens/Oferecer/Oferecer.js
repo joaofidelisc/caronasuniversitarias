@@ -967,7 +967,10 @@ function Oferecer({route, navigation}) {
                       <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
                       <TouchableOpacity
                           style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
-                          onPress={()=>{rotaPassageiro(latitudePassageiro, longitudePassageiro, nomeCaronista, uidPassageiro)}}
+                          onPress={()=>{
+                            rotaPassageiro(latitudePassageiro, longitudePassageiro, nomeCaronista, uidPassageiro)
+                            setModalBuscarPassageiro(false)
+                          }}
                       >
                           <Text style={styles.textStyle}>Buscar passageiro(a)</Text>
                       </TouchableOpacity>
