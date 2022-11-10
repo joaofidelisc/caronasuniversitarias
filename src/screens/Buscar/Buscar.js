@@ -1,6 +1,8 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {View, Text, SafeAreaView, StatusBar, Button, Image, Dimensions, TextInput, TouchableOpacity, Platform, Modal, StyleSheet} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, Button, Image, Dimensions, TextInput, TouchableOpacity, Platform, Modal, StyleSheet, Alert} from 'react-native';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
+import { useNetInfo } from '@react-native-community/netinfo';
+
 
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
@@ -26,7 +28,9 @@ export default function Buscar({navigation}) {
   const [localizacaoPassageiro, setlocalizacaoPassageiro] = useState(null);
   const [localizacaoAtiva, setLocalizacaoAtiva] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [usuarioConectado, setUsuarioConectado] = useState(false);
   // const [aplicativoEstavaAtivo, setAplicativoEstavaAtivo] = useState(true);
+  const netInfo = useNetInfo();
 
   async function enviarLocalizacaoPassageiro(latitude, longitude){
     // await AsyncStorage.setItem('buscandoCarona', 'true');
@@ -215,12 +219,28 @@ export default function Buscar({navigation}) {
   // }, [])
 
   useEffect(()=>{
+    // const netInfo = useNetInfo();
+    if (netInfo.isConnected == false){
+      Alert.alert(
+        "Sem conexão",
+        "Para continuar a utilizar o aplicativo, conecte-se à internet!",
+        [
+          // { text: "OKs", onPress: () => verificarConexao()}
+        ]
+      );
+    }
+    console.log('netInfo:', netInfo);
+    console.log('conectado:', netInfo.isConnected);
+  })
+
+  useEffect(()=>{
+    // if (netInfo.isConnected == true){
     console.log('TELA: Buscar');
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
     ligarLocalizacao();    
     // excluiBancoPassageiroMotorista();
+    // }
   }, [])
-  
   
   return (
     <SafeAreaView>

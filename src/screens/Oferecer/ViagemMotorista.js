@@ -196,6 +196,7 @@ function ViagemMotorista({route, navigation}){
     }
 
     function removeListeners(){
+      database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`).onDisconnect().cancel();
       database().ref().child(`${estado}/${cidade}/Passageiros`).off('child_removed');
       database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`).off('value');
       database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`).off('child_added');

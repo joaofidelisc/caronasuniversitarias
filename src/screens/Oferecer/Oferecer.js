@@ -744,6 +744,15 @@ function Oferecer({route, navigation}) {
   }, [token]);
 
 
+  useEffect(()=>{
+    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+    if (numPassageirosABordo == 0){
+      reference.onDisconnect().remove();
+    }else{
+      reference.onDisconnect().cancel();
+    }
+  })
+
   return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -781,12 +790,19 @@ function Oferecer({route, navigation}) {
                   tappable={caronista.caronasAceitas.includes(currentUser)?true:false}
                   onPress={()=>{
                     getDadosUsuario(caronista.uid, caronista.caronasAceitas, caronista.latitude, caronista.longitude);
-                  }}
-                  
-                  icon={
-                    caronista.caronasAceitas==''?require('../../assets/icons/caronista.png'):caronista.caronasAceitas.includes(currentUser)?require('../../assets/icons/carona_aceita.png'):require('../../assets/icons/caronista-nao-clicavel.png')
-                  }
-                />:null
+                  }}  
+                  // icon={
+                  //   caronista.caronasAceitas==''?require('../../assets/icons/caronista.png'):caronista.caronasAceitas.includes(currentUser)?require('../../assets/icons/carona_aceita.png'):require('../../assets/icons/caronista-nao-clicavel.png')
+                  // }
+                >
+                  <Image
+                    source={
+                      caronista.caronasAceitas==''?require('../../assets/icons/caronista.png'):caronista.caronasAceitas.includes(currentUser)?require('../../assets/icons/carona_aceita.png'):require('../../assets/icons/caronista-nao-clicavel.png')
+                    }
+                    style={{width: width*0.07, height: width*0.07}}
+                    resizeMode="contain"
+                  />
+                </Marker>:null
               ))
             }
             {
@@ -799,9 +815,16 @@ function Oferecer({route, navigation}) {
                   onPress={()=>{
                     getDadosUsuario(caronista.uid, caronista.caronasAceitas, caronista.latitude, caronista.longitude);
                   }}
-                  
-                  icon={require('../../assets/icons/carona_aceita.png')}
-                />:null
+                  // icon={require('../../assets/icons/carona_aceita.png')}
+                >
+                  <Image
+                    source={
+                      require('../../assets/icons/carona_aceita.png')
+                    }
+                    style={{width: width*0.07, height: width*0.07}}
+                    resizeMode="contain"
+                  />
+                </Marker>:null
               ))
             }
             {/* {

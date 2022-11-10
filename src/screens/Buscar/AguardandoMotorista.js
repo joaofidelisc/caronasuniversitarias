@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, SafeAreaView, StatusBar, PermissionsAndroid, Dimensions, Modal} from 'react-native';
+import {View, Image, SafeAreaView, StatusBar, PermissionsAndroid, Dimensions, Modal} from 'react-native';
 import database from '@react-native-firebase/database';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -188,21 +188,18 @@ function AguardandoMotorista({navigation, route}){
                     key={uidMotorista}
                     coordinate={{ latitude : posicaoMotorista.latitude , longitude : posicaoMotorista.longitude}}
                     tappable={false}
-                    icon={
-                        require('../../assets/icons/motorista.png')
+                    // icon={
+                    //     require('../../assets/icons/motorista.png')
+                    //   }
+                >
+                  <Image
+                    source={
+                      require('../../assets/icons/motorista.png')
                     }
-                />
-                {/* {
-                //utilizado para traçar a rota
-                destination &&
-                <MapViewDirections
-                    origin={region}
-                    destination={destination}
-                    apikey={config.googleAPI}
-                    strokeWidth={3}
-                    strokeColor='#FF5F55'
-                    />
-                } */}
+                    style={{width: width*0.065, height: width*0.065}}
+                    resizeMode="contain"
+                  />
+                </Marker>
             </MapView>
           }
         </View>
