@@ -47,6 +47,7 @@ function Oferecer({route, navigation}) {
     const [ofertasAceitas, setOfertasAceitas] = useState([]); ////Vetor com todos os uids dos passageiros que aceitaram a carona do motorista corrente (motorista atual);
     const [arrayOfertasAceitas, setArrayOfertasAceitas] = useState([]);
     const [modalBuscarPassageiro, setModalBuscarPassageiro] = useState(false);
+    const [cancelarOferta, setCancelarOferta] = useState(true);
     const [passageiros, setPassageiros] = useState([]);
     const [faltaPassageiros, setFaltaPassageiros] = useState(false);
     const [token, setToken] = useState(""); //Armazena o token atual obtido do dispositivo do usuário.
@@ -96,6 +97,9 @@ function Oferecer({route, navigation}) {
       filhoRemovido = '';
     }
     try{
+      database().ref().child(`${estado}/${cidade}/Passageiros`).on('child_removed', function(snapshot){
+        setCaronistas(vetorCaronistas.filter((uid)=>(uid.uid != snapshot.key)));
+      })
       database().ref().child(`${estado}/${cidade}/Passageiros`).on('value', function(snapshot){
         if (snapshot.exists()){
           snapshot.forEach(function(userSnapshot){       
@@ -422,6 +426,9 @@ function Oferecer({route, navigation}) {
                 setArrayOfertasAceitas(arrayUIDs);
                 setOfertasAceitas(snapshot.val());
                 setNumCaronasAceitas(arrayUIDs.length);
+                if (cancelarOferta){
+                  setCancelarOferta(false);
+                }
               }else if (vagasDisponiveis == numCaronasAceitas){
                 console.log('vagas esgotadas!');
               }
@@ -602,6 +609,7 @@ function Oferecer({route, navigation}) {
           navigation.navigate('ConfigurarCarona'); //só consigo navegar para a tela inicial se o número de caronas aceitas é vazio;
         }else{
           //como tratar o cancelamento de carona?
+          //motorista só pode cancelar a oferta se não tiver nenhuma carona aceita!
         }
       })
     }catch(error){
@@ -1010,12 +1018,15 @@ function Oferecer({route, navigation}) {
               </View>
             </View>
           </Modal>
-          <TouchableOpacity
-              style={{backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, justifyContent: 'center', position: 'absolute', top: 10, left: 10, borderWidth: 1, borderColor: '#FF5F55'}}
-              onPress={desistirDaOferta}
-          >
-             <Icon name="arrow-left" size={30} color="#FF5F55" style={{alignSelf:'center'}}/>
-          </TouchableOpacity>
+          {
+            cancelarOferta &&
+            <TouchableOpacity
+                style={{backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, justifyContent: 'center', position: 'absolute', top: 10, left: 10, borderWidth: 1, borderColor: '#FF5F55'}}
+                onPress={desistirDaOferta}
+            >
+              <Icon name="arrow-left" size={30} color="#FF5F55" style={{alignSelf:'center'}}/>
+            </TouchableOpacity>
+          }
         </View>
       </SafeAreaView>
     );

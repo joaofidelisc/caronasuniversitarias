@@ -22,6 +22,8 @@ import ConfigurarCarona from '../screens/Oferecer/ConfigurarCarona';
 import ViagemEmAndamento from '../screens/Buscar/ViagemEmAndamento';
 import ClassificarPassageiro from '../screens/Oferecer/ClassificarPassageiro';
 import ViagemMotorista from '../screens/Oferecer/ViagemMotorista';
+import RotaPassageiro from '../routes/app.passageiro.routes';
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -62,6 +64,21 @@ function RotaOferecerCarona(){
   );
 }
 
+function RotaTrocaDeModo(){
+  return (
+    <NavigationContainer
+      independent={true}
+    >
+      <Stack.Navigator initialRouteName="Perfil_Conta" options={{headerShown:false}}>
+        <Stack.Screen name="Perfil_Conta" component={Perfil_Conta} options={{headerShown:false}}/>
+        <Stack.Screen name="RotaPassageiro" component={RotaPassageiro} options={{headerShown:false}}/>
+      </Stack.Navigator>
+   </NavigationContainer>
+  );
+}
+
+
+
 
 function RotaPerfil(){
   return(
@@ -74,7 +91,7 @@ function RotaPerfil(){
       tabBarStyle: {position:'absolute', top: '28%'}
     }}  
     >
-      <Tab.Screen name="Conta" component={Perfil_Conta} 
+      <Tab.Screen name="Conta" component={RotaTrocaDeModo} 
         options={{
           tabBarIcon:(({color})=>
           <Image source={

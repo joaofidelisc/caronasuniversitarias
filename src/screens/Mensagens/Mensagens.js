@@ -19,6 +19,7 @@ export default function Mensagens({route, navigation}) {
   const [ocultarChat, setOcultarChat] = useState(true);
   const [secondUser, setSecondUser] = useState(null);
   const [avatarAnotherUser, setAvatarAnotherUser] = useState(null);
+  const [carregarTela, setCarregarTela] = useState(null);
 
   const currentUser = auth().currentUser.uid;
   const chatIDRef = useRef(null);
@@ -123,6 +124,7 @@ export default function Mensagens({route, navigation}) {
             if (idChat.val().firstUser == currentUser || idChat.val().secondUser == currentUser){
               if (!existeChat){
                 setExisteChat(true);
+                setCarregarTela(true);
               }
               infoChatrooms.some(infoChat =>{
                 if (infoChat.idChat == idChat.key){
@@ -140,6 +142,8 @@ export default function Mensagens({route, navigation}) {
               }
             }
           })
+        }else{
+          carregarTela(false);
         }
       })      
     }catch(error){
@@ -221,7 +225,7 @@ export default function Mensagens({route, navigation}) {
     <>
       <StatusBar barStyle={'light-content'} />
         {
-          !existeChat &&
+          !existeChat && carregarTela &&
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
           <Text style={{color:'#06444C', position: 'absolute', top:100, left: 24, fontWeight:'600', fontSize: 18, lineHeight:24, textAlign:'left'}}>Você conseguirá enviar mensagens para{'\n'} passageiros ou motoristas, assim que{'\n'} fizer sua primeira viagem.</Text>
           <Image source={

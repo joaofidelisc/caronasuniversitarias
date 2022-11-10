@@ -196,6 +196,7 @@ function ViagemMotorista({route, navigation}){
     }
 
     function removeListeners(){
+      database().ref().child(`${estado}/${cidade}/Passageiros`).off('child_removed');
       database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`).off('value');
       database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`).off('child_added');
       database().ref().child(`${estado}/${cidade}/Passageiros`).off('value');
@@ -225,8 +226,6 @@ function ViagemMotorista({route, navigation}){
             autoSize={false}
             loop = {true}
             speed = {1.1}
-
-            
         />
           <Text style={{fontSize:height*0.025, color:'#2f4f4f', fontWeight:'bold', marginTop: '5%', marginBottom: 30}}>Passageiros(as) a bordo...</Text>
           {/* <Text style={{fontSize:20, color:'#2f4f4f', paddingHorizontal:70, fontWeight:'600', marginTop: 30, marginBottom: 30}}>Ao finalizar a viagem de todos os passageiros(as), você será redirecionado(a) para a tela de classificação</Text> */}
