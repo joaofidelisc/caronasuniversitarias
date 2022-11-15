@@ -1,11 +1,11 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect, Component } from 'react';
 import {View, Text, SafeAreaView, StatusBar, Image, StyleSheet, Dimensions, ScrollView, TouchableOpacity} from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
 import firebase from "@react-native-firebase/app";
 import auth from '@react-native-firebase/auth'
 import database from '@react-native-firebase/database';
-
+import Lottie from 'lottie-react-native';
 
 const {height, width} = Dimensions.get('screen')
 
@@ -14,7 +14,7 @@ const {height, width} = Dimensions.get('screen')
 function Suas_Viagens({route, navigation}) {
     const [arrayHistoricoViagens, setArrayHistoricoViagens] = useState([]);
     const [existeViagem, setExisteViagem] = useState(false);
-
+    const [loading, setLoading] = useState(true);
     const currentUser = auth().currentUser.uid;
 
     const defineArrayHistoricoViagens = async()=>{
@@ -79,9 +79,28 @@ function Suas_Viagens({route, navigation}) {
         }
     }
 
+
+    useEffect(()=>{
+      setTimeout(()=> setLoading(false), 4000);
+      console.log('carregou!');
+    },[]);
+
     useEffect(()=>{
       defineArrayHistoricoViagens();
     }, [])
+
+
+    
+
+    // useEffect(()=>{
+    //   console.log('rodando useEffect do DOM...');
+    //   document.addEventListener('DOMContentLoaded', function(event){
+    //     console.log('carregou!!!');
+    //   })
+    // })
+    
+    
+
 
 
     return (
@@ -89,7 +108,20 @@ function Suas_Viagens({route, navigation}) {
         <StatusBar barStyle={'light-content'} />
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
           {
-            !existeViagem &&
+          loading &&
+          <View style={{alignSelf:'center', marginTop: '60%'}}>
+            <Text style={{color:'#06444C', fontWeight:'600', fontSize: 20, lineHeight:24}}>Verificando se existem viagens...</Text>
+            <Lottie 
+              style={{height:height*0.3, width:height*0.3, alignSelf:'center'}}
+              source={require('../../assets/JSON/loading.json')} 
+              autoPlay 
+              loop
+              speed={0.6} 
+            />
+          </View>
+          }
+          {
+            !existeViagem && !loading &&
             <>
             <Image source={
               require('../../assets/images/viagens-futuras.png')} 
@@ -110,10 +142,13 @@ function Suas_Viagens({route, navigation}) {
             </View>
             </>
           }
-          <Text style={{color:'#06444C', fontWeight:'700', fontSize: height*0.0225, lineHeight:24, textAlign: 'center', marginTop: '10%',}}>Seu histórico de viagens</Text>
           <ScrollView style={[styles.scrollView]}>
           {
-            existeViagem &&
+            existeViagem && !loading &&
+            <Text style={{color:'#06444C', fontWeight:'700', fontSize: height*0.0225, lineHeight:24, textAlign: 'center', marginTop: '10%',}}>Seu histórico de viagens</Text>
+          }
+          {
+            existeViagem && !loading &&
             arrayHistoricoViagens.map(viagem=>(
               <View style={styles.viewViagens}
               key={viagem.refViagem}

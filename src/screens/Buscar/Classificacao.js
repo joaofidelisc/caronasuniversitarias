@@ -130,7 +130,7 @@ function Classificacao({navigation, route}){
                     autoSize={false}
                     loop = {true}
                     speed = {1}
-                />
+          />
           <Text style={{color:'#06444C', fontWeight:'700', fontSize: height*0.028, lineHeight:29, marginTop: '35%'}}>Classifique o(a) motorista</Text>
           {
             maxRating.map((item, key) => {

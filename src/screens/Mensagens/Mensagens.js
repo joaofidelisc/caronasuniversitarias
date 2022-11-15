@@ -6,6 +6,8 @@ import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import firestore from '@react-native-firebase/firestore';
+import Lottie from 'lottie-react-native';
+
 import { ReactNativeFirebase } from '@react-native-firebase/app';
 
 
@@ -20,6 +22,7 @@ export default function Mensagens({route, navigation}) {
   const [secondUser, setSecondUser] = useState(null);
   const [avatarAnotherUser, setAvatarAnotherUser] = useState(null);
   const [carregarTela, setCarregarTela] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const currentUser = auth().currentUser.uid;
   const chatIDRef = useRef(null);
@@ -143,7 +146,7 @@ export default function Mensagens({route, navigation}) {
             }
           })
         }else{
-          carregarTela(false);
+          setCarregarTela(false);
         }
       })      
     }catch(error){
@@ -198,6 +201,11 @@ export default function Mensagens({route, navigation}) {
   }
 
   useEffect(()=>{
+    setTimeout(()=> setLoading(false), 8000);
+    console.log('carregou!');
+  },[]);
+
+  useEffect(()=>{
     buscaChat();
   })
 
@@ -225,7 +233,20 @@ export default function Mensagens({route, navigation}) {
     <>
       <StatusBar barStyle={'light-content'} />
         {
-          !existeChat && carregarTela &&
+        loading &&
+        <View style={{alignSelf:'center', marginTop: '60%'}}>
+          <Text style={{color:'#06444C', fontWeight:'600', fontSize: 20, lineHeight:24}}>Verificando se existem conversas...</Text>
+          <Lottie 
+            style={{height:height*0.3, width:height*0.3, alignSelf:'center'}}
+            source={require('../../assets/JSON/loading.json')} 
+            autoPlay 
+            loop
+            speed={0.6} 
+          />
+        </View>
+        }
+        {
+          !existeChat && !carregarTela && !loading &&
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
           <Text style={{color:'#06444C', position: 'absolute', top:100, left: 24, fontWeight:'600', fontSize: 18, lineHeight:24, textAlign:'left'}}>Você conseguirá enviar mensagens para{'\n'} passageiros ou motoristas, assim que{'\n'} fizer sua primeira viagem.</Text>
           <Image source={
@@ -235,7 +256,7 @@ export default function Mensagens({route, navigation}) {
         </View>
       }
       {
-        existeChat && ocultarChat &&
+        existeChat && ocultarChat && !loading &&
         <SafeAreaView>
 
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
