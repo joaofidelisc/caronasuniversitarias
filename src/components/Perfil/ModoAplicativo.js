@@ -30,8 +30,8 @@ function ModoAplicativo({navigation}){
   }
   
   const navegarParaPassageiro = async()=>{
-    await AsyncStorage.removeItem('modoApp');
-    await AsyncStorage.setItem('modoApp', 'passageiro');
+    // await AsyncStorage.removeItem('modoApp');
+    // await AsyncStorage.setItem('modoApp', 'passageiro');
     const userID = auth().currentUser.uid;
     try{
       await firestore().collection('Users').doc(userID).update({
@@ -43,8 +43,8 @@ function ModoAplicativo({navigation}){
   }
   
   const navegarParaMotorista = async()=>{
-    await AsyncStorage.removeItem('modoApp');
-    await AsyncStorage.setItem('modoApp', 'motorista');
+    // await AsyncStorage.removeItem('modoApp');
+    // await AsyncStorage.setItem('modoApp', 'motorista');
     const userID = auth().currentUser.uid;
     try{
       await firestore().collection('Users').doc(userID).update({
@@ -59,17 +59,17 @@ function ModoAplicativo({navigation}){
     modoAtuacao();
   });
 
-  useEffect(()=>{
-      const getModoApp = async()=>{
-        let modoAppStorage = await AsyncStorage.getItem("modoApp");
-        if (modoAppStorage == null && modoApp != ''){
-          await AsyncStorage.setItem('modoApp', modoApp);  
-        }
-        console.log('modoAppStorage', modoAppStorage);
-        console.log('modoApp', modoApp);
-      }
-      getModoApp();
-  },[modoApp]);
+  // useEffect(()=>{
+  //     const getModoApp = async()=>{
+  //       let modoAppStorage = await AsyncStorage.getItem("modoApp");
+  //       if (modoAppStorage == null && modoApp != ''){
+  //         await AsyncStorage.setItem('modoApp', modoApp);  
+  //       }
+  //       console.log('modoAppStorage', modoAppStorage);
+  //       console.log('modoApp', modoApp);
+  //     }
+  //     getModoApp();
+  // },[modoApp]);
   
   return (
     <SafeAreaView>

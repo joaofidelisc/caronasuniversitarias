@@ -30,7 +30,7 @@ function Forms_Motorista_Veiculo({navigation, route}) {
     const email = route.params?.email;
 
     const insertDataNewUser = async() => {
-        await AsyncStorage.setItem('modoApp', 'motorista');
+        // await AsyncStorage.setItem('modoApp', 'motorista');
         if (placa_veiculo == '' || ano_veiculo == '' || cor_veiculo == '' || nome_veiculo == ''){
             setWarning('Preencha todos os campos!');
             setModalVisible(true);

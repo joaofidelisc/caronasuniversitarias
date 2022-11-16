@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Image, SafeAreaView, StatusBar, Dimensions, BackHandler } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Image, SafeAreaView, StatusBar, Dimensions, BackHandler, Alert } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
@@ -11,44 +11,30 @@ function Entrada({navigation}){
   const [falhaLogin, setFalhaLogin] = useState(false);
 
   const redirecionamentoLogin = async(email)=>{  
-    let modoApp = await AsyncStorage.getItem("modoApp");
-    // let buscandoCarona = await AsyncStorage.getItem("buscandoCarona");
-    // let CaronaEncontrada = await AsyncStorage.getItem("CaronaEncontrada");
-    // let AguardandoMotorista = await AsyncStorage.getItem("AguardandoMotorista");
-    // let ViagemEmAndamento = await AsyncStorage.getItem("ViagemEmAndamento");
-    // let Classificacao = await AsyncStorage.getItem("Classificacao");
-
     try{
       firestore().collection('Users').where('email', '==', email).get().then(querySnapshot=>{
         const valor = querySnapshot.docs;
+        const motorista = valor[0].data().motorista;
         if (valor == ""){
           navigation.navigate("Como_Comecar", {email: email});
         }
         else{
-          // if (buscandoCarona != null){
-          //   navigation.navigate("Buscando_Carona");
-          // }else if (CaronaEncontrada != null){
-          //   navigation.navigate("CaronaEncontrada");
-          // }else if (AguardandoMotorista != null){
-          //   navigation.navigate("AguardandoMotorista");
-          // }else if (ViagemEmAndamento != null){
-          //   navigation.navigate("ViagemEmAndamento");
-          // }else if (Classificacao != null){
-          //   navigation.navigate("Classificacao");
-          // }else{
-          // }
-          //tratar aqui se ele é motorista ou passageiro!!;
-          if (modoApp != undefined && modoApp != null && modoApp != ''){
-            if (modoApp == 'passageiro'){
-              navigation.navigate("ModoPassageiro");
-            }else{
-              navigation.navigate("ModoMotorista");
-            }
+          if (motorista == true){
+            navigation.navigate("ModoMotorista");
+          }else{
+            navigation.navigate("ModoPassageiro");
           }
         }
       })
     }catch(error){
       setFalhaLogin(true);
+      Alert.alert(
+        "Algum erro ocorreu",
+        "Tente entrar novamente...",
+        [
+          // { text: "OKs", onPress: () => verificarConexao()}
+        ]
+      );
       console.log('erro no redirecionamento');
     }   
   }

@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, Dimensions, Modal, StyleSheet} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, Dimensions, Modal, StyleSheet, Alert} from 'react-native';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
 import Geocoder from 'react-native-geocoding';
 import config from '../../config';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -15,7 +16,9 @@ function ConfigurarCarona({navigation}) {
     const [localizacaoMotorista, setlocalizacaoMotorista] = useState(null);
     const [nomeDestino, setNomeDestino] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
-    
+    const netInfo = useNetInfo();
+
+
     const ligarLocalizacao = async()=>{
       LocationServicesDialogBox.checkLocationServicesIsEnabled({
         message: "<h2 style='color: #0af13e'>Usar localização</h2><br/>Deseja permitir que o aplicativo <b>Caronas Universitárias</b> acesse a sua localização?<br/><br/>",
@@ -76,6 +79,20 @@ function ConfigurarCarona({navigation}) {
 
     }
 
+    useEffect(()=>{
+      // const netInfo = useNetInfo();
+      if (netInfo.isConnected == false){
+        Alert.alert(
+          "Sem conexão",
+          "Para continuar a utilizar o aplicativo, conecte-se à internet!",
+          [
+            // { text: "OKs", onPress: () => verificarConexao()}
+          ]
+        );
+      }
+      console.log('netInfo:', netInfo);
+      console.log('conectado:', netInfo.isConnected);
+    })
 
     useEffect(()=>{
       Geocoder.init(config.googleAPI, {language:'pt-BR'});

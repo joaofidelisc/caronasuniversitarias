@@ -49,7 +49,7 @@ function Forms_Passageiro({route, navigation}) {
     
     
     const insertDataNewUser = async() => {
-        await AsyncStorage.setItem('modoApp', 'passageiro');
+        // await AsyncStorage.setItem('modoApp', 'passageiro');
         if (nome == '' || CPF == '' || data_nasc == '' || num_cel == '' || universidade == ''){
             setWarning('Preencha todos os campos!');
             setModalVisible(true);

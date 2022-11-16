@@ -6,7 +6,7 @@ import auth from '@react-native-firebase/auth'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 
-const dominios_permitidos = ["estudante.ufscar.br"];
+const dominios_permitidos = ["estudante.ufscar.br, ufscar.br"];
 const {height, width} = Dimensions.get('screen')
 
 GoogleSignin.configure({

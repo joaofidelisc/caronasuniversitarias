@@ -269,7 +269,7 @@ export default function Mensagens({route, navigation}) {
               >
                  <Image 
                     source={id.urlIMG!=''?{uri:id.urlIMG}:null}
-                    style={{height:70, width: 70, borderRadius: 100, backgroundColor:'gray', alignSelf:'center', marginBottom:'4%', marginTop:'4%'}}  
+                    style={{height:70, width: 70, borderRadius: 100, alignSelf:'center', marginBottom:'4%', marginTop:'4%'}}  
                   />
                 <Text style={{color:'#06444C', fontWeight:'600', fontSize: height*0.02, textAlign:'center', marginBottom:'4%'}}>{id.name}</Text>
                 <TouchableOpacity 
