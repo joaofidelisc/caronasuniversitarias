@@ -241,6 +241,7 @@ export default function Buscar({navigation}) {
     // excluiBancoPassageiroMotorista();
     // }
   }, [])
+
   
   return (
     <SafeAreaView>

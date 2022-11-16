@@ -118,14 +118,14 @@ function Cadastro_Email({navigation}) {
           </TouchableOpacity>
           <Text style={{color: '#06444C', position: 'absolute', top: '8%', fontWeight: '700', fontSize: height*0.025, lineHeight: height*0.03, alignSelf: 'center', textAlign: 'center'}}>Digite um e-mail institucional{'\n'}  e uma senha para se cadastrar</Text>
           <TextInput
-            style={{width: '75%', height: '6%', top: '22%', alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: height*0.02, lineHeight: 22, borderWidth:1, color:'black'}}
+            style={{width: '75%', height: height*0.05, top: '22%', alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: height*0.02, lineHeight: 22, borderWidth:1, color:'black'}}
             placeholderTextColor='black'
             placeholder='Digite aqui o e-mail'
             keyboardType='email-address'
             onChangeText={(email)=>setEmail(email)}
             />
           <TextInput
-            style={{width: '75%', height: '6%', top: '26%', alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: height*0.02, lineHeight: height*0.03, borderWidth:1, color:'black'}}
+            style={{width: '75%', height: height*0.05, top: '26%', alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: height*0.02, lineHeight: height*0.03, borderWidth:1, color:'black'}}
             placeholderTextColor='black'
             placeholder='Digite aqui a senha'
             secureTextEntry={senhaVisivel}
@@ -138,12 +138,12 @@ function Cadastro_Email({navigation}) {
             <Text style={{color: 'black'}}>Ver senha</Text>
           </TouchableOpacity>
           <TouchableOpacity 
-            style={{position: 'absolute', width: '75%', height: '6%', top: '45%', backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
+            style={{position: 'absolute', width: '75%', height: height*0.05, top: '45%', backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center', marginTop: height*0.04}}
             onPress={InsertUserWithEmail}
             >
             <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.02, lineHeight: height*0.03, textAlign: 'center'}}>Continuar</Text>
           </TouchableOpacity>
-          <Text style={{color:'#FF5F55', position: 'absolute', top: '57%', alignSelf:'center', fontWeight: '600', fontSize: height*0.017}}>Perdeu o código de autenticação?</Text>
+          <Text style={{color:'#FF5F55', position: 'absolute', top: '57%', alignSelf:'center', fontWeight: '600', fontSize: height*0.017, marginTop:height*0.04}}>Perdeu o código de autenticação?</Text>
           {/* <TouchableOpacity 
             style={{position: 'absolute', width: 210, height: 45, top: 500, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
             onPress={VerificationCode}
