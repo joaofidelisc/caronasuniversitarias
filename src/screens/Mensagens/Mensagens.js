@@ -235,10 +235,10 @@ export default function Mensagens({route, navigation}) {
         {
         loading &&
         <View style={{alignSelf:'center', marginTop: '60%'}}>
-          <Text style={{color:'#06444C', fontWeight:'600', fontSize: 20, lineHeight:24}}>Verificando se existem conversas...</Text>
+          {/* <Text style={{color:'#06444C', fontWeight:'600', fontSize: 20, lineHeight:24, textAlign:'center'}}>Verificando se existem conversas...</Text> */}
           <Lottie 
             style={{height:height*0.3, width:height*0.3, alignSelf:'center'}}
-            source={require('../../assets/JSON/loading.json')} 
+            source={require('../../assets/JSON/loading_1.json')} 
             autoPlay 
             loop
             speed={0.6} 
