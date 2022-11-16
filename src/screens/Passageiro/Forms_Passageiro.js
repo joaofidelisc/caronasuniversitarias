@@ -3,6 +3,7 @@ import {View, Text, SafeAreaView, StatusBar, TextInput, TouchableOpacity, Image,
 import firestore from '@react-native-firebase/firestore';
 import { TextInputMask } from 'react-native-masked-text'
 import { ScrollView } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {height,width} = Dimensions.get('screen')
 
@@ -48,6 +49,7 @@ function Forms_Passageiro({route, navigation}) {
     
     
     const insertDataNewUser = async() => {
+        await AsyncStorage.setItem('modoApp', 'passageiro');
         if (nome == '' || CPF == '' || data_nasc == '' || num_cel == '' || universidade == ''){
             setWarning('Preencha todos os campos!');
             setModalVisible(true);
@@ -78,7 +80,7 @@ function Forms_Passageiro({route, navigation}) {
                 nome_veiculo: "",
                 motorista: false,
             }).then(()=>{
-                navigation.navigate('MenuPrincipal', {userID: userID});
+                navigation.navigate('ModoPassageiro', {userID: userID});
             });
         }
     }

@@ -5,6 +5,7 @@ import storage from '@react-native-firebase/storage';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import auth from '@react-native-firebase/auth';
 import { ScrollView } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {height, width} = Dimensions.get('screen')
 
@@ -29,6 +30,7 @@ function Forms_Motorista_Veiculo({navigation, route}) {
     const email = route.params?.email;
 
     const insertDataNewUser = async() => {
+        await AsyncStorage.setItem('modoApp', 'motorista');
         if (placa_veiculo == '' || ano_veiculo == '' || cor_veiculo == '' || nome_veiculo == ''){
             setWarning('Preencha todos os campos!');
             setModalVisible(true);
@@ -57,7 +59,7 @@ function Forms_Motorista_Veiculo({navigation, route}) {
             }).then(()=>{
                 enviarFotoStorage(imagemPlaca);
             });
-            navigation.navigate('MenuPrincipal');
+            navigation.navigate('ModoMotorista');
         }
     }
 

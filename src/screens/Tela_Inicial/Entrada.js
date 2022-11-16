@@ -11,6 +11,7 @@ function Entrada({navigation}){
   const [falhaLogin, setFalhaLogin] = useState(false);
 
   const redirecionamentoLogin = async(email)=>{  
+    let modoApp = await AsyncStorage.getItem("modoApp");
     // let buscandoCarona = await AsyncStorage.getItem("buscandoCarona");
     // let CaronaEncontrada = await AsyncStorage.getItem("CaronaEncontrada");
     // let AguardandoMotorista = await AsyncStorage.getItem("AguardandoMotorista");
@@ -37,7 +38,13 @@ function Entrada({navigation}){
           // }else{
           // }
           //tratar aqui se ele é motorista ou passageiro!!;
-          navigation.navigate("MenuPrincipal");
+          if (modoApp != undefined && modoApp != null && modoApp != ''){
+            if (modoApp == 'passageiro'){
+              navigation.navigate("ModoPassageiro");
+            }else{
+              navigation.navigate("ModoMotorista");
+            }
+          }
         }
       })
     }catch(error){

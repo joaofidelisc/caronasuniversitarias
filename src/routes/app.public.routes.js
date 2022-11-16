@@ -5,7 +5,8 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import Entrada from '../screens/Tela_Inicial/Entrada';
 import Login from '../screens/Login/Login';
-import MenuPrincipal from '../routes/app.private.routes';
+import ModoMotorista from './app.motorista.routes';
+import ModoPassageiro from '../routes/app.passageiro.routes';
 import Cadastro_Celular from '../screens/Cadastro/Cadastro_Celular';
 import Cadastro_Email from '../screens/Cadastro/Cadastro_Email';
 import Cadastro_Inicio from '../screens/Cadastro/Cadastro_Inicio';
@@ -35,7 +36,8 @@ function RotaEntrada() {
           <Stack.Screen name="Forms_Passageiro" component={Forms_Passageiro} options={{headerShown:false}} />
           <Stack.Screen name="Forms_Motorista" component={Forms_Motorista} options={{headerShown:false}} />
           <Stack.Screen name="Forms_Motorista_Veiculo" component={Forms_Motorista_Veiculo} options={{headerShown:false}} />
-          <Stack.Screen name="MenuPrincipal" component={MenuPrincipal} options={{headerShown:false}}/>
+          <Stack.Screen name="ModoPassageiro" component={ModoPassageiro} options={{headerShown:false}}/>
+          <Stack.Screen name="ModoMotorista" component={ModoMotorista} options={{headerShown:false}}/>
         </Stack.Navigator>
       </NavigationContainer>
     );

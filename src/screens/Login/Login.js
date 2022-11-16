@@ -44,22 +44,21 @@ function Login({navigation}) {
   })
   
   const redirecionamentoLogin = async(emailGoogle)=>{  
+    console.log('entrando em redirecionamento login')
     if (email == ''){
       await AsyncStorage.setItem('email', emailGoogle);
       firestore().collection('Users').where('email', '==', emailGoogle).get().then(querySnapshot=>{
         const valor = querySnapshot.docs;
+        const motorista = valor[0].data().motorista;
         if (valor == ""){
           navigation.navigate("Como_Comecar", {email: emailGoogle});
         }
         else{
-          try{
-            //recuperar aqui!!
-
-          }catch(error){
-            console.log('erro aqui!');
+          if (motorista == true){
+            navigation.navigate("ModoMotorista");
+          }else{
+            navigation.navigate("ModoPassageiro");
           }
-          //aqui tem que ter outra verificação se ele é motorista ou passageiro
-          navigation.navigate("MenuPrincipal");
         }
       })
     }else{
@@ -67,17 +66,16 @@ function Login({navigation}) {
       await AsyncStorage.setItem('password', password);
       firestore().collection('Users').where('email', '==', email).get().then(querySnapshot=>{
         const valor = querySnapshot.docs;
+        const motorista = valor[0].data().motorista;
         if (valor == ""){
           navigation.navigate("Como_Comecar", {email: email});
         }
         else{
-          try{
-            //recuperar aqui!!
-          }catch(error){
-            console.log('erro aqui!');
+          if (motorista == true){
+            navigation.navigate("ModoMotorista");
+          }else{
+            navigation.navigate("ModoPassageiro");
           }
-          //aqui tem que ter outra verificação se ele é motorista ou passageiro
-          navigation.navigate("MenuPrincipal");
         }
       })
     }

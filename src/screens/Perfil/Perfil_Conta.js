@@ -26,18 +26,18 @@ function Perfil_Conta({navigation}){
   const [modoApp, setModoApp] = useState('');
   const [modalModo, setModalModo] = useState(false);
 
-  const modoAtuacao = async()=>{
-    const userID = auth().currentUser.uid;
-    firestore().collection('Users').doc(userID).get().then(doc=>{
-      if (doc && doc.exists){
-        if (doc.data().motorista == true){
-          setModoApp('motorista');
-        }else{
-          setModoApp('passageiro');
-        }
-      }
-    })
-  }
+  // const modoAtuacao = async()=>{
+  //   const userID = auth().currentUser.uid;
+  //   firestore().collection('Users').doc(userID).get().then(doc=>{
+  //     if (doc && doc.exists){
+  //       if (doc.data().motorista == true){
+  //         setModoApp('motorista');
+  //       }else{
+  //         setModoApp('passageiro');
+  //       }
+  //     }
+  //   })
+  // }
 
   const signOut = async()=>{
     const providerID = auth().currentUser?.providerData[0].providerId;
@@ -78,7 +78,7 @@ function Perfil_Conta({navigation}){
 
   useEffect(()=>{
     console.log('Perfil_Conta');
-    modoAtuacao();
+    // modoAtuacao();
   })
   
   return (

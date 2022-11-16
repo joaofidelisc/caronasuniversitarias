@@ -22,7 +22,7 @@ import ConfigurarCarona from '../screens/Oferecer/ConfigurarCarona';
 import ViagemEmAndamento from '../screens/Buscar/ViagemEmAndamento';
 import ClassificarPassageiro from '../screens/Oferecer/ClassificarPassageiro';
 import ViagemMotorista from '../screens/Oferecer/ViagemMotorista';
-import RotaPassageiro from '../routes/app.passageiro.routes';
+import RotaPassageiro from './app.passageiro.routes';
 
 
 const Tab = createBottomTabNavigator();
@@ -32,22 +32,22 @@ const Stack = createNativeStackNavigator();
 //nested navigation https://www.youtube.com/watch?v=SPzjttByz6E
 // const {height, width} = Dimensions.get('screen');
 
-function RotaBuscandoCarona(){
-  return (
-    <NavigationContainer
-      independent={true}
-    >
-      <Stack.Navigator initialRouteName="Buscar" options={{headerShown:false}}>
-        <Stack.Screen name="Buscar" component={Buscar} options={{headerShown:false}}/>
-        <Stack.Screen name="Buscando_Carona" component={BuscandoCarona} options={{headerShown:false}} />
-        <Stack.Screen name="CaronaEncontrada" component={CaronaEncontrada} options={{headerShown:false}}/>
-        <Stack.Screen name="AguardandoMotorista" component={AguardandoMotorista} options={{headerShown:false}}/>
-        <Stack.Screen name="ViagemEmAndamento" component={ViagemEmAndamento} options={{headerShown:false}}/>
-        <Stack.Screen name="Classificacao" component={Classificacao} options={{headerShown:false}}/>
-      </Stack.Navigator>
-   </NavigationContainer>
-  );
-}
+// function RotaBuscandoCarona(){
+//   return (
+//     <NavigationContainer
+//       independent={true}
+//     >
+//       <Stack.Navigator initialRouteName="Buscar" options={{headerShown:false}}>
+//         <Stack.Screen name="Buscar" component={Buscar} options={{headerShown:false}}/>
+//         <Stack.Screen name="Buscando_Carona" component={BuscandoCarona} options={{headerShown:false}} />
+//         <Stack.Screen name="CaronaEncontrada" component={CaronaEncontrada} options={{headerShown:false}}/>
+//         <Stack.Screen name="AguardandoMotorista" component={AguardandoMotorista} options={{headerShown:false}}/>
+//         <Stack.Screen name="ViagemEmAndamento" component={ViagemEmAndamento} options={{headerShown:false}}/>
+//         <Stack.Screen name="Classificacao" component={Classificacao} options={{headerShown:false}}/>
+//       </Stack.Navigator>
+//    </NavigationContainer>
+//   );
+// }
 
 function RotaOferecerCarona(){
   return (
@@ -64,18 +64,18 @@ function RotaOferecerCarona(){
   );
 }
 
-function RotaTrocaDeModo(){
-  return (
-    <NavigationContainer
-      independent={true}
-    >
-      <Stack.Navigator initialRouteName="Perfil_Conta" options={{headerShown:false}}>
-        <Stack.Screen name="Perfil_Conta" component={Perfil_Conta} options={{headerShown:false}}/>
-        <Stack.Screen name="RotaPassageiro" component={RotaPassageiro} options={{headerShown:false}}/>
-      </Stack.Navigator>
-   </NavigationContainer>
-  );
-}
+// function RotaTrocaDeModo(){
+//   return (
+//     <NavigationContainer
+//       independent={true}
+//     >
+//       <Stack.Navigator initialRouteName="Perfil_Conta" options={{headerShown:false}}>
+//         <Stack.Screen name="Perfil_Conta" component={Perfil_Conta} options={{headerShown:false}}/>
+//         <Stack.Screen name="RotaPassageiro" component={RotaPassageiro} options={{headerShown:false}}/>
+//       </Stack.Navigator>
+//    </NavigationContainer>
+//   );
+// }
 
 
 
@@ -91,7 +91,7 @@ function RotaPerfil(){
       tabBarStyle: {position:'absolute', top: '28%'}
     }}  
     >
-      <Tab.Screen name="Conta" component={RotaTrocaDeModo} 
+      <Tab.Screen name="Conta" component={Perfil_Conta} 
         options={{
           tabBarIcon:(({color})=>
           <Image source={
@@ -136,14 +136,14 @@ function AppRoutes({route, navigation}) {
       independent={true}
     >
       <Tab.Navigator 
-        initialRouteName='Buscar'
+        initialRouteName='Oferecer'
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: '#FF5F55',
           tabBarInactiveTintColor: 'gray'
         }}  
       >
-        <Tab.Screen name="Buscar" component={RotaBuscandoCarona} 
+        {/* <Tab.Screen name="Buscar" component={RotaBuscandoCarona} 
           options={{
             tabBarIcon:(({color})=>
             <Image source={
@@ -152,7 +152,7 @@ function AppRoutes({route, navigation}) {
             />
               )
           }}
-        />
+        /> */}
         <Tab.Screen name="Oferecer" component={RotaOferecerCarona} 
           options={{
             tabBarIcon:(({color})=>

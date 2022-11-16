@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, Modal, PermissionsAndroid, Dimensions} from 'react-native';
-
 import firestore from '@react-native-firebase/firestore';
-
 import auth from '@react-native-firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNRestart from 'react-native-restart';
 
 const {height,width} = Dimensions.get('screen')
 
@@ -11,6 +11,7 @@ function ModoAplicativo({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState('');
   const [modoApp, setModoApp] = useState('');
+
 
   const modoAtuacao = async()=>{
     const userID = auth().currentUser.uid;
@@ -27,12 +28,48 @@ function ModoAplicativo({navigation}){
       }
     })
   }
-
-
+  
+  const navegarParaPassageiro = async()=>{
+    await AsyncStorage.removeItem('modoApp');
+    await AsyncStorage.setItem('modoApp', 'passageiro');
+    const userID = auth().currentUser.uid;
+    try{
+      await firestore().collection('Users').doc(userID).update({
+        motorista: false
+      })
+    }catch(error){
+      console.log('erro em navegarParaPassageiro');
+    }
+  }
+  
+  const navegarParaMotorista = async()=>{
+    await AsyncStorage.removeItem('modoApp');
+    await AsyncStorage.setItem('modoApp', 'motorista');
+    const userID = auth().currentUser.uid;
+    try{
+      await firestore().collection('Users').doc(userID).update({
+        motorista: true
+      })
+    }catch(error){
+      console.log('erro em navegarParaMotorista');
+    }    
+  }
 
   useEffect(()=>{
     modoAtuacao();
   });
+
+  useEffect(()=>{
+      const getModoApp = async()=>{
+        let modoAppStorage = await AsyncStorage.getItem("modoApp");
+        if (modoAppStorage == null && modoApp != ''){
+          await AsyncStorage.setItem('modoApp', modoApp);  
+        }
+        console.log('modoAppStorage', modoAppStorage);
+        console.log('modoApp', modoApp);
+      }
+      getModoApp();
+  },[modoApp]);
   
   return (
     <SafeAreaView>
@@ -56,10 +93,13 @@ function ModoAplicativo({navigation}){
             onPress={()=>{
               console.log('modo app!', message);
               if (message == 'passageiro'){
-                // console.log('AAAAA');
+                navegarParaPassageiro();
+                RNRestart.Restart();
                 console.log('navegar para passageiro!');
                 // navigation.navigate("MenuPassageiro");
               }else{
+                navegarParaMotorista();
+                RNRestart.Restart();
                 console.log('navegar para motorista!');
               }
             }}  
