@@ -3,10 +3,10 @@ import {View, Text, StatusBar, StyleSheet, TouchableOpacity, SafeAreaView, Modal
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth'
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import dominios from '../../dominios/dominios.json';
 
-const dominios_permitidos = ["estudante.ufscar.br, ufscar.br"];
 const {height, width} = Dimensions.get('screen')
 
 GoogleSignin.configure({
@@ -24,50 +24,45 @@ function Cadastro_Inicio({navigation}) {
   })
   
   const redirecionamentoLogin = async(emailGoogle)=>{  
-    // console.log('email:', emailGoogle);
+    await AsyncStorage.setItem('email', emailGoogle);
     firestore().collection('Users').where('email', '==', emailGoogle).get().then(querySnapshot=>{
       const valor = querySnapshot.docs;
       console.log(valor);
       if (valor == ""){
-        // console.log("AAA");
         navigation.navigate("Como_Comecar", {email: emailGoogle});
       }
       else{
         setWarning('Email já cadastrado.\nFaça login para continuar.');
         setModalVisible(true);
         signOutGoogle();
-        // navigation.navigate("MenuPrincipal");
       }
     })
   }
 
   const signOutGoogle = async() =>{
     GoogleSignin.signOut().then(()=>{
-      // console.log('saiu');
     }).catch(error =>{
-      // console.log(error.code);
       setWarning('Algum erro ocorreu.');
       setModalVisible(true);
     })
   }
 
-  //impede o usuário de fazer login mas não o remove da base de dados;
   const SignInGoogle = async() =>{
     try{
       const { idToken } = await GoogleSignin.signIn();
+      await AsyncStorage.setItem('token', idToken);
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       const res = await auth().signInWithCredential(googleCredential);
       const dominio = res.user.email.split("@");
-      if (dominios_permitidos.includes(dominio[1]) == false){
+      if (dominios.dominios_permitidos.includes(dominio[1]) == false){
         setWarning('Você pode se cadastrar apenas\n com e-mails institucionais!');
         setModalVisible(true);
         if (auth().onAuthStateChanged()){
-          const bloquearAcesso = await auth().currentUser;
+          const bloquearAcesso = auth().currentUser;
           await bloquearAcesso.delete();
         }
         signOutGoogle();
       }else{
-        // await AsyncStorage.setItem("token", idToken);
         const emailGoogle = res.user.email.slice();
         redirecionamentoLogin(emailGoogle);
       }

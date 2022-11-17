@@ -1,13 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {View, Image, SafeAreaView, StatusBar, PermissionsAndroid, Dimensions, Modal} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Image, SafeAreaView, StatusBar, PermissionsAndroid, Dimensions } from 'react-native';
 import database from '@react-native-firebase/database';
 import MapView, { Marker, Callout } from 'react-native-maps';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import Geolocation from '@react-native-community/geolocation';
-import storage from '@react-native-firebase/storage';
+
 
 const {width, height} = Dimensions.get('screen');
 

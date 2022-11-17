@@ -17,9 +17,11 @@ import {
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import dominios from '../../dominios/dominios.json';
 
 // incluir aqui dominios permitidos (válido para email e autenticação com Google)
-const dominios_permitidos = ["estudante.ufscar.br"];
+// const dominios_permitidos = ["estudante.ufscar.br"];
+
 
 GoogleSignin.configure({
   webClientId: '97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com',
@@ -35,14 +37,13 @@ function Cadastro_Email({navigation}) {
   const [tokenEmailEnviado, setTokenEmailEnviado] = useState(false);
   const [senhaVisivel, setSenhaVisivel] = useState(true);
 
+  //Falta implementar o reenvio de código de verificação.
   const VerificationCode = async() =>{
     if (email == ''){
       setWarning('O campo e-mail \nnão pode estar vazio!');
       setModalVisible(true);
     }
     else{
-      console.log('current user:', email);
-      console.log(auth().currentUser);
       await auth().currentUser.sendEmailVerification().then(()=>{
         setWarning('Um novo código de verificação foi enviado para');
         setModalVisible(true);
@@ -50,8 +51,6 @@ function Cadastro_Email({navigation}) {
         console.log(error.code);
       })
     }
-    // else{
-    // }
   }
 
   
@@ -71,7 +70,7 @@ function Cadastro_Email({navigation}) {
     else{
       if (tokenEmailEnviado == false){
         const dominio = email.split("@")
-        if (dominios_permitidos.includes(dominio[1]) == false){
+        if (dominios.dominios_permitidos.includes(dominio[1]) == false){
           setWarning('Você pode se cadastrar\n apenas com e-mails institucionais!');
           setModalVisible(true);
         }
@@ -80,7 +79,7 @@ function Cadastro_Email({navigation}) {
             setEmailCadastro(email);
             result.user.sendEmailVerification();
             setTokenEmailEnviado(true);
-            setWarning('Verifique seu e-mail para prosseguir.\nApós confirmar, faça login para continuar.');
+            setWarning('Foi enviado um link de confirmação de cadastro para o seu e-mail.\n\nVerifique para prosseguir.');
             setModalVisible(true);
           }).catch(error => {
             if (error.code === 'auth/email-already-in-use') {
@@ -96,7 +95,7 @@ function Cadastro_Email({navigation}) {
       }
       else{
         if (auth().currentUser.emailVerified == false){
-          setWarning('Link de verificação enviado.\nVerifique e faça login para continuar.');
+          setWarning('Link de verificação enviado.\n\nVerifique e faça login para continuar.');
           setModalVisible(true);
         }
       }

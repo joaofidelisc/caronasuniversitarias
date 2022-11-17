@@ -18,8 +18,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import firestore from '@react-native-firebase/firestore';
 
+import dominios from '../../dominios/dominios.json';
+
+
 // incluir aqui dominios permitidos (válido para email e autenticação com Google)
-const dominios_permitidos = ["estudante.ufscar.br"];
+// const dominios_permitidos = ["estudante.ufscar.br"];
 
 GoogleSignin.configure({
   webClientId: '97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com',
@@ -97,7 +100,7 @@ function Login({navigation}) {
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       const res = await auth().signInWithCredential(googleCredential);
       const dominio = res.user.email.split("@");
-      if (dominios_permitidos.includes(dominio[1]) == false){
+      if (dominios.dominios_permitidos.includes(dominio[1]) == false){
         setWarning('Você pode entrar apenas\n com e-mails institucionais!');
         setModalVisible(true);
         if (auth().onAuthStateChanged()){
@@ -106,7 +109,6 @@ function Login({navigation}) {
         }
         signOutGoogle();
       }else{
-        // await AsyncStorage.setItem("token", idToken);
         const emailGoogle = res.user.email.slice();
         redirecionamentoLogin(emailGoogle);
       }
@@ -170,7 +172,6 @@ function Login({navigation}) {
           else{
             auth().currentUser.reload();
             auth().currentUser.getIdToken(true);
-            // console.log('GET TOKEN EMAIL', auth().currentUser.getIdTokenResult);
             setWarning('Verifique seu e-mail antes de prosseguir!');
             setModalVisible(true);
         }

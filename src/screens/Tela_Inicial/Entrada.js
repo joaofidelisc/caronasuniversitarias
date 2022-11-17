@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth'
 
+
 const {height,width}=Dimensions.get('window')
 
 function Entrada({navigation}){
@@ -24,7 +25,11 @@ function Entrada({navigation}){
         const email_banco = (valor == "" || valor == undefined)? '' : valor[0].data().email;
         console.log('informações:', nome, cpf, data_nasc, num_cel, universidade, email_banco);
         if (valor == ""){
-          navigation.navigate("Como_Comecar", {email: email});
+          if (email_banco != ''){
+            navigation.navigate("Como_Comecar", {email: email});
+          }else{
+            setFalhaLogin(true);
+          }
         }
         else{
           if (motorista == true && cadastro_veiculo!=''){

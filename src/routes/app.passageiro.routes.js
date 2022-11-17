@@ -8,8 +8,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import Buscar from '../screens/Buscar/Buscar';
-import Buscando_Carona from '../screens/Buscar/BuscandoCarona';
-// import Oferecer from '../screens/Oferecer/Oferecer';
 import Suas_Viagens from '../screens/Suas_Viagens/Suas_Viagens';
 import Mensagens from '../screens/Mensagens/Mensagens';
 import Perfil_Conta from '../screens/Perfil/Perfil_Conta';
@@ -18,17 +16,13 @@ import BuscandoCarona from '../screens/Buscar/BuscandoCarona'
 import CaronaEncontrada from '../screens/Buscar/CaronaEncontrada';
 import AguardandoMotorista from '../screens/Buscar/AguardandoMotorista';
 import Classificacao from '../screens/Buscar/Classificacao';
-import ConfigurarCarona from '../screens/Oferecer/ConfigurarCarona';
 import ViagemEmAndamento from '../screens/Buscar/ViagemEmAndamento';
-import ClassificarPassageiro from '../screens/Oferecer/ClassificarPassageiro';
-import ViagemMotorista from '../screens/Oferecer/ViagemMotorista';
+import Erro from '../screens/Erro/Erro';
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-// const DrawerNavigationMethod = createDrawerNavigator();
 
-//nested navigation https://www.youtube.com/watch?v=SPzjttByz6E
-// const {height, width} = Dimensions.get('screen');
 
 function RotaBuscandoCarona(){
   return (
@@ -46,21 +40,6 @@ function RotaBuscandoCarona(){
    </NavigationContainer>
   );
 }
-
-// function RotaOferecerCarona(){
-//   return (
-//     <NavigationContainer
-//       independent={true}
-//     >
-//       <Stack.Navigator initialRouteName="ConfigurarCarona" options={{headerShown:false}}>
-//         <Stack.Screen name="ConfigurarCarona" component={ConfigurarCarona} options={{headerShown:false}}/>
-//         <Stack.Screen name="OferecerCarona" component={Oferecer} options={{headerShown:false}}/>
-//         <Stack.Screen name="ViagemMotorista" component={ViagemMotorista} options={{headerShown:false}}/>
-//         <Stack.Screen name="ClassificarPassageiro" component={ClassificarPassageiro} options={{headerShown:false}}/>
-//       </Stack.Navigator>
-//    </NavigationContainer>
-//   );
-// }
 
 
 function RotaPerfil(){
@@ -98,18 +77,7 @@ function RotaPerfil(){
   )
 }
 
-// function RotaPerfil(){
-//   return(
-//     // <NavigationContainer independent={true}>
-//       <DrawerNavigationMethod.Navigator initialRouteName='Perfil_Detalhes'>
-//         <DrawerNavigationMethod.Screen name="Conta" component={Perfil_Conta}/>
-//         <DrawerNavigationMethod.Screen name="Detalhes" component={Perfil_Detalhes}/>
-//       </DrawerNavigationMethod.Navigator>
-//     // </NavigationContainer>
-//   )
-// }
-
-function AppRoutes({route, navigation}) {
+function AppRoutes() {
   useEffect(() => {
     BackHandler.addEventListener('backPress', () => true)
     return () => BackHandler.removeEventListener('backPress', () => true)
@@ -136,16 +104,6 @@ function AppRoutes({route, navigation}) {
               )
           }}
         />
-        {/* <Tab.Screen name="Oferecer" component={RotaOferecerCarona} 
-          options={{
-            tabBarIcon:(({color})=>
-            <Image source={
-              require('../assets/icons/oferecer.png')} 
-              style={{height:22, width: 22, tintColor: color}}  
-            />
-              )
-          }}
-        /> */}
         <Tab.Screen name="Suas Viagens" component={Suas_Viagens} 
           options={{
             tabBarIcon:(({color})=>
