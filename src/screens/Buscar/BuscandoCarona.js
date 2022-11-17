@@ -62,6 +62,7 @@ function BuscandoCarona({navigation, route}) {
     }catch(error){
       console.log(error.code);
     }
+    atualizaEstadoAtual();
     navigation.navigate('Buscar');
   }
 
@@ -90,13 +91,17 @@ function BuscandoCarona({navigation, route}) {
             token: token
           })
           // }
-          console.log('TELA DE BUSCANDO CARONA:');
-          console.log('token armazenado:', doc.data().token);
+          // console.log('TELA DE BUSCANDO CARONA:');
+          // console.log('token armazenado:', doc.data().token);
         }
       })
     }catch(error){
       console.log('erro em armazenaToken');
     }
+  }
+
+  const atualizaEstadoAtual = async()=>{
+    await AsyncStorage.removeItem('BuscandoCarona');
   }
 
   useEffect(()=>{
@@ -108,7 +113,15 @@ function BuscandoCarona({navigation, route}) {
     }
     defineEstadoAtual().catch(console.error);
     atualizarDados().catch(console.error);
-    // EstadoApp.getData();
+    
+    let teste = EstadoApp.getData();
+    console.log('-------------------------------------------');
+    console.log('testeEEEE:', teste.cidade);
+    console.log('testeEEEE:', teste.estado);
+    console.log(EstadoApp.getData());
+    // const [city, state] = EstadoApp.getData();
+    // console.log('city:', city, 'state:', state);
+    console.log('-------------------------------------------');
   }, []);
 
 

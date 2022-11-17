@@ -38,6 +38,7 @@ const getData = async()=>{
                         var estado = results.rows.item(0).estado;
                         console.log('cidade:', cidade);
                         console.log('estado:', estado);
+                        return [results.rows.item(0).cidade, estado];
                         //utilizar hooks aqui (setCidade, setEstado, etc...);
                     }
                 }

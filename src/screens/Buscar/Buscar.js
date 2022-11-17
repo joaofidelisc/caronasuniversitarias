@@ -29,7 +29,7 @@ export default function Buscar({navigation}) {
   const [localizacaoPassageiro, setlocalizacaoPassageiro] = useState(null);
   const [localizacaoAtiva, setLocalizacaoAtiva] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  
+  const [aplicativoEstavaAtivo, setAplicativoEstavaAtivo] = useState(true);
   const netInfo = useNetInfo();
 
   async function enviarLocalizacaoPassageiro(latitude, longitude){
@@ -181,42 +181,42 @@ export default function Buscar({navigation}) {
   
   //PARA A VERSÃO PASSAGEIRO:
 
-  // useEffect(()=>{
-  //   const recuperaEstadoApp = async()=>{
-  //     let BuscandoCarona = await AsyncStorage.getItem("BuscandoCarona");
-  //     let CaronaEncontrada = await AsyncStorage.getItem("CaronaEncontrada");
-  //     let AguardandoMotorista = await AsyncStorage.getItem("AguardandoMotorista");
-  //     let ViagemEmAndamento = await AsyncStorage.getItem("ViagemEmAndamento");
-  //     let Classificacao = await AsyncStorage.getItem("Classificacao");
+  useEffect(()=>{
+    const recuperaEstadoApp = async()=>{
+      let BuscandoCarona = await AsyncStorage.getItem("BuscandoCarona");
+      let CaronaEncontrada = await AsyncStorage.getItem("CaronaEncontrada");
+      let AguardandoMotorista = await AsyncStorage.getItem("AguardandoMotorista");
+      let ViagemEmAndamento = await AsyncStorage.getItem("ViagemEmAndamento");
+      let Classificacao = await AsyncStorage.getItem("Classificacao");
       
-  //     (BuscandoCarona!=null && BuscandoCarona!=undefined || 
-  //     CaronaEncontrada!=null && CaronaEncontrada!=undefined ||
-  //     AguardandoMotorista!=null && AguardandoMotorista!=undefined ||
-  //     ViagemEmAndamento !=null && ViagemEmAndamento!=undefined ||
-  //     Classificacao!=null && Classificacao !=undefined
-  //     )?setAplicativoEstavaAtivo(true):setAplicativoEstavaAtivo(false);
+      (BuscandoCarona!=null && BuscandoCarona!=undefined || 
+      CaronaEncontrada!=null && CaronaEncontrada!=undefined ||
+      AguardandoMotorista!=null && AguardandoMotorista!=undefined ||
+      ViagemEmAndamento !=null && ViagemEmAndamento!=undefined ||
+      Classificacao!=null && Classificacao !=undefined
+      )?setAplicativoEstavaAtivo(true):setAplicativoEstavaAtivo(false);
       
-  //     if (BuscandoCarona != null && BuscandoCarona != undefined){
-  //       navigation.navigate('Buscando_Carona');
-  //     }else if (CaronaEncontrada != null && CaronaEncontrada !=undefined){
-  //       navigation.navigate('CaronaEncontrada');
-  //     }else if (AguardandoMotorista != null && AguardandoMotorista !=undefined){
-  //       navigation.navigate('AguardandoMotorista');
-  //     }else if (ViagemEmAndamento != null && ViagemEmAndamento != undefined){
-  //       navigation.navigate('ViagemEmAndamento');
-  //     }else if (Classificacao != null && Classificacao != undefined){
-  //       navigation.navigate('Classificacao');
-  //     }
-  //   }
-  //   recuperaEstadoApp().catch(console.error);
-  // })
+      if (BuscandoCarona != null && BuscandoCarona != undefined){
+        navigation.navigate('Buscando_Carona');
+      }else if (CaronaEncontrada != null && CaronaEncontrada !=undefined){
+        navigation.navigate('CaronaEncontrada');
+      }else if (AguardandoMotorista != null && AguardandoMotorista !=undefined){
+        navigation.navigate('AguardandoMotorista');
+      }else if (ViagemEmAndamento != null && ViagemEmAndamento != undefined){
+        navigation.navigate('ViagemEmAndamento');
+      }else if (Classificacao != null && Classificacao != undefined){
+        navigation.navigate('Classificacao');
+      }
+    }
+    recuperaEstadoApp().catch(console.error);
+  })
 
-  // useEffect(()=>{
-  //   const defineEstadoAtual = async()=>{
-  //     await AsyncStorage.removeItem('BuscandoCarona');
-  //   }
-  //   defineEstadoAtual().catch(console.error);
-  // }, [])
+  useEffect(()=>{
+    const defineEstadoAtual = async()=>{
+      await AsyncStorage.removeItem('BuscandoCarona');
+    }
+    defineEstadoAtual().catch(console.error);
+  }, [])
 
   useEffect(()=>{
     // const netInfo = useNetInfo();
