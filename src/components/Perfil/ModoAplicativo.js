@@ -7,7 +7,7 @@ import RNRestart from 'react-native-restart';
 
 const {height,width} = Dimensions.get('screen')
 
-function ModoAplicativo({navigation}){
+function ModoAplicativo(){
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState('');
   const [modoApp, setModoApp] = useState('');
@@ -17,14 +17,9 @@ function ModoAplicativo({navigation}){
     const userID = auth().currentUser.uid;
     firestore().collection('Users').doc(userID).get().then(doc=>{
       if (doc && doc.exists){
-        if (doc.data().nome_veiculo==""){
-          console.log('NÃO TEM CADASTRO!');
-        }
         if (doc.data().motorista == true){
-          // await AsyncStorage.setItem('modoApp', 'passageiro');
           setModoApp('motorista');
           setMessage('passageiro');
-          console.log('rodou!!')
         }else{
           setModoApp('passageiro');
           setMessage('motorista');
@@ -34,8 +29,6 @@ function ModoAplicativo({navigation}){
   }
   
   const navegarParaPassageiro = async()=>{
-    // await AsyncStorage.removeItem('modoApp');
-    // await AsyncStorage.setItem('modoApp', 'passageiro');
     const userID = auth().currentUser.uid;
     try{
       await firestore().collection('Users').doc(userID).update({
@@ -47,8 +40,6 @@ function ModoAplicativo({navigation}){
   }
   
   const navegarParaMotorista = async()=>{
-    // await AsyncStorage.removeItem('modoApp');
-    // await AsyncStorage.setItem('modoApp', 'motorista');
     const userID = auth().currentUser.uid;
     try{
       await firestore().collection('Users').doc(userID).update({
@@ -62,18 +53,6 @@ function ModoAplicativo({navigation}){
   useEffect(()=>{
     modoAtuacao();
   });
-
-  // useEffect(()=>{
-  //     const getModoApp = async()=>{
-  //       let modoAppStorage = await AsyncStorage.getItem("modoApp");
-  //       if (modoAppStorage == null && modoApp != ''){
-  //         await AsyncStorage.setItem('modoApp', modoApp);  
-  //       }
-  //       console.log('modoAppStorage', modoAppStorage);
-  //       console.log('modoApp', modoApp);
-  //     }
-  //     getModoApp();
-  // },[modoApp]);
   
   return (
     <SafeAreaView>
@@ -98,13 +77,12 @@ function ModoAplicativo({navigation}){
               console.log('modo app!', message);
               if (message == 'passageiro'){
                 navegarParaPassageiro();
+                setModalVisible(!modalVisible);
                 RNRestart.Restart();
-                console.log('navegar para passageiro!');
-                // navigation.navigate("MenuPassageiro");
               }else{
                 navegarParaMotorista();
+                setModalVisible(!modalVisible);
                 RNRestart.Restart();
-                console.log('navegar para motorista!');
               }
             }}  
           >

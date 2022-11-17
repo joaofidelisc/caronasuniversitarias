@@ -6,6 +6,8 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import auth from '@react-native-firebase/auth';
 import { ScrollView } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNRestart from 'react-native-restart';
+
 
 const {height, width} = Dimensions.get('screen')
 
@@ -28,6 +30,7 @@ function Forms_Motorista_Veiculo({navigation, route}) {
     const num_cel = route.params?.num_cel;
     const universidade = route.params?.universidade;
     const email = route.params?.email;
+    
     const trocaDeModo = route.params?.trocaDeModo;
 
 
@@ -42,6 +45,9 @@ function Forms_Motorista_Veiculo({navigation, route}) {
         }
         else if (ano_veiculo.length != 4){
             setWarning('Digite o ano com 4 números.');
+            setModalVisible(true);
+        } else if (imagemAnexada == false){
+            setWarning('Você precisa anexar a foto da placa do seu veículo para prosseguir.');
             setModalVisible(true);
         }
         else{
@@ -93,9 +99,19 @@ function Forms_Motorista_Veiculo({navigation, route}) {
         }
     }
 
-    useEffect(()=>{
-        console.log('troca de modo:', trocaDeModo);
-    },[]);
+    const modoPassageiro = async()=>{
+        const userID = auth().currentUser.uid;
+        try{
+          await firestore().collection('Users').doc(userID).update({
+            motorista: false
+          })
+        }catch(error){
+          console.log('erro em navegarParaPassageiro');
+        }
+        console.log('voltando ao modo passageiro!');
+    }
+
+
 
     return (
     <SafeAreaView>
@@ -105,6 +121,11 @@ function Forms_Motorista_Veiculo({navigation, route}) {
             </View>
             <ScrollView>
             <View style={{backgroundColor: '#FFF', height: height, justifyContent: 'center', alignItems: 'center'}}>
+                {
+                    trocaDeModo!=undefined?
+                    <Text style={{position: 'absolute', top: '4%', textAlign: 'center', fontWeight: '700', fontSize: height*0.022, lineHeight: 20, color: '#06444C'}}>Só mais algumas informações...</Text>
+                    :null
+                }
                 <Image source={
                     require('../../assets/icons/car.png')} 
                     style={{height:'8%', width: '20%', position: 'absolute', top:'8%'}}  
@@ -161,6 +182,18 @@ function Forms_Motorista_Veiculo({navigation, route}) {
                 >
                     <Text style={{fontWeight: '700', fontSize: height*0.022, color: '#06444C'}}>Avançar</Text>
                 </TouchableOpacity>
+                {
+                   trocaDeModo!=undefined?   
+                    <TouchableOpacity 
+                        style={{position: 'absolute', top: '72%'}}
+                        onPress={()=>{                            
+                            modoPassageiro()
+                            RNRestart.Restart();
+                        }}    
+                    >
+                        <Text style={{fontWeight: '700', fontSize: height*0.022, color: '#FF5F55'}}>Voltar ao modo passageiro</Text>
+                    </TouchableOpacity>:null
+                }
                 <Modal
                     animationType="fade"
                     transparent={true}
