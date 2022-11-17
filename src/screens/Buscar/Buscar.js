@@ -16,6 +16,7 @@ import auth from '@react-native-firebase/auth';
 import config from '../../config';
 import { onChange, set } from 'react-native-reanimated'; //?
 import Geocoder from 'react-native-geocoding';
+import EstadoApp from '../../services/sqlite/EstadoApp';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -28,8 +29,7 @@ export default function Buscar({navigation}) {
   const [localizacaoPassageiro, setlocalizacaoPassageiro] = useState(null);
   const [localizacaoAtiva, setLocalizacaoAtiva] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [usuarioConectado, setUsuarioConectado] = useState(false);
-  // const [aplicativoEstavaAtivo, setAplicativoEstavaAtivo] = useState(true);
+  
   const netInfo = useNetInfo();
 
   async function enviarLocalizacaoPassageiro(latitude, longitude){
@@ -242,6 +242,14 @@ export default function Buscar({navigation}) {
     // }
   }, [])
 
+
+  useEffect(()=>{
+    const criaTabela = async()=>{
+      await EstadoApp.createTable();
+    }
+    criaTabela();
+    console.log("TABELA CRIADA!");
+  })
   
   return (
     <SafeAreaView>

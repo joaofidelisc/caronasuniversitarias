@@ -7,6 +7,8 @@ import estilos from '../../estilos/estilos';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import database from '@react-native-firebase/database';
 import Lottie from 'lottie-react-native';
+import EstadoApp from '../../services/sqlite/EstadoApp';
+
 
 const {height,width} = Dimensions.get('screen')
 

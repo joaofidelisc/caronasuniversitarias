@@ -8,6 +8,11 @@ import Geocoder from 'react-native-geocoding';
 import config from '../../config';
 import { useNetInfo } from '@react-native-community/netinfo';
 
+
+//teste banco
+import EstadoApp from '../../services/sqlite/EstadoApp';
+//
+
 const {width, height} = Dimensions.get('screen');
 
 function ConfigurarCarona({navigation}) {
@@ -78,6 +83,15 @@ function ConfigurarCarona({navigation}) {
       }
 
     }
+
+    //TESTE BANCO
+    const testeBanco = async()=>{
+      await EstadoApp.createTable();
+      await EstadoApp.insertData('São Carlos', 'SP');
+      await EstadoApp.getData();
+      console.log('testando banco...');
+    }
+    //TESTE BANCO
 
     useEffect(()=>{
       // const netInfo = useNetInfo();
@@ -204,6 +218,14 @@ function ConfigurarCarona({navigation}) {
           >
             <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
               Avançar
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{backgroundColor: '#FF5F55', width: 260, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', position: 'absolute', top: 670}}
+            onPress={testeBanco}
+          >
+            <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
+              Teste Banco
             </Text>
           </TouchableOpacity>
           <Modal

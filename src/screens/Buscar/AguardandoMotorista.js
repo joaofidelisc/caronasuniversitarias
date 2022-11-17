@@ -4,6 +4,7 @@ import database from '@react-native-firebase/database';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import Geolocation from '@react-native-community/geolocation';
+import EstadoApp from '../../services/sqlite/EstadoApp';
 
 
 const {width, height} = Dimensions.get('screen');

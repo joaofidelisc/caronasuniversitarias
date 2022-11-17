@@ -9,6 +9,8 @@ import firestore from '@react-native-firebase/firestore';
 import Geocoder from 'react-native-geocoding';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
+import EstadoApp from '../../services/sqlite/EstadoApp';
+
 
 const {height, width} = Dimensions.get('screen')
 
@@ -97,12 +99,18 @@ function BuscandoCarona({navigation, route}) {
     }
   }
 
-  // useEffect(()=>{
-  //   const defineEstadoAtual = async()=>{
-  //     await AsyncStorage.setItem('BuscandoCarona', 'true');
-  //   }
-  //   defineEstadoAtual().catch(console.error);
-  // }, [])
+  useEffect(()=>{
+    const defineEstadoAtual = async()=>{
+      await AsyncStorage.setItem('BuscandoCarona', 'true');
+    }
+    const atualizarDados = async()=>{
+      await EstadoApp.updateData(cidade, estado);
+    }
+    defineEstadoAtual().catch(console.error);
+    atualizarDados().catch(console.error);
+    // EstadoApp.getData();
+  }, []);
+
 
   useEffect(()=>{
     console.log('Tela: BuscandoCarona');
