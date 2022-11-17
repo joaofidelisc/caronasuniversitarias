@@ -229,8 +229,8 @@ export default function Buscar({navigation}) {
         ]
       );
     }
-    console.log('netInfo:', netInfo);
-    console.log('conectado:', netInfo.isConnected);
+    // console.log('netInfo:', netInfo);
+    // console.log('conectado:', netInfo.isConnected);
   })
 
   useEffect(()=>{

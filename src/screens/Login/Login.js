@@ -49,7 +49,7 @@ function Login({navigation}) {
       await AsyncStorage.setItem('email', emailGoogle);
       firestore().collection('Users').where('email', '==', emailGoogle).get().then(querySnapshot=>{
         const valor = querySnapshot.docs;
-        const motorista = valor[0].data().motorista;
+        const motorista = (valor == "" || valor == undefined)? '' : valor[0].data().motorista;
         if (valor == ""){
           navigation.navigate("Como_Comecar", {email: emailGoogle});
         }
@@ -66,7 +66,7 @@ function Login({navigation}) {
       await AsyncStorage.setItem('password', password);
       firestore().collection('Users').where('email', '==', email).get().then(querySnapshot=>{
         const valor = querySnapshot.docs;
-        const motorista = valor[0].data().motorista;
+        const motorista = (valor == "" || valor == undefined)? '' : valor[0].data().motorista;
         if (valor == ""){
           navigation.navigate("Como_Comecar", {email: email});
         }
@@ -101,7 +101,7 @@ function Login({navigation}) {
         setWarning('Você pode entrar apenas\n com e-mails institucionais!');
         setModalVisible(true);
         if (auth().onAuthStateChanged()){
-          const bloquearAcesso = await auth().currentUser;
+          const bloquearAcesso = auth().currentUser;
           await bloquearAcesso.delete();
         }
         signOutGoogle();

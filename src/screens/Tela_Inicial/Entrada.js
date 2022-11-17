@@ -14,14 +14,26 @@ function Entrada({navigation}){
     try{
       firestore().collection('Users').where('email', '==', email).get().then(querySnapshot=>{
         const valor = querySnapshot.docs;
-        const motorista = valor[0].data().motorista;
+        const motorista = (valor == "" || valor == undefined)? '' : valor[0].data().motorista;
+        const cadastro_veiculo = (valor == "" || valor == undefined)? '' : valor[0].data().nome_veiculo;
+        const nome = (valor == "" || valor == undefined)? '' : valor[0].data().nome;
+        const cpf = (valor == "" || valor == undefined)? '' : valor[0].data().CPF;
+        const data_nasc = (valor == "" || valor == undefined)? '' : valor[0].data().data_nasc;
+        const num_cel = (valor == "" || valor == undefined)? '' : valor[0].data().num_cel;
+        const universidade = (valor == "" || valor == undefined)? '' : valor[0].data().universidade;
+        const email_banco = (valor == "" || valor == undefined)? '' : valor[0].data().email;
+        console.log('informações:', nome, cpf, data_nasc, num_cel, universidade, email_banco);
         if (valor == ""){
           navigation.navigate("Como_Comecar", {email: email});
         }
         else{
-          if (motorista == true){
+          if (motorista == true && cadastro_veiculo!=''){
             navigation.navigate("ModoMotorista");
-          }else{
+          }else if (motorista == true && cadastro_veiculo == ''){
+            console.log('navegando para a tela de cadastro de veículo');
+            console.log('informações:', nome, cpf, data_nasc, num_cel, universidade, email_banco);
+            navigation.navigate('Forms_Motorista_Veiculo', {trocaDeModo:true});
+          } else{
             navigation.navigate("ModoPassageiro");
           }
         }

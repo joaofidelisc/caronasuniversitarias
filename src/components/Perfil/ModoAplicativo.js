@@ -17,7 +17,11 @@ function ModoAplicativo({navigation}){
     const userID = auth().currentUser.uid;
     firestore().collection('Users').doc(userID).get().then(doc=>{
       if (doc && doc.exists){
+        if (doc.data().nome_veiculo==""){
+          console.log('NÃO TEM CADASTRO!');
+        }
         if (doc.data().motorista == true){
+          // await AsyncStorage.setItem('modoApp', 'passageiro');
           setModoApp('motorista');
           setMessage('passageiro');
           console.log('rodou!!')

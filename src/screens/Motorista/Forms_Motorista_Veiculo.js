@@ -20,17 +20,18 @@ function Forms_Motorista_Veiculo({navigation, route}) {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [warning, setWarning] = useState('');
-    
-    const userID = route.params?.userID;
+
+    const userID = (route.params?.userID==null || route.params?.userID==undefined || route.params?.userID=='')?auth().currentUser.uid:route.params?.userID;
     const nome = route.params?.nome;
     const CPF = route.params?.cpf;
     const data_nasc = route.params?.data_nasc;
     const num_cel = route.params?.num_cel;
     const universidade = route.params?.universidade;
     const email = route.params?.email;
+    const trocaDeModo = route.params?.trocaDeModo;
+
 
     const insertDataNewUser = async() => {
-        // await AsyncStorage.setItem('modoApp', 'motorista');
         if (placa_veiculo == '' || ano_veiculo == '' || cor_veiculo == '' || nome_veiculo == ''){
             setWarning('Preencha todos os campos!');
             setModalVisible(true);
@@ -44,21 +45,32 @@ function Forms_Motorista_Veiculo({navigation, route}) {
             setModalVisible(true);
         }
         else{
-            await firestore().collection('Users').doc(userID).set({
-                nome: nome,
-                CPF: CPF,
-                data_nasc: data_nasc,
-                num_cel: num_cel,
-                universidade: universidade,
-                email: email,
-                placa_veiculo: placa_veiculo,
-                ano_veiculo: ano_veiculo,
-                cor_veiculo: cor_veiculo,
-                nome_veiculo: nome_veiculo,
-                motorista: true,
-            }).then(()=>{
-                enviarFotoStorage(imagemPlaca);
-            });
+            if (trocaDeModo == false || trocaDeModo == undefined || trocaDeModo == ''){
+                await firestore().collection('Users').doc(userID).set({
+                    nome: nome,
+                    CPF: CPF,
+                    data_nasc: data_nasc,
+                    num_cel: num_cel,
+                    universidade: universidade,
+                    email: email,
+                    placa_veiculo: placa_veiculo,
+                    ano_veiculo: ano_veiculo,
+                    cor_veiculo: cor_veiculo,
+                    nome_veiculo: nome_veiculo,
+                    motorista: true,
+                }).then(()=>{
+                    enviarFotoStorage(imagemPlaca);
+                });
+            }else{
+                await firestore().collection('Users').doc(userID).update({                   
+                    placa_veiculo: placa_veiculo,
+                    ano_veiculo: ano_veiculo,
+                    cor_veiculo: cor_veiculo,
+                    nome_veiculo: nome_veiculo,
+                }).then(()=>{
+                    enviarFotoStorage(imagemPlaca);
+                });
+            }
             navigation.navigate('ModoMotorista');
         }
     }
@@ -82,7 +94,7 @@ function Forms_Motorista_Veiculo({navigation, route}) {
     }
 
     useEffect(()=>{
-
+        console.log('troca de modo:', trocaDeModo);
     },[]);
 
     return (
