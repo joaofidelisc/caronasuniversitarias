@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {View, Text, SafeAreaView, StatusBar, StyleSheet, PermissionsAndroid, Dimensions, Modal, TouchableOpacity, Image, ScrollView, BackHandler, Linking, Platform} from 'react-native';
 
-import MapView, { Marker, Callout } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapViewDirections from 'react-native-maps-directions';
@@ -13,7 +13,7 @@ import LocationServicesDialogBox from "react-native-android-location-services-di
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import config from '../../config';
+import config from '../../config/index.json';
 import Geocoder from 'react-native-geocoding';
 
 import notifee, { AndroidColor } from '@notifee/react-native';
@@ -759,6 +759,7 @@ function Oferecer({route, navigation}) {
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
           <MapView
             onMapReady={()=>{
+              console.log('carregou!!!!');
               PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
                 .then(()=>{
@@ -766,12 +767,13 @@ function Oferecer({route, navigation}) {
                   localizacaoLigada();
                 })
             }}
+            provider={PROVIDER_GOOGLE}
             style={{width:width, height:height, flex:1}}
             region={region}
             zoomEnabled={true}
             minZoomLevel={17}
             showsUserLocation={true}
-            loadingEnabled={true}
+            loadingEnabled={false}
             onRegionChange={getMyLocation}
             initialRegion={{
               latitude: -21.983311,
