@@ -84,7 +84,7 @@ function Classificacao({navigation, route}){
 
     
     const navigateToBuscar = async()=>{
-      // await AsyncStorage.removeItem('Classificacao');
+      await AsyncStorage.removeItem('Classificacao');
       navigation.navigate('Buscar')
     }
 
@@ -104,13 +104,13 @@ function Classificacao({navigation, route}){
     })
 
 
-    // useEffect(()=>{
-    //   const defineEstadoAtual = async()=>{
-    //     await AsyncStorage.removeItem('ViagemEmAndamento');
-    //     await AsyncStorage.setItem('Classificacao', 'true');
-    //   }
-    //   defineEstadoAtual().catch(console.error);
-    // }, [])
+    useEffect(()=>{
+      const defineEstadoAtual = async()=>{
+        await AsyncStorage.removeItem('ViagemEmAndamento');
+        await AsyncStorage.setItem('Classificacao', 'true');
+      }
+      defineEstadoAtual().catch(console.error);
+    }, [])
 
     return (
       <SafeAreaView>

@@ -1,4 +1,7 @@
+// import { enablePromise } from 'react-native-sqlite-storage';
 import db from './SQLitedatabase';
+
+// enablePromise(true);
 
 const createTable = async()=>{
     try{
@@ -25,6 +28,25 @@ const insertData = async(cidade, estado)=>{
     }
 }
 
+const getAll = async()=>{
+    try{
+        (await db).transaction((tx)=>{
+            tx.executeSql(
+                "SELECT * FROM infoApp",
+                [],
+                (tx, results)=>{
+                    var len = results.rows.length;
+                    if (len>0){
+                        console.log(results.rows.item(0));
+                    }
+                }
+            )
+        })
+    }catch(error){
+        console.log(error);
+    }
+}
+
 const getData = async()=>{
     try{
         (await db).transaction((tx)=>{
@@ -40,6 +62,8 @@ const getData = async()=>{
                         console.log('estado:', estado);
                         return [results.rows.item(0).cidade, estado];
                         //utilizar hooks aqui (setCidade, setEstado, etc...);
+                    }else{
+                        console.log('caiu no else do getData!');
                     }
                 }
             );
@@ -48,6 +72,7 @@ const getData = async()=>{
         console.log('erro em getData');
     }
 }
+
 
 const updateData = async(cidade, estado)=>{
     try{

@@ -175,7 +175,7 @@ function Options({navigation, route}) {
             if (ofertasRestantes == ''){
               setMotoristas([]);
               reference_passageiro.off('value');
-              // voltouTela();
+              voltouTela();
               navigation.navigate('Buscando_Carona', {cidade: cidade, estado:estado});
             }
             reference_passageiro.update({
@@ -225,10 +225,6 @@ function Options({navigation, route}) {
     navigation.navigate('AguardandoMotorista', {cidade: cidade, estado: estado, uidMotorista:uidMotorista, currentUser: currentUser, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, urlIMG: motoristaURL, nomeDestino: nomeDestino});
   }
 
-  // async function defineEstadoAtual(){
-  //   // await AsyncStorage.removeItem('CaronaEncontrada');
-  //   // await AsyncStorage.setItem('AguardandoMotorista', true);
-  // }
   
   //Função responsável por aceitar carona - escreve no banco do banco do passageiro o uid do motorista e reseta o vetor de ofertas de caronas;
   //Além disso, invoca a função aceitarCarona_ (complementar desta), que é responsável por escrever no banco do motorista o uid do passageiro;
@@ -246,17 +242,17 @@ function Options({navigation, route}) {
     aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL);
   }
 
-  // const voltouTela = async()=>{
-  //   await AsyncStorage.removeItem('CaronaEncontrada');
-  // }
+  const voltouTela = async()=>{
+    await AsyncStorage.removeItem('CaronaEncontrada');
+  }
 
-  // useEffect(()=>{
-  //   const defineEstadoAtual = async()=>{
-  //     await AsyncStorage.removeItem('BuscandoCarona');
-  //     await AsyncStorage.setItem('CaronaEncontrada', 'true');
-  //   }
-  //   defineEstadoAtual().catch(console.error);
-  // }, [])
+  useEffect(()=>{
+    const defineEstadoAtual = async()=>{
+      await AsyncStorage.removeItem('BuscandoCarona');
+      await AsyncStorage.setItem('CaronaEncontrada', 'true');
+    }
+    defineEstadoAtual().catch(console.error);
+  }, [])
   
   useEffect(()=>{
     getDadosMotorista();

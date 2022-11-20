@@ -104,6 +104,12 @@ function BuscandoCarona({navigation, route}) {
     await AsyncStorage.removeItem('BuscandoCarona');
   }
 
+  const testeBanco = async()=>{
+    console.log('teste banco!');
+    await EstadoApp.getData();
+    // console.log('teste:', teste);
+  }
+
   useEffect(()=>{
     const defineEstadoAtual = async()=>{
       await AsyncStorage.setItem('BuscandoCarona', 'true');
@@ -118,7 +124,7 @@ function BuscandoCarona({navigation, route}) {
     console.log('-------------------------------------------');
     console.log('testeEEEE:', teste.cidade);
     console.log('testeEEEE:', teste.estado);
-    console.log(EstadoApp.getData());
+    console.log('estadoApp.getDataA:', EstadoApp.getData());
     // const [city, state] = EstadoApp.getData();
     // console.log('city:', city, 'state:', state);
     console.log('-------------------------------------------');
@@ -156,6 +162,7 @@ function BuscandoCarona({navigation, route}) {
           <TouchableOpacity
             style={{backgroundColor: '#FF5F55', width: '66%', height: '6.5%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.03}}
             onPress={cancelarBusca}
+            // onPress={testeBanco}
             >
             <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.019, lineHeight: 24, textAlign: 'center'}}>
               Cancelar busca

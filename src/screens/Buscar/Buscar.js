@@ -30,6 +30,8 @@ export default function Buscar({navigation}) {
   const [localizacaoAtiva, setLocalizacaoAtiva] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [aplicativoEstavaAtivo, setAplicativoEstavaAtivo] = useState(true);
+  const [criouTabela, setCriouTabela] = useState(false);
+
   const netInfo = useNetInfo();
 
   async function enviarLocalizacaoPassageiro(latitude, longitude){
@@ -47,6 +49,8 @@ export default function Buscar({navigation}) {
     var cidade = filtro_cidade[0].short_name; 
     var estado = filtro_estado[0].short_name;
 
+    await EstadoApp.insertData(cidade, estado);
+    console.log('dados inseridos!');
     // excluiBancoPassageiroMotorista(estado, cidade, currentUser);
 
     const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
@@ -244,12 +248,16 @@ export default function Buscar({navigation}) {
 
 
   useEffect(()=>{
+
     const criaTabela = async()=>{
       await EstadoApp.createTable();
     }
-    criaTabela();
-    console.log("TABELA CRIADA!");
-  })
+    if (criouTabela == false){
+      criaTabela();
+      console.log("TABELA CRIADA!");
+      setCriouTabela(true);
+    }
+  });
   
   return (
     <SafeAreaView>

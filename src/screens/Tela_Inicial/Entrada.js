@@ -33,13 +33,15 @@ function Entrada({navigation}){
         }
         else{
           if (motorista == true && cadastro_veiculo!=''){
-            navigation.navigate("ModoMotorista");
+            // navigation.navigate("ModoMotorista");
+            navigation.navigate("MenuTeste");
           }else if (motorista == true && cadastro_veiculo == ''){
             console.log('navegando para a tela de cadastro de veículo');
             console.log('informações:', nome, cpf, data_nasc, num_cel, universidade, email_banco);
             navigation.navigate('Forms_Motorista_Veiculo', {trocaDeModo:true});
           } else{
-            navigation.navigate("ModoPassageiro");
+            navigation.navigate("MenuTeste");
+            // navigation.navigate("ModoPassageiro");
           }
         }
       })

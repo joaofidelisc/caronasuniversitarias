@@ -5,6 +5,7 @@ import MapView, { Marker, Callout } from 'react-native-maps';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import Geolocation from '@react-native-community/geolocation';
 import EstadoApp from '../../services/sqlite/EstadoApp';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const {width, height} = Dimensions.get('screen');
@@ -59,8 +60,8 @@ function AguardandoMotorista({navigation, route}){
       const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
       if (viagemEmAndamento){
         reference_motorista.off('value');
-        // await AsyncStorage.removeItem('AguardandoMotorista');
-        // await AsyncStorage.setItem('ViagemEmAndamento', true);
+        await AsyncStorage.removeItem('AguardandoMotorista');
+        await AsyncStorage.setItem('ViagemEmAndamento', true);
         console.log('uidMOTORISTA::::', uidMotorista);
         navigation.navigate('ViagemEmAndamento', {uidMotorista: uidMotorista, currentUser: currentUser, cidade: cidade, estado: estado, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, motoristaUrl: motoristaUrl, nomeDestino: nomeDestino});
       }
@@ -138,13 +139,13 @@ function AguardandoMotorista({navigation, route}){
       }
     }
 
-    // useEffect(()=>{
-    //   const defineEstadoAtual = async()=>{
-    //     await AsyncStorage.removeItem('CaronaEncontrada');
-    //     await AsyncStorage.setItem('AguardandoMotorista', 'true');
-    //   }
-    //   defineEstadoAtual().catch(console.error);
-    // }, [])
+    useEffect(()=>{
+      const defineEstadoAtual = async()=>{
+        await AsyncStorage.removeItem('CaronaEncontrada');
+        await AsyncStorage.setItem('AguardandoMotorista', 'true');
+      }
+      defineEstadoAtual().catch(console.error);
+    }, [])
     
     useEffect(()=>{
         getMyLocation();

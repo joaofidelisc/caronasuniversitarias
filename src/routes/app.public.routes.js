@@ -7,6 +7,7 @@ import Entrada from '../screens/Tela_Inicial/Entrada';
 import Login from '../screens/Login/Login';
 import ModoMotorista from './app.motorista.routes';
 import ModoPassageiro from '../routes/app.passageiro.routes';
+import MenuTeste from '../routes/app.private.routes';
 import Cadastro_Celular from '../screens/Cadastro/Cadastro_Celular';
 import Cadastro_Email from '../screens/Cadastro/Cadastro_Email';
 import Cadastro_Inicio from '../screens/Cadastro/Cadastro_Inicio';
@@ -40,6 +41,9 @@ function RotaEntrada() {
           <Stack.Screen name="Forms_Motorista_Veiculo" component={Forms_Motorista_Veiculo} options={{headerShown:false}} />
           <Stack.Screen name="ModoPassageiro" component={ModoPassageiro} options={{headerShown:false}}/>
           <Stack.Screen name="ModoMotorista" component={ModoMotorista} options={{headerShown:false}}/>
+          {/*  */}
+          <Stack.Screen name="MenuTeste" component={MenuTeste} options={{headerShown:false}}/>
+          {/*  */}
           <Stack.Screen name="Erro" component={Erro} options={{headerShown:false}} />
         </Stack.Navigator>
       </NavigationContainer>

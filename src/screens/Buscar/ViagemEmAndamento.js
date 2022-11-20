@@ -164,13 +164,13 @@ function ViagemEmAndamento({navigation, route}) {
       setModalVisible(!modalVisible);
     }
 
-    // useEffect(()=>{
-    //   const defineEstadoAtual = async()=>{
-    //     await AsyncStorage.removeItem('AguardandoMotorista');
-    //     await AsyncStorage.setItem('ViagemEmAndamento', 'true');
-    //   }
-    //   defineEstadoAtual().catch(console.error);
-    // }, [])
+    useEffect(()=>{
+      const defineEstadoAtual = async()=>{
+        await AsyncStorage.removeItem('AguardandoMotorista');
+        await AsyncStorage.setItem('ViagemEmAndamento', 'true');
+      }
+      defineEstadoAtual().catch(console.error);
+    }, [])
 
     useEffect(()=>{
       viagemTerminou();
