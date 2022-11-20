@@ -655,7 +655,7 @@ function Oferecer({route, navigation}) {
        body: remoteMessage.notification.body,
        android: {
          channelId,
-         largeIcon: 'https://img.icons8.com/plasticine/344/car--v1.png',
+        //  largeIcon: 'https://img.icons8.com/plasticine/344/car--v1.png',
          color: '#E8210C',
          importance: AndroidImportance.HIGH,
          smallIcon: 'ic_launcher', // optional, defaults to 'ic_launcher'.
@@ -801,8 +801,8 @@ function Oferecer({route, navigation}) {
                     source={
                       caronista.caronasAceitas==''?require('../../assets/icons/caronista.png'):caronista.caronasAceitas.includes(currentUser)?require('../../assets/icons/carona_aceita.png'):require('../../assets/icons/caronista-nao-clicavel.png')
                     }
-                    style={{width: width*0.07, height: width*0.07}}
-                    resizeMode="contain"
+                    style={{width: width*0.0742, height: width*0.0742}}
+                    resizeMode="center"
                   />
                 </Marker>:null
               ))
@@ -823,7 +823,7 @@ function Oferecer({route, navigation}) {
                     source={
                       require('../../assets/icons/carona_aceita.png')
                     }
-                    style={{width: width*0.07, height: width*0.07}}
+                    style={{width: width*0.0742, height: width*0.0742}}
                     resizeMode="contain"
                   />
                 </Marker>:null

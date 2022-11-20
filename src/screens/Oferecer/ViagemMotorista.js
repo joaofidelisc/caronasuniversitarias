@@ -220,14 +220,14 @@ function ViagemMotorista({route, navigation}){
         <StatusBar barStyle={'light-content'} />
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
         <Text style={{fontSize:height*0.025, color:'#2f4f4f', fontWeight:'bold', marginTop: '5%', marginBottom: 30}}>Finalização da viagem <Icon name="car" size={18} color="#06444C"> </Icon></Text>
-        <Lottie 
+        {/* <Lottie 
             style={{height:height*0.31, width:width*0.20}}
             source={require('../../assets/JSON/passageiro3.json')} 
             autoPlay 
             autoSize={false}
             loop = {true}
             speed = {1.1}
-        />
+        /> */}
           <Text style={{fontSize:height*0.025, color:'#2f4f4f', fontWeight:'bold', marginTop: '5%', marginBottom: 30}}>Passageiros(as) a bordo...</Text>
           {/* <Text style={{fontSize:20, color:'#2f4f4f', paddingHorizontal:70, fontWeight:'600', marginTop: 30, marginBottom: 30}}>Ao finalizar a viagem de todos os passageiros(as), você será redirecionado(a) para a tela de classificação</Text> */}
 
@@ -254,7 +254,7 @@ function ViagemMotorista({route, navigation}){
                       source={{
                         uri: passageiro.url
                       }}
-                      style={{height:'100%', width: '20%', borderRadius: 100, marginBottom:10, marginTop: '5%', marginLeft: '5%'}}  
+                      style={{height:height*0.05, width: height*0.05, borderRadius: 100, marginBottom:height*0.01, marginTop: '5%', marginLeft: '5%'}}  
                       />
                     <Text style={{color:'#06444C', fontWeight:'600', fontSize: height*0.02, marginLeft: 10}}>{passageiro.nome}</Text>
                       <Text style={{color:'#06444C', left: '30%', fontWeight:'600', fontSize: height*0.02}}>{passageiro.classificacao}</Text>

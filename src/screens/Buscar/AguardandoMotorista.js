@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Image, SafeAreaView, StatusBar, PermissionsAndroid, Dimensions } from 'react-native';
 import database from '@react-native-firebase/database';
-import MapView, { Marker, Callout } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import Geolocation from '@react-native-community/geolocation';
 import EstadoApp from '../../services/sqlite/EstadoApp';
@@ -60,8 +60,6 @@ function AguardandoMotorista({navigation, route}){
       const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
       if (viagemEmAndamento){
         reference_motorista.off('value');
-        await AsyncStorage.removeItem('AguardandoMotorista');
-        await AsyncStorage.setItem('ViagemEmAndamento', true);
         console.log('uidMOTORISTA::::', uidMotorista);
         navigation.navigate('ViagemEmAndamento', {uidMotorista: uidMotorista, currentUser: currentUser, cidade: cidade, estado: estado, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, motoristaUrl: motoristaUrl, nomeDestino: nomeDestino});
       }
@@ -169,12 +167,13 @@ function AguardandoMotorista({navigation, route}){
                     localizacaoLigada();
                     })
                 }}
+                provider={PROVIDER_GOOGLE}
                 style={{width:width, height:height, flex:1}}
                 region={posicaoPassageiro}
                 zoomEnabled={true}
                 minZoomLevel={17}
                 showsUserLocation={true}
-                loadingEnabled={true}
+                loadingEnabled={false}
                 onRegionChange={getMyLocation}
                 initialRegion={{
                 latitude: -21.983311,
