@@ -13,7 +13,7 @@ const insertData = (obj) => {
     return new Promise((resolve, reject) => {
       db.transaction((tx) => {
         tx.executeSql(
-          "INSERT INTO user (cidade, estado, nomeDestino, uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaUrl, id) values (?, ?, ?, ?, ?, ?, ?, ?);",
+          "INSERT INTO user (cidade, estado, nomeDestino, uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaUrl, id) values (?, ?, ?, ?, ?, ?, ?, ?, ?);",
           [obj.cidade, obj.estado, obj.nomeDestino, obj.uidMotorista, obj.nomeMotorista, obj.veiculoMotorista, obj.placaVeiculoMotorista, obj.motoristaUrl, obj.id],
           //-----------------------
           (_, { rowsAffected, insertId }) => {
@@ -30,8 +30,8 @@ const insertData = (obj) => {
     return new Promise((resolve, reject) => {
       db.transaction((tx) => {
         tx.executeSql(
-          "UPDATE user SET cidade=?, estado=?, nomeDestino=?, uidMotorista=?, nomeMotorista=?, veiculoMotorista=?, placaVeiculoMotorista=?, motoristaUrl=? WHERE id=?;",
-          [obj.cidade, obj.estado, obj.nomeDestino, obj.uidMotorista, obj.nomeMotorista, obj.veiculoMotorista, obj.placaVeiculoMotorista, obj.motoristaUrl, obj.id],
+          "UPDATE user SET uidMotorista=?, nomeMotorista=?, veiculoMotorista=?, placaVeiculoMotorista=?, motoristaUrl=? WHERE id=?;",
+          [obj.uidMotorista, obj.nomeMotorista, obj.veiculoMotorista, obj.placaVeiculoMotorista, obj.motoristaUrl],
           //-----------------------
           (_, { rowsAffected }) => {
             if (rowsAffected > 0) resolve(rowsAffected);
