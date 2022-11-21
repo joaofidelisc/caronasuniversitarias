@@ -84,12 +84,31 @@ function ConfigurarCarona({navigation}) {
 
     }
 
+    const printValor = (valor) => {
+      console.log('valor:')
+      console.log(`cidade:${valor.cidade}, estado:${valor.estado}, id:${valor.id}`)
+    }
+
     //TESTE BANCO
     const testeBanco = async()=>{
-      await EstadoApp.createTable();
-      await EstadoApp.insertData('São Carlos', 'SP');
-      await EstadoApp.getData();
+      // await EstadoApp.createTable();
+      console.log('----------------------------------');
       console.log('testando banco...');
+      console.log('rodando getAll...')
+      // EstadoApp.updateData(1, {cidade: 'Matão', estado: 'SP', id:1})
+      // EstadoApp.insertData({cidade: 'São Carlos', estado: 'SP', nomeDestino: 'centro', localDestino: 'centro-2', id:1});
+      EstadoApp.findData(1).then(info => console.log(info)).catch(err=> console.log(err));
+      // EstadoApp.getAll().then(info => printValor(info)).catch(err=> console.log(err));
+      // console.log('rodando getAll2...')
+      // EstadoApp.getAll2();
+      // EstadoApp.getData();
+      // EstadoApp.getData().then(info => info.forEach(c => console.log(c)));
+      
+      // EstadoApp.getData().then( 
+      //   info => info.forEach( c => printValor(c) )
+      //   )
+      console.log('----------------------------------');
+
     }
     //TESTE BANCO
 
@@ -220,14 +239,14 @@ function ConfigurarCarona({navigation}) {
               Avançar
             </Text>
           </TouchableOpacity>
-          {/* <TouchableOpacity
+          <TouchableOpacity
             style={{backgroundColor: '#FF5F55', width: 260, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', position: 'absolute', top: 670}}
             onPress={testeBanco}
           >
             <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
               Teste Banco
             </Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
           <Modal
               animationType="fade"
               transparent={true}

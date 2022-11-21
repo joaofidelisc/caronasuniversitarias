@@ -31,11 +31,12 @@ export default function Buscar({navigation}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [aplicativoEstavaAtivo, setAplicativoEstavaAtivo] = useState(true);
   const [criouTabela, setCriouTabela] = useState(false);
+  const [recuperouEstado, setRecuperouEstado] = useState(false);
+  const [definiuEstado, setDefiniuEstado] = useState(false);
 
   const netInfo = useNetInfo();
 
   async function enviarLocalizacaoPassageiro(latitude, longitude){
-    // await AsyncStorage.setItem('buscandoCarona', 'true');
     const currentUser = auth().currentUser.uid;
     var response = await Geocoder.from(latitude, longitude);
     var filtro_cidade = response.results[0].address_components.filter(function(address_component){
@@ -48,11 +49,10 @@ export default function Buscar({navigation}) {
     
     var cidade = filtro_cidade[0].short_name; 
     var estado = filtro_estado[0].short_name;
-
-    await EstadoApp.insertData(cidade, estado);
+    await EstadoApp.removeData(1).then(console.log('dados removidos!')).catch(console.log('algum erro ocorreu!'));
     console.log('dados inseridos!');
     // excluiBancoPassageiroMotorista(estado, cidade, currentUser);
-
+    
     const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     try{
       reference.set({
@@ -65,6 +65,9 @@ export default function Buscar({navigation}) {
         ofertasCaronas:'',
         caronasAceitas:'',
       }).then(()=>console.log('coordenadas passageiro enviadas!'));
+      
+      //'abrir' local destino para enviar para o banco de dados
+      await EstadoApp.insertData({cidade: cidade, estado: estado, nomeDestino:nomeDestino, uidMotorista:'', veiculoMotorista:'', placaVeiculoMotorista:'', motoristaUrl:'', id:1});
       navigation.navigate('Buscando_Carona', {nomeDestino: nomeDestino, localDestino: localDestino, cidade: cidade, estado: estado})
     }catch(error){
       console.log('ERRO:', error.code);
@@ -187,6 +190,7 @@ export default function Buscar({navigation}) {
 
   useEffect(()=>{
     const recuperaEstadoApp = async()=>{
+      console.log('rodando recuperaEstadoApp...');
       let BuscandoCarona = await AsyncStorage.getItem("BuscandoCarona");
       let CaronaEncontrada = await AsyncStorage.getItem("CaronaEncontrada");
       let AguardandoMotorista = await AsyncStorage.getItem("AguardandoMotorista");
@@ -194,33 +198,39 @@ export default function Buscar({navigation}) {
       let Classificacao = await AsyncStorage.getItem("Classificacao");
       
       (BuscandoCarona!=null && BuscandoCarona!=undefined || 
-      CaronaEncontrada!=null && CaronaEncontrada!=undefined ||
-      AguardandoMotorista!=null && AguardandoMotorista!=undefined ||
-      ViagemEmAndamento !=null && ViagemEmAndamento!=undefined ||
-      Classificacao!=null && Classificacao !=undefined
-      )?setAplicativoEstavaAtivo(true):setAplicativoEstavaAtivo(false);
-      
-      if (BuscandoCarona != null && BuscandoCarona != undefined){
-        navigation.navigate('Buscando_Carona');
-      }else if (CaronaEncontrada != null && CaronaEncontrada !=undefined){
-        navigation.navigate('CaronaEncontrada');
-      }else if (AguardandoMotorista != null && AguardandoMotorista !=undefined){
-        navigation.navigate('AguardandoMotorista');
-      }else if (ViagemEmAndamento != null && ViagemEmAndamento != undefined){
-        navigation.navigate('ViagemEmAndamento');
-      }else if (Classificacao != null && Classificacao != undefined){
-        navigation.navigate('Classificacao');
+        CaronaEncontrada!=null && CaronaEncontrada!=undefined ||
+        AguardandoMotorista!=null && AguardandoMotorista!=undefined ||
+        ViagemEmAndamento !=null && ViagemEmAndamento!=undefined ||
+        Classificacao!=null && Classificacao !=undefined
+        )?setAplicativoEstavaAtivo(true):setAplicativoEstavaAtivo(false);
+        
+        if (BuscandoCarona != null && BuscandoCarona != undefined){
+          navigation.navigate('Buscando_Carona');
+        }else if (CaronaEncontrada != null && CaronaEncontrada !=undefined){
+          navigation.navigate('CaronaEncontrada');
+        }else if (AguardandoMotorista != null && AguardandoMotorista !=undefined){
+          navigation.navigate('AguardandoMotorista');
+        }else if (ViagemEmAndamento != null && ViagemEmAndamento != undefined){
+          navigation.navigate('ViagemEmAndamento');
+        }else if (Classificacao != null && Classificacao != undefined){
+          navigation.navigate('Classificacao');
+        }
+        setRecuperouEstado(true);
       }
-    }
-    recuperaEstadoApp().catch(console.error);
-  })
-
-  useEffect(()=>{
-    const defineEstadoAtual = async()=>{
-      await AsyncStorage.removeItem('BuscandoCarona');
-    }
-    defineEstadoAtual().catch(console.error);
-  }, [])
+      if (!recuperouEstado){
+        recuperaEstadoApp().catch(console.error);
+      }
+    })
+    
+    useEffect(()=>{
+      const defineEstadoAtual = async()=>{
+        console.log('rodando defineEstado...');
+        await AsyncStorage.removeItem('BuscandoCarona');
+      }
+      if (!definiuEstado){
+        defineEstadoAtual().catch(console.error);
+      }
+    }, [])
 
   useEffect(()=>{
     // const netInfo = useNetInfo();
@@ -247,17 +257,17 @@ export default function Buscar({navigation}) {
   }, [])
 
 
-  useEffect(()=>{
+  // useEffect(()=>{
 
-    const criaTabela = async()=>{
-      await EstadoApp.createTable();
-    }
-    if (criouTabela == false){
-      criaTabela();
-      console.log("TABELA CRIADA!");
-      setCriouTabela(true);
-    }
-  });
+  //   // const criaTabela = async()=>{
+  //   //   // await EstadoApp.createTable();
+  //   // }
+  //   // if (criouTabela == false){
+  //   //   // criaTabela();
+  //   //   console.log("TABELA CRIADA!");
+  //   //   setCriouTabela(true);
+  //   // }
+  // });
   
   return (
     <SafeAreaView>

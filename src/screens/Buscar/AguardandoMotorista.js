@@ -4,28 +4,72 @@ import database from '@react-native-firebase/database';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import Geolocation from '@react-native-community/geolocation';
-import EstadoApp from '../../services/sqlite/EstadoApp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import auth from '@react-native-firebase/auth';
+import EstadoApp from '../../services/sqlite/EstadoApp';
 
 
 const {width, height} = Dimensions.get('screen');
 
 
 function AguardandoMotorista({navigation, route}){
+    
+  
     const [motoristaAcaminho, setMotoristaAcaminho] = useState(false);
     const [posicaoMotorista, setPosicaoMotorista] = useState(null);
     const [posicaoPassageiro, setPosicaoPassageiro] = useState(null);
     const [viagemEmAndamento, setViagemEmAndamento] = useState(null);
+    
+    const [infoCarregadas, setInfoCarregadas] = useState(false);
 
-    const cidade = route.params?.cidade;
-    const estado = route.params?.estado;
-    const uidMotorista = route.params?.uidMotorista;
-    const currentUser = route.params?.currentUser;
-    const nomeMotorista = route.params?.nomeMotorista;
-    const veiculoMotorista = route.params?.veiculoMotorista;
-    const placaVeiculoMotorista = route.params?.placaVeiculoMotorista;
-    const motoristaUrl = route.params?.urlIMG;
-    const nomeDestino = route.params?.nomeDestino;
+    const [cidade, setCidade] = useState(null);
+    const [estado, setEstado] = useState(null);
+    const [nomeDestino, setNomeDestino] = useState(null);
+    const [uidMotorista, setUidMotorista] = useState(null);
+    const [nomeMotorista, setNomeMotorista] = useState(null);
+    const [veiculoMotorista, setVeiculoMotorista] = useState(null);
+    const [placaVeiculoMotorista, setPlacaVeiculoMotorista] = useState(null);
+    const [motoristaUrl, setMotoristaUrl] = useState(null);
+
+    // const cidade = route.params?.cidade;
+    // const estado = route.params?.estado;
+    // const uidMotorista = route.params?.uidMotorista;
+    // // const currentUser = route.params?.currentUser;
+    // const nomeMotorista = route.params?.nomeMotorista;
+    // const veiculoMotorista = route.params?.veiculoMotorista;
+    // const placaVeiculoMotorista = route.params?.placaVeiculoMotorista;
+    // const motoristaUrl = route.params?.urlIMG;
+    // const nomeDestino = route.params?.nomeDestino;
+
+    const currentUser = auth().currentUser.uid;
+
+
+    function carregarInformacoes(){
+      if (route.params?.cidade == undefined || route.params?.estado == undefined || route.params?.nomeDestino == undefined){
+        //buscar do banco
+        EstadoApp.findData(1).then(
+          info => {
+            console.log(info)
+            setCidade(info.cidade);
+            setEstado(info.estado);
+            setNomeDestino(info.nomeDestino);
+            setUidMotorista(info.uidMotorista);
+            setNomeMotorista(info.nomeMotorista);
+            setVeiculoMotorista(info.veiculoMotorista);
+            setPlacaVeiculoMotorista(info.placaVeiculoMotorista);
+            setMotoristaUrl(info.motoristaUrl);
+            setInfoCarregadas(true);
+          }
+        ).catch(err=> console.log(err));
+  
+      }else{
+        console.log('info carregadas por default!');
+        setCidade(route.params?.cidade);
+        setEstado(route.params?.estado);
+        setNomeDestino(route.params?.nomeDestino);
+        setInfoCarregadas(true);
+      }
+    }
 
     //Função responsável por solicitar ao motorista para ligar sua localização.
     const localizacaoLigada = async()=>{
@@ -147,10 +191,15 @@ function AguardandoMotorista({navigation, route}){
     
     useEffect(()=>{
         getMyLocation();
-        getPosicaoMotorista();
-        motoristaMeBuscando();
-        viagemIniciada();
-    }, [motoristaAcaminho, viagemEmAndamento])
+        if (infoCarregadas){
+          getPosicaoMotorista();
+          motoristaMeBuscando();
+          viagemIniciada();
+        }else{
+          console.log('é necessário carregar as informações');
+          carregarInformacoes();
+        }
+    }, [motoristaAcaminho, viagemEmAndamento, infoCarregadas])
 
     return (
       <SafeAreaView>

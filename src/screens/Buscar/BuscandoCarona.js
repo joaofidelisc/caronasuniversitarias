@@ -16,20 +16,50 @@ const {height, width} = Dimensions.get('screen')
 
 function BuscandoCarona({navigation, route}) {
   const [token,setToken] = useState("");
+  const [infoCarregadas, setInfoCarregadas] = useState(false);
+  
+  const [cidade, setCidade] = useState(null);
+  const [estado, setEstado] = useState(null);
+  const [nomeDestino, setNomeDestino] = useState(null);
+
+  const [encontrouCarona, setEncontrouCarona] = useState('');
+  const currentUser = auth().currentUser.uid;
+
   const localizacaoPassageiro = route.params?.localizacao;
   const destinoPassageiro = route.params?.destino;
 
 
 
-  const [encontrouCarona, setEncontrouCarona] = useState('');
-  const currentUser = auth().currentUser.uid;
 
   // const recusouCarona = route.params?.recusou;
-  const cidade = route.params?.cidade;
-  const estado = route.params?.estado;
-  const nomeDestino = route.params?.nomeDestino;
+  // const cidade = route.params?.cidade;
+  // const estado = route.params?.estado;
+  // const nomeDestino = route.params?.nomeDestino;
+  
+  function carregarInformacoes(){
+    if (route.params?.cidade == undefined || route.params?.estado == undefined || route.params?.nomeDestino == undefined){
+      //buscar do banco
+      EstadoApp.findData(1).then(
+        info => {
+          console.log(info)
+          setCidade(info.cidade);
+          setEstado(info.estado);
+          setNomeDestino(info.nomeDestino);
+          setInfoCarregadas(true);
+        }
+      ).catch(err=> console.log(err));
+
+    }else{
+      console.log('info carregadas por default!');
+      setCidade(route.params?.cidade);
+      setEstado(route.params?.estado);
+      setNomeDestino(route.params?.nomeDestino);
+      setInfoCarregadas(true);
+    }
+  }
 
   function buscarCarona(){
+    console.log('rodando buscar carona!');
     const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
     try{
       reference.on('value', function(snapshot){
@@ -80,19 +110,14 @@ function BuscandoCarona({navigation, route}) {
        });
    };
 
-  //enviar notificação para o motorista????
   const armazenaToken = async()=>{
     let docRef = firestore().collection('Users').doc(currentUser);
     try{
       docRef.get().then((doc)=>{
         if (doc.exists){
-          // if (doc.data().token == undefined || doc.data().token == ''){
           docRef.update({
             token: token
           })
-          // }
-          // console.log('TELA DE BUSCANDO CARONA:');
-          // console.log('token armazenado:', doc.data().token);
         }
       })
     }catch(error){
@@ -104,30 +129,12 @@ function BuscandoCarona({navigation, route}) {
     await AsyncStorage.removeItem('BuscandoCarona');
   }
 
-  const testeBanco = async()=>{
-    console.log('teste banco!');
-    await EstadoApp.getData();
-    // console.log('teste:', teste);
-  }
-
+ 
   useEffect(()=>{
     const defineEstadoAtual = async()=>{
       await AsyncStorage.setItem('BuscandoCarona', 'true');
     }
-    const atualizarDados = async()=>{
-      await EstadoApp.updateData(cidade, estado);
-    }
-    defineEstadoAtual().catch(console.error);
-    atualizarDados().catch(console.error);
-    
-    let teste = EstadoApp.getData();
-    console.log('-------------------------------------------');
-    console.log('testeEEEE:', teste.cidade);
-    console.log('testeEEEE:', teste.estado);
-    console.log('estadoApp.getDataA:', EstadoApp.getData());
-    // const [city, state] = EstadoApp.getData();
-    // console.log('city:', city, 'state:', state);
-    console.log('-------------------------------------------');
+    defineEstadoAtual().catch(console.error);    
   }, []);
 
 
@@ -136,9 +143,17 @@ function BuscandoCarona({navigation, route}) {
     getFCMToken();
     requestPermission();
     armazenaToken();
-    buscarCarona();
   }, [token])
 
+  useEffect(()=>{
+    if (infoCarregadas){
+      buscarCarona();
+    }else{
+      console.log('é necessário carregar as informações');
+      carregarInformacoes();
+    }
+  }, [infoCarregadas]);
+  
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />

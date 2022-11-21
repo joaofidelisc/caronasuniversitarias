@@ -15,12 +15,40 @@ const {height,width} = Dimensions.get('screen')
 function Options({navigation, route}) {
 
     const [vetorMotoristas, setMotoristas] = useState([]);    
+    const [infoCarregadas, setInfoCarregadas] = useState(false);
+    const [cidade, setCidade] = useState(null);
+    const [estado, setEstado] = useState(null);
+    const [nomeDestino, setNomeDestino] = useState(null);
+  
 
     const currentUser = auth().currentUser.uid;
     
-    const cidade = route.params?.cidade;
-    const estado = route.params?.estado;
-    const nomeDestino = route.params?.nomeDestino;
+    // const cidade = route.params?.cidade;
+    // const estado = route.params?.estado;
+    // const nomeDestino = route.params?.nomeDestino;
+
+    function carregarInformacoes(){
+      if (route.params?.cidade == undefined || route.params?.estado == undefined || route.params?.nomeDestino == undefined){
+        //buscar do banco
+        EstadoApp.findData(1).then(
+          info => {
+            console.log(info)
+            setCidade(info.cidade);
+            setEstado(info.estado);
+            setNomeDestino(info.nomeDestino);
+            setInfoCarregadas(true);
+          }
+        ).catch(err=> console.log(err));
+  
+      }else{
+        console.log('info carregadas por default!');
+        setCidade(route.params?.cidade);
+        setEstado(route.params?.estado);
+        setNomeDestino(route.params?.nomeDestino);
+        setInfoCarregadas(true);
+      }
+    }
+  
 
     /*
     Função responsável por definir o vetor de motoristas e atualizar em tempo real conforme mais caronas forem oferecidas.
@@ -255,8 +283,12 @@ function Options({navigation, route}) {
   }, [])
   
   useEffect(()=>{
-    getDadosMotorista();
-  }, [vetorMotoristas]);
+    if (infoCarregadas){
+      getDadosMotorista();
+    }else{
+      carregarInformacoes();
+    }
+  }, [vetorMotoristas, infoCarregadas]);
 
     return (
        <SafeAreaView>
