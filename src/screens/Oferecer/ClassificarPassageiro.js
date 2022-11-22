@@ -4,6 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 import database from '@react-native-firebase/database';
 import Lottie from 'lottie-react-native';
+import EstadoApp from '../../services/sqlite/EstadoApp';
+
 
 const {width, height} = Dimensions.get('screen');
 

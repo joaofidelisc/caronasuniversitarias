@@ -10,6 +10,8 @@ import firebase from "@react-native-firebase/app";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Lottie from 'lottie-react-native';
+import EstadoApp from '../../services/sqlite/EstadoApp';
+
 
 /*
 Ideias para essa tela:

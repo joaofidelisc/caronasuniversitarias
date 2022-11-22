@@ -20,6 +20,7 @@ import notifee, { AndroidColor } from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 import NotificationService from '../Notificacoes/PushNotifications';
 import { AndroidImportance } from '@notifee/react-native';
+import EstadoApp from '../../services/sqlite/EstadoApp';
 
 
 const {width, height} = Dimensions.get('screen');
