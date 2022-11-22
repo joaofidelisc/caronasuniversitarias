@@ -45,7 +45,7 @@ function AguardandoMotorista({navigation, route}){
 
 
     function carregarInformacoes(){
-      if (route.params?.cidade == undefined || route.params?.estado == undefined || route.params?.nomeDestino == undefined){
+      if (route.params?.cidade == undefined || route.params?.estado == undefined){
         //buscar do banco
         EstadoApp.findData(1).then(
           info => {
@@ -61,12 +61,16 @@ function AguardandoMotorista({navigation, route}){
             setInfoCarregadas(true);
           }
         ).catch(err=> console.log(err));
-  
       }else{
         console.log('info carregadas por default!');
         setCidade(route.params?.cidade);
         setEstado(route.params?.estado);
+        setNomeMotorista(route.params?.nomeMotorista);
+        setVeiculoMotorista(route.params?.veiculoMotorista);
+        setPlacaVeiculoMotorista(route.params?.placaVeiculoMotorista);
+        setMotoristaUrl(route.params?.motoristaUrl);
         setNomeDestino(route.params?.nomeDestino);
+        setUidMotorista(route.params?.uidMotorista);
         setInfoCarregadas(true);
       }
     }
@@ -166,19 +170,28 @@ function AguardandoMotorista({navigation, route}){
       }
     
     function getPosicaoMotorista(){
+      console.log('----------------------------------')
+      console.log('dentro de getPosicaoMotorista:');
+      console.log('uidMotorista:', uidMotorista);
+      //UIDMOTORISTA NÃO ESTÁ ATUALIZANDO...
+      console.log('cidade:', cidade, 'estado:', estado);
       const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
       try{
+        //bug aqui
         reference.on('value', function(snapshot){
-          setPosicaoMotorista({
-            latitude: snapshot.val().latitudeMotorista,
-            longitude: snapshot.val().longitudeMotorista,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421
-          })
+          if (snapshot.exists()){
+            setPosicaoMotorista({
+              latitude: snapshot.val().latitudeMotorista,
+              longitude: snapshot.val().longitudeMotorista,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421
+            })
+          }
         })
       }catch(error){
-          console.log('erro em getPosicaoMotorista');
+        console.log('erro em getPosicaoMotorista');
       }
+      console.log('----------------------------------')
     }
 
     useEffect(()=>{
@@ -199,7 +212,20 @@ function AguardandoMotorista({navigation, route}){
           console.log('é necessário carregar as informações');
           carregarInformacoes();
         }
-    }, [motoristaAcaminho, viagemEmAndamento, infoCarregadas])
+    }, [motoristaAcaminho, viagemEmAndamento, infoCarregadas]);
+
+
+  //   useEffect(()=>{
+  //     getMyLocation();
+  //     getPosicaoMotorista();
+  //     motoristaMeBuscando();
+  //     viagemIniciada();
+  //     // if (infoCarregadas){
+  //     // }else{
+  //     //   console.log('é necessário carregar as informações');
+  //     //   carregarInformacoes();
+  //     // }
+  // }, [motoristaAcaminho, viagemEmAndamento])
 
     return (
       <SafeAreaView>

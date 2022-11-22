@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, SafeAreaView, StatusBar, Image, TextInput, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
+import auth from '@react-native-firebase/auth'
 
 import firestore from '@react-native-firebase/firestore';
 import firebase from "@react-native-firebase/app";
@@ -17,12 +18,39 @@ function Classificacao({navigation, route}){
     const [defaultRating, setDefaultRating] = useState(2); 
     const [maxRating, setMaxRating] = useState([1, 2, 3, 4, 5]);
 
-    const uidMotorista = route.params?.uidMotorista;
-    const currentUser = route.params?.currentUser;
-    const cidade = route.params?.cidade;
-    const estado = route.params?.estado;
 
+    const [infoCarregadas, setInfoCarregadas] = useState(false);
+    const [cidade, setCidade] = useState(null);
+    const [estado, setEstado] = useState(null);
+    const [uidMotorista, setUidMotorista] = useState(null);
+    
+    const currentUser = auth().currentUser.uid;
+    
+    // const uidMotorista = route.params?.uidMotorista;
+    // const currentUser = route.params?.currentUser;
+    // const cidade = route.params?.cidade;
+    // const estado = route.params?.estado;
 
+    function carregarInformacoes(){
+      if (route.params?.cidade == undefined || route.params?.estado == undefined){
+        //buscar do banco
+        EstadoApp.findData(1).then(
+          info => {
+            console.log(info)
+            setCidade(info.cidade);
+            setEstado(info.estado);
+            setUidMotorista(info.uidMotorista);
+            setInfoCarregadas(true);
+          }
+        ).catch(err=> console.log(err));
+      }else{
+        console.log('info carregadas por default!');
+        setCidade(route.params?.cidade);
+        setEstado(route.params?.estado);
+        setUidMotorista(route.params?.uidMotorista);
+        setInfoCarregadas(true);
+      }
+    }
 
     function CustomRatingBar() {
       return (
@@ -100,8 +128,13 @@ function Classificacao({navigation, route}){
     useEffect(()=>{
       console.log('largura:', width);
       console.log('altura:', height);
-      excluiBancoPassageiro();
-    })
+      if (infoCarregadas){
+        excluiBancoPassageiro();
+      }else{
+        console.log('é necessário carregar as informações');
+        carregarInformacoes();
+      }
+    }, [infoCarregadas]);
 
 
     useEffect(()=>{

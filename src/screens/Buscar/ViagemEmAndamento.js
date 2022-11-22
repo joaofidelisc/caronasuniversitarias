@@ -4,6 +4,8 @@ import database from '@react-native-firebase/database';
 import firestore from '@react-native-firebase/firestore';
 import firebase from "@react-native-firebase/app";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import auth from '@react-native-firebase/auth';
+
 import EstadoApp from '../../services/sqlite/EstadoApp';
 
 
@@ -13,17 +15,62 @@ function ViagemEmAndamento({navigation, route}) {
     
     const [modalVisible, setModalVisible] = useState(false);
 
-    const uidMotorista = route.params?.uidMotorista;
-    const currentUser = route.params?.currentUser;
-    const cidade = route.params?.cidade;
-    const estado = route.params?.estado;
-    const nomeMotorista = route.params?.nomeMotorista;
-    const veiculoMotorista = route.params?.veiculoMotorista;
-    const placaVeiculoMotorista = route.params?.placaVeiculoMotorista;
-    const motoristaURL = route.params?.motoristaUrl;
-    const nomeDestino = route.params?.nomeDestino;
 
-    
+    const [infoCarregadas, setInfoCarregadas] = useState(false);
+
+    const [cidade, setCidade] = useState(null);
+    const [estado, setEstado] = useState(null);
+    const [nomeMotorista, setNomeMotorista] = useState(null);
+    const [veiculoMotorista, setVeiculoMotorista] = useState(null);
+    const [placaVeiculoMotorista, setPlacaVeiculoMotorista] = useState(null);
+    const [motoristaURL, setMotoristaURL] = useState(null);
+    const [nomeDestino, setNomeDestino] = useState(null);
+    const [uidMotorista, setUidMotorista] = useState(null);
+    const currentUser = auth().currentUser.uid;
+
+    // const uidMotorista = route.params?.uidMotorista;
+    // const currentUser = route.params?.currentUser;
+    // const cidade = route.params?.cidade; //ok
+    // const estado = route.params?.estado; //ok
+    // const nomeMotorista = route.params?.nomeMotorista; //ok
+    // const veiculoMotorista = route.params?.veiculoMotorista; //ok
+    // const placaVeiculoMotorista = route.params?.placaVeiculoMotorista; //ok
+    // const motoristaURL = route.params?.motoristaUrl; //OK
+    // const nomeDestino = route.params?.nomeDestino; //OK
+
+    //cidade, estado, currentUser, uidMotorista, nomeMotorista, nomeDestino, motoristaURL
+
+    function carregarInformacoes(){
+      if (route.params?.cidade == undefined || route.params?.estado == undefined){
+        //buscar do banco
+        EstadoApp.findData(1).then(
+          info => {
+            console.log(info)
+            setCidade(info.cidade);
+            setEstado(info.estado);
+            setNomeMotorista(info.nomeMotorista);
+            setVeiculoMotorista(info.veiculoMotorista);
+            setPlacaVeiculoMotorista(info.placaVeiculoMotorista);
+            setMotoristaURL(info.motoristaUrl);
+            setNomeDestino(info.nomeDestino);
+            setUidMotorista(info.uidMotorista);
+            setInfoCarregadas(true);
+          }
+        ).catch(err=> console.log(err));
+      }else{
+        console.log('info carregadas por default!');
+        setCidade(route.params?.cidade);
+        setEstado(route.params?.estado);
+        setNomeMotorista(route.params?.nomeMotorista);
+        setVeiculoMotorista(route.params?.veiculoMotorista);
+        setPlacaVeiculoMotorista(route.params?.placaVeiculoMotorista);
+        setMotoristaURL(route.params?.motoristaUrl);
+        setNomeDestino(route.params?.nomeDestino);
+        setUidMotorista(route.params?.uidMotorista);
+        setInfoCarregadas(true);
+      }
+    }
+
     const buscaChat = async(secondUser)=>{
       let idChatKey = null;
       try{
@@ -72,6 +119,7 @@ function ViagemEmAndamento({navigation, route}) {
       }  
     }
 
+    
     // const excluiBancoPassageiro = async()=>{
     //   const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     //   try{
@@ -115,6 +163,8 @@ function ViagemEmAndamento({navigation, route}) {
         return dia+"/"+mes+"/"+ano;
     }
 
+
+    
     const escreveHistoricoViagem = async()=>{
       const data = await dataAtualFormatada();
       const reference_passageiro = firestore().collection('Users').doc(currentUser); 
@@ -173,8 +223,13 @@ function ViagemEmAndamento({navigation, route}) {
     }, [])
 
     useEffect(()=>{
-      viagemTerminou();
-    })
+      if (infoCarregadas){
+        viagemTerminou(); 
+      }else{
+        console.log('carregando informações!');
+        carregarInformacoes();
+      }
+    }, [infoCarregadas]);
 
     return (
       <SafeAreaView>

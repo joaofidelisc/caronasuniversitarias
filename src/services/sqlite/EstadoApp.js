@@ -26,11 +26,11 @@ const insertData = (obj) => {
     });
   };
 
-  const updateData = (id, obj) => {
+  const updateData = (obj, id) => {
     return new Promise((resolve, reject) => {
       db.transaction((tx) => {
         tx.executeSql(
-          "UPDATE user SET uidMotorista=?, nomeMotorista=?, veiculoMotorista=?, placaVeiculoMotorista=?, motoristaUrl=? WHERE id=?;",
+          "UPDATE user SET uidMotorista=?, nomeMotorista=?, veiculoMotorista=?, placaVeiculoMotorista=?, motoristaUrl=?",
           [obj.uidMotorista, obj.nomeMotorista, obj.veiculoMotorista, obj.placaVeiculoMotorista, obj.motoristaUrl],
           //-----------------------
           (_, { rowsAffected }) => {

@@ -744,14 +744,14 @@ function Oferecer({route, navigation}) {
   }, [token]);
 
 
-  useEffect(()=>{
-    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-    if (numPassageirosABordo == 0){
-      reference.onDisconnect().remove();
-    }else{
-      reference.onDisconnect().cancel();
-    }
-  })
+  // useEffect(()=>{
+  //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+  //   if (numPassageirosABordo == 0){
+  //     reference.onDisconnect().remove();
+  //   }else{
+  //     reference.onDisconnect().cancel();
+  //   }
+  // })
 
   return (
       <SafeAreaView>

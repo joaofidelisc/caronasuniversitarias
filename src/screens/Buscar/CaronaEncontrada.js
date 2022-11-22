@@ -28,7 +28,7 @@ function Options({navigation, route}) {
     // const nomeDestino = route.params?.nomeDestino;
 
     function carregarInformacoes(){
-      if (route.params?.cidade == undefined || route.params?.estado == undefined || route.params?.nomeDestino == undefined){
+      if (route.params?.cidade == undefined || route.params?.estado == undefined){
         //buscar do banco
         EstadoApp.findData(1).then(
           info => {
@@ -225,7 +225,7 @@ function Options({navigation, route}) {
 
   //Função responsável por complementar a função abaixo.
   //Escreve no banco do motorista o UID do passageiro.
-  function aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL){
+  async function aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL){
     let listaCaronasAceitas = '';
     const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
     try{
@@ -249,11 +249,10 @@ function Options({navigation, route}) {
     // defineEstadoAtual();
     const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     reference_passageiro.off('value');
-    // console.log('UID MOTORISTA:', uidMotorista);
-    EstadoApp.updateData({uidMotorista: uidMotorista, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, motoristaURL: motoristaURL}, 1);
+    EstadoApp.updateData({uidMotorista: uidMotorista, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, motoristaUrl: motoristaURL});
     navigation.navigate('AguardandoMotorista', {cidade: cidade, estado: estado, uidMotorista:uidMotorista, currentUser: currentUser, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, urlIMG: motoristaURL, nomeDestino: nomeDestino});
   }
-
+  
   
   //Função responsável por aceitar carona - escreve no banco do banco do passageiro o uid do motorista e reseta o vetor de ofertas de caronas;
   //Além disso, invoca a função aceitarCarona_ (complementar desta), que é responsável por escrever no banco do motorista o uid do passageiro;

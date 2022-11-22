@@ -97,6 +97,8 @@ function ConfigurarCarona({navigation}) {
       console.log('rodando getAll...')
       // EstadoApp.updateData(1, {cidade: 'Matão', estado: 'SP', id:1})
       // EstadoApp.insertData({cidade: 'São Carlos', estado: 'SP', nomeDestino: 'centro', localDestino: 'centro-2', id:1});
+      EstadoApp.updateData({uidMotorista: '123456', nomeMotorista: 'joao', veiculoMotorista: 'ferrari', placaVeiculoMotorista: '123456', motoristaUrl: 123456}, 0);
+
       EstadoApp.findData(1).then(info => console.log(info)).catch(err=> console.log(err));
       // EstadoApp.getAll().then(info => printValor(info)).catch(err=> console.log(err));
       // console.log('rodando getAll2...')
