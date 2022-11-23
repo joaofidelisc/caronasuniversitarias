@@ -46,6 +46,9 @@ function Entrada({navigation}){
         }
       })
     }catch(error){
+      if (error.code == 'auth/missing-identifier'){
+        console.log('missing identifier!');
+      }
       setFalhaLogin(true);
       Alert.alert(
         "Algum erro ocorreu",

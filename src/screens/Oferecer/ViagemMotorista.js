@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useMemo, useCallback} from 'react';
 import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, ScrollView, StyleSheet, Dimensions} from 'react-native';
 
-import auth from '@react-native-firebase/auth'
+import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
@@ -32,10 +32,37 @@ function ViagemMotorista({route, navigation}){
     const [UIDsPassageiros, setUIDsPassageiros] = useState([]);
     const [UIDsClassificar, setUIDsClassificar] = useState([]); //utilizado na próxima tela;
     const [atualizarNumPassageiros, setAtualizarNumPassageiros] = useState(true);
+    const [definiuEstado, setDefiniuEstado] = useState(false);
+
+    const [infoCarregadas, setInfoCarregadas] = useState(false);
+  
+    const [cidade, setCidade] = useState(null);
+    const [estado, setEstado] = useState(null);
+  
 
     const currentUser = auth().currentUser.uid;
-    const cidade = route.params?.cidade;
-    const estado = route.params?.estado;
+    // const cidade = route.params?.cidade;
+    // const estado = route.params?.estado;
+    function carregarInformacoes(){
+      if (route.params?.cidade == undefined || route.params?.estado == undefined){
+        //buscar do banco
+        EstadoApp.findData(1).then(
+          info => {
+            console.log(info)
+            setCidade(info.cidade);
+            setEstado(info.estado);
+            setInfoCarregadas(true);
+          }
+        ).catch(err=> console.log(err));
+  
+      }else{
+        console.log('info carregadas por default!');
+        setCidade(route.params?.cidade);
+        setEstado(route.params?.estado);
+        setInfoCarregadas(true);
+      }
+    }
+
 
     async function getDadosPassageiros(){
       let listaPassageiros = '';
@@ -191,7 +218,9 @@ function ViagemMotorista({route, navigation}){
       setPassageirosABordo(passageirosABordo.filter((uid)=>(uid.uid != uidPassageiro)));
       await escreveHistoricoViagem(uidPassageiro, destinoPassageiro, nomePassageiro, passageiroIMG);
       if (numPassageirosABordo == 1){
-        navigation.navigate('ClassificarPassageiro', {cidade: cidade, estado: estado, currentUser: currentUser, passageiros: passageirosABordo, arrayClassificar: UIDsClassificar});
+        const objString = JSON.stringify(passageirosABordo);       
+        EstadoApp.updateData({uidMotorista: 'att', nomeMotorista: 'att', veiculoMotorista: 'att', placaVeiculoMotorista: 'att', motoristaUrl: 'att', passageiros:objString});
+        navigation.navigate('ClassificarPassageiro', {cidade: cidade, estado: estado, passageiros: passageirosABordo, arrayClassificar: UIDsClassificar});
       }else{
         setNumPassageirosABordo(numPassageirosABordo-1);
       } 
@@ -205,17 +234,44 @@ function ViagemMotorista({route, navigation}){
       database().ref().child(`${estado}/${cidade}/Passageiros`).off('value');
     }
 
-    useEffect(()=>{
-      console.log('numero de passageiros a bordo:', numPassageirosABordo);
-    })
 
     useEffect(()=>{
-      removeListeners();
-    })
+      const defineEstadoAtual = async()=>{
+        await AsyncStorage.removeItem('Oferecer');
+        await AsyncStorage.setItem('ViagemMotorista', 'true');
+      }
+      if (!definiuEstado){
+        defineEstadoAtual().catch(console.error);
+      }
+    }, []);
+
 
     useEffect(()=>{
-      getDadosPassageiros();
-    }, [passageirosABordo]);
+      if (infoCarregadas){
+        removeListeners();
+      }else{
+        carregarInformacoes();
+      }
+    }, [infoCarregadas]);
+
+    useEffect(()=>{
+      if (infoCarregadas){
+        getDadosPassageiros();
+      }else{
+        carregarInformacoes();
+      }
+    }, [passageirosABordo, infoCarregadas]);
+
+    // useEffect(()=>{
+    //   console.log('teste!!!!');
+    //   console.log('Passageiros a bordo:', passageirosABordo);
+    //   console.log('tentando converter obj para string:');
+    //   const objString = JSON.stringify(passageirosABordo);
+    //   console.log('objString:', objString);
+
+    //   const objJSON = JSON.parse(objString);
+    //   console.log('objJSON:', objJSON);
+    // })
 
     return (
       <SafeAreaView>

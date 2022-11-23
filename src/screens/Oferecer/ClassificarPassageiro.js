@@ -5,7 +5,13 @@ import firestore from '@react-native-firebase/firestore';
 import database from '@react-native-firebase/database';
 import Lottie from 'lottie-react-native';
 import EstadoApp from '../../services/sqlite/EstadoApp';
+import auth from '@react-native-firebase/auth'
 
+
+// console.log('objString:', objString);
+  
+// const objJSON = JSON.parse(objString);
+// console.log('objJSON:', objJSON);
 
 const {width, height} = Dimensions.get('screen');
 
@@ -14,13 +20,42 @@ function ClassificarPassageiro({route, navigation}) {
     const [defaultRating, setDefaultRating] = useState(2); 
     const [maxRating, setMaxRating] = useState([1, 2, 3, 4, 5]);
     const [passageirosAvaliados, setPassageirosAvaliados] = useState([]);
+    const [definiuEstado, setDefiniuEstado] = useState(false);
 
-    const passageiros = route.params?.passageiros;
-    const currentUser = route.params?.currentUser;
-    const cidade = route.params?.cidade;
-    const estado = route.params?.estado;
 
-    
+    const [infoCarregadas, setInfoCarregadas] = useState(false);
+    const [renderizarTela, setRenderizarTela] = useState(false);
+    const [cidade, setCidade] = useState(null);
+    const [estado, setEstado] = useState(null);
+    const [passageiros, setPassageiros] = useState(null);
+    const currentUser = auth().currentUser.uid;
+
+    // const passageiros = route.params?.passageiros;
+    // const currentUser = route.params?.currentUser;
+    // const cidade = route.params?.cidade;
+    // const estado = route.params?.estado;
+
+    function carregarInformacoes(){
+      if (route.params?.cidade == undefined || route.params?.estado == undefined){
+        EstadoApp.findData(1).then(
+          info => {
+            const objJSON = JSON.parse(info.passageiros);
+            console.log(info);
+            setCidade(info.cidade);
+            setEstado(info.estado);
+            setPassageiros(objJSON);
+            setInfoCarregadas(true);
+          }
+        ).catch(err=> console.log(err));
+  
+      }else{
+        setCidade(route.params?.cidade);
+        setEstado(route.params?.estado);
+        setPassageiros(route.params?.passageiros);
+        setInfoCarregadas(true);
+      }
+    }
+
     const classificarPassageiro = async(uidPassageiro)=>{
       setPassageirosAvaliados([...passageirosAvaliados, uidPassageiro]);
       let numViagens = 0;
@@ -61,13 +96,18 @@ function ClassificarPassageiro({route, navigation}) {
  
 
     const finalizarViagem = async()=>{
-      // let arrayPassageiros = []
-      // arrayPassageiros = passageiros.split(', ');
-      // console.log('teste');
-      // console.log('passageiros:', passageiros);
       excluiBancoMotorista();
+      await AsyncStorage.removeItem('ClassificarPassageiro');
       navigation.navigate('ConfigurarCarona');
     }
+
+    useEffect(()=>{
+      if (!infoCarregadas){
+        carregarInformacoes();
+      }else{
+        setRenderizarTela(true);
+      }
+    }, [infoCarregadas, renderizarTela]);
 
     function CustomRatingBar() {
       return (
@@ -100,6 +140,16 @@ function ClassificarPassageiro({route, navigation}) {
     }
 
     useEffect(()=>{
+      const defineEstadoAtual = async()=>{
+        await AsyncStorage.removeItem('ViagemMotorista');
+        await AsyncStorage.setItem('ClassificarPassageiro', 'true');
+      }
+      if (!definiuEstado){
+        defineEstadoAtual().catch(console.error);
+      }
+    }, []);
+
+    useEffect(()=>{
       console.log('tela classificar passageiros:');
       console.log('passageiros:', passageiros);
     })
@@ -119,7 +169,7 @@ function ClassificarPassageiro({route, navigation}) {
                 />
           <ScrollView style={styles.scrollView}>
           {
-              passageiros.map(passageiro=>(
+              renderizarTela && passageiros.map(passageiro=>(
                 !passageirosAvaliados.includes(passageiro.uid)?
                 <View style={styles.viewPassageiros}
                 key={passageiro.uid}

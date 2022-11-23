@@ -7,6 +7,7 @@ import Geolocation from '@react-native-community/geolocation';
 import Geocoder from 'react-native-geocoding';
 import config from '../../config';
 import { useNetInfo } from '@react-native-community/netinfo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 import EstadoApp from '../../services/sqlite/EstadoApp';
@@ -19,6 +20,11 @@ function ConfigurarCarona({navigation}) {
     const [localizacaoMotorista, setlocalizacaoMotorista] = useState(null);
     const [nomeDestino, setNomeDestino] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
+    const [recuperouEstado, setRecuperouEstado] = useState(false);
+    const [definiuEstado, setDefiniuEstado] = useState(false);
+    const [aplicativoEstavaAtivo, setAplicativoEstavaAtivo] = useState(true);
+
+
     const netInfo = useNetInfo();
 
 
@@ -74,7 +80,9 @@ function ConfigurarCarona({navigation}) {
       var filtro_estado = response.results[0].address_components.filter(function(address_component){
         return address_component.types.includes("administrative_area_level_1");
       });
+      await EstadoApp.removeData(1).then(console.log('dados removidos!')).catch(console.log('algum erro ocorreu!'));
       if (nomeDestino != ''){
+        await EstadoApp.insertData({cidade: filtro_cidade[0].short_name, estado: filtro_estado[0].short_name, nomeDestino:nomeDestino, uidMotorista:'alterar', nomeMotorista:'alterar', veiculoMotorista:'alterar', placaVeiculoMotorista:'alterar', motoristaUrl:'alterar', numVagas:vagas, passageiros:'atualizar', id:1});
         navigation.navigate('OferecerCarona', {cidade:filtro_cidade[0].short_name, estado:filtro_estado[0].short_name, destino:nomeDestino, vagas:vagas})
       }else{
         setModalVisible(true);
@@ -82,35 +90,72 @@ function ConfigurarCarona({navigation}) {
 
     }
 
-    const printValor = (valor) => {
-      console.log('valor:')
-      console.log(`cidade:${valor.cidade}, estado:${valor.estado}, id:${valor.id}`)
-    }
+    // const printValor = (valor) => {
+    //   console.log('valor:')
+    //   console.log(`cidade:${valor.cidade}, estado:${valor.estado}, id:${valor.id}`)
+    // }
 
-    //TESTE BANCO
-    const testeBanco = async()=>{
-      // await EstadoApp.createTable();
-      console.log('----------------------------------');
-      console.log('testando banco...');
-      console.log('rodando getAll...')
-      // EstadoApp.updateData(1, {cidade: 'Matão', estado: 'SP', id:1})
-      // EstadoApp.insertData({cidade: 'São Carlos', estado: 'SP', nomeDestino: 'centro', localDestino: 'centro-2', id:1});
-      EstadoApp.updateData({uidMotorista: '123456', nomeMotorista: 'joao', veiculoMotorista: 'ferrari', placaVeiculoMotorista: '123456', motoristaUrl: 123456}, 0);
+    // //TESTE BANCO
+    // const testeBanco = async()=>{
+    //   // await EstadoApp.createTable();
+    //   console.log('----------------------------------');
+    //   console.log('testando banco...');
+    //   console.log('rodando getAll...')
+    //   // EstadoApp.updateData(1, {cidade: 'Matão', estado: 'SP', id:1})
+    //   // EstadoApp.insertData({cidade: 'São Carlos', estado: 'SP', nomeDestino: 'centro', localDestino: 'centro-2', id:1});
+    //   EstadoApp.updateData({uidMotorista: '123456', nomeMotorista: 'joao', veiculoMotorista: 'ferrari', placaVeiculoMotorista: '123456', motoristaUrl: 123456}, 0);
 
-      EstadoApp.findData(1).then(info => console.log(info)).catch(err=> console.log(err));
-      // EstadoApp.getAll().then(info => printValor(info)).catch(err=> console.log(err));
-      // console.log('rodando getAll2...')
-      // EstadoApp.getAll2();
-      // EstadoApp.getData();
-      // EstadoApp.getData().then(info => info.forEach(c => console.log(c)));
+    //   EstadoApp.findData(1).then(info => console.log(info)).catch(err=> console.log(err));
+    //   // EstadoApp.getAll().then(info => printValor(info)).catch(err=> console.log(err));
+    //   // console.log('rodando getAll2...')
+    //   // EstadoApp.getAll2();
+    //   // EstadoApp.getData();
+    //   // EstadoApp.getData().then(info => info.forEach(c => console.log(c)));
       
-      // EstadoApp.getData().then( 
-      //   info => info.forEach( c => printValor(c) )
-      //   )
-      console.log('----------------------------------');
+    //   // EstadoApp.getData().then( 
+    //   //   info => info.forEach( c => printValor(c) )
+    //   //   )
+    //   console.log('----------------------------------');
 
-    }
-    //TESTE BANCO
+    // }
+    // //TESTE BANCO
+  useEffect(()=>{
+    const recuperaEstadoApp = async()=>{
+      console.log('rodando recuperaEstadoApp...');
+      let Oferecer = await AsyncStorage.getItem("Oferecer");
+      let ViagemMotorista = await AsyncStorage.getItem("ViagemMotorista");
+      let ClassificarPassageiro = await AsyncStorage.getItem("ClassificarPassageiro");
+      
+      (Oferecer!=null && Oferecer!=undefined || 
+        ViagemMotorista!=null && ViagemMotorista!=undefined ||
+        ClassificarPassageiro !=null && ClassificarPassageiro!=undefined
+        )?setAplicativoEstavaAtivo(true):setAplicativoEstavaAtivo(false);
+        
+        //aplicativoEstavaAtivo -> variável utilizada apenas para controlar a tela exibida, ou seja, se o app estava ativo, não exibir tela atual;
+        //aguardar para exibir tela enquanto essa variável não é definida.
+        if (Oferecer != null && Oferecer != undefined){
+          navigation.navigate('OferecerCarona');
+        }else if (ViagemMotorista != null && ViagemMotorista !=undefined){
+          navigation.navigate('ViagemMotorista');
+        }else if (ClassificarPassageiro != null && ClassificarPassageiro != undefined){
+          navigation.navigate('ClassificarPassageiro');
+        }
+        setRecuperouEstado(true);
+      }
+      if (!recuperouEstado){
+        recuperaEstadoApp().catch(console.error);
+      }
+    })
+
+    useEffect(()=>{
+      const defineEstadoAtual = async()=>{
+        console.log('rodando defineEstado...');
+        await AsyncStorage.removeItem('Oferecer');
+      }
+      if (!definiuEstado){
+        defineEstadoAtual().catch(console.error);
+      }
+    }, [])
 
     useEffect(()=>{
       // const netInfo = useNetInfo();

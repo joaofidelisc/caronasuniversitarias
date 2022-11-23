@@ -51,15 +51,46 @@ function Oferecer({route, navigation}) {
     const [cancelarOferta, setCancelarOferta] = useState(true);
     const [passageiros, setPassageiros] = useState([]);
     const [faltaPassageiros, setFaltaPassageiros] = useState(false);
+    const [definiuEstado, setDefiniuEstado] = useState(false);
+    const [infoCarregadas, setInfoCarregadas] = useState(false);
+
     const [token, setToken] = useState(""); //Armazena o token atual obtido do dispositivo do usuário.
-    
     //Informações do motorista e banco de dados
     const currentUser = auth().currentUser.uid;
-    const cidade = route.params?.cidade; 
-    const estado = route.params?.estado;
-    const destino = route.params?.destino;
-    const vagasDisponiveis = route.params?.vagas;
+    
+    const [cidade, setCidade] = useState(null);
+    const [estado, setEstado] = useState(null);
+    const [destino, setDestino] = useState(null);
+    const [vagasDisponiveis, setVagasDisponiveis] = useState(null);
+    
+    // const cidade = route.params?.cidade; 
+    // const estado = route.params?.estado;
+    // const destino = route.params?.destino;
+    // const vagasDisponiveis = route.params?.vagas;
 
+    function carregarInformacoes(){
+      if (route.params?.cidade == undefined || route.params?.estado == undefined || route.params?.destino == undefined){
+        //buscar do banco
+        EstadoApp.findData(1).then(
+          info => {
+            console.log(info)
+            setCidade(info.cidade);
+            setEstado(info.estado);
+            setDestino(info.nomeDestino);
+            setVagasDisponiveis(info.numVagas);
+            setInfoCarregadas(true);
+          }
+        ).catch(err=> console.log(err));
+  
+      }else{
+        console.log('info carregadas por default!');
+        setCidade(route.params?.cidade);
+        setEstado(route.params?.estado);
+        setDestino(route.params?.nomeDestino);
+        setVagasDisponiveis(route.params?.vagas);
+        setInfoCarregadas(true);
+      }
+    }
 
     /*
       Função responsável por solicitar ao motorista para ligar sua localização.
@@ -580,14 +611,14 @@ function Oferecer({route, navigation}) {
     console.log("OFERECER!!!!!!!!!!!!! - iniciarViagem");
     if(numCaronasAceitas>numPassageirosABordo){
       console.log('você não buscou todos os seus passageiros!!!');
-      navigation.navigate('ViagemMotorista', {currentUser: currentUser, cidade: cidade, estado: estado});
+      navigation.navigate('ViagemMotorista', {cidade: cidade, estado: estado});
       // setFaltaPassageiros(true);
       //descomentar a linha de cima - comentei apenas para teste
     }else{
       if (numCaronasAceitas < vagasDisponiveis){
         setAlertaViagem(true);
       }else{
-        navigation.navigate('ViagemMotorista', {currentUser: currentUser, cidade: cidade, estado: estado});
+        navigation.navigate('ViagemMotorista', {cidade: cidade, estado: estado});
       }
     }
   }
@@ -709,39 +740,63 @@ function Oferecer({route, navigation}) {
        console.log('erro em armazenaToken');
      }
    }
+
+   useEffect(()=>{
+      const defineEstadoAtual = async()=>{
+        console.log('rodando defineEstado...');
+        await AsyncStorage.setItem('Oferecer', 'true');
+      }
+      if (!definiuEstado){
+        defineEstadoAtual().catch(console.error);
+      }
+  }, []);
  
   useEffect(()=>{
     console.log('TELA: Oferecer');
     console.log('vagas ofertas:', vagasDisponiveis);
     console.log('vagas ocupadas:', numCaronasAceitas);
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
-    estadoInicial();
-  })
+    if (infoCarregadas){
+      estadoInicial();
+    }else{
+      carregarInformacoes();
+    }
+  }, [infoCarregadas]);
 
   useEffect(()=>{
-    getMyLocation();
-    getCaronistasMarker();
+    if (infoCarregadas){
+      getMyLocation();
+      getCaronistasMarker();
+    }else{
+      carregarInformacoes();
+    }
     BackHandler.addEventListener('hardwareBackPress', ()=>{
       return true
     })
-  }, [vetorCaronistas, existeBanco]);
+  }, [vetorCaronistas, existeBanco, infoCarregadas]);
 
   
   useEffect(()=>{
-    caronasAceitas();
-  }, [ofertasAceitas, numCaronasAceitas]);
+    if (infoCarregadas){
+      caronasAceitas();
+    }else{
+      carregarInformacoes();
+    }
+  }, [ofertasAceitas, numCaronasAceitas, infoCarregadas]);
 
   
   useEffect(() => {
-    getFCMToken();
-    requestPermission();
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('remoteMessage', JSON.stringify(remoteMessage));
       DisplayNotification(remoteMessage);
-      // Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
     });
-    armazenaToken(); //
-    return unsubscribe;
+    if (infoCarregadas){
+      getFCMToken();
+      requestPermission();
+      armazenaToken(); //
+      return unsubscribe;
+    }else{
+      carregarInformacoes();
+    }
   }, [token]);
 
 
@@ -966,7 +1021,7 @@ function Oferecer({route, navigation}) {
                           style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
                           onPress={() => {
                             setAlertaViagem(!alertaViagem);
-                            navigation.navigate('ViagemMotorista', {currentUser: currentUser, cidade: cidade, estado: estado});
+                            navigation.navigate('ViagemMotorista', {cidade: cidade, estado: estado});
                           }}
                       >
                         <Text style={styles.textStyle}>Sim</Text>

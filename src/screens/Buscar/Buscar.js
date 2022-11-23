@@ -67,7 +67,7 @@ export default function Buscar({navigation}) {
       }).then(()=>console.log('coordenadas passageiro enviadas!'));
 
       //'abrir' local destino para enviar para o banco de dados
-      await EstadoApp.insertData({cidade: cidade, estado: estado, nomeDestino:nomeDestino, uidMotorista:'alterar', nomeMotorista:'alterar', veiculoMotorista:'alterar', placaVeiculoMotorista:'alterar', motoristaUrl:'alterar', id:1});
+      await EstadoApp.insertData({cidade: cidade, estado: estado, nomeDestino:nomeDestino, uidMotorista:'alterar', nomeMotorista:'alterar', veiculoMotorista:'alterar', placaVeiculoMotorista:'alterar', motoristaUrl:'alterar', numVagas:0, passageiros:'alterar', id:1});
       navigation.navigate('Buscando_Carona', {nomeDestino: nomeDestino, localDestino: localDestino, cidade: cidade, estado: estado})
     }catch(error){
       console.log('ERRO:', error.code);
