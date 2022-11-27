@@ -121,7 +121,7 @@ export default function Mensagens({route, navigation}) {
       jaExiste = false;
     }
     try{
-      database().ref().child('chatrooms/').on('value', snapshot=>{
+      database().ref().child('chatrooms/').once('value', snapshot=>{
         if (snapshot.exists()){
           snapshot.forEach(async idChat=>{
             if (idChat.val().firstUser == currentUser || idChat.val().secondUser == currentUser){

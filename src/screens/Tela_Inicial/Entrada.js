@@ -4,12 +4,40 @@ import { Text, View, StyleSheet, TouchableOpacity, Image, SafeAreaView, StatusBa
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth'
+import database, {firebase} from '@react-native-firebase/database';
 
 
 const {height,width}=Dimensions.get('window')
 
 function Entrada({navigation}){
   const [falhaLogin, setFalhaLogin] = useState(false);
+
+  // const testeBanco = async()=>{
+  //   console.log('testando banco...');
+  //   const estado = 'SP';
+  //   const cidade = 'Matão';
+  //   const currentUser= 'dasudhasudhasda';
+  //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+  //   try{
+  //     reference.once('value').then(snapshot=>{
+  //       if (snapshot.exists()){
+  //         console.log('existe!');
+  //       }else{
+  //         console.log('não existe!');
+  //       }
+  //     })
+  //   }catch(error){
+  //     console.log("error:", error.code);
+  //   }
+  //   // if (!existeBanco){
+  //   //   try{
+  //   //     reference.once('value').then(function(snapshot){
+  //   //       setExisteBanco(snapshot.exists());
+  //   //     })
+  //   //   }catch(error){
+  //   //     console.log('erro em estadoInicial()');
+  //   //   }
+  // }
 
   const redirecionamentoLogin = async(email)=>{  
     try{
@@ -141,6 +169,9 @@ function Entrada({navigation}){
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={()=>navigation.navigate('Login')}
+                // onPress={()=>{
+                //   testeBanco();
+                // }}
                 style={{alignSelf:'center'}}
                 >
                 <Text style={styles.txtBtnEntrar}>Entrar</Text>
