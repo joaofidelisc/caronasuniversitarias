@@ -106,12 +106,14 @@ function ModoAplicativo(){
   }
 
   useEffect(()=>{
-    if (infoCarregadas){
-      modoAtuacao();
-    }else{
+    modoAtuacao();
+  });
+
+  useEffect(()=>{
+    if (!infoCarregadas){
       carregarInformacoes();
     }
-  }, [infoCarregadas]);
+  })
   
   return (
     <SafeAreaView>

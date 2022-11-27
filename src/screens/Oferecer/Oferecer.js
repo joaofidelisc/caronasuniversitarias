@@ -830,7 +830,7 @@ function Oferecer({route, navigation}) {
             minZoomLevel={17}
             showsUserLocation={true}
             loadingEnabled={false}
-            onRegionChange={getMyLocation}
+            // onRegionChange={getMyLocation}
             initialRegion={{
               latitude: -21.983311,
               longitude: -47.883154,

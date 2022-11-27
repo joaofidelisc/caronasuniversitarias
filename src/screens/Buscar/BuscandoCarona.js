@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, Dimensions} from 'react-native';
 import Lottie from 'lottie-react-native';
 
@@ -10,7 +10,7 @@ import Geocoder from 'react-native-geocoding';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import EstadoApp from '../../services/sqlite/EstadoApp';
-
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 const {height, width} = Dimensions.get('screen')
 
@@ -21,15 +21,16 @@ function BuscandoCarona({navigation, route}) {
   const [cidade, setCidade] = useState(null);
   const [estado, setEstado] = useState(null);
   const [nomeDestino, setNomeDestino] = useState(null);
-
   const [encontrouCarona, setEncontrouCarona] = useState('');
   const currentUser = auth().currentUser.uid;
-
+  
   const localizacaoPassageiro = route.params?.localizacao;
   const destinoPassageiro = route.params?.destino;
 
-
-
+  const [atualizouEstado, setAtualizouEstado] = useState(false);
+  const voltouEstado = route.params?.voltouEstado;
+  const exibeCancelarBusca = (voltouEstado == undefined)?(true):(false);
+  const isFocused = useIsFocused();
 
   // const recusouCarona = route.params?.recusou;
   // const cidade = route.params?.cidade;
@@ -80,6 +81,8 @@ function BuscandoCarona({navigation, route}) {
   async function caronaEncontrada(){
     const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
     reference.off('value');
+    // setAtualizouEstado(false);
+    setEncontrouCarona(false);
     navigation.navigate('CaronaEncontrada', {cidade: cidade, estado: estado, nomeDestino: nomeDestino});
   }
 
@@ -93,6 +96,8 @@ function BuscandoCarona({navigation, route}) {
       console.log(error.code);
     }
     atualizaEstadoAtual();
+    // setAtualizouEstado(false);
+    setEncontrouCarona(false);
     navigation.navigate('Buscar');
   }
 
@@ -130,29 +135,36 @@ function BuscandoCarona({navigation, route}) {
   }
 
  
-  useEffect(()=>{
-    const defineEstadoAtual = async()=>{
-      await AsyncStorage.setItem('BuscandoCarona', 'true');
-    }
-    defineEstadoAtual().catch(console.error);    
-  }, []);
+  useFocusEffect(
+    useCallback(()=>{
+      const defineEstadoAtual = async()=>{
+        await AsyncStorage.setItem('BuscandoCarona', 'true');
+      }
+      defineEstadoAtual().catch(console.error);    
+    })
+  );
+  
+  
+  useFocusEffect(
+    useCallback(()=>{
+      console.log('Tela: BuscandoCarona');
+      getFCMToken();
+      requestPermission();
+      armazenaToken();
+    }, [token])
+  );
 
+  useFocusEffect(
+    useCallback(()=>{
+      if (infoCarregadas){
+        buscarCarona();
+      }else{
+        console.log('é necessário carregar as informações');
+        carregarInformacoes();
+      }
+    },[infoCarregadas])
+  );
 
-  useEffect(()=>{
-    console.log('Tela: BuscandoCarona');
-    getFCMToken();
-    requestPermission();
-    armazenaToken();
-  }, [token])
-
-  useEffect(()=>{
-    if (infoCarregadas){
-      buscarCarona();
-    }else{
-      console.log('é necessário carregar as informações');
-      carregarInformacoes();
-    }
-  }, [infoCarregadas]);
   
   return (
     <SafeAreaView>

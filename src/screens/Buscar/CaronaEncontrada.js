@@ -27,6 +27,20 @@ function Options({navigation, route}) {
     // const estado = route.params?.estado;
     // const nomeDestino = route.params?.nomeDestino;
 
+
+    function listenerBancoMotoristas(){
+      console.log('rodando listenerBanco!');
+      setMotoristas(vetorMotoristas.filter((uid)=>(uid.uid != currentUser)));
+      // try{
+        database().ref().child(`${estado}/${cidade}/Motoristas`).on('child_removed', snapshot=>{
+          setMotoristas(vetorMotoristas.filter((uid)=>(uid.uid != snapshot.key)));
+        })
+      // }catch(error){
+      //   console.log('erro em listenerBancoMotoristas')
+      // }
+    }
+
+
     function carregarInformacoes(){
       if (route.params?.cidade == undefined || route.params?.estado == undefined){
         //buscar do banco
@@ -62,6 +76,13 @@ function Options({navigation, route}) {
       }
       const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
       try{
+
+        database().ref().child(`${estado}/${cidade}/Motoristas`).on('child_removed', snapshot=>{
+          console.log("filho removido! key:", snapshot.key);
+          setMotoristas(vetorMotoristas.filter((uid)=>(uid.uid != snapshot.key)));
+          recusarCarona(snapshot.key);
+        });
+
         reference.on('value', function(snapshot){
           if (snapshot.exists() && snapshot.val().ofertasCaronas != undefined){
             listaCaronas = snapshot.val().ofertasCaronas;
@@ -204,7 +225,7 @@ function Options({navigation, route}) {
               setMotoristas([]);
               reference_passageiro.off('value');
               voltouTela();
-              navigation.navigate('Buscando_Carona', {cidade: cidade, estado:estado});
+              navigation.navigate('Buscando_Carona', {cidade: cidade, estado:estado, voltouEstado:true});
             }
             reference_passageiro.update({
               ofertasCaronas: ofertasRestantes,
@@ -340,6 +361,15 @@ function Options({navigation, route}) {
                 </View>
             ))
           }
+          {/* <TouchableOpacity 
+            style={{backgroundColor:'#FF5F55', height: 30, marginTop:10, alignSelf:'center', width: 200, borderRadius: 100, justifyContent:'center'}}
+            onPress={()=>{
+              console.log('teste!!!!');
+              listenerBancoMotoristas();
+            }}  
+          >
+            <Text style={{color:'white', fontWeight:'bold', textAlign:'center'}}>TESTE BANCO!</Text>
+          </TouchableOpacity> */}
             <Text style={styles.text}>
             
             {'\n\n\n\n'}

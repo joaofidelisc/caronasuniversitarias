@@ -338,7 +338,7 @@ export default function Buscar({navigation}) {
               listView: {
                 elevation: 1,
                 height: height*0.5,
-                width: width*0.75
+                width: width
               },
             }}
           />
