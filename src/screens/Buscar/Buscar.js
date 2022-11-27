@@ -276,10 +276,10 @@ export default function Buscar({navigation}) {
 
         <Image source={
           require('../../assets/images/buscar-carona.png')} 
-          style={{height:'50%', width: '90%', position: 'absolute', top: '32%', alignSelf: 'center'}}  
+          style={{height:height*0.5, width: width*0.9, position: 'absolute', top: height*0.28, alignSelf: 'center'}}  
         />
-        <Text style={{fontSize:height*0.025, color:'#2f4f4f', paddingHorizontal:70, fontWeight:'bold', position: 'absolute', top: '8%', textDecorationLine:'underline'}}>Para onde pretende ir?</Text>
-        <Text style={{fontSize:height*0.019, color:'#c0c0c0', paddingHorizontal:70, fontWeight:'normal', marginVertical:'2%', position: 'absolute', top: '23%', fontWeight: '600'}}>Ex: Universidade federal de São Carlos</Text>
+        <Text style={{fontSize:height*0.025, color:'#2f4f4f', fontWeight:'bold', position: 'absolute', top: height*0.08, textDecorationLine:'underline'}}>Para onde pretende ir?</Text>
+        <Text style={{fontSize:height*0.019, color:'#c0c0c0', fontWeight:'normal', position: 'absolute', marginVertical:height*0.04, top: height*0.20, fontWeight: '600'}}>Ex: Universidade Federal de São Carlos</Text>
         {
           localizacaoPassageiro &&
           <GooglePlacesAutocomplete
@@ -317,13 +317,13 @@ export default function Buscar({navigation}) {
               container: {
                 position:'absolute',
                 alignItems: 'center',
-                top: '16%',                   
+                top: height*0.16,                   
                 width: width,
                 justifyContent: 'center',
               },
               textInputContainer: {
-                width: '75%',
-                height: 50,
+                width: width*0.75,
+                height: height*0.06,
                 borderColor: 'rgba(83, 83, 83, 0.8)',
                 borderWidth:2,
                 borderRadius: 8,
@@ -337,8 +337,8 @@ export default function Buscar({navigation}) {
               },
               listView: {
                 elevation: 1,
-                height: 100,
-                width: 312
+                height: height*0.5,
+                width: width
               },
             }}
           />
@@ -346,10 +346,8 @@ export default function Buscar({navigation}) {
       
       <View style={{marginVertical:50}}>
       <TouchableOpacity
-        style={{position: 'absolute', backgroundColor: '#FF5F55', top: height*0.3, width: '70%', height: height*0.055, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}        
+        style={{position: 'absolute', backgroundColor: '#FF5F55', top: height*0.34, width: width*0.7, height: height*0.055, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}        
         onPress={getLocalPassageiro}
-        // onPress={()=>{console.log('DATE:', Date.now())}}
-        // onPress={insereBanco} //criei apenas para testar a tela Oferecer.js
       >
         <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.02, lineHeight: 24, textAlign: 'center'}}>
           Buscar Carona

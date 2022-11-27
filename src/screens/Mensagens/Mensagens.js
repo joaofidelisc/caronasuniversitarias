@@ -121,7 +121,7 @@ export default function Mensagens({route, navigation}) {
       jaExiste = false;
     }
     try{
-      database().ref().child('chatrooms/').once('value', snapshot=>{
+      database().ref().child('chatrooms/').on('value', snapshot=>{
         if (snapshot.exists()){
           snapshot.forEach(async idChat=>{
             if (idChat.val().firstUser == currentUser || idChat.val().secondUser == currentUser){
@@ -257,7 +257,7 @@ export default function Mensagens({route, navigation}) {
       }
       {
         existeChat && ocultarChat && !loading &&
-        <SafeAreaView>
+        // <SafeAreaView>
 
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
           <Text style={{color:'#06444C', position: 'absolute', top:100, left: 24, fontWeight:'600', fontSize: 18, lineHeight:24, textAlign:'left'}}>Aqui estão suas conversas recentes</Text>
@@ -291,7 +291,7 @@ export default function Mensagens({route, navigation}) {
           }
         </ScrollView>
         </View>
-        </SafeAreaView>
+        // </SafeAreaView>
 
       
       }
