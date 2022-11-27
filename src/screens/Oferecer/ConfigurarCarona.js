@@ -221,11 +221,11 @@ function ConfigurarCarona({navigation}) {
                    alignItems: 'center',
                   //  top: 120,
                    width: width,
-                   marginTop: 16,
+                   marginTop: height*0.02,
                  },
                  textInputContainer: {
-                   width: 312,
-                   height: 50,
+                   width: width*0.85,
+                   height: height*0.06,
                    borderColor: 'rgba(83, 83, 83, 0.8)',
                    borderWidth:2,
                    borderRadius: 8,
@@ -239,8 +239,8 @@ function ConfigurarCarona({navigation}) {
                  },
                  listView: {
                    elevation: 1,
-                   height: 100,
-                   width: 312,
+                   height: height*0.5,
+                   width: width*0.85,
                  },
                }}
              />
