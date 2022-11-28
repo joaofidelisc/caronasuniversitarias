@@ -106,6 +106,19 @@ function ViagemEmAndamento({navigation, route}) {
     
     const viagemTerminou = async()=>{
       const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
+      const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
+      try{
+        reference_motorista.once('value', function(snapshot){
+          if (snapshot.exists()){
+            console.log("ainda existe!!!!")
+          }else{
+            console.log("apagou!");
+            fimDaViagem();
+          }
+        })
+      }catch(error){
+        console.log(error);
+      }
       try{
         reference.on('value', function(snapshot){
           if(snapshot.child('viagemTerminou').exists()){

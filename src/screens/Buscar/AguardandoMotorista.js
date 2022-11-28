@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, SafeAreaView, StatusBar, PermissionsAndroid, Dimensions } from 'react-native';
+import { View, Image, Text, TouchableOpacity, SafeAreaView, StatusBar, PermissionsAndroid, Dimensions, StyleSheet } from 'react-native';
 import database from '@react-native-firebase/database';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
@@ -274,10 +274,52 @@ function AguardandoMotorista({navigation, route}){
                   />
                 </Marker>
             </MapView>
+            
+            
           }
+            <View style={styles.viewCancelar}>
+              <Text style={{color:'#06444C', fontWeight: '600', fontSize: height*0.015, lineHeight: 24, textAlign: 'center'}}>
+                  Caso deseje cancelar a viagem...{'\n'} Pressione no botão abaixo.{'\n'}
+              </Text>
+              <TouchableOpacity
+                style={{backgroundColor: '#FF5F55', width: '75%', height:'30%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', top:'5%'}}
+                onPress={()=>{
+                  console.log('cancelando viagem...');
+                  // embarquePassageiro(embarcarPassageiro);
+                }}
+              >
+                <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.019, lineHeight: 24, textAlign: 'center'}}>
+                  Cancelar viagem
+                </Text>
+              </TouchableOpacity>
+            </View>
+          
         </View>
       </SafeAreaView>
     );
 }
 
+const styles = StyleSheet.create({
+  viewCancelar:{
+    position: 'absolute', 
+    width: width*0.8,
+    height: height*0.15, 
+    bottom: '2%', 
+    justifyContent: 'center', 
+    borderBottomColor: '#FF5F55', 
+    borderBottomWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 1,
+    shadowRadius: 25,
+    elevation: 20,
+    backgroundColor: 'white', 
+    borderRadius: 15, 
+    alignSelf:'center', 
+    alignContent:'center'
+  }
+})
 export default AguardandoMotorista;
