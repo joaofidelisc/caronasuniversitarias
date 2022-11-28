@@ -55,9 +55,11 @@ function ModoAplicativo(){
         if (doc.data().motorista == true){
           setModoApp('motorista');
           setMessage('passageiro');
+          trocaDeModoLiberada('Passageiros');
         }else{
           setModoApp('passageiro');
           setMessage('motorista');
+          trocaDeModoLiberada('Motoristas');
         }
       }
     })
