@@ -215,6 +215,15 @@ function ViagemEmAndamento({navigation, route}) {
       navigation.navigate('Classificacao', {uidMotorista: uidMotorista, currentUser: currentUser, cidade: cidade, estado: estado});
     }
 
+    //CORRIGIR BUG AQUI, NÃO É POSSÍVEL NAVEGAR PARA ENTRAR EM CONTATO MOTORISTA
+    /*
+
+    The action 'NAVIGATE' with payload {"name":"Mensagens","params":{"ocultarChat":false,"idChat":"-NGwrYODPph157zIdChq"}} was not handled by any navigator.
+    Do you have a screen named 'Mensagens'?
+    If you're trying to navigate to a screen in a nested navigator, see https://reactnavigation.org/docs/nesting-navigators#navigating-to-a-screen-in-a-nested-navigator.
+    This is a development-only warning and won't be shown in production.  
+
+    */
     const entrarEmContatoMotorista = async()=>{
       let idChat = null;
       idChat = await buscaChat(uidMotorista);
@@ -243,6 +252,13 @@ function ViagemEmAndamento({navigation, route}) {
         carregarInformacoes();
       }
     }, [infoCarregadas]);
+
+    useEffect(()=>{
+      console.log('---------------------------------------------------------------------');
+      console.log('imagem motorista:', motoristaURL);
+      console.log('imagem motorista PARAMS VIAGEM MOTORISTA:', route.params?.motoristaUrl);
+      console.log('---------------------------------------------------------------------');
+    });
 
     return (
       <SafeAreaView>
@@ -274,101 +290,24 @@ function ViagemEmAndamento({navigation, route}) {
                 <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, lineHeight:24, marginTop: 6}}>Placa: {placaVeiculoMotorista}</Text>
                 <Text style={{color:'#06444C', fontWeight:'700', fontSize: 20, lineHeight:24, marginTop: 18}}>Ainda não está no carro?</Text>
                 <TouchableOpacity
-                  style={{ width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: 6}}
+                  style={{ width: width*0.7, height: height*0.05, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: height*0.012}}
                   onPress={entrarEmContatoMotorista}
                 >
                   <Text style={{color: '#FF5F55', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
                     Entre em contato com o(a) motorista
                   </Text>
                 </TouchableOpacity>
-
-                {/* <TouchableOpacity
-                  style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: 18}}
-                  onPress={fimDaViagem}
+                <TouchableOpacity
+                  style={{backgroundColor: '#FF5F55', width: width*0.6, height: height*0.05, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.01, marginTop: height*0.018}}
+                  onPress={()=>{
+                    // fimDaViagem();
+                    console.log('finalizando viagem...');
+                  }}
                 >
                   <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
-                    Confirmar fim da viagem
+                    Finalizar viagem
                   </Text>
-                </TouchableOpacity> */}
-                  {/* Esse botão de fechar modal não vai ter, só coloquei porque tava dando bug ao renderizar a tela de Oferecer.js */}
-                {/* <TouchableOpacity
-                    style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: 18}}
-                    onPress={()=>{
-                      setModalVisible(!modalVisible);
-                    }}
-                  >
-                    <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
-                      Fechar modal
-                    </Text>
-                  </TouchableOpacity> */}
-
-                  {/* {
-                    oferecerMaisCaronas && exibeModalOferecer &&
-                    <>
-                      <Image 
-                        source={imageUser!=''?{uri:imageUser}:null}
-                        style={{height:70, width: 70, borderRadius: 100, marginBottom:10}}  
-                      />
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{nomeCaronista}</Text>
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
-                      <TouchableOpacity
-                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
-                          onPress={()=>{oferecerCarona()}}
-                      >
-                          <Text style={styles.textStyle}>Oferecer carona</Text>
-                      </TouchableOpacity>
-                     <TouchableOpacity
-                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
-                          onPress={() => {
-                            setModalVisible(!modalVisible)}}
-                      >
-                        <Text style={styles.textStyle}>Cancelar</Text>
-                    </TouchableOpacity>
-                    </>
-                  }
-                  {
-                    !oferecerMaisCaronas && alertaVagas &&
-                    <>
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '700'}}>Você atingiu o número máximo de caronistas!</Text>
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>
-                        Para buscar um(a) passageiro(a), pressione uma vez no ícone em verde e clique em buscar passageiro(a).
-                      </Text>
-                      <TouchableOpacity
-                            style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
-                            onPress={() => {
-                              setModalVisible(!modalVisible);
-                              setAlertaVagas(!alertaVagas);
-                            }}
-                        >
-                          <Text style={styles.textStyle}>Entendi</Text>
-                      </TouchableOpacity>
-                    </>
-                  }
-                  {
-                    !exibeModalOferecer &&
-                    <>
-                      <Image 
-                        source={imageUser!=''?{uri:imageUser}:null}
-                        style={{height:70, width: 70, borderRadius: 100, marginBottom:10}}  
-                      />
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{nomeCaronista}</Text>
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
-                      <TouchableOpacity
-                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
-                          onPress={()=>{rotaPassageiro(latitudePassageiro, longitudePassageiro, nomeCaronista, uidPassageiro)}}
-                      >
-                          <Text style={styles.textStyle}>Buscar passageiro(a)</Text>
-                      </TouchableOpacity>
-                    <TouchableOpacity
-                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
-                          onPress={() => {
-                            setModalVisible(!modalVisible);
-                          }}
-                      >
-                        <Text style={styles.textStyle}>Cancelar</Text>
-                    </TouchableOpacity>
-                  </>
-                  }   */}
+                </TouchableOpacity>
               </View>
             </View>
           </Modal>

@@ -1,13 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, Modal, PermissionsAndroid, Dimensions} from 'react-native';
-
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-
-import estilos from '../../estilos/estilos';
-
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
+import { useCallback } from 'react';
 
 const {height,width} = Dimensions.get('screen')
 
@@ -18,6 +16,8 @@ function FotoPerfil({navigation}){
   const [alterar, setAlterar] = useState(false);
   const [imageUser, setImageUser] = useState('');
   
+  const isFocused = useIsFocused();
+
   const receberFoto = async()=>{
     setMessage('Atualizar foto do perfil')
     setModalVisible(true);
@@ -104,6 +104,14 @@ function FotoPerfil({navigation}){
     }
   }, []);
   
+  // useFocusEffect(
+  //   useCallback(()=>{
+  //     console.log('rodando useFocusEffect!!');
+  //     if (alterar == false){
+  //       recuperarFotoStorage();
+  //     }
+  //   })
+  // );
   return (
     <SafeAreaView>
         <TouchableOpacity

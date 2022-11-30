@@ -26,18 +26,18 @@ function Perfil_Conta({navigation}){
   const [modoApp, setModoApp] = useState('');
   const [modalModo, setModalModo] = useState(false);
 
-  // const modoAtuacao = async()=>{
-  //   const userID = auth().currentUser.uid;
-  //   firestore().collection('Users').doc(userID).get().then(doc=>{
-  //     if (doc && doc.exists){
-  //       if (doc.data().motorista == true){
-  //         setModoApp('motorista');
-  //       }else{
-  //         setModoApp('passageiro');
-  //       }
-  //     }
-  //   })
-  // }
+  const modoAtuacao = async()=>{
+    const userID = auth().currentUser.uid;
+    firestore().collection('Users').doc(userID).get().then(doc=>{
+      if (doc && doc.exists){
+        if (doc.data().motorista == true){
+          setModoApp('motorista');
+        }else{
+          setModoApp('passageiro');
+        }
+      }
+    })
+  }
 
   const signOut = async()=>{
     const providerID = auth().currentUser?.providerData[0].providerId;
@@ -52,13 +52,27 @@ function Perfil_Conta({navigation}){
         await AsyncStorage.removeItem('password');
         auth().signOut();
       }
+      resetaEstados();
       RNRestart.Restart();
     }catch(error){
       console.log('erro no logout!');
     }
     console.log('SAINDO...');
   }
-
+  
+  const resetaEstados = async()=>{
+    if (modoApp == 'motorista'){
+      await AsyncStorage.removeItem('Oferecer');
+      await AsyncStorage.removeItem('ViagemMotorista');
+      await AsyncStorage.removeItem('ClassificarPassageiro');
+    }else if(modoApp == 'passageiro'){
+      await AsyncStorage.removeItem('BuscandoCarona');
+      await AsyncStorage.removeItem('CaronaEncontrada');
+      await AsyncStorage.removeItem('AguardandoMotorista');
+      await AsyncStorage.removeItem('ViagemEmAndamento');
+      await AsyncStorage.removeItem('Classificacao');
+    }
+  }
   const changePassword = async()=>{
     setAviso('Digite a senha atual e a nova')
     setAlterarSenha(true);
@@ -78,7 +92,7 @@ function Perfil_Conta({navigation}){
 
   useEffect(()=>{
     console.log('Perfil_Conta');
-    // modoAtuacao();
+    modoAtuacao();
   })
   
   return (

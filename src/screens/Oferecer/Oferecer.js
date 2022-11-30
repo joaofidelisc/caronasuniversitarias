@@ -354,6 +354,7 @@ function Oferecer({route, navigation}) {
         setExibeModalOferecer(false);
         setModalBuscarPassageiro(true);
         // setModalVisible(true);
+        setUidPassageiro(userUID);
         console.log("o passageiro aceitou sua carona!");
       }
     }else{

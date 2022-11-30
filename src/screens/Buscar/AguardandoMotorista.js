@@ -108,7 +108,10 @@ function AguardandoMotorista({navigation, route}){
       const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
       if (viagemEmAndamento){
         reference_motorista.off('value');
+        console.log('--------------------------------------------');
         console.log('uidMOTORISTA::::', uidMotorista);
+        console.log('MOTORISTAURL AGUARDANDO MOTORISTA:', motoristaUrl);
+        console.log('--------------------------------------------');
         navigation.navigate('ViagemEmAndamento', {uidMotorista: uidMotorista, currentUser: currentUser, cidade: cidade, estado: estado, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, motoristaUrl: motoristaUrl, nomeDestino: nomeDestino});
       }
     }

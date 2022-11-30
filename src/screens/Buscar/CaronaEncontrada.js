@@ -270,8 +270,11 @@ function Options({navigation, route}) {
     // defineEstadoAtual();
     const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
     reference_passageiro.off('value');
+    console.log('--------------------------------');
+    console.log("motoristaURL caronaEncontrada:", motoristaURL);
+    console.log('--------------------------------');
     EstadoApp.updateData({uidMotorista: uidMotorista, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, motoristaUrl: motoristaURL, passageiros:'att'});
-    navigation.navigate('AguardandoMotorista', {cidade: cidade, estado: estado, uidMotorista:uidMotorista, currentUser: currentUser, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, urlIMG: motoristaURL, nomeDestino: nomeDestino});
+    navigation.navigate('AguardandoMotorista', {cidade: cidade, estado: estado, uidMotorista:uidMotorista, currentUser: currentUser, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, motoristaUrl: motoristaURL, nomeDestino: nomeDestino});
   }
   
   

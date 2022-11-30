@@ -187,14 +187,16 @@ function ViagemMotorista({route, navigation}){
       return dia+"/"+mes+"/"+ano;
     }
 
+    //corrigir lógica aqui!!
+    //invés de uidMotorista, colocar uidPassageiro para salvar no banco, na versão motorista!
     //finalizar essa função passando como parametro o nome do passageiro, o url para a foto de perfil, e o destino.
-    const escreveHistoricoViagem = async(uidPassageiro, destinoPassageiro, nomePassageiro, passageiroIMG)=>{
+    const escreveHistoricoViagem = async(destinoPassageiro, nomePassageiro, passageiroIMG)=>{
       const data = await dataAtualFormatada();
-      const reference_passageiro = firestore().collection('Users').doc(uidPassageiro); 
+      const reference_passageiro = firestore().collection('Users').doc(currentUser); 
       try{
         reference_passageiro.update({
           historicoViagens: firebase.firestore.FieldValue.arrayUnion({
-            uidMotorista: uidPassageiro,
+            uidMotorista: currentUser,
             dataViagem: data,
             nome: nomePassageiro,
             destino: destinoPassageiro,
@@ -211,12 +213,14 @@ function ViagemMotorista({route, navigation}){
     const finalizarViagemPassageiro = async(uidPassageiro, destinoPassageiro, nomePassageiro, passageiroIMG)=>{
       setUIDsPassageiros(UIDsPassageiros.filter((uid)=>(uid != uidPassageiro)));
       const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`);
+      //testar aqui se o banco ainda existe
       reference_passageiro.update({
         viagemTerminou: true,
       })
       console.log('num passageiros a bordo:', numPassageirosABordo);
       setPassageirosABordo(passageirosABordo.filter((uid)=>(uid.uid != uidPassageiro)));
-      await escreveHistoricoViagem(uidPassageiro, destinoPassageiro, nomePassageiro, passageiroIMG);
+      // await escreveHistoricoViagem(uidPassageiro, destinoPassageiro, nomePassageiro, passageiroIMG);
+      await escreveHistoricoViagem(destinoPassageiro, nomePassageiro, passageiroIMG);
       if (numPassageirosABordo == 1){
         const objString = JSON.stringify(passageirosABordo);       
         EstadoApp.updateData({uidMotorista: 'att', nomeMotorista: 'att', veiculoMotorista: 'att', placaVeiculoMotorista: 'att', motoristaUrl: 'att', passageiros:objString});
