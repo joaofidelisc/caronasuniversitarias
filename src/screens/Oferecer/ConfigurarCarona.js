@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 import EstadoApp from '../../services/sqlite/EstadoApp';
+// const queryHandler = require('../../services/node-server/index');
 
 const {width, height} = Dimensions.get('screen');
 
@@ -174,6 +175,11 @@ function ConfigurarCarona({navigation}) {
 
     const testeNode = async()=>{
       console.log('teste node!');
+      //JOIN, ALTER JOIN, INNER JOIN, ...
+      //LISTAR TODOS OS DADOS DA TABELA User;
+      //INSERIR DADOS NA TABELA USER;
+      //APAGAR DADOS DA TABELA USER;
+      //ATUALIZAR DADOS NA TELA USER;
     }
 
     useEffect(()=>{
