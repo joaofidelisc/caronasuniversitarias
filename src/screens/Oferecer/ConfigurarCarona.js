@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import EstadoApp from '../../services/sqlite/EstadoApp';
 // const queryHandler = require('../../services/node-server/index');
+import configBD from '../../../config/config.json';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -175,6 +176,23 @@ function ConfigurarCarona({navigation}) {
 
     const testeNode = async()=>{
       console.log('teste node!');
+      //padronizar a url com um arquivo JSON;
+      let req = await fetch(configBD.urlRootNode);
+
+      // console.log(configBD.urlRootNode+'cadastrar');
+      let reqs = await fetch(configBD.urlRootNode+'cadastrar',{
+      // let reqs = await fetch(configBD.urlRootNode+'create',{
+        method: 'POST',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        },
+        body: JSON.stringify({
+          nome: 'Cardozo'
+        })
+      })
+      console.log('req:', req);
+      console.log('passou!');
       //JOIN, ALTER JOIN, INNER JOIN, ...
       //LISTAR TODOS OS DADOS DA TABELA User;
       //INSERIR DADOS NA TABELA USER;
