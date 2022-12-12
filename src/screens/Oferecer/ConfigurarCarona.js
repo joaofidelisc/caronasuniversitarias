@@ -177,27 +177,48 @@ function ConfigurarCarona({navigation}) {
     const testeNode = async()=>{
       console.log('teste node!');
       //padronizar a url com um arquivo JSON;
-      let req = await fetch(configBD.urlRootNode);
+      // let req = await fetch(configBD.urlRootNode);
 
-      // console.log(configBD.urlRootNode+'cadastrar');
-      let reqs = await fetch(configBD.urlRootNode+'cadastrar',{
-      // let reqs = await fetch(configBD.urlRootNode+'create',{
-        method: 'POST',
+      // // console.log(configBD.urlRootNode+'cadastrar');
+      // let reqs = await fetch(configBD.urlRootNode+'cadastrar',{
+      //   method: 'POST',
+      //   headers:{
+      //     'Accept':'application/json',
+      //     'Content-type':'application/json'
+      //   },
+      //   body: JSON.stringify({
+      //     userId: 'duashdsadaskdl',
+      //     nome: 'João Cardozo',
+      //     CPF:"414.386.918-74",
+      //     dataNasc:"1998-06-10",
+      //     email:"joao.fidelis@estudante.ufscar.br",
+      //     numCel:'(16)99376-4191',
+      //     token:'dusahdasdl',
+      //     universidade:'UFSCar',
+      //     classificacao:4.65,
+      //     fotoPerfil:'duasdjasdl',
+      //     motorista:true
+      //   })
+      // });
+
+      // let res = await reqs.json();
+
+      // console.log('req:', req);
+      // console.log('passou!');
+
+      let response = await fetch(configBD.urlRootNode+'retornarEmails',{
+        method: 'GET',
+        mode: 'cors',
         headers:{
           'Accept':'application/json',
           'Content-type':'application/json'
-        },
-        body: JSON.stringify({
-          nome: 'Cardozo'
-        })
-      })
-      console.log('req:', req);
-      console.log('passou!');
-      //JOIN, ALTER JOIN, INNER JOIN, ...
-      //LISTAR TODOS OS DADOS DA TABELA User;
-      //INSERIR DADOS NA TABELA USER;
-      //APAGAR DADOS DA TABELA USER;
-      //ATUALIZAR DADOS NA TELA USER;
+        }
+      });
+
+      const data = await response.json();
+
+      console.log('resposta:', data);
+      // console.log()
     }
 
     useEffect(()=>{

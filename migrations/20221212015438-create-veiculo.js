@@ -9,6 +9,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      userId: {
+        type: Sequelize.STRING
+      },
       nomeVeiculo: {
         type: Sequelize.STRING
       },
@@ -20,15 +23,6 @@ module.exports = {
       },
       placaVeiculo: {
         type: Sequelize.STRING
-      },
-      userId: {
-        type: Sequelize.STRING,
-        references:{
-          model:'users',
-          key:'userId'
-        },
-        onUpdate:'cascade',
-        onDelete: 'cascade' //quando apagar um usuario, apaga os veiculos junto
       },
       createdAt: {
         allowNull: false,
