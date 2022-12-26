@@ -2,6 +2,8 @@
 const {
   Model
 } = require('sequelize');
+
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -15,20 +17,21 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   User.init({
-    userId: DataTypes.STRING,
-    nome: DataTypes.STRING,
-    CPF: DataTypes.STRING,
+    // id: DataTypes.STRING(50),
+    nome: DataTypes.STRING(100),
+    CPF: DataTypes.STRING(14),
     dataNasc: DataTypes.DATE,
-    email: DataTypes.STRING,
-    numCel: DataTypes.STRING,
+    email: DataTypes.STRING(100),
+    numCel: DataTypes.STRING(18),
     token: DataTypes.STRING,
-    universidade: DataTypes.STRING,
+    universidade: DataTypes.STRING(100),
     classificacao: DataTypes.FLOAT,
     fotoPerfil: DataTypes.STRING,
     motorista: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'User',
+    tableName: 'user'
   });
   return User;
 };

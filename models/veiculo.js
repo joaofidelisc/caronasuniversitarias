@@ -15,14 +15,16 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Veiculo.init({
-    userId: DataTypes.STRING,
-    nomeVeiculo: DataTypes.STRING,
+    userId: DataTypes.STRING(50),
+    nomeVeiculo: DataTypes.STRING(100),
     anoVeiculo: DataTypes.INTEGER,
-    corVeiculo: DataTypes.STRING,
-    placaVeiculo: DataTypes.STRING
+    corVeiculo: DataTypes.STRING(15),
+    placaVeiculo: DataTypes.STRING(7)
   }, {
     sequelize,
     modelName: 'Veiculo',
+    tableName: 'veiculo'
   });
   return Veiculo;
 };
+
