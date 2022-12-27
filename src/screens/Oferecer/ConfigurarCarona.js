@@ -183,7 +183,7 @@ function ConfigurarCarona({navigation}) {
       // let req = await fetch(configBD.urlRootNode);
 
       // // console.log(configBD.urlRootNode+'cadastrar');
-      let reqs = await fetch(configBD.urlRootNode+'cadastrar',{
+      let reqs = await fetch(configBD.urlRootNode+'inserirUsuario',{
         method: 'POST',
         headers:{
           'Accept':'application/json',
@@ -191,7 +191,7 @@ function ConfigurarCarona({navigation}) {
         },
         body: JSON.stringify({
           id: Math.random().toString(),
-          nome: 'João Cardozo',
+          nome: 'Inara Bueno',
           CPF:"414.386.918-74",
           dataNasc:"1998-06-10",
           email:"joao.fidelis@estudante.ufscar.br",
