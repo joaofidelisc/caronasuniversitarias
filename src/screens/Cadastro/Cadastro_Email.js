@@ -18,6 +18,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import dominios from '../../dominios/dominios.json';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 // incluir aqui dominios permitidos (válido para email e autenticação com Google)
 // const dominios_permitidos = ["estudante.ufscar.br"];
@@ -115,40 +116,38 @@ function Cadastro_Email({navigation}) {
               style={{height:'80%', width: '100%'}}  
             />
           </TouchableOpacity>
-          <Text style={{color: '#06444C', position: 'absolute', top: '8%', fontWeight: '700', fontSize: height*0.025, lineHeight: height*0.03, alignSelf: 'center', textAlign: 'center'}}>Digite um e-mail institucional{'\n'}  e uma senha para se cadastrar</Text>
+          <Text style={{color: '#06444C', top: height*0.08, fontWeight: '700', fontSize: height*0.025, lineHeight: height*0.03, alignSelf: 'center', textAlign: 'center'}}>Digite um e-mail institucional{'\n'}  e uma senha para se cadastrar</Text>
           <TextInput
-            style={{width: '75%', height: height*0.05, top: '22%', alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: height*0.02, lineHeight: 22, borderWidth:1, color:'black'}}
+            style={{width: width*0.75, height: height*0.05, top: height*0.15, alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: height*0.02, lineHeight: 22, borderWidth:1, color:'black'}}
             placeholderTextColor='black'
             placeholder='Digite aqui o e-mail'
             keyboardType='email-address'
             onChangeText={(email)=>setEmail(email)}
             />
           <TextInput
-            style={{width: '75%', height: height*0.05, top: '26%', alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: height*0.02, lineHeight: height*0.03, borderWidth:1, color:'black'}}
+            style={{width: width*0.75, height: height*0.05, top: height*0.2, alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: height*0.02, lineHeight: height*0.03, borderWidth:1, color:'black'}}
             placeholderTextColor='black'
             placeholder='Digite aqui a senha'
             secureTextEntry={senhaVisivel}
             onChangeText={(password)=>setPassword(password)}
           />
           <TouchableOpacity 
-            style={{top: '26.5%', left: '67%'}}
-            onPress={()=>{setSenhaVisivel(!senhaVisivel)}}
+          style={{top: height*0.32, left: width*0.76, position:'absolute'}}
+          onPress={()=>{setSenhaVisivel(!senhaVisivel)}}
           >
-            <Text style={{color: 'black'}}>Ver senha</Text>
+            {
+              senhaVisivel?
+              <Icon name="eye" size={26} color="gray"/>:
+              <Icon name="eye-slash" size={26} color="gray"/>
+            }
           </TouchableOpacity>
           <TouchableOpacity 
-            style={{position: 'absolute', width: '75%', height: height*0.05, top: '45%', backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center', marginTop: height*0.04}}
+            style={{width: width*0.75, height: height*0.05, top: height*0.25, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center', marginTop: height*0.04}}
             onPress={InsertUserWithEmail}
             >
             <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.02, lineHeight: height*0.03, textAlign: 'center'}}>Continuar</Text>
           </TouchableOpacity>
-          <Text style={{color:'#FF5F55', position: 'absolute', top: '57%', alignSelf:'center', fontWeight: '600', fontSize: height*0.017, marginTop:height*0.04}}>Perdeu o código de autenticação?</Text>
-          {/* <TouchableOpacity 
-            style={{position: 'absolute', width: 210, height: 45, top: 500, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center'}}
-            onPress={VerificationCode}
-            >
-            <Text style={{color: 'white', fontWeight: '600', fontSize: 15, lineHeight: 24, textAlign: 'center'}}>Obter novo código</Text>
-          </TouchableOpacity> */}
+          <Text style={{color:'#FF5F55', top: height*0.25, alignSelf:'center', fontWeight: '600', fontSize: height*0.017, marginTop:height*0.04}}>Perdeu o código de autenticação?</Text>
           <Modal
               animationType="fade"
               transparent={true}

@@ -13,6 +13,7 @@ import {
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth'
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -211,6 +212,9 @@ function Login({navigation}) {
             />
           </TouchableOpacity>
           <Text style={{color: '#06444C', position: 'absolute', top: 65, fontWeight: '700', fontSize: 24, lineHeight: 29, alignSelf: 'center', textAlign: 'center'}}>Nos informe seu e-mail{'\n'} e senha de cadastro</Text>
+          <View>
+
+          </View>
           <TextInput
             style={{width: 291, height: 47, top: 167, alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: 18, lineHeight: 22, borderWidth: 1, color:'black'}}
             placeholderTextColor='black'
@@ -218,12 +222,6 @@ function Login({navigation}) {
             keyboardType='email-address'
             onChangeText={(email)=>setEmail(email)}
           />
-          <TouchableOpacity 
-            style={{top: 273, left: 265}}
-            onPress={()=>{setSenhaVisivel(!senhaVisivel)}}
-          >
-            <Text style={{color: 'black'}}>Ver senha</Text>
-          </TouchableOpacity>
           <TextInput
             style={{width: 291, height: 47, top: 200, alignSelf: 'center', borderRadius: 15, fontWeight: '400', fontSize: 18, lineHeight: 22, borderWidth: 1, color:'black'}}
             placeholderTextColor='black'
@@ -231,6 +229,16 @@ function Login({navigation}) {
             secureTextEntry={senhaVisivel}
             onChangeText={(password)=>setPassword(password)}
           />
+          <TouchableOpacity 
+            style={{top: 163, left: 295}}
+            onPress={()=>{setSenhaVisivel(!senhaVisivel)}}
+            >
+              {
+                senhaVisivel?
+                <Icon name="eye" size={26} color="gray"/>:
+                <Icon name="eye-slash" size={26} color="gray"/>
+              }
+          </TouchableOpacity>
           <TouchableOpacity 
             style={{position: 'absolute', width: 291, height: 47, top: 395, backgroundColor: '#FF5F55', borderRadius: 15, alignSelf: 'center', justifyContent: 'center', flexDirection: 'row', alignItems:'center'}}
             onPress={SignInGoogle}

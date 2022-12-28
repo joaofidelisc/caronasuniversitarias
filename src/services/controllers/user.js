@@ -37,6 +37,14 @@ async function inserirUsuario(req, res){
     }
 }
 
+async function atualizarToken(req, res){
+
+}
+
+async function atualizarModo(req, res){
+    
+}
+
 /*
 app.post('/cadastrar', async(req, res)=>{
     let reqs = await model.User.create({
@@ -108,7 +116,6 @@ app.put('/atualizarToken', async(req, res)=>{
     }
 })
 
-// app.get('/')
 */
 
 module.exports = {

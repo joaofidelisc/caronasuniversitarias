@@ -1,6 +1,3 @@
-// import { Sequelize } from "sequelize";
-// import dbConfig from "../mysql-config/db.config.js";
-
 const Sequelize = require('sequelize');
 const dbConfig = require('../mysql-config/db.config.js');
 
@@ -14,6 +11,4 @@ const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
     host: dbHost,
 });
 
-
-// export default sequelize;
 module.exports = sequelize;
