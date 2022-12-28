@@ -8,6 +8,7 @@ import Geocoder from 'react-native-geocoding';
 import config from '../../config';
 import { useNetInfo } from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import auth from '@react-native-firebase/auth'
 
 
 import EstadoApp from '../../services/sqlite/EstadoApp';
@@ -175,76 +176,73 @@ function ConfigurarCarona({navigation}) {
     })
 
     const testeNode = async()=>{
-      console.log('teste node!');
-      // let randomString = Math.random().toString();
 
-      // console.log('randomString:', randomString);
-      //padronizar a url com um arquivo JSON;
-      // let req = await fetch(configBD.urlRootNode);
+      /*
+      ////EXEMPLO DE INSERÇÃO DE DADOS;
+      // let reqs = await fetch(configBD.urlRootNode+'inserirUsuario',{
+      //   method: 'POST',
+      //   headers:{
+      //     'Accept':'application/json',
+      //     'Content-type':'application/json'
+      //   },
+      //   body: JSON.stringify({
+      //     // id: Math.random().toString(),
+      //     id: auth().currentUser.uid,
+      //     nome: 'Inara Bueno',
+      //     CPF:"414.386.918-74",
+      //     dataNasc:"1998-06-10",
+      //     email:"joao.fidelis@estudante.ufscar.br",
+      //     numCel:'(16)99376-4191',
+      //     token:'dusahdasdl',
+      //     universidade:'UFSCar',
+      //     classificacao:4.65,
+      //     fotoPerfil:'duasdjasdl',
+      //     motorista:true
+      //   })
+      // });
 
-      // // console.log(configBD.urlRootNode+'cadastrar');
-      let reqs = await fetch(configBD.urlRootNode+'inserirUsuario',{
-        method: 'POST',
+      // let res = await reqs.json();
+      // console.log('req:', res);
+      */
+     
+     //---------------------------------------------------------------------
+      
+      
+      // let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/0VtQXRifF8PdbcKCrthdOtlnah12`,{
+      //     method: 'GET',
+      //     mode: 'cors',
+      //     headers:{
+      //       'Accept':'application/json',
+      //       'Content-type':'application/json'
+      //     }
+      //   });
+        
+      //   const res = await reqs.json();
+      //   console.log('resposta:', res);
+  
+      //---------------------------------------------------------------------
+
+      // ATUALIZA UMA INFORMAÇÃO DO BANCO
+      let reqs = await fetch(configBD.urlRootNode+'atualizarModo',{
+        method: 'PUT',
         headers:{
           'Accept':'application/json',
           'Content-type':'application/json'
         },
         body: JSON.stringify({
-          id: Math.random().toString(),
-          nome: 'Inara Bueno',
-          CPF:"414.386.918-74",
-          dataNasc:"1998-06-10",
-          email:"joao.fidelis@estudante.ufscar.br",
-          numCel:'(16)99376-4191',
-          token:'dusahdasdl',
-          universidade:'UFSCar',
-          classificacao:4.65,
-          fotoPerfil:'duasdjasdl',
-          motorista:true
+          id: auth().currentUser.uid,
+          motorista:false
         })
       });
 
       let res = await reqs.json();
 
       console.log('req:', res);
-      console.log('passou!');
-
-      //---------------------------------------------------------------------
-      // let response = await fetch(configBD.urlRootNode+'retornarEmails',{
-      //   method: 'GET',
-      //   mode: 'cors',
-      //   headers:{
-      //     'Accept':'application/json',
-      //     'Content-type':'application/json'
-      //   }
-      // });
-      
-      // const data = await response.json();
-      
-      // console.log('resposta:', data);
-      //---------------------------------------------------------------------
-
-      //ATUALIZA UMA INFORMAÇÃO DO BANCO
-      // let reqs = await fetch(configBD.urlRootNode+'atualizarModo',{
-      //   method: 'PUT',
-      //   headers:{
-      //     'Accept':'application/json',
-      //     'Content-type':'application/json'
-      //   },
-      //   body: JSON.stringify({
-      //     // userId: 'duashdsadaskdl',
-      //     id: 1,
-      //     motorista:false
-      //   })
-      // });
-
-      // let res = await reqs.json();
-
-      // console.log('req:', req);
       // console.log('passou!');
 
 
       // console.log()
+     
     }
 
     useEffect(()=>{
