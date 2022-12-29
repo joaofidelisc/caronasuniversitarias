@@ -297,7 +297,12 @@ export default function Mensagens({route, navigation}) {
       }
       {
         existeChat && !ocultarChat && currentChatID &&
-        <>
+        <View style={{
+          position:'absolute',
+          width:width,
+          height:height*0.8,
+        }}>
+
         <GiftedChat
         renderInputToolbar={renderInputToolbar}
         messages={messages}
@@ -305,16 +310,17 @@ export default function Mensagens({route, navigation}) {
         user={{
           _id: currentUser,
         }}
+        placeholder={'Digite uma mensagem'}
         />
         <TouchableOpacity
               style={{backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, justifyContent: 'center', position: 'absolute', top: 10, left: 10, borderWidth: 1, borderColor: '#FF5F55'}}
               onPress={()=>{
                 fecharConversa()
               }}
-          >
+              >
              <Icon name="arrow-left" size={30} color="#FF5F55" style={{alignSelf:'center'}}/>
           </TouchableOpacity>
-        </>
+        </View>
         }
     </>
   )

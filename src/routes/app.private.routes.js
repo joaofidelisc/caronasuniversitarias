@@ -129,7 +129,7 @@ function AppRoutes({route, navigation}) {
             borderRadius: 50,
             height: height*0.08,
             width: width*0.95,
-            bottom: height*0.01,
+            top: height*0.82,
             elevation:0,
             position:'absolute',
             left: width*0.025,
