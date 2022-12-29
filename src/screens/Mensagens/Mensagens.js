@@ -8,9 +8,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import firestore from '@react-native-firebase/firestore';
 import Lottie from 'lottie-react-native';
 
-import { ReactNativeFirebase } from '@react-native-firebase/app';
-
-
 const {height,width} = Dimensions.get('screen');
 
 export default function Mensagens({route, navigation}) {
@@ -23,12 +20,14 @@ export default function Mensagens({route, navigation}) {
   const [avatarAnotherUser, setAvatarAnotherUser] = useState(null);
   const [carregarTela, setCarregarTela] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [atualizarChats, setAtualizarChats] = useState(true);
 
   const currentUser = auth().currentUser.uid;
   const chatIDRef = useRef(null);
   
 
   const getFotoStorage = async(userUID1, userUID2)=>{
+    console.log('Renderizando...1');
     const userUID = userUID1==currentUser?userUID2:userUID1;
     var caminhoFirebase = userUID.concat('Perfil');    
     var url = '';
@@ -44,8 +43,9 @@ export default function Mensagens({route, navigation}) {
     return url;
   }
   
-  //Função responsável por get o nome do motorista e atualizar no vetor;
+
   async function getNomeStorage(userUID1, userUID2){
+    console.log('Renderizando...2');
       const userUID = userUID1==currentUser?userUID2:userUID1;
       let nomeUsuario = '';
       let docRef = firestore().collection('Users').doc(userUID);
@@ -61,6 +61,8 @@ export default function Mensagens({route, navigation}) {
   
 
   const renderMessages = useCallback((msgs)=>{
+    console.log('Renderizando...3');
+
     return msgs != undefined? (
       msgs.reverse().map((msg, index)=>({
         ...msg,
@@ -77,6 +79,8 @@ export default function Mensagens({route, navigation}) {
     
   //ok
   const fetchMessages = useCallback(async(chatroomID)=>{
+    console.log('Renderizando...4');
+
     const ref = database().ref(`chatrooms/${chatroomID}`);
     const snapshot = await ref.once('value').then(snapshot=>{
       return snapshot.val();
@@ -87,6 +91,8 @@ export default function Mensagens({route, navigation}) {
   
   //ok
   const loadData = async(chatroomID)=>{
+    console.log('Renderizando...5');
+
     const myChatroom = await fetchMessages(chatroomID);
     setMessages(renderMessages(myChatroom.messages));
   }
@@ -94,6 +100,8 @@ export default function Mensagens({route, navigation}) {
 
   //ok
   const listenerChatroom = (chatroomID)=>{
+    console.log('Renderizando...6');
+
     const ref = database().ref(`chatrooms/${chatroomID}`);
     try{
       ref.on('value', snapshot=>{
@@ -107,6 +115,8 @@ export default function Mensagens({route, navigation}) {
   
   //ok
   const removeListener = ()=>{
+    console.log('Renderizando...7');
+
     try{
       database().ref(`chatrooms/${chatIDRef.current}`).off('value');
     }catch(error){
@@ -116,6 +126,10 @@ export default function Mensagens({route, navigation}) {
   
   //ok
   const buscaChat = useCallback(async()=>{
+  // const buscaChat = async()=>{
+
+    console.log('Renderizando...8');
+    
     let jaExiste = false;
     if (jaExiste == true){
       jaExiste = false;
@@ -126,15 +140,18 @@ export default function Mensagens({route, navigation}) {
           snapshot.forEach(async idChat=>{
             if (idChat.val().firstUser == currentUser || idChat.val().secondUser == currentUser){
               if (!existeChat){
+                console.log('não existe chat!');
                 setExisteChat(true);
                 setCarregarTela(true);
               }
               infoChatrooms.some(infoChat =>{
+                console.log('info já existente!');
                 if (infoChat.idChat == idChat.key){
                   jaExiste = true;
                 }
               })
               if (!jaExiste){
+                console.log('atualizando...');
                 setinfoChatrooms([...infoChatrooms, {
                   idChat:idChat.key,
                   firstUser:idChat.val().firstUser,
@@ -152,11 +169,14 @@ export default function Mensagens({route, navigation}) {
     }catch(error){
       console.log('erro em buscaChat');
     }
-  });
-
+    });
+  // }  
+    
 
   //ok
   const onSend = useCallback(async (messages = []) => {
+    console.log('Renderizando...9');
+
     const data = new Date().toString();
     const ref = database().ref(`chatrooms/${chatIDRef.current}`);
     const currentChatroom = await fetchMessages(chatIDRef.current);
@@ -179,12 +199,16 @@ export default function Mensagens({route, navigation}) {
 
   
   function renderInputToolbar (props) {
+    console.log('Renderizando...10');
+
     return (
       <InputToolbar {...props} containerStyle={styles.toolbar} />
     )
   }
 
   const abrirConversa = async(chatroomID)=>{
+    console.log('Renderizando...11');
+
     database().ref().child('chatrooms/').off('value');
     setOcultarChat(!ocultarChat);
     loadData(chatroomID);
@@ -192,6 +216,9 @@ export default function Mensagens({route, navigation}) {
   }
 
   const fecharConversa = ()=>{
+    console.log('Renderizando...12');
+    console.log('Fechando conversa...')
+
     removeListener();
     setOcultarChat(true);
     setCurrentChatID(null);
@@ -201,16 +228,23 @@ export default function Mensagens({route, navigation}) {
   }
 
   useEffect(()=>{
+    console.log('useEffect...1');
+
     setTimeout(()=> setLoading(false), 8000);
     console.log('carregou!');
   },[]);
 
   useEffect(()=>{
-    buscaChat();
+    if (atualizarChats){
+      console.log('useEffect...2');
+      buscaChat();
+      setAtualizarChats(!atualizarChats);
+    }
   })
 
 
   useEffect(()=>{
+    console.log('useEffect...3');
     if (currentChatID != null && ocultarChat){
       abrirConversa(currentChatID);
     }
@@ -219,6 +253,8 @@ export default function Mensagens({route, navigation}) {
 
   //Vem da tela de Suas Viagens
   useEffect(()=>{
+    console.log('useEffect...4');
+
     const exibirChat = route.params?.ocultarChat;
     const idChat = route.params?.idChat;
     if (exibirChat != null && exibirChat != undefined && idChat != null && idChat != undefined){
@@ -257,20 +293,27 @@ export default function Mensagens({route, navigation}) {
       }
       {
         existeChat && ocultarChat && !loading &&
-        // <SafeAreaView>
 
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
-          <Text style={{color:'#06444C', position: 'absolute', top:100, left: 24, fontWeight:'600', fontSize: 18, lineHeight:24, textAlign:'left'}}>Aqui estão suas conversas recentes</Text>
+          <Text style={{color:'#06444C', position: 'absolute', top:height*0.05, left: width*0.0625, fontWeight:'600', fontSize: width*0.0469, lineHeight:24, textAlign:'left'}}>Aqui estão suas conversas recentes</Text>
           <ScrollView style={styles.scrollView}>
           {
             infoChatrooms && infoChatrooms.map(id=>(
               <View style={styles.viewMensagens}
               key={id.idChat}
               >
-                 <Image 
-                    source={id.urlIMG!=''?{uri:id.urlIMG}:null}
-                    style={{height:70, width: 70, borderRadius: 100, alignSelf:'center', marginBottom:'4%', marginTop:'4%'}}  
-                  />
+                     {
+                      id.urlIMG != ''?
+                      <Image 
+                      source={{uri:id.urlIMG}}
+                      style={{height:70, width: 70, borderRadius: 100, alignSelf:'center', marginBottom:'4%', marginTop:'4%'}}  
+                      />:
+                      <Image source={
+                        require('../../assets/icons/user_undefined.png')} 
+                        style={{height:70, width: 70, borderRadius: 100, alignSelf:'center', marginBottom:'4%', marginTop:'4%'}}  
+                      />
+                     }
+                 
                 <Text style={{color:'#06444C', fontWeight:'600', fontSize: height*0.02, textAlign:'center', marginBottom:'4%'}}>{id.name}</Text>
                 <TouchableOpacity 
                   style={{width: '90%', justifyContent: 'center', alignSelf:'center'}}
@@ -291,9 +334,6 @@ export default function Mensagens({route, navigation}) {
           }
         </ScrollView>
         </View>
-        // </SafeAreaView>
-
-      
       }
       {
         existeChat && !ocultarChat && currentChatID &&
@@ -331,7 +371,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF5F55',
   },
   scrollView: {
-    top: '20%',
+    top: '12%',
     width: width,
     height: height
   },
@@ -339,7 +379,7 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: height*0.02
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,

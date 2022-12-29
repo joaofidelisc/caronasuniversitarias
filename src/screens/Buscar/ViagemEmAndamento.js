@@ -276,7 +276,7 @@ function ViagemEmAndamento({navigation, route}) {
             onRequestClose={() => {setModalVisible(!modalVisible);}}
             
           >
-            <View style={{justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 268, alignSelf: 'center'}}>
+            <View style={{justifyContent: 'center', alignItems: 'center', position: 'absolute', top: height*0.31, alignSelf: 'center'}}>
                 <View style={styles.modalView}>
                 <Text style={{color:'#06444C', fontWeight:'700', fontSize: 20, lineHeight:24}}>Viagem em andamento...</Text>
                 <Image 
@@ -329,17 +329,17 @@ function ViagemEmAndamento({navigation, route}) {
 const styles = StyleSheet.create({
   modalView: {
     backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
+    borderRadius: height*0.04,
+    padding: height*0.04,
+    height:height*0.5,
     alignItems: "center",
     shadowColor: "#FF5F55",
     shadowOffset: {
-      width: 0,
-      height: 2
+      height: height*0.002
     },
     shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 10
+    shadowRadius: height*0.03,
+    elevation: height*0.01
   },
 });
 

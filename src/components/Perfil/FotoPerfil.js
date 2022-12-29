@@ -13,7 +13,13 @@ function FotoPerfil({navigation}){
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState('');
 
+
   const [alterar, setAlterar] = useState(false);
+  const [atualizouImagem, setAtualizouImagem] = useState(false);
+
+  const [recuperouImagem, setRecuperouImagem] = useState(false);
+
+  const [oldImageUser, setOldImageUser] = useState('');
   const [imageUser, setImageUser] = useState('');
   
   const isFocused = useIsFocused();
@@ -25,7 +31,7 @@ function FotoPerfil({navigation}){
 
   //envia a foto do usuário para o firebase (storage) com o formato uidPerfil
   const enviarFotoStorage = async(local)=>{
-    const currentUser = await auth().currentUser.uid;
+    const currentUser = auth().currentUser.uid;
     var caminhoFirebase = currentUser.concat('Perfil');    
     const reference = storage().ref(caminhoFirebase);
     await reference.putFile(local);
@@ -37,13 +43,14 @@ function FotoPerfil({navigation}){
     var url = '';
     try{
       url = await storage().ref(caminhoFirebase).getDownloadURL();
-      setImageUser(url); 
+      setImageUser(url);
     } catch (error){
       if (error.code == 'storage/object-not-found'){
         url = await storage().ref('user_undefined.png').getDownloadURL(); 
         setImageUser(url); 
       }
     }
+    setRecuperouImagem(true);
   }
 
   const pickImageFromGalery = async()=>{
@@ -54,10 +61,10 @@ function FotoPerfil({navigation}){
     if (result?.assets){
       setAlterar(true);
       setImageUser(result.assets[0].uri);
-      enviarFotoStorage(result.assets[0].uri);
-      return
+      return;
+    }else{
+      return null;
     }
-    //tratar excecao
   }
 
   const pickImageFromCamera = async()=>{
@@ -72,46 +79,43 @@ function FotoPerfil({navigation}){
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA,
         {
-          title: "Cool Photo App Camera Permission",
+          title: "O aplicativo requer permissão para a camêra",
           message:
-            "Cool Photo App needs access to your camera " +
-            "so you can take awesome pictures.",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK"
+            "O aplicativo precisa de permissão para acessar a câmera " +
+            "para que você consiga tirar fotos.",
+          buttonNeutral: "Perguntar depois",
+          buttonNegative: "Cancelar",
+          buttonPositive: "Permitir"
         }
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        // console.log("You can use the camera");
         result = await launchCamera(options);
         if (result?.assets){
           setAlterar(true);
           setImageUser(result.assets[0].uri);
-          enviarFotoStorage(result.assets[0].uri);
-          return
+          
+          return;
         }
       } else {
         console.log("Camera permission denied");
+        return null;
       }
     } catch (err) {
       console.warn(err);
     }
   }
 
-  useEffect(()=>{
-    if (alterar == false){
-      recuperarFotoStorage();
-    }
-  }, []);
-  
-  // useFocusEffect(
-  //   useCallback(()=>{
-  //     console.log('rodando useFocusEffect!!');
-  //     if (alterar == false){
-  //       recuperarFotoStorage();
-  //     }
-  //   })
-  // );
+
+  useFocusEffect(
+    useCallback(()=>{
+      console.log('atualizando foto...');
+      if (!recuperouImagem || atualizouImagem){
+        recuperarFotoStorage();
+      }
+    }, [atualizouImagem])
+  );
+
+
   return (
     <SafeAreaView>
         <TouchableOpacity
@@ -146,7 +150,14 @@ function FotoPerfil({navigation}){
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={{backgroundColor:'#FF5F55', width: '85%', height: '25%', borderRadius: 15, justifyContent: 'center', marginTop: 5, borderColor:'white', borderWidth:1}}
-                    onPress={() => setModalVisible(!modalVisible)}
+                    onPress={()=>{
+                      if (alterar){
+                        enviarFotoStorage(imageUser);
+                        setAtualizouImagem(true);
+                        setAlterar(false);
+                      }
+                      setModalVisible(!modalVisible);
+                    }}
                 >
                     <Text style={styles.textStyle}>Confirmar</Text>
                 </TouchableOpacity>

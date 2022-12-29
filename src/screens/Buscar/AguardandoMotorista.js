@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     position: 'absolute', 
     width: width*0.8,
     height: height*0.15, 
-    bottom: '2%', 
+    bottom: '12%', 
     justifyContent: 'center', 
     borderBottomColor: '#FF5F55', 
     borderBottomWidth: 1,

@@ -181,7 +181,7 @@ function BuscandoCarona({navigation, route}) {
         loop />
 
         
-        <Text style={{fontSize:height*0.022, color:'#c0c0c0', paddingHorizontal:10, fontWeight:'normal',marginVertical:'9%', marginHorizontal:'5%' }}>
+        <Text style={{fontSize:height*0.022, color:'#c0c0c0', fontWeight:'normal', marginHorizontal:'5%', marginBottom: '4%'}}>
           Exibiremos uma lista de propostas assim que possível!
         </Text>
         {

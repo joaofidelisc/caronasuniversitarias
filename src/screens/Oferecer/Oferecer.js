@@ -900,7 +900,7 @@ function Oferecer({route, navigation}) {
           </MapView>
           {
             embarcarPassageiro &&
-            <View style={[styles.viewCaronistas, {position: 'absolute', bottom: 10, height: '28%', justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
+            <View style={[styles.viewCaronistas, {position: 'absolute', bottom: '12%', height: '28%', justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
               <Text style={{color:'#06444C', fontWeight: '600', fontSize: height*0.015, lineHeight: 24, textAlign: 'center'}}>
                   Passageiro(a) próximo!{'\n'}Assim que ele estiver no carro, pressione no botão abaixo.
               </Text>
@@ -918,7 +918,7 @@ function Oferecer({route, navigation}) {
           }
           {
             existePassageiroAbordo &&
-            <View style={[styles.viewCaronistas, {position: 'absolute', bottom: 10, height: '28%', justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
+            <View style={[styles.viewCaronistas, {position: 'absolute', bottom: '12%', height: '28%', justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
               <Text style={{color:'#06444C', fontWeight: '600', fontSize: height*0.015, lineHeight: 24, textAlign: 'center'}}>
                   Pronto para iniciar a viagem...{'\n'}Pressione no botão abaixo para começar.
               </Text>
@@ -1116,10 +1116,10 @@ function Oferecer({route, navigation}) {
 
 const styles = StyleSheet.create({
   modalView: {
-    margin: 20,
+    margin: height*0.01,
     backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
+    borderRadius: height*0.02,
+    padding: height*0.04,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -1148,7 +1148,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white', 
     borderRadius: 15, 
     alignSelf:'center', 
-    marginTop: 50,
+    // marginTop: 50,
     alignContent:'center'
   }
 });
