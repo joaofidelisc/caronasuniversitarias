@@ -357,14 +357,14 @@ function ConfigurarCarona({navigation}) {
               Avançar
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={{backgroundColor: '#FF5F55', width: 260, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', position: 'absolute', top: 670}}
             onPress={testeNode}
           >
             <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
               Teste Node
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <Modal
               animationType="fade"
               transparent={true}

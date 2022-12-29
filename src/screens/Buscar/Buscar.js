@@ -276,10 +276,10 @@ export default function Buscar({navigation}) {
 
         <Image source={
           require('../../assets/images/buscar-carona.png')} 
-          style={{height:height*0.5, width: width*0.9, position: 'absolute', top: height*0.28, alignSelf: 'center'}}  
+          style={{height:height*0.5, width: width*0.9, position: 'absolute', top: height*0.24, alignSelf: 'center'}}  
         />
-        <Text style={{fontSize:height*0.025, color:'#2f4f4f', fontWeight:'bold', position: 'absolute', top: height*0.08, textDecorationLine:'underline'}}>Para onde pretende ir?</Text>
-        <Text style={{fontSize:height*0.019, color:'#c0c0c0', fontWeight:'normal', position: 'absolute', marginVertical:height*0.04, top: height*0.20, fontWeight: '600'}}>Ex: Universidade Federal de São Carlos</Text>
+        <Text style={{fontSize:height*0.025, color:'#2f4f4f', fontWeight:'bold', position: 'absolute', top: height*0.05, textDecorationLine:'underline'}}>Para onde pretende ir?</Text>
+        <Text style={{fontSize:height*0.019, color:'#c0c0c0', fontWeight:'normal', position: 'absolute', marginVertical:height*0.04, top: height*0.16, fontWeight: '600'}}>Ex: Universidade Federal de São Carlos</Text>
         {
           localizacaoPassageiro &&
           <GooglePlacesAutocomplete
@@ -317,7 +317,7 @@ export default function Buscar({navigation}) {
               container: {
                 position:'absolute',
                 alignItems: 'center',
-                top: height*0.16,                   
+                top: height*0.12,                   
                 width: width,
                 justifyContent: 'center',
               },
@@ -346,7 +346,7 @@ export default function Buscar({navigation}) {
       
       <View style={{marginVertical:50}}>
       <TouchableOpacity
-        style={{position: 'absolute', backgroundColor: '#FF5F55', top: height*0.34, width: width*0.7, height: height*0.055, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}        
+        style={{position: 'absolute', backgroundColor: '#FF5F55', top: height*0.28, width: width*0.7, height: height*0.055, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center'}}        
         onPress={getLocalPassageiro}
       >
         <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.02, lineHeight: 24, textAlign: 'center'}}>
