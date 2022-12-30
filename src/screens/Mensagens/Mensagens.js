@@ -20,7 +20,10 @@ export default function Mensagens({route, navigation}) {
   const [avatarAnotherUser, setAvatarAnotherUser] = useState(null);
   const [carregarTela, setCarregarTela] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [atualizarChats, setAtualizarChats] = useState(true);
+  // const [atualizarChats, setAtualizarChats] = useState(true);
+
+  const [testeLottie, setTesteLottie] = useState(true);
+
 
   const currentUser = auth().currentUser.uid;
   const chatIDRef = useRef(null);
@@ -235,11 +238,11 @@ export default function Mensagens({route, navigation}) {
   },[]);
 
   useEffect(()=>{
-    if (atualizarChats){
-      console.log('useEffect...2');
-      buscaChat();
-      setAtualizarChats(!atualizarChats);
-    }
+    buscaChat();
+    // if (atualizarChats){
+    //   console.log('useEffect...2');
+    //   setAtualizarChats(!atualizarChats);
+    // }
   })
 
 
@@ -270,7 +273,8 @@ export default function Mensagens({route, navigation}) {
       <StatusBar barStyle={'light-content'} />
         {
         loading &&
-        <View style={{alignSelf:'center', marginTop: '60%'}}>
+        // testeLottie &&
+        <View style={{marginVertical:height*0.3}}>
           {/* <Text style={{color:'#06444C', fontWeight:'600', fontSize: 20, lineHeight:24, textAlign:'center'}}>Verificando se existem conversas...</Text> */}
           <Lottie 
             style={{height:height*0.3, width:height*0.3, alignSelf:'center'}}
@@ -282,7 +286,7 @@ export default function Mensagens({route, navigation}) {
         </View>
         }
         {
-          !existeChat && !carregarTela && !loading &&
+          !existeChat && !carregarTela && !loading && 
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
           <Text style={{color:'#06444C', position: 'absolute', top:100, left: 24, fontWeight:'600', fontSize: 18, lineHeight:24, textAlign:'left'}}>Você conseguirá enviar mensagens para{'\n'} passageiros ou motoristas, assim que{'\n'} fizer sua primeira viagem.</Text>
           <Image source={
@@ -336,7 +340,7 @@ export default function Mensagens({route, navigation}) {
         </View>
       }
       {
-        existeChat && !ocultarChat && currentChatID &&
+        existeChat && !ocultarChat && currentChatID && 
         <View style={{
           position:'absolute',
           width:width,

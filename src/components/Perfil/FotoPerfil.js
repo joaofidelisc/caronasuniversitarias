@@ -7,6 +7,9 @@ import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 import { useCallback } from 'react';
 
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+
 const {height,width} = Dimensions.get('screen')
 
 function FotoPerfil({navigation}){
@@ -46,8 +49,8 @@ function FotoPerfil({navigation}){
       setImageUser(url);
     } catch (error){
       if (error.code == 'storage/object-not-found'){
-        url = await storage().ref('user_undefined.png').getDownloadURL(); 
-        setImageUser(url); 
+        // url = await storage().ref('user_undefined.png').getDownloadURL(); 
+        setImageUser(''); 
       }
     }
     setRecuperouImagem(true);
@@ -122,11 +125,15 @@ function FotoPerfil({navigation}){
           style={{position: 'absolute', top:height*0.05, alignSelf: 'center'}}
           onPress={receberFoto}  
         >
-          <Image 
-              source={
-                imageUser!=''?{uri:imageUser}:null}
-              style={{height:height*0.1, width: width*0.22, borderRadius: 100}}  
-          />
+          {
+            imageUser != '' ?
+            <Image 
+                source={
+                {uri:imageUser}}
+                style={{height:height*0.1, width: height*0.1, borderRadius: 100}}  
+            />:            
+            <Icon name="user-circle"size={height*0.1} color = 'white'/>
+          }
         </TouchableOpacity>
         <Modal
           animationType="fade"

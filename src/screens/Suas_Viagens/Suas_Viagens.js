@@ -15,6 +15,8 @@ function Suas_Viagens({route, navigation}) {
     const [arrayHistoricoViagens, setArrayHistoricoViagens] = useState([]);
     const [existeViagem, setExisteViagem] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [testeLottie, setTesteLottie] = useState(true);
+    
     const currentUser = auth().currentUser.uid;
 
     const defineArrayHistoricoViagens = async()=>{
@@ -108,8 +110,8 @@ function Suas_Viagens({route, navigation}) {
         <StatusBar barStyle={'light-content'} />
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
           {
-          loading &&
-          <View style={{alignSelf:'center', marginTop: '60%'}}>
+            loading &&
+          <View style={{alignSelf:'center'}}>
             {/* <Text style={{color:'#06444C', fontWeight:'600', fontSize: 20, lineHeight:24, textAlign:'center'}}>Verificando se existem viagens...</Text> */}
             <Lottie 
               style={{height:height*0.3, width:height*0.3, alignSelf:'center'}}
@@ -131,17 +133,9 @@ function Suas_Viagens({route, navigation}) {
             <Text style={{color: '#C4C4C4', position: 'absolute', top:'63%', left: '5%', fontWeight: '600', fontSize: height*0.017, lineHeight:17}}>
               Encontre a viagem para a sua cidade entre{'\n'}milhares de destinos ou publique sua{'\n'}carona para dividir os custos.
             </Text>
-            <Image source={
-              require('../../assets/icons/mask-covid.png')} 
-              style={{height:'9%', width: '15%', position: 'absolute', top: '78%', left:'5%'}}  
-              />
-            <Text style={{color: '#06444C', position: 'absolute', top:'80%', left: '20%', fontWeight: '600', fontSize: height*0.016, lineHeight:17}}>
-            COVID-19: Seja consciente, siga{'\n'} as orientações da universidade!
-            </Text>
-            <View style={{position: 'absolute', top: '76%', width:'72%', height: '15%', left:'5%', borderWidth:1}}>
-            </View>
             </>
           }
+          <View style={{height: '88%', position:'absolute', top: 0, alignItems:'center'}}>
           <ScrollView style={[styles.scrollView]}>
           {
             existeViagem && !loading &&
@@ -174,6 +168,7 @@ function Suas_Viagens({route, navigation}) {
             ))
           }
           </ScrollView>
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -183,7 +178,7 @@ function Suas_Viagens({route, navigation}) {
 const styles = StyleSheet.create({
   scrollView: {
     marginHorizontal: 10,
-    width:'100%'
+    width:'100%',
   },
   viewViagens:{
     shadowColor: "#000",
