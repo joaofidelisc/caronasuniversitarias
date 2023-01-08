@@ -112,8 +112,8 @@ function TesteCRUD() {
             'Content-type':'application/json'
             },
             body: JSON.stringify({
-            id: Math.random().toString(),
-            // id: auth().currentUser.uid,
+            // id: Math.random().toString(),
+            id: auth().currentUser.uid,
             nome: 'JOÃO',
             CPF:"414.386.918-75",
             dataNasc:"1998-06-10",
@@ -152,6 +152,7 @@ function TesteCRUD() {
 
     //LER NOME DO CARRO DO MOTORISTA;
     //LER PLACA DO CARRO DO MOTORISTA;
+    //CADASTRAR VEÍCULO
     
     //VIAGEM(?)
     
@@ -160,6 +161,26 @@ function TesteCRUD() {
     //ATUALIZAR DADOS DO USUÁRIO;
         //dados do veículo que devem ser atualizados!
 
+    //CRUD VEICULO
+    const cadastrarVeiculo = async()=>{
+        let reqs = await fetch(configBD.urlRootNode+'cadastrarVeiculo',{
+            method: 'POST',
+            headers:{
+                'Accept':'application/json',
+                'Content-type':'application/json'
+            },
+            body: JSON.stringify({
+                userId: '0VtQXRifF8PdbcKCrthdOtlnah12',
+                nomeVeiculo: 'Del Rei',
+                anoVeiculo: 1992,
+                corVeiculo: 'cinza',
+                placaVeiculo: 'JJJJJJJ',
+             })
+        });
+
+        let res = await reqs.json();
+        console.log('req:', res);
+    }
 
     return (
       <SafeAreaView>
@@ -188,6 +209,12 @@ function TesteCRUD() {
             onPress={buscarEmail}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Buscar E-mail</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
+            onPress={cadastrarVeiculo}  
+          >
+            <Text style={{color:'white', fontSize: width*0.05}}>Cadastrar Veiculo</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

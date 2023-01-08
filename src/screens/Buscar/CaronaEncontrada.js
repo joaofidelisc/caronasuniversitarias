@@ -126,33 +126,70 @@ function Options({navigation, route}) {
 
 
   //Função responsável por obter o nome do motorista e atualizar no vetor;
-  async function getNomeMotorista(motoristaUID){
-    let nomeMotorista = '';
-    let docRef = firestore().collection('Users').doc(motoristaUID);
-    return docRef.get().then((doc)=>{
-      if (doc.exists){
-        nomeMotorista = doc.data().nome;
-        return nomeMotorista;
+  // async function getNomeMotorista(motoristaUID){
+  //   let nomeMotorista = '';
+  //   let docRef = firestore().collection('Users').doc(motoristaUID);
+  //   return docRef.get().then((doc)=>{
+  //     if (doc.exists){
+  //       nomeMotorista = doc.data().nome;
+  //       return nomeMotorista;
+  //     }else{
+  //       return '';
+  //     }
+  //   })
+  // }
+
+    async function getNomeMotorista(motoristaUID){
+      let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${motoristaUID}`,{
+          method: 'GET',
+          mode: 'cors',
+          headers:{
+            'Accept':'application/json',
+            'Content-type':'application/json'
+          }
+      });
+      const res = await reqs.json();
+      if (res != 'Falha'){
+          return res.motorista;
       }else{
         return '';
       }
-    })
-  }
+    }
+
 
   //Função responsável por obter o nome do carro do motorista
+  // async function getNomeCarroMotorista(motoristaUID){
+  //   let nomeCarroMotorista = '';
+  //   let docRef = firestore().collection('Users').doc(motoristaUID);
+  //   return docRef.get().then((doc)=>{
+  //     if (doc.exists){
+  //       nomeCarroMotorista = doc.data().nome_veiculo;
+  //       return nomeCarroMotorista;
+  //     }else{
+  //       return '';
+  //     }
+  //   })
+  // }
+
+  //refazer essa aqui
   async function getNomeCarroMotorista(motoristaUID){
-    let nomeCarroMotorista = '';
-    let docRef = firestore().collection('Users').doc(motoristaUID);
-    return docRef.get().then((doc)=>{
-      if (doc.exists){
-        nomeCarroMotorista = doc.data().nome_veiculo;
-        return nomeCarroMotorista;
-      }else{
-        return '';
-      }
-    })
+    let reqs = await fetch(configBD.urlRootNode+`buscarVeiculo/${motoristaUID}`,{
+        method: 'GET',
+        mode: 'cors',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        }
+    });
+    const res = await reqs.json();
+    if (res != 'Falha'){
+        return res.nomeVeiculo;
+    }else{
+      return '';
+    }
   }
 
+  //fazer ESSA AQUI
   //Função responsável por obter a placa do carro do motorista
   async function getPlacaCarroMotorista(motoristaUID){
     let placaCarroMotorista = '';
@@ -167,25 +204,42 @@ function Options({navigation, route}) {
     })
   }
 
-  const getClassificacaoMotorista = async(motoristaUID)=>{
-    let classificacaoAtual = 0;
-    const reference_motorista = firestore().collection('Users').doc(motoristaUID);
-    try{
-      await reference_motorista.get().then((reference)=>{
-        if (reference.exists){
-          classificacaoAtual = reference.data().classificacao;
-          if (classificacaoAtual == undefined){
-            classificacaoAtual = 0;
-          }
-          return parseFloat(classificacaoAtual.toFixed(2));
-        }
-      })
-    }catch(error){
-      console.log('erro em recuperaClassificacaoMotorista');
-    }
-    return parseFloat(classificacaoAtual.toFixed(2));
-  }
+  // const getClassificacaoMotorista = async(motoristaUID)=>{
+  //   let classificacaoAtual = 0;
+  //   const reference_motorista = firestore().collection('Users').doc(motoristaUID);
+  //   try{
+  //     await reference_motorista.get().then((reference)=>{
+  //       if (reference.exists){
+  //         classificacaoAtual = reference.data().classificacao;
+  //         if (classificacaoAtual == undefined){
+  //           classificacaoAtual = 0;
+  //         }
+  //         return parseFloat(classificacaoAtual.toFixed(2));
+  //       }
+  //     })
+  //   }catch(error){
+  //     console.log('erro em recuperaClassificacaoMotorista');
+  //   }
+  //   return parseFloat(classificacaoAtual.toFixed(2));
+  // }
 
+  
+  async function getClassificacaoMotorista(motoristaUID){
+    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${motoristaUID}`,{
+        method: 'GET',
+        mode: 'cors',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        }
+    });
+    const res = await reqs.json();
+    if (res != 'Falha'){
+        return parseFloat(res.classificacao);
+    }else{
+      return 0;
+    }
+  }
 
   //Função responsável por receber um UID e retornar a url para a imagem do motorista.
   const getFotoMotorista = async(motoristaUID)=>{
