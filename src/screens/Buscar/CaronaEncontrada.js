@@ -125,7 +125,7 @@ function Options({navigation, route}) {
 
 
 
-  //Função responsável por get o nome do motorista e atualizar no vetor;
+  //Função responsável por obter o nome do motorista e atualizar no vetor;
   async function getNomeMotorista(motoristaUID){
     let nomeMotorista = '';
     let docRef = firestore().collection('Users').doc(motoristaUID);
@@ -139,7 +139,7 @@ function Options({navigation, route}) {
     })
   }
 
-  //Função responsável por get o nome do carro do motorista
+  //Função responsável por obter o nome do carro do motorista
   async function getNomeCarroMotorista(motoristaUID){
     let nomeCarroMotorista = '';
     let docRef = firestore().collection('Users').doc(motoristaUID);
@@ -153,7 +153,7 @@ function Options({navigation, route}) {
     })
   }
 
-  //Função responsável por get a placa do carro do motorista
+  //Função responsável por obter a placa do carro do motorista
   async function getPlacaCarroMotorista(motoristaUID){
     let placaCarroMotorista = '';
     let docRef = firestore().collection('Users').doc(motoristaUID);

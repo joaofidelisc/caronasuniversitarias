@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, Modal, PermissionsAndroid, Dimensions} from 'react-native';
-import firestore from '@react-native-firebase/firestore';
+// import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import RNRestart from 'react-native-restart';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 import database from '@react-native-firebase/database';
 
+import configBD from '../../../config/config.json';
 
 const {height,width} = Dimensions.get('screen')
 
@@ -49,31 +50,77 @@ function ModoAplicativo(){
   }
 
 
-  const modoAtuacao = async()=>{
-    firestore().collection('Users').doc(userID).get().then(doc=>{
-      if (doc && doc.exists){
-        if (doc.data().motorista == true){
-          setModoApp('motorista');
-          setMessage('passageiro');
-          trocaDeModoLiberada('Passageiros');
-        }else{
-          setModoApp('passageiro');
-          setMessage('motorista');
-          trocaDeModoLiberada('Motoristas');
-        }
-      }
-    })
-  }
+  // const modoAtuacao = async()=>{
+  //   firestore().collection('Users').doc(userID).get().then(doc=>{
+  //     if (doc && doc.exists){
+  //       if (doc.data().motorista == true){
+  //         setModoApp('motorista');
+  //         setMessage('passageiro');
+  //         trocaDeModoLiberada('Passageiros');
+  //       }else{
+  //         setModoApp('passageiro');
+  //         setMessage('motorista');
+  //         trocaDeModoLiberada('Motoristas');
+  //       }
+  //     }
+  //   })
+  // }
   
+
+  const modoAtuacao = async()=>{
+    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${userID}`,{
+      method: 'GET',
+      mode: 'cors',
+      headers:{
+        'Accept':'application/json',
+        'Content-type':'application/json'
+      }
+    });
+    const res = await reqs.json();
+    if (res != 'Falha'){
+      if (res.motorista == true){
+        setModoApp('motorista');
+        setMessage('passageiro');
+        trocaDeModoLiberada('Passageiros');
+      }else{
+        setModoApp('passageiro');
+        setMessage('motorista');
+        trocaDeModoLiberada('Motoristas');
+      }
+    }
+  }
+
+    //
+    const atualizarModoApp = async(motorista)=>{
+      console.log('atualizarModoApp');
+         let reqs = await fetch(configBD.urlRootNode+'atualizarModoApp',{
+          method: 'PUT',
+          headers:{
+            'Accept':'application/json',
+            'Content-type':'application/json'
+          },
+          body: JSON.stringify({
+            id: userID,
+            motorista:motorista
+          })
+        });
+        // let res = await reqs.json();
+        // console.log('req:', res);
+        // console.log('passou!');
+    }
+    //
+
+
   const navegarParaPassageiro = async()=>{
     await trocaDeModoLiberada('Motoristas');
     console.log('troca liberada?', trocaLiberada);
     if (trocaLiberada){
       console.log('pode trocar!')
       try{
-        await firestore().collection('Users').doc(userID).update({
-          motorista: false
-        })
+        await atualizarModoApp(false);
+        // await firestore().collection('Users').doc(userID).update({
+        //   motorista: false
+        // })
         setModalVisible(!modalVisible);
         RNRestart.Restart();
       }catch(error){
@@ -92,9 +139,10 @@ function ModoAplicativo(){
     console.log('troca liberada?', trocaLiberada);
     if (trocaLiberada){
       try{
-        await firestore().collection('Users').doc(userID).update({
-          motorista: true
-        })
+        // await firestore().collection('Users').doc(userID).update({
+        //   motorista: true
+        // })
+        await atualizarModoApp(true);
         setModalVisible(!modalVisible);
         RNRestart.Restart(); 
       }catch(error){

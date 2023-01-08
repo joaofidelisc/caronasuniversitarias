@@ -14,6 +14,7 @@ routes.get("/", (req, res)=>{
 //Rotas do usuário (motorista ou passageiro)
 routes.post("/cadastrarUsuario", userFunctions.cadastrarUsuario);
 routes.get("/buscarUsuario/:id", userFunctions.buscarUsuario);
+routes.get("/buscarPorEmail/:email", userFunctions.buscarPorEmail);
 routes.put("/atualizarModoApp", userFunctions.atualizarModoApp);
 routes.put("/atualizarToken", userFunctions.atualizarToken);
 routes.put("/atualizarClassificacao", userFunctions.atualizarClassificacao);

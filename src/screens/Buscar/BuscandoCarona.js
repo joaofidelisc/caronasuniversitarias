@@ -115,20 +115,40 @@ function BuscandoCarona({navigation, route}) {
        });
    };
 
-  const armazenaToken = async()=>{
-    let docRef = firestore().collection('Users').doc(currentUser);
-    try{
-      docRef.get().then((doc)=>{
-        if (doc.exists){
-          docRef.update({
-            token: token
-          })
-        }
-      })
-    }catch(error){
-      console.log('erro em armazenaToken');
-    }
+  // const armazenaToken = async()=>{
+  //   let docRef = firestore().collection('Users').doc(currentUser);
+  //   try{
+  //     docRef.get().then((doc)=>{
+  //       if (doc.exists){
+  //         docRef.update({
+  //           token: token
+  //         })
+  //       }
+  //     })
+  //   }catch(error){
+  //     console.log('erro em armazenaToken');
+  //   }
+  // }
+
+  const atualizaToken = async()=>{
+    console.log('atualizarToken');
+    let reqs = await fetch(configBD.urlRootNode+'atualizarToken',{
+    method: 'PUT',
+    headers:{
+        'Accept':'application/json',
+        'Content-type':'application/json'
+    },
+    body: JSON.stringify({
+        id: currentUser,
+        token: token
+    })
+    });
+
+    let res = await reqs.json();
+    console.log('req:', res);
+    // console.log('passou!');
   }
+
 
   const atualizaEstadoAtual = async()=>{
     await AsyncStorage.removeItem('BuscandoCarona');
@@ -150,7 +170,7 @@ function BuscandoCarona({navigation, route}) {
       console.log('Tela: BuscandoCarona');
       getFCMToken();
       requestPermission();
-      armazenaToken();
+      atualizaToken();
     }, [token])
   );
 

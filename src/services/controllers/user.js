@@ -62,6 +62,21 @@
     }
     
     
+    async function buscarPorEmail(req, res){
+        let reqs = await model.User.findAll({
+            where:{
+                'email': req.params.email
+            }
+        })
+        if (reqs){
+            res.send(JSON.stringify(reqs));
+        }else{
+            //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
+            res.send(JSON.stringify('Falha'));
+        }
+    }
+
+
     /*
     A função abaixo, cumpre os seguintes requisitos:
     - ATUALIZAR MODO APP (motorista:true ou false);
@@ -116,6 +131,7 @@
     module.exports = {
         cadastrarUsuario,
         buscarUsuario,
+        buscarPorEmail,
         atualizarModoApp,
         atualizarToken,
         atualizarClassificacao

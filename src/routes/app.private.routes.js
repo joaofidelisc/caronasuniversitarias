@@ -21,6 +21,7 @@ import ViagemEmAndamento from '../screens/Buscar/ViagemEmAndamento';
 import ClassificarPassageiro from '../screens/Oferecer/ClassificarPassageiro';
 import ViagemMotorista from '../screens/Oferecer/ViagemMotorista';
 
+import TesteCRUD from '../screens/Teste_CRUD/TesteCRUD';
 import Erro from '../screens/Erro/Erro';
 
 const Tab = createBottomTabNavigator();
@@ -156,7 +157,8 @@ function AppRoutes({route, navigation}) {
               )
             }}
         />
-        <Tab.Screen name="Suas Viagens" component={Suas_Viagens} 
+        {/* <Tab.Screen name="Suas Viagens" component={Suas_Viagens}  */}
+        <Tab.Screen name="CRUD" component={TesteCRUD} 
         // <Tab.Screen name="Erro" component={Erro} 
           options={{
             tabBarIcon:(({color})=>
