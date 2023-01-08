@@ -21,6 +21,8 @@ import ViagemEmAndamento from '../screens/Buscar/ViagemEmAndamento';
 import ClassificarPassageiro from '../screens/Oferecer/ClassificarPassageiro';
 import ViagemMotorista from '../screens/Oferecer/ViagemMotorista';
 
+import Erro from '../screens/Erro/Erro';
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -155,6 +157,7 @@ function AppRoutes({route, navigation}) {
             }}
         />
         <Tab.Screen name="Suas Viagens" component={Suas_Viagens} 
+        // <Tab.Screen name="Erro" component={Erro} 
           options={{
             tabBarIcon:(({color})=>
               <Icon name="list-alt" size={height*0.025} color = {color}/>
