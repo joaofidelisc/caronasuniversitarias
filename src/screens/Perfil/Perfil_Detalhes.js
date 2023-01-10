@@ -37,6 +37,35 @@ function Perfil_Detalhes({navigation, route}){
     console.log('Perfil_Detalhes');
   })
   
+  //const userUID = auth().currentUser.uid;
+  //Essa função altera algum dado do usuario?
+  //Pela quantidade de useStates, essa foi a dedução, mas não ficou claro
+
+ 
+   /*async function recuperarDados(userUID){
+    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${userUID}`,{
+        method: 'PUT',
+        mode: 'cors',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        }
+    });
+    const res = await reqs.json();
+    if (res != 'Falha'){
+        const nome_usuario = reqs.body.nome;
+        const celular_usuario = reqs.body.numCel; //OBS: "numCel" foi usado no modelo sequelize porem com o firestore estava "num_cel".   
+        const email_usuario = reqs.body.email;
+        const universidade_usuario = reqs.body.universidade;
+        setNome(nome_usuario);
+        setCelular(celular_usuario);
+        setEmail(email_usuario);
+        setUniversidade(universidade_usuario);
+    }else{
+      return 0;
+    }
+  }*/
+
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
