@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      nome: {
+      nomeMotorista: {
         type: Sequelize.STRING(100)
       },
       uidPassageiro1: {
@@ -62,7 +62,7 @@ module.exports = {
         onUpdate: 'NO ACTION',
         onDelete: 'NO ACTION'
       },
-      fotoPerfil: {
+      fotoPerfilMotorista: {
         type: Sequelize.STRING
       },
       destino: {

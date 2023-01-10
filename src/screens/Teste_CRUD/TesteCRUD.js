@@ -1,5 +1,7 @@
 import React from 'react';
 import {View, Text, SafeAreaView, StatusBar, Image, Dimensions, TouchableOpacity} from 'react-native';
+import auth from '@react-native-firebase/auth'
+
 
 import configBD from '../../../config/config.json';
 
@@ -13,8 +15,11 @@ function TesteCRUD() {
     //       //LER CLASSIFICACAO DO USUÁRIO;
     //   }
     const buscarUsuario = async()=>{
-        console.log('lerModoApp');
-        let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/0VtQXRifF8PdbcKCrthdOtlnah12`,{
+        // console.log('lerModoApp');
+        const userID = auth().currentUser.uid;
+        console.log('tipo',typeof(userID));
+        console.log('userID:', userID);
+        let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${userID}`,{
             method: 'GET',
             mode: 'cors',
             headers:{
@@ -113,16 +118,16 @@ function TesteCRUD() {
             },
             body: JSON.stringify({
             // id: Math.random().toString(),
-            id: auth().currentUser.uid,
-            nome: 'JOÃO',
+            id: '0VtQXRifF8PdbcKCrthdOtlnah12',
+            nome: 'João Cardozo',
             CPF:"414.386.918-75",
             dataNasc:"1998-06-10",
             email:"joao.fidelis@estudante.ufscar.br",
             numCel:'(16)99376-4191',
-            token:'dusahdasdl',
+            token:`fmKly7zzT52ImztuxXN8sY:APA91bE_ikS-rcAvO63OTgmo93DADw1msFKOau_X1s7Te9sziw0WFZyDb5tEQnHAA81dkquFv58UB6jZe2-vQGJlm6d1D47lH0z-8yhmZxwjJBH7kqHITLe8sPi01U8vyeL3ConZlLVF`,
             universidade:'UFSCar',
             classificacao:4.65,
-            fotoPerfil:'duasdjasdl',
+            fotoPerfil:'NULO',
             motorista:true
         })
         });
@@ -130,6 +135,48 @@ function TesteCRUD() {
         let res = await reqs.json();
         console.log('req:', res);
     }
+
+
+      //CADASTRAR VIAGEM
+      const cadastrarViagem = async()=>{
+        let reqs = await fetch(configBD.urlRootNode+'cadastrarViagem',{
+            method: 'POST',
+            headers:{
+              'Accept':'application/json',
+              'Content-type':'application/json'
+            },
+            body: JSON.stringify({
+              nomeMotorista: 'João Cardozo',
+              uidPassageiro1: '0VtQXRifF8PdbcKCrthdOtlnah12',
+              uidMotorista: '0VtQXRifF8PdbcKCrthdOtlnah12',
+              fotoPerfil: 'linkFoto',
+              destino: 'Centro de São Carlos',
+              dataViagem: "2023-01-10"
+            })
+        });
+
+        let res = await reqs.json();
+        console.log('req:', res);
+    }
+
+
+    const buscarViagem = async()=>{
+      console.log('Buscar Viagem');
+      let reqs = await fetch(configBD.urlRootNode+`buscarViagem/0VtQXRifF8PdbcKCrthdOtlnah12`,{
+          method: 'GET',
+          mode: 'cors',
+          headers:{
+            'Accept':'application/json',
+            'Content-type':'application/json'
+          }
+      });
+      const res = await reqs.json();
+      console.log('resposta:', res[0]);
+      if (res[0] == undefined || res == 'Falha'){
+          console.log('Viagem não encontrada!');
+      }
+  }
+
 
     //VERIFICAR SE USUÁRIO EXISTE PELO EMAIL;
     const buscarEmail = async()=>{
@@ -215,6 +262,24 @@ function TesteCRUD() {
             onPress={cadastrarVeiculo}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Cadastrar Veiculo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
+            onPress={cadastrarViagem}  
+          >
+            <Text style={{color:'white', fontSize: width*0.05}}>Cadastrar Viagem</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
+            onPress={buscarViagem}  
+          >
+            <Text style={{color:'white', fontSize: width*0.05}}>Buscar Viagem</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
+            onPress={cadastrarViagem}  
+          >
+            <Text style={{color:'white', fontSize: width*0.05}}>Contar Viagem</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

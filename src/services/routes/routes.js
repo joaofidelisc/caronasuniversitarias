@@ -3,7 +3,7 @@ const routes = express.Router();
 
 var userFunctions = require('../controllers/user.js');
 var veiculoFunctions = require('../controllers/veiculo.js');
-// var viagemFunctions = require('../controllers/viagem.js');
+var viagemFunctions = require('../controllers/viagem.js');
 
 
 routes.get("/", (req, res)=>{
@@ -29,7 +29,8 @@ routes.put("/atualizarCorVeiculo", veiculoFunctions.atualizarCorVeiculo);
 routes.put("/atualizarNomeVeiculo", veiculoFunctions.atualizarNomeVeiculo);
 
 //Rotas de viagem
-//Falta fazer as funções no controller e aqui nas rotas e alterar no código do app também!
-//Falta entender como fazer o relacionamento entre viagem, carro e motorista(ou passageiro);
+routes.post("/cadastrarViagem", viagemFunctions.cadastrarViagem);
+routes.get("/buscarViagem/:uidPassageiro1", viagemFunctions.buscarViagem);
+routes.get("/contarViagens/:uidPassageiro1?uidPassageiro2?uidPassageiro3?uidPassageiro4?uidMotorista", viagemFunctions.contarViagens);
 
 module.exports = routes;

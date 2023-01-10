@@ -9,6 +9,9 @@ import dominios from '../../dominios/dominios.json';
 
 const {height, width} = Dimensions.get('screen')
 
+import configBD from '../../../config/config.json';
+
+
 GoogleSignin.configure({
   webClientId: '97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com',
 });
@@ -23,20 +26,43 @@ function Cadastro_Inicio({navigation}) {
     }
   })
   
-  const redirecionamentoLogin = async(emailGoogle)=>{  
+  // const redirecionamentoLogin = async(emailGoogle)=>{  
+  //   await AsyncStorage.setItem('email', emailGoogle);
+  //   firestore().collection('Users').where('email', '==', emailGoogle).get().then(querySnapshot=>{
+  //     const valor = querySnapshot.docs;
+  //     console.log(valor);
+  //     if (valor == ""){
+  //       navigation.navigate("Como_Comecar", {email: emailGoogle});
+  //     }
+  //     else{
+  //       setWarning('Email já cadastrado.\nFaça login para continuar.');
+  //       setModalVisible(true);
+  //       signOutGoogle();
+  //     }
+  //   })
+  // }
+  
+  const redirecionamentoLogin = async(emailGoogle)=>{
     await AsyncStorage.setItem('email', emailGoogle);
-    firestore().collection('Users').where('email', '==', emailGoogle).get().then(querySnapshot=>{
-      const valor = querySnapshot.docs;
-      console.log(valor);
-      if (valor == ""){
-        navigation.navigate("Como_Comecar", {email: emailGoogle});
+    let reqs = await fetch(configBD.urlRootNode+`buscarPorEmail/${emailGoogle}`,{
+      method: 'GET',
+      mode: 'cors',
+      headers:{
+        'Accept':'application/json',
+        'Content-type':'application/json'
       }
-      else{
-        setWarning('Email já cadastrado.\nFaça login para continuar.');
-        setModalVisible(true);
-        signOutGoogle();
-      }
-    })
+    });
+    const res = await reqs.json();
+    console.log('resposta:', res[0]);
+    if (res[0] == undefined || res == 'Falha'){
+      // console.log('Usuário não encontrado!');
+      navigation.navigate("Como_Comecar", {email: emailGoogle});
+    }else{
+      setWarning('Email já cadastrado.\nFaça login para continuar.');
+      setModalVisible(true);
+      signOutGoogle();
+    }
+
   }
 
   const signOutGoogle = async() =>{

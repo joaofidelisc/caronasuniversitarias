@@ -7,7 +7,9 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth'
 import FotoPerfil from '../../components/Perfil/FotoPerfil';
 import ModoAplicativo from '../../components/Perfil/ModoAplicativo';
-import { buscarUsuario } from '../../services/controllers/user';
+
+import configBD from '../../../config/config.json';
+
 
 const {height,width} = Dimensions.get('screen')
 
@@ -17,42 +19,38 @@ function Perfil_Detalhes({navigation, route}){
   const [email, setEmail] = useState('');
   const [universidade, setUniversidade] = useState('');
   
-  const recuperarDados = async()=>{
-    const userID = auth().currentUser.uid;
-    firestore().collection('Users').doc(userID).get().then(doc=>{
-      if (doc && doc.exists){
-        const nome_usuario = doc.data().nome;
-        const celular_usuario = doc.data().num_cel;
-        const email_usuario = doc.data().email;
-        const universidade_usuario = doc.data().universidade;
-        setNome(nome_usuario);
-        setCelular(celular_usuario);
-        setEmail(email_usuario);
-        setUniversidade(universidade_usuario);
-      }
-    })
-  }
-
-  useEffect(()=>{
-    recuperarDados();
-    console.log('Perfil_Detalhes');
-  })
+  // const recuperarDados = async()=>{
+  //   const userID = auth().currentUser.uid;
+  //   firestore().collection('Users').doc(userID).get().then(doc=>{
+  //     if (doc && doc.exists){
+  //       const nome_usuario = doc.data().nome;
+  //       const celular_usuario = doc.data().num_cel;
+  //       const email_usuario = doc.data().email;
+  //       const universidade_usuario = doc.data().universidade;
+  //       setNome(nome_usuario);
+  //       setCelular(celular_usuario);
+  //       setEmail(email_usuario);
+  //       setUniversidade(universidade_usuario);
+  //     }
+  //   })
+  // }
   
   //const userUID = auth().currentUser.uid;
   //Essa função altera algum dado do usuario?
   //Pela quantidade de useStates, essa foi a dedução, mas não ficou claro
-
- 
-   /*async function recuperarDados(userUID){
-    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${userUID}`,{
-        method: 'PUT',
-        mode: 'cors',
-        headers:{
-          'Accept':'application/json',
-          'Content-type':'application/json'
-        }
+  
+  
+  async function recuperarDados(){
+    const userID = auth().currentUser.uid;
+    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${userID}`,{
+      method: 'GET',
+      mode: 'cors',
+      headers:{
+        'Accept':'application/json',
+        'Content-type':'application/json'
+      }
     });
-    const res = await reqs.json();
+  const res = await reqs.json();
     if (res != 'Falha'){
         const nome_usuario = res.nome;
         const celular_usuario = res.numCel; //OBS: "numCel" foi usado no modelo sequelize porem com o firestore estava "num_cel".   
@@ -63,9 +61,18 @@ function Perfil_Detalhes({navigation, route}){
         setEmail(email_usuario);
         setUniversidade(universidade_usuario);
     }else{
-      return 0;
+      setNome('Erro');
+      setCelular('(xx)xxxxx-xxxx');
+      setUniversidade('Atualizar');
     }
-  }*/
+  }
+
+
+  useEffect(()=>{
+    recuperarDados();
+    console.log('Perfil_Detalhes');
+  })
+  
 
   return (
     <SafeAreaView>

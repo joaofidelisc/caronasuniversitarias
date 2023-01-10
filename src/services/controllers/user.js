@@ -127,7 +127,6 @@
         }
     }
 
-    
     module.exports = {
         cadastrarUsuario,
         buscarUsuario,
