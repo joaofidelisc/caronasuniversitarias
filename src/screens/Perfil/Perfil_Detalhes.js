@@ -7,6 +7,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth'
 import FotoPerfil from '../../components/Perfil/FotoPerfil';
 import ModoAplicativo from '../../components/Perfil/ModoAplicativo';
+import { buscarUsuario } from '../../services/controllers/user';
 
 const {height,width} = Dimensions.get('screen')
 
@@ -53,10 +54,10 @@ function Perfil_Detalhes({navigation, route}){
     });
     const res = await reqs.json();
     if (res != 'Falha'){
-        const nome_usuario = reqs.body.nome;
-        const celular_usuario = reqs.body.numCel; //OBS: "numCel" foi usado no modelo sequelize porem com o firestore estava "num_cel".   
-        const email_usuario = reqs.body.email;
-        const universidade_usuario = reqs.body.universidade;
+        const nome_usuario = res.nome;
+        const celular_usuario = res.numCel; //OBS: "numCel" foi usado no modelo sequelize porem com o firestore estava "num_cel".   
+        const email_usuario = res.email;
+        const universidade_usuario = res.universidade;
         setNome(nome_usuario);
         setCelular(celular_usuario);
         setEmail(email_usuario);
