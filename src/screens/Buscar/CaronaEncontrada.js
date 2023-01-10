@@ -172,8 +172,25 @@ function Options({navigation, route}) {
   // }
 
   //refazer essa aqui
-  async function getNomeCarroMotorista(motoristaUID){
+  /*async function getNomeCarroMotorista(motoristaUID){
     let reqs = await fetch(configBD.urlRootNode+`buscarVeiculo/${motoristaUID}`,{
+        method: 'GET',
+        mode: 'cors',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        }
+    });
+    const res = await reqs.json();
+    if (res != 'Falha'){
+        return res.nomeVeiculo;
+    }else{
+      return '';
+    }
+  }*/
+
+  async function getNomeCarroMotorista(motoristaUID){
+    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${motoristaUID}`,{
         method: 'GET',
         mode: 'cors',
         headers:{
@@ -191,7 +208,7 @@ function Options({navigation, route}) {
 
   //fazer ESSA AQUI
   //Função responsável por obter a placa do carro do motorista
-  async function getPlacaCarroMotorista(motoristaUID){
+  /*async function getPlacaCarroMotorista(motoristaUID){
     let placaCarroMotorista = '';
     let docRef = firestore().collection('Users').doc(motoristaUID);
     return docRef.get().then((doc)=>{
@@ -202,6 +219,23 @@ function Options({navigation, route}) {
         return '';
       }
     })
+  }*/
+
+  async function getPlacaCarroMotorista(motoristaUID){
+    let reqs = await fetch(configBD.urlRootNode+`buscarVeiculo/${motoristaUID}`,{
+        method: 'GET',
+        mode: 'cors',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        }
+    });
+    const res = await reqs.json();
+    if (res != 'Falha'){
+        return res.placaVeiculo;
+    }else{
+      return '';
+    }
   }
 
   // const getClassificacaoMotorista = async(motoristaUID)=>{
