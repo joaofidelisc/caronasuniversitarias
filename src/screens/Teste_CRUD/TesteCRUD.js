@@ -147,10 +147,10 @@ function TesteCRUD() {
             },
             body: JSON.stringify({
               nomeMotorista: 'João Cardozo',
-              uidPassageiro1: '0VtQXRifF8PdbcKCrthdOtlnah12',
+              uidPassageiro2: '0VtQXRifF8PdbcKCrthdOtlnah12',
               uidMotorista: '0VtQXRifF8PdbcKCrthdOtlnah12',
               fotoPerfil: 'linkFoto',
-              destino: 'Centro de São Carlos',
+              destino: 'UFSCar',
               dataViagem: "2023-01-10"
             })
         });
@@ -175,13 +175,36 @@ function TesteCRUD() {
       if (res[0] == undefined || res == 'Falha'){
           console.log('Viagem não encontrada!');
       }
-  }
+    }
+
+
+    const contarViagem = async()=>{
+      console.log('Contar Viagem');
+      let reqs = await fetch(configBD.urlRootNode+`contarViagens/0VtQXRifF8PdbcKCrthdOtlnah12`,{
+          method: 'GET',
+          mode: 'cors',
+          headers:{
+            'Accept':'application/json',
+            'Content-type':'application/json'
+          }
+      });
+      const res = await reqs.json();
+      console.log('resposta:', res);
+      // console.log(res);
+      if (res == 3){
+        console.log('retornou 3!!');
+      }
+      // console.log('resposta:', res[0]);
+      if (res == 'Falha'){
+          console.log(0);
+      }
+    }
 
 
     //VERIFICAR SE USUÁRIO EXISTE PELO EMAIL;
     const buscarEmail = async()=>{
         console.log('Buscar Email');
-        let reqs = await fetch(configBD.urlRootNode+`buscarPorEmail/joao.fidelis@estudante.ufscar.brr`,{
+        let reqs = await fetch(configBD.urlRootNode+`buscarPorEmail/joao.fidelis@estudante.ufscar.br`,{
             method: 'GET',
             mode: 'cors',
             headers:{
@@ -193,10 +216,19 @@ function TesteCRUD() {
         console.log('resposta:', res[0]);
         if (res[0] == undefined || res == 'Falha'){
             console.log('Usuário não encontrado!');
+        }else{
+          return res;
         }
     }
 
 
+
+    const teste = async()=>{
+      let objUsuario = await buscarEmail();
+      console.log('objUsuario', objUsuario[0].CPF);
+      console.log('tipo objUsuario:', typeof(objUsuario));
+
+    }
     //LER NOME DO CARRO DO MOTORISTA;
     //LER PLACA DO CARRO DO MOTORISTA;
     //CADASTRAR VEÍCULO
@@ -253,7 +285,8 @@ function TesteCRUD() {
           </TouchableOpacity>
           <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
-            onPress={buscarEmail}  
+            // onPress={buscarEmail}  
+            onPress={teste}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Buscar E-mail</Text>
           </TouchableOpacity>
@@ -277,7 +310,7 @@ function TesteCRUD() {
           </TouchableOpacity>
           <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
-            onPress={cadastrarViagem}  
+            onPress={contarViagem}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Contar Viagem</Text>
           </TouchableOpacity>

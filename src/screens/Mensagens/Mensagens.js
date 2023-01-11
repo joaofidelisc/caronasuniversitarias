@@ -10,6 +10,9 @@ import Lottie from 'lottie-react-native';
 
 const {height,width} = Dimensions.get('screen');
 
+import configBD from '../../../config/config.json';
+
+
 export default function Mensagens({route, navigation}) {
   const [messages, setMessages] = useState([]);
   const [currentChatID, setCurrentChatID] = useState(null);
@@ -47,21 +50,40 @@ export default function Mensagens({route, navigation}) {
   }
   
 
+  // async function getNomeStorage(userUID1, userUID2){
+  //   console.log('Renderizando...2');
+  //   const userUID = userUID1==currentUser?userUID2:userUID1;
+  //   let nomeUsuario = '';
+  //   let docRef = firestore().collection('Users').doc(userUID);
+  //   return docRef.get().then((doc)=>{
+  //     if (doc.exists){
+  //       nomeUsuario = doc.data().nome;
+  //       return nomeUsuario;
+  //     }else{
+    //       return '';
+    //     }
+  //   })
+  // }
+  
+  
   async function getNomeStorage(userUID1, userUID2){
     console.log('Renderizando...2');
-      const userUID = userUID1==currentUser?userUID2:userUID1;
-      let nomeUsuario = '';
-      let docRef = firestore().collection('Users').doc(userUID);
-      return docRef.get().then((doc)=>{
-        if (doc.exists){
-          nomeUsuario = doc.data().nome;
-          return nomeUsuario;
-        }else{
-          return '';
+    const userUID = userUID1==currentUser?userUID2:userUID1;
+    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${userUID}`,{
+        method: 'GET',
+        mode: 'cors',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
         }
-      })
+    });
+    const res = await reqs.json();
+    if (res != 'Falha'){
+        return res.nome;
+    }else{
+      return '';
     }
-  
+  }
 
   const renderMessages = useCallback((msgs)=>{
     console.log('Renderizando...3');

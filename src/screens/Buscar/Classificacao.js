@@ -10,6 +10,8 @@ import database from '@react-native-firebase/database';
 import Lottie from 'lottie-react-native';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 
+import configBD from '../../../config/config.json';
+
 
 const {height,width} = Dimensions.get('screen')
 
@@ -82,32 +84,131 @@ function Classificacao({navigation, route}){
       );
     }
 
-    const classificarMotorista = async()=>{
-      let numViagens = 0;
-      let classificacaoAtual = 0;
-      const reference_motorista = firestore().collection('Users').doc(uidMotorista);
-      try{
-        reference_motorista.get().then((reference)=>{
-          if (reference.exists){
-            numViagens = reference.data().numViagensRealizadas;
-            classificacaoAtual = reference.data().classificacao;
-            if (numViagens != undefined && classificacaoAtual != undefined){
-              reference_motorista.update({
-                classificacao: (defaultRating+classificacaoAtual)/2,
-                numViagensRealizadas: numViagens+1
-              })
-            }else{
-              reference_motorista.update({
-                classificacao: defaultRating,
-                numViagensRealizadas: 1
-              })
-            }
+    
+    
+    const contarViagem = async()=>{
+      console.log('Contar Viagem');
+      let reqs = await fetch(configBD.urlRootNode+`contarViagens/${uidMotorista}`,{
+          method: 'GET',
+          mode: 'cors',
+          headers:{
+            'Accept':'application/json',
+            'Content-type':'application/json'
           }
-        })
+        });
+        const res = await reqs.json();
+        if (res == 'Falha'){
+          return 0;
+        }else{
+          return res;
+        }
+      }
+
+
+      const retornaClassificacao = async()=>{
+        let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${uidMotorista}`,{
+            method: 'GET',
+            mode: 'cors',
+            headers:{
+              'Accept':'application/json',
+              'Content-type':'application/json'
+            }
+        });
+        const res = await reqs.json();
+        if (res != 'Falha'){
+          return res.classificacao;
+        }else{
+          return 0;
+        }
+      }
+
+      const atualizarClassificacao = async(novaClassificacao)=>{
+        console.log('atualizarClassificacao');
+        let reqs = await fetch(configBD.urlRootNode+'atualizarClassificacao',{
+         method: 'PUT',
+         headers:{
+           'Accept':'application/json',
+           'Content-type':'application/json'
+         },
+         body: JSON.stringify({
+           id: uidMotorista,
+           classificacao: novaClassificacao
+         })
+       });
+ 
+       let res = await reqs.json();
+
+      //  console.log('req:', res);
+       // console.log('passou!');
+    }
+      
+      // const classificarMotorista = async()=>{
+      //   let numViagens = 0;
+      //   let classificacaoAtual = 0;
+      //   const reference_motorista = firestore().collection('Users').doc(uidMotorista);
+      //   try{
+      //     reference_motorista.get().then((reference)=>{
+      //       if (reference.exists){
+      //         numViagens = reference.data().numViagensRealizadas;
+      //         classificacaoAtual = reference.data().classificacao;
+      //         if (numViagens != undefined && classificacaoAtual != undefined){
+      //           reference_motorista.update({
+      //             classificacao: (defaultRating+classificacaoAtual)/2,
+      //             numViagensRealizadas: numViagens+1
+      //           })
+      //         }else{
+      //           reference_motorista.update({
+      //             classificacao: defaultRating,
+      //             numViagensRealizadas: 1
+      //           })
+      //         }
+      //       }
+      //     })
+      //     await navigateToBuscar();
+      //   }catch(error){
+      //     console.log('erro em getClassificacao');
+      //   }
+      // }
+
+    const classificarMotorista = async()=>{
+      let numViagens = await contarViagem();
+      let classificacaoAtual = await retornaClassificacao();
+      try{
+        if (numViagens>0){
+          await atualizarClassificacao((defaultRating+classificacaoAtual)/2);
+        }else{
+          await atualizarClassificacao(defaultRating);
+        }
         await navigateToBuscar();
       }catch(error){
-        console.log('erro em getClassificacao');
+        console.log('erro em classificarMotorista');
       }
+      //obter classificacao atual - se a referencia existe;
+      //senão atualizar classificacao;
+
+        // const reference_motorista = firestore().collection('Users').doc(uidMotorista);
+        // try{
+        //   reference_motorista.get().then((reference)=>{
+        //     if (reference.exists){
+        //       numViagens = reference.data().numViagensRealizadas;
+        //       classificacaoAtual = reference.data().classificacao;
+        //       if (numViagens != undefined && classificacaoAtual != undefined){
+        //         reference_motorista.update({
+        //           classificacao: (defaultRating+classificacaoAtual)/2,
+        //           numViagensRealizadas: numViagens+1
+        //         })
+        //       }else{
+        //         reference_motorista.update({
+        //           classificacao: defaultRating,
+        //           numViagensRealizadas: 1
+        //         })
+        //       }
+        //     }
+        //   })
+        //   await navigateToBuscar();
+        // }catch(error){
+        //   console.log('erro em getClassificacao');
+        // }
     }
 
     

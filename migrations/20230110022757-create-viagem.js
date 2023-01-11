@@ -71,6 +71,10 @@ module.exports = {
       dataViagem: {
         type: Sequelize.DATE
       },
+      UserId: {
+        allowNull:true,
+        type: Sequelize.STRING(50)
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

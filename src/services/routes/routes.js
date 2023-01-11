@@ -31,6 +31,7 @@ routes.put("/atualizarNomeVeiculo", veiculoFunctions.atualizarNomeVeiculo);
 //Rotas de viagem
 routes.post("/cadastrarViagem", viagemFunctions.cadastrarViagem);
 routes.get("/buscarViagem/:uidPassageiro1", viagemFunctions.buscarViagem);
-routes.get("/contarViagens/:uidPassageiro1?uidPassageiro2?uidPassageiro3?uidPassageiro4?uidMotorista", viagemFunctions.contarViagens);
+routes.get("/contarViagens/:uidPassageiro1", viagemFunctions.contarViagens);
+routes.put("/atualizarViagem", viagemFunctions.atualizarViagem);
 
 module.exports = routes;

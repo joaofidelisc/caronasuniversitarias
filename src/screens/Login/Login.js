@@ -21,6 +21,7 @@ import firestore from '@react-native-firebase/firestore';
 
 import dominios from '../../dominios/dominios.json';
 
+import configBD from '../../../config/config.json';
 
 // incluir aqui dominios permitidos (válido para email e autenticação com Google)
 // const dominios_permitidos = ["estudante.ufscar.br"];
@@ -46,42 +47,83 @@ function Login({navigation}) {
       signOutGoogle();
     }
   })
+
+  const buscarEmail = async(email)=>{
+    console.log('Buscar Email');
+    let reqs = await fetch(configBD.urlRootNode+`buscarPorEmail/${email}`,{
+        method: 'GET',
+        mode: 'cors',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        }
+    });
+    const res = await reqs.json();
+    // console.log('resposta:', res[0]);
+    if (res[0] == undefined || res == 'Falha'){
+        return '';
+    }else{
+      return res;
+    }
+  }
   
   const redirecionamentoLogin = async(emailGoogle)=>{  
     console.log('entrando em redirecionamento login')
     if (email == ''){
       await AsyncStorage.setItem('email', emailGoogle);
-      firestore().collection('Users').where('email', '==', emailGoogle).get().then(querySnapshot=>{
-        const valor = querySnapshot.docs;
-        const motorista = (valor == "" || valor == undefined)? '' : valor[0].data().motorista;
-        if (valor == ""){
-          navigation.navigate("Como_Comecar", {email: emailGoogle});
+      const objUsuario = await buscarEmail(emailGoogle);
+      if (objUsuario == ''){
+        navigation.navigate("Como_Comecar", {email: emailGoogle});
+      }else{
+        if (objUsuario[0].motorista == true){
+          navigation.navigate("ModoMotorista");
+        }else{
+          navigation.navigate("ModoPassageiro");
         }
-        else{
-          if (motorista == true){
-            navigation.navigate("ModoMotorista");
-          }else{
-            navigation.navigate("ModoPassageiro");
-          }
-        }
-      })
+      }
+      // firestore().collection('Users').where('email', '==', emailGoogle).get().then(querySnapshot=>{
+        //   const valor = querySnapshot.docs;
+        //   const motorista = (valor == "" || valor == undefined)? '' : valor[0].data().motorista;
+        //   if (valor == ""){
+          //     navigation.navigate("Como_Comecar", {email: emailGoogle});
+          //   }
+      //   else{
+        //     if (motorista == true){
+      //       navigation.navigate("ModoMotorista");
+      //     }else{
+      //       navigation.navigate("ModoPassageiro");
+      //     }
+      //   }
+      // })
     }else{
       await AsyncStorage.setItem('email', email);
       await AsyncStorage.setItem('password', password);
-      firestore().collection('Users').where('email', '==', email).get().then(querySnapshot=>{
-        const valor = querySnapshot.docs;
-        const motorista = (valor == "" || valor == undefined)? '' : valor[0].data().motorista;
-        if (valor == ""){
-          navigation.navigate("Como_Comecar", {email: email});
+      const objUsuario = await buscarEmail(email);
+      if (objUsuario == ''){
+        navigation.navigate("Como_Comecar", {email: emailGoogle});
+      }else{
+        if (objUsuario[0].motorista == true){
+          navigation.navigate("ModoMotorista");
+        }else{
+          navigation.navigate("ModoPassageiro");
+          
         }
-        else{
-          if (motorista == true){
-            navigation.navigate("ModoMotorista");
-          }else{
-            navigation.navigate("ModoPassageiro");
-          }
-        }
-      })
+      }
+
+      // firestore().collection('Users').where('email', '==', email).get().then(querySnapshot=>{
+      //   const valor = querySnapshot.docs;
+      //   const motorista = (valor == "" || valor == undefined)? '' : valor[0].data().motorista;
+      //   if (valor == ""){
+      //     navigation.navigate("Como_Comecar", {email: email});
+      //   }
+      //   else{
+      //     if (motorista == true){
+      //       navigation.navigate("ModoMotorista");
+      //     }else{
+      //       navigation.navigate("ModoPassageiro");
+      //     }
+      //   }
+      // })
     }
   }
 

@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     uidPassageiro4: DataTypes.STRING(50),
     uidMotorista: DataTypes.STRING(50),
     fotoPerfilMotorista: DataTypes.STRING,
-    // UserId: DataTypes.STRING(50),
+    UserId: DataTypes.STRING(50),
     destino: DataTypes.STRING,
     dataViagem: DataTypes.DATE
   }, {

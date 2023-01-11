@@ -12,33 +12,87 @@ const {height,width}=Dimensions.get('window')
 function Entrada({navigation}){
   const [falhaLogin, setFalhaLogin] = useState(false);
 
-  // const testeBanco = async()=>{
-  //   console.log('testando banco...');
-  //   const estado = 'SP';
-  //   const cidade = 'Matão';
-  //   const currentUser= 'dasudhasudhasda';
-  //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-  //   try{
-  //     reference.once('value').then(snapshot=>{
-  //       if (snapshot.exists()){
-  //         console.log('existe!');
-  //       }else{
-  //         console.log('não existe!');
-  //       }
-  //     })
-  //   }catch(error){
-  //     console.log("error:", error.code);
-  //   }
-  //   // if (!existeBanco){
-  //   //   try{
-  //   //     reference.once('value').then(function(snapshot){
-  //   //       setExisteBanco(snapshot.exists());
-  //   //     })
-  //   //   }catch(error){
-  //   //     console.log('erro em estadoInicial()');
-  //   //   }
-  // }
-
+  /*
+  const redirecionamentoLogin = async(email)=>{  
+    try{
+      let reqs = await fetch(configBD.urlRootNode+`buscarPorEmail/${email}`,{
+          method: 'GET',
+          mode: 'cors',
+          headers:{
+            'Accept':'application/json',
+            'Content-type':'application/json'
+          }
+      });
+      const res_user = await reqs.json();
+      console.log('resposta:', res_user[0]);
+      if (res_user[0] != undefined && res_user != 'Falha'){
+        let reqs_veiculo = await fetch(configBD.urlRootNode+`buscarVeiculo/${res_user.id}`,{
+          method: 'GET',
+          mode: 'cors',
+          headers:{
+            'Accept':'application/json',
+            'Content-type':'application/json'
+          }
+        });
+        const res_veiculo = await reqs_veiculo.json();
+        if (res_veiculo != 'Falha'){
+          //existe veiculo;
+        }else{
+          //não existe veiculo;
+        }
+          //encontrou
+      }else{
+        // n encontrou
+      }
+      // firestore().collection('Users').where('email', '==', email).get().then(querySnapshot=>{
+      //   const valor = querySnapshot.docs;
+      //   const motorista = (valor == "" || valor == undefined)? '' : valor[0].data().motorista;
+      //   const cadastro_veiculo = (valor == "" || valor == undefined)? '' : valor[0].data().nome_veiculo;
+      //   const nome = (valor == "" || valor == undefined)? '' : valor[0].data().nome;
+      //   const cpf = (valor == "" || valor == undefined)? '' : valor[0].data().CPF;
+      //   const data_nasc = (valor == "" || valor == undefined)? '' : valor[0].data().data_nasc;
+      //   const num_cel = (valor == "" || valor == undefined)? '' : valor[0].data().num_cel;
+      //   const universidade = (valor == "" || valor == undefined)? '' : valor[0].data().universidade;
+      //   const email_banco = (valor == "" || valor == undefined)? '' : valor[0].data().email;
+      //   console.log('informações:', nome, cpf, data_nasc, num_cel, universidade, email_banco);
+      //   if (valor == ""){
+      //     if (email_banco != ''){
+      //       navigation.navigate("Como_Comecar", {email: email});
+      //     }else{
+      //       setFalhaLogin(true);
+      //     }
+      //   }
+      //   else{
+      //     if (motorista == true && cadastro_veiculo!=''){
+      //       // navigation.navigate("ModoMotorista");
+      //       navigation.navigate("MenuTeste");
+      //     }else if (motorista == true && cadastro_veiculo == ''){
+      //       console.log('navegando para a tela de cadastro de veículo');
+      //       console.log('informações:', nome, cpf, data_nasc, num_cel, universidade, email_banco);
+      //       navigation.navigate('Forms_Motorista_Veiculo', {trocaDeModo:true});
+      //     } else{
+      //       navigation.navigate("MenuTeste");
+      //       // navigation.navigate("ModoPassageiro");
+      //     }
+      //   }
+      // })
+    }catch(error){
+      if (error.code == 'auth/missing-identifier'){
+        console.log('missing identifier!');
+      }
+      setFalhaLogin(true);
+      Alert.alert(
+        "Algum erro ocorreu",
+        "Tente entrar novamente...",
+        [
+          // { text: "OKs", onPress: () => verificarConexao()}
+        ]
+      );
+      console.log('erro no redirecionamento');
+    }   
+  }
+  
+  */
   const redirecionamentoLogin = async(email)=>{  
     try{
       firestore().collection('Users').where('email', '==', email).get().then(querySnapshot=>{

@@ -12,6 +12,9 @@ import messaging from '@react-native-firebase/messaging';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
+import configBD from '../../../config/config.json';
+
+
 const {height, width} = Dimensions.get('screen')
 
 function BuscandoCarona({navigation, route}) {

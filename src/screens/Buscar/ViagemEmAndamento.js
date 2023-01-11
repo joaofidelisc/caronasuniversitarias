@@ -8,6 +8,8 @@ import auth from '@react-native-firebase/auth';
 
 import EstadoApp from '../../services/sqlite/EstadoApp';
 
+import configBD from '../../../config/config.json';
+
 
 const {height, width} = Dimensions.get('screen')
 
@@ -177,25 +179,50 @@ function ViagemEmAndamento({navigation, route}) {
     }
 
 
-    
+    //cadastrar viagem;
+    //viagem em andamento do passageiro
     const escreveHistoricoViagem = async()=>{
-      const data = await dataAtualFormatada();
-      const reference_passageiro = firestore().collection('Users').doc(currentUser); 
-      try{
-        reference_passageiro.update({
-          historicoViagens: firebase.firestore.FieldValue.arrayUnion({
-            uidMotorista: uidMotorista,
-            dataViagem: data,
-            nome: nomeMotorista,
-            destino: nomeDestino,
-            fotoPerfil: motoristaURL,
-            refViagem: Date.now()
-          })
-        })
-      }catch(error){
-        console.log('erro em escreveHistoricoViagem');
-      }
+      // let reqs = await fetch(configBD.urlRootNode+'cadastrarViagem',{
+      //     method: 'POST',
+      //     headers:{
+      //       'Accept':'application/json',
+      //       'Content-type':'application/json'
+      //     },
+      //     body: JSON.stringify({
+      //       nomeMotorista: 'João Cardozo',
+      //       uidPassageiro2: '0VtQXRifF8PdbcKCrthdOtlnah12',
+      //       uidMotorista: '0VtQXRifF8PdbcKCrthdOtlnah12',
+      //       fotoPerfil: 'linkFoto',
+      //       destino: 'UFSCar',
+      //       dataViagem: "2023-01-10"
+      //     })
+      // });
+
+      // let res = await reqs.json();
+      // console.log('req:', res);
+    
+      //buscar a viagem mais recente que linka com o uid do passageiro e atualizar viagem;
+      
     }
+
+    // const escreveHistoricoViagem = async()=>{
+    //   const data = await dataAtualFormatada();
+    //   const reference_passageiro = firestore().collection('Users').doc(currentUser); 
+    //   try{
+    //     reference_passageiro.update({
+    //       historicoViagens: firebase.firestore.FieldValue.arrayUnion({
+    //         uidMotorista: uidMotorista,
+    //         dataViagem: data,
+    //         nome: nomeMotorista,
+    //         destino: nomeDestino,
+    //         fotoPerfil: motoristaURL,
+    //         refViagem: Date.now()
+    //       })
+    //     })
+    //   }catch(error){
+    //     console.log('erro em escreveHistoricoViagem');
+    //   }
+    // }
 
     
   // async function defineEstadoAtual(){
