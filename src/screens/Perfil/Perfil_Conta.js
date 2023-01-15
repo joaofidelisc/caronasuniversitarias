@@ -13,6 +13,8 @@ import ModoAplicativo from '../../components/Perfil/ModoAplicativo';
 import auth from '@react-native-firebase/auth'
 import RNRestart from 'react-native-restart';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import configBD from '../../../config/config.json';
+
 
 const {height,width} = Dimensions.get('screen')
 

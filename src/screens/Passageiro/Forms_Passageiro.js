@@ -5,6 +5,8 @@ import { TextInputMask } from 'react-native-masked-text'
 import { ScrollView } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import configBD from '../../../config/config.json';
+
 const {height,width} = Dimensions.get('screen')
 
 function Forms_Passageiro({route, navigation}) {

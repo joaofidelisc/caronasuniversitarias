@@ -12,6 +12,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Lottie from 'lottie-react-native';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 
+import configBD from '../../../config/config.json';
+
 
 /*
 Ideias para essa tela:

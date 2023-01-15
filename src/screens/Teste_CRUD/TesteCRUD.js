@@ -146,8 +146,8 @@ function TesteCRUD() {
               'Content-type':'application/json'
             },
             body: JSON.stringify({
-              uidMotorista:'0VtQXRifF8PdbcKCrthdOtlnah12',
-              dataViagem: "2023-01-14"
+              uidMotorista:'24Yqq2s4auM58cVGSrLfre2fHqo2',
+              dataViagem: "2023-01-15"
             })
         });
 
@@ -156,26 +156,28 @@ function TesteCRUD() {
     }
 
 
-    const cadastrarPassageiroViagem = async()=>{
-      let reqs = await fetch(configBD.urlRootNode+'cadastrarPassageiroViagem',{
-          method: 'POST',
-          headers:{
-            'Accept':'application/json',
-            'Content-type':'application/json'
-          },
-          body: JSON.stringify({
-            uidMotorista:'0VtQXRifF8PdbcKCrthdOtlnah12',
-            dataViagem: "2023-01-14"
-          })
-      });
+  //   const cadastrarViagemPassageiro = async()=>{
+  //     let reqs = await fetch(configBD.urlRootNode+'cadastrarViagemPassageiro',{
+  //         method: 'POST',
+  //         headers:{
+  //           'Accept':'application/json',
+  //           'Content-type':'application/json'
+  //         },
+  //         body: JSON.stringify({
+  //           userId:'0VtQXRifF8PdbcKCrthdOtlnah12',
+  //           idViagem: 1,
+  //           dataViagem: "2023-01-15",
+  //           destino:'UFSCar'
+  //         })
+  //     });
 
-      let res = await reqs.json();
-      console.log('req:', res);
-  }
+  //     let res = await reqs.json();
+  //     console.log('req:', res);
+  // }
 
     const buscarViagem = async()=>{
       console.log('Buscar Viagem');
-      let reqs = await fetch(configBD.urlRootNode+`buscarViagem/0VtQXRifF8PdbcKCrthdOtlnah12`,{
+      let reqs = await fetch(configBD.urlRootNode+`buscarUltimaViagem/24Yqq2s4auM58cVGSrLfre2fHqo2`,{
           method: 'GET',
           mode: 'cors',
           headers:{
@@ -184,16 +186,37 @@ function TesteCRUD() {
           }
       });
       const res = await reqs.json();
-      console.log('resposta:', res[0]);
-      if (res[0] == undefined || res == 'Falha'){
-          console.log('Viagem não encontrada!');
-      }
+      console.log('idViagem:')
+      console.log(res.idViagem);
+      // if (res[0] == undefined || res == 'Falha'){
+      //     console.log('Viagem não encontrada!');
+      // }
     }
 
 
-    const contarViagem = async()=>{
+    const buscarViagemPassageiro = async()=>{
+      console.log('Buscar Viagem');
+      let reqs = await fetch(configBD.urlRootNode+`buscarUltimaViagem/24Yqq2s4auM58cVGSrLfre2fHqo2`,{
+          method: 'GET',
+          mode: 'cors',
+          headers:{
+            'Accept':'application/json',
+            'Content-type':'application/json'
+          }
+      });
+      const res = await reqs.json();
+      console.log('idViagem:')
+      console.log(res.idViagem);
+      // if (res[0] == undefined || res == 'Falha'){
+      //     console.log('Viagem não encontrada!');
+      // }
+    }
+
+
+
+    const contarViagemMotorista = async()=>{
       console.log('Contar Viagem');
-      let reqs = await fetch(configBD.urlRootNode+`contarViagens/0VtQXRifF8PdbcKCrthdOtlnah12`,{
+      let reqs = await fetch(configBD.urlRootNode+`contarViagens/24Yqq2s4auM58cVGSrLfre2fHqo2`,{
           method: 'GET',
           mode: 'cors',
           headers:{
@@ -202,17 +225,29 @@ function TesteCRUD() {
           }
       });
       const res = await reqs.json();
-      console.log('resposta:', res);
-      // console.log(res);
-      if (res == 3){
-        console.log('retornou 3!!');
-      }
-      // console.log('resposta:', res[0]);
-      if (res == 'Falha'){
-          console.log(0);
+      console.log('resposta:', res.count);
+      if (res.count > 3){
+        console.log('oiiii')
       }
     }
 
+    const contarViagemPassageiro = async()=>{
+
+      let reqs = await fetch(configBD.urlRootNode+`contarViagensPassageiro/0VtQXRifF8PdbcKCrthdOtlnah12`,{
+        method: 'GET',
+        mode: 'cors',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        }
+      });
+      const res = await reqs.json();
+      console.log('resposta:', res.count);
+      if (res.count > 3){
+        console.log('oiiii')
+      }
+
+    }
 
     //VERIFICAR SE USUÁRIO EXISTE PELO EMAIL;
     const buscarEmail = async()=>{
@@ -226,6 +261,7 @@ function TesteCRUD() {
             }
         });
         const res = await reqs.json();
+        console.log('resposta:', res);
         console.log('resposta:', res[0]);
         if (res[0] == undefined || res == 'Falha'){
             console.log('Usuário não encontrado!');
@@ -274,16 +310,71 @@ function TesteCRUD() {
         console.log('req:', res);
     }
 
+
+
+    //----------------------------------------------------
+
+
+    const retornaIdUltimaViagem = async(uidMotorista)=>{
+      console.log('Buscar Viagem');
+      let reqs = await fetch(configBD.urlRootNode+`buscarUltimaViagem/${uidMotorista}`,{
+          method: 'GET',
+          mode: 'cors',
+          headers:{
+            'Accept':'application/json',
+            'Content-type':'application/json'
+          }
+      });
+      const res = await reqs.json();
+      console.log('res:', res.idViagem);
+      return res.idViagem;
+    }
+
+
+    
+    const cadastrarViagemPassageiro = async(currentUser, idViagem, nomeDestino)=>{
+      console.log('currentUser:', currentUser);
+      console.log('idViagem:', idViagem);
+      console.log('destino:', nomeDestino);
+      let reqs = await fetch(configBD.urlRootNode+'cadastrarViagemPassageiro',{
+          method: 'POST',
+          headers:{
+            'Accept':'application/json',
+            'Content-type':'application/json'
+          },
+          body: JSON.stringify({
+            userId:currentUser,
+            idViagem: idViagem,
+            destino:nomeDestino
+          })
+      });
+
+      let res = await reqs.json();
+      console.log('req:', res);
+  }
+    
+    const escreveHistoricoViagem = async()=>{
+      const nomeDestino = 'UFSCar';
+      const uidMotorista = '24Yqq2s4auM58cVGSrLfre2fHqo2';
+      const idViagem = await retornaIdUltimaViagem(uidMotorista);
+      await cadastrarViagemPassageiro('0VtQXRifF8PdbcKCrthdOtlnah12', idViagem, nomeDestino);
+   
+
+
+      //uidMotorista;
+      //dataViagem;
+      // nomeMotorista
+      // linkFotoPerfilMotorista;
+      //refViagem = idViagem
+
+      //pegar id da última viagem do motorista;
+    }
+    
+    //----------------------------------------------------
     return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
         <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
-          <TouchableOpacity 
-            style={{backgroundColor:'#FF5F55', width: width*0.4, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center'}}
-            onPress={buscarUsuario}  
-          >
-            <Text style={{color:'white', fontSize: width*0.05}}>Buscar Usuário</Text>
-          </TouchableOpacity>
           <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
             onPress={atualizarModoApp}  
@@ -295,6 +386,12 @@ function TesteCRUD() {
             onPress={cadastrarUsuario}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Cadastrar Usuário</Text>
+          </TouchableOpacity>
+          {/* <TouchableOpacity 
+            style={{backgroundColor:'#FF5F55', width: width*0.4, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center'}}
+            onPress={buscarUsuario}  
+          >
+            <Text style={{color:'white', fontSize: width*0.05}}>Buscar Usuário</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
@@ -308,7 +405,7 @@ function TesteCRUD() {
             onPress={cadastrarVeiculo}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Cadastrar Veiculo</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
             onPress={cadastrarViagem}  
@@ -319,13 +416,31 @@ function TesteCRUD() {
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
             onPress={buscarViagem}  
           >
-            <Text style={{color:'white', fontSize: width*0.05}}>Buscar Viagem</Text>
+            <Text style={{color:'white', fontSize: width*0.05}}>Buscar Última Viagem</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
-            onPress={contarViagem}  
+            onPress={contarViagemMotorista}  
           >
-            <Text style={{color:'white', fontSize: width*0.05}}>Contar Viagem</Text>
+            <Text style={{color:'white', fontSize: width*0.05}}>Contar Viagem Motorista </Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
+            onPress={escreveHistoricoViagem}  
+          >
+            <Text style={{color:'white', fontSize: width*0.05}}>EscreveHistóricoViagem</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
+            onPress={cadastrarViagemPassageiro}  
+          >
+            <Text style={{color:'white', fontSize: width*0.05}}>CadastrarViagemPassageiro</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
+            onPress={contarViagemPassageiro}  
+          >
+            <Text style={{color:'white', fontSize: width*0.05}}>ContarViagemPassageiro</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

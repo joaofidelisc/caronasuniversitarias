@@ -34,6 +34,53 @@ function Forms_Motorista_Veiculo({navigation, route}) {
     const trocaDeModo = route.params?.trocaDeModo;
 
 
+    const cadastrarUsuario = async()=>{
+        let reqs = await fetch(configBD.urlRootNode+'cadastrarUsuario',{
+            method: 'POST',
+            headers:{
+                'Accept':'application/json',
+                'Content-type':'application/json'
+            },
+            body: JSON.stringify({
+                id: userID,
+                nome: nome,
+                CPF: CPF,
+                dataNasc: data_nasc, //conferir se data está no formato "xxxx-xx-xx"
+                email: email,
+                numCel: num_cel,
+                token: 'atualizar',
+                universidade: universidade,
+                classificacao: 0,
+                fotoPerfil:'atualizar',
+                motorista: true
+            })
+        });
+
+        let res = await reqs.json();
+        console.log('req:', res);
+    }
+
+
+    const cadastrarVeiculo = async()=>{
+        let reqs = await fetch(configBD.urlRootNode+'cadastrarVeiculo',{
+            method: 'POST',
+            headers:{
+                'Accept':'application/json',
+                'Content-type':'application/json'
+            },
+            body: JSON.stringify({
+                userId: userID,
+                nomeVeiculo: nome_veiculo,
+                anoVeiculo: ano_veiculo,
+                corVeiculo: cor_veiculo,
+                placaVeiculo: placa_veiculo,
+             })
+        });
+
+        let res = await reqs.json();
+        console.log('req:', res);
+    }
+
     const insertDataNewUser = async() => {
         if (placa_veiculo == '' || ano_veiculo == '' || cor_veiculo == '' || nome_veiculo == ''){
             setWarning('Preencha todos os campos!');
@@ -52,30 +99,34 @@ function Forms_Motorista_Veiculo({navigation, route}) {
         }
         else{
             if (trocaDeModo == false || trocaDeModo == undefined || trocaDeModo == ''){
-                await firestore().collection('Users').doc(userID).set({
-                    nome: nome,
-                    CPF: CPF,
-                    data_nasc: data_nasc,
-                    num_cel: num_cel,
-                    universidade: universidade,
-                    email: email,
-                    placa_veiculo: placa_veiculo,
-                    ano_veiculo: ano_veiculo,
-                    cor_veiculo: cor_veiculo,
-                    nome_veiculo: nome_veiculo,
-                    motorista: true,
-                }).then(()=>{
-                    enviarFotoStorage(imagemPlaca);
-                });
+                await cadastrarUsuario();
+                await enviarFotoStorage(imagemPlaca);
+                // await firestore().collection('Users').doc(userID).set({
+                //     nome: nome,
+                //     CPF: CPF,
+                //     data_nasc: data_nasc,
+                //     num_cel: num_cel,
+                //     universidade: universidade,
+                //     email: email,
+                //     placa_veiculo: placa_veiculo,
+                //     ano_veiculo: ano_veiculo,
+                //     cor_veiculo: cor_veiculo,
+                //     nome_veiculo: nome_veiculo,
+                //     motorista: true,
+                // }).then(()=>{
+                //     enviarFotoStorage(imagemPlaca);
+                // });
             }else{
-                await firestore().collection('Users').doc(userID).update({                   
-                    placa_veiculo: placa_veiculo,
-                    ano_veiculo: ano_veiculo,
-                    cor_veiculo: cor_veiculo,
-                    nome_veiculo: nome_veiculo,
-                }).then(()=>{
-                    enviarFotoStorage(imagemPlaca);
-                });
+                await cadastrarVeiculo();
+                await enviarFotoStorage(imagemPlaca);
+            //     await firestore().collection('Users').doc(userID).update({                   
+            //         placa_veiculo: placa_veiculo,
+            //         ano_veiculo: ano_veiculo,
+            //         cor_veiculo: cor_veiculo,
+            //         nome_veiculo: nome_veiculo,
+            //     }).then(()=>{
+            //         enviarFotoStorage(imagemPlaca);
+            //     });
             }
             navigation.navigate('ModoMotorista');
         }
@@ -99,18 +150,35 @@ function Forms_Motorista_Veiculo({navigation, route}) {
         }
     }
 
-    const modoPassageiro = async()=>{
-        const userID = auth().currentUser.uid;
-        try{
-          await firestore().collection('Users').doc(userID).update({
-            motorista: false
-          })
-        }catch(error){
-          console.log('erro em navegarParaPassageiro');
-        }
-        console.log('voltando ao modo passageiro!');
-    }
+    // const modoPassageiro = async()=>{
+    //     const userID = auth().currentUser.uid;
+    //     try{
+    //       await firestore().collection('Users').doc(userID).update({
+    //         motorista: false
+    //       })
+    //     }catch(error){
+    //       console.log('erro em navegarParaPassageiro');
+    //     }
+    //     console.log('voltando ao modo passageiro!');
+    // }
 
+    const modoPassageiro = async()=>{
+        console.log('atualizarModoApp');
+           let reqs = await fetch(configBD.urlRootNode+'atualizarModoApp',{
+            method: 'PUT',
+            headers:{
+              'Accept':'application/json',
+              'Content-type':'application/json'
+            },
+            body: JSON.stringify({
+              id: userID,
+              motorista: false
+            })
+          });
+          // let res = await reqs.json();
+          // console.log('req:', res);
+          // console.log('passou!');
+      }
 
 
     return (

@@ -6,6 +6,8 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth'
 import database, {firebase} from '@react-native-firebase/database';
 
+import configBD from '../../../config/config.json';
+
 
 const {height,width}=Dimensions.get('window')
 

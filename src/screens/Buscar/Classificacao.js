@@ -97,11 +97,7 @@ function Classificacao({navigation, route}){
           }
         });
         const res = await reqs.json();
-        if (res == 'Falha'){
-          return 0;
-        }else{
-          return res;
-        }
+        return res.count;
       }
 
 

@@ -181,7 +181,7 @@ function ViagemEmAndamento({navigation, route}) {
 
     //cadastrar viagem;
     //viagem em andamento do passageiro
-    const escreveHistoricoViagem = async()=>{
+    // const escreveHistoricoViagem = async()=>{
       // let reqs = await fetch(configBD.urlRootNode+'cadastrarViagem',{
       //     method: 'POST',
       //     headers:{
@@ -203,7 +203,7 @@ function ViagemEmAndamento({navigation, route}) {
     
       //buscar a viagem mais recente que linka com o uid do passageiro e atualizar viagem;
       
-    }
+    // }
 
     // const escreveHistoricoViagem = async()=>{
     //   const data = await dataAtualFormatada();
@@ -229,6 +229,48 @@ function ViagemEmAndamento({navigation, route}) {
   //   await AsyncStorage.removeItem('ViagemEmAndamento');
   //   await AsyncStorage.setItem('Classificacao', true);
   // }
+
+  const retornaIdUltimaViagem = async()=>{
+    console.log('Buscar Viagem');
+    let reqs = await fetch(configBD.urlRootNode+`buscarUltimaViagem/${uidMotorista}`,{
+        method: 'GET',
+        mode: 'cors',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        }
+    });
+    const res = await reqs.json();
+    return res.idViagem;
+  }
+
+
+  
+  const cadastrarViagemPassageiro = async(idViagem)=>{
+    console.log('currentUser:', currentUser);
+    console.log('idViagem:', idViagem);
+    console.log('destino:', nomeDestino);
+    let reqs = await fetch(configBD.urlRootNode+'cadastrarViagemPassageiro',{
+        method: 'POST',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        },
+        body: JSON.stringify({
+          userId:currentUser,
+          idViagem: idViagem,
+          destino:nomeDestino
+        })
+    });
+
+    let res = await reqs.json();
+    console.log('req:', res);
+}
+  
+  const escreveHistoricoViagem = async()=>{
+    const idViagem = await retornaIdUltimaViagem(uidMotorista);
+    await cadastrarViagemPassageiro(idViagem);
+  }
 
     const fimDaViagem = async()=>{
       // await excluiBancoPassageiro();

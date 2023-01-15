@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Viagem.init({
-    // idViagem: DataTypes.INTEGER,
     uidMotorista: DataTypes.STRING,
     dataViagem: DataTypes.DATE
   }, {

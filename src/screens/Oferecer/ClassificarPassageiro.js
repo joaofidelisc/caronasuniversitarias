@@ -12,6 +12,8 @@ import auth from '@react-native-firebase/auth'
   
 // const objJSON = JSON.parse(objString);
 // console.log('objJSON:', objJSON);
+import configBD from '../../../config/config.json';
+
 
 const {width, height} = Dimensions.get('screen');
 
@@ -56,29 +58,85 @@ function ClassificarPassageiro({route, navigation}) {
       }
     }
 
+    const contarViagemPassageiro = async(uidPassageiro)=>{
+      let reqs = await fetch(configBD.urlRootNode+`contarViagensPassageiro/${uidPassageiro}`,{
+        method: 'GET',
+        mode: 'cors',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        }
+      });
+      const res = await reqs.json();
+      return res.count;
+    }
+
+    const retornaClassificacao = async(uidPassageiro)=>{
+      let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${uidPassageiro}`,{
+          method: 'GET',
+          mode: 'cors',
+          headers:{
+            'Accept':'application/json',
+            'Content-type':'application/json'
+          }
+      });
+      const res = await reqs.json();
+      if (res != 'Falha'){
+        return res.classificacao;
+      }else{
+        return 0;
+      }
+    }
+
+    const atualizarClassificacao = async(novaClassificacao, uidPassageiro)=>{
+      console.log('atualizarClassificacao');
+      let reqs = await fetch(configBD.urlRootNode+'atualizarClassificacao',{
+       method: 'PUT',
+       headers:{
+         'Accept':'application/json',
+         'Content-type':'application/json'
+       },
+       body: JSON.stringify({
+         id: uidPassageiro,
+         classificacao: novaClassificacao
+       })
+     });
+
+     let res = await reqs.json();
+
+    //  console.log('req:', res);
+     // console.log('passou!');
+  }
+
+
     const classificarPassageiro = async(uidPassageiro)=>{
       setPassageirosAvaliados([...passageirosAvaliados, uidPassageiro]);
-      let numViagens = 0;
-      let classificacaoAtual = 0;
-      const reference_passageiro = firestore().collection('Users').doc(uidPassageiro);
+      let numViagens = await contarViagemPassageiro(uidPassageiro);
+      let classificacaoAtual = await retornaClassificacao(uidPassageiro);
+      // const reference_passageiro = firestore().collection('Users').doc(uidPassageiro);
       try{
-        reference_passageiro.get().then((reference)=>{
-          if (reference.exists){
-            numViagens = reference.data().numViagensRealizadas;
-            classificacaoAtual = reference.data().classificacao;
-            if (numViagens != undefined && classificacaoAtual != undefined){
-              reference_passageiro.update({
-                classificacao: (defaultRating+classificacaoAtual)/2,
-                numViagensRealizadas: numViagens+1
-              })
-            }else{
-              reference_passageiro.update({
-                classificacao: defaultRating,
-                numViagensRealizadas: 1
-              })
-            }
-          }
-        })
+        if (numViagens>0){
+          await atualizarClassificacao((defaultRating+classificacaoAtual)/2)
+        }else{
+          await atualizarClassificacao(defaultRating);
+        }
+        // reference_passageiro.get().then((reference)=>{
+        //   if (reference.exists){
+        //     numViagens = reference.data().numViagensRealizadas;
+        //     classificacaoAtual = reference.data().classificacao;
+        //     if (numViagens != undefined && classificacaoAtual != undefined){
+        //       reference_passageiro.update({
+        //         classificacao: (defaultRating+classificacaoAtual)/2,
+        //         numViagensRealizadas: numViagens+1
+        //       })
+        //     }else{
+        //       reference_passageiro.update({
+        //         classificacao: defaultRating,
+        //         numViagensRealizadas: 1
+        //       })
+        //     }
+        //   }
+        // })
       }catch(error){
         console.log('erro em getClassificacao');
       }
