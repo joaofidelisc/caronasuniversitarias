@@ -11,24 +11,18 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Viagem.belongsTo(models.User);
+      Viagem.belongsTo(models.PassageiroViagem, {foreignKey: 'idViagem'});
     }
   }
   Viagem.init({
-    nomeMotorista: DataTypes.STRING(100),
-    uidPassageiro1: DataTypes.STRING(50),
-    uidPassageiro2: DataTypes.STRING(50),
-    uidPassageiro3: DataTypes.STRING(50),
-    uidPassageiro4: DataTypes.STRING(50),
-    uidMotorista: DataTypes.STRING(50),
-    fotoPerfilMotorista: DataTypes.STRING,
-    UserId: DataTypes.STRING(50),
-    destino: DataTypes.STRING,
+    // idViagem: DataTypes.INTEGER,
+    uidMotorista: DataTypes.STRING,
     dataViagem: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'Viagem',
-    tableName: 'Viagem'
+    tableName: 'viagem'
   });
+  Viagem.removeAttribute('id');
   return Viagem;
 };

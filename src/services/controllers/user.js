@@ -135,3 +135,21 @@
         atualizarToken,
         atualizarClassificacao
     }
+
+    //UserRepository;
+
+    //controler->validar dados de entrada;
+    //repositório->
+    /*
+        ex.: 
+        let reqs = await model.User.update({
+            'classificacao': req.body.classificacao,
+        },{
+            where: {'id': req.body.id}
+        });
+    */
+    //pesquisar código de erros
+    // http response status codes
+
+    //distribuição automática das funcionalidades;
+    

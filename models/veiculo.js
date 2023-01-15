@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Veiculo.belongsTo(models.User);
+      Veiculo.belongsTo(models.User, {foreignKey: 'userId'});
     }
   }
   Veiculo.init({
