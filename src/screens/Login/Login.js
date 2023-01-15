@@ -76,9 +76,11 @@ function Login({navigation}) {
         navigation.navigate("Como_Comecar", {email: emailGoogle});
       }else{
         if (objUsuario[0].motorista == true){
-          navigation.navigate("ModoMotorista");
+          // navigation.navigate("ModoMotorista");
+          navigation.navigate("MenuTeste");
         }else{
-          navigation.navigate("ModoPassageiro");
+          navigation.navigate("MenuTeste");
+          // navigation.navigate("ModoPassageiro");
         }
       }
       // firestore().collection('Users').where('email', '==', emailGoogle).get().then(querySnapshot=>{
@@ -100,13 +102,14 @@ function Login({navigation}) {
       await AsyncStorage.setItem('password', password);
       const objUsuario = await buscarEmail(email);
       if (objUsuario == ''){
-        navigation.navigate("Como_Comecar", {email: emailGoogle});
+        navigation.navigate("Como_Comecar", {email: email});
       }else{
         if (objUsuario[0].motorista == true){
-          navigation.navigate("ModoMotorista");
+          // navigation.navigate("ModoMotorista");
+          navigation.navigate("MenuTeste");
         }else{
-          navigation.navigate("ModoPassageiro");
-          
+          navigation.navigate("MenuTeste");
+          // navigation.navigate("ModoPassageiro");
         }
       }
 

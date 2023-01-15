@@ -3,30 +3,28 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('PassageiroViagem', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
       userId: {
         allowNull:false,
         type: Sequelize.STRING(50),
+        // primaryKey: true,
+        autoIncrement: false,
         references:{
           model:'user',
           key:'id'
         },
-        onUpdate: 'NO ACTION',
-        onDelete: 'NO ACTION'
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       idViagem: {
         type: Sequelize.INTEGER,
+        // primaryKey: true,
+        autoIncrement: false,
         references:{
           model:'viagem',
           key:'idViagem'
         },
-        onUpdate: 'NO ACTION',
-        onDelete: 'NO ACTION'
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       destino: {
         type: Sequelize.STRING
@@ -40,6 +38,11 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+    await queryInterface.addConstraint('PassageiroViagem', {
+      fields: ['userId', 'idViagem'],
+      type: 'primary key',
+      name: 'refPassageiroViagem'
+  });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('PassageiroViagem');

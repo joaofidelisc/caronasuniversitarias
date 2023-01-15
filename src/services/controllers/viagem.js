@@ -4,15 +4,7 @@ const { Op } = require("sequelize");
 //busca viagem por id do passageiro (ou motorista)
 async function cadastrarViagem(req, res){
     let reqs = await model.Viagem.create({
-        // 'id': req.body.id,
-        'nomeMotorista': req.body.nomeMotorista,
-        'uidPassageiro1': req.body.uidPassageiro1,
-        'uidPassageiro2': req.body.uidPassageiro2,
-        'uidPassageiro3': req.body.uidPassageiro3,
-        'uidPassageiro4': req.body.uidPassageiro4,
         'uidMotorista': req.body.uidMotorista,
-        'fotoPerfil': req.body.fotoPerfil,
-        'destino': req.body.destino,
         'dataViagem': req.body.dataViagem,
         'createdAt': new Date(),
         'updatedAt': new Date(),
@@ -44,7 +36,6 @@ async function buscarViagem(req, res){
         //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
         res.send(JSON.stringify('Falha'));
     }        
-
 }
 
 // async function buscarViagem(req, res){

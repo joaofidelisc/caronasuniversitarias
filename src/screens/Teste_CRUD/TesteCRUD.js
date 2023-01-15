@@ -146,12 +146,8 @@ function TesteCRUD() {
               'Content-type':'application/json'
             },
             body: JSON.stringify({
-              nomeMotorista: 'João Cardozo',
-              uidPassageiro2: '0VtQXRifF8PdbcKCrthdOtlnah12',
-              uidMotorista: '0VtQXRifF8PdbcKCrthdOtlnah12',
-              fotoPerfil: 'linkFoto',
-              destino: 'UFSCar',
-              dataViagem: "2023-01-10"
+              uidMotorista:'0VtQXRifF8PdbcKCrthdOtlnah12',
+              dataViagem: "2023-01-14"
             })
         });
 
@@ -159,6 +155,23 @@ function TesteCRUD() {
         console.log('req:', res);
     }
 
+
+    const cadastrarPassageiroViagem = async()=>{
+      let reqs = await fetch(configBD.urlRootNode+'cadastrarPassageiroViagem',{
+          method: 'POST',
+          headers:{
+            'Accept':'application/json',
+            'Content-type':'application/json'
+          },
+          body: JSON.stringify({
+            uidMotorista:'0VtQXRifF8PdbcKCrthdOtlnah12',
+            dataViagem: "2023-01-14"
+          })
+      });
+
+      let res = await reqs.json();
+      console.log('req:', res);
+  }
 
     const buscarViagem = async()=>{
       console.log('Buscar Viagem');

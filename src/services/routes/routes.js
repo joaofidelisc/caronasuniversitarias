@@ -3,7 +3,7 @@ const routes = express.Router();
 
 var userFunctions = require('../controllers/user.js');
 var veiculoFunctions = require('../controllers/veiculo.js');
-// var viagemFunctions = require('../controllers/viagem.js');
+var viagemFunctions = require('../controllers/viagem.js');
 
 
 routes.get("/", (req, res)=>{
@@ -29,7 +29,7 @@ routes.put("/atualizarCorVeiculo", veiculoFunctions.atualizarCorVeiculo);
 routes.put("/atualizarNomeVeiculo", veiculoFunctions.atualizarNomeVeiculo);
 
 // //Rotas de viagem
-// routes.post("/cadastrarViagem", viagemFunctions.cadastrarViagem);
+routes.post("/cadastrarViagem", viagemFunctions.cadastrarViagem);
 // routes.get("/buscarViagem/:uidPassageiro1", viagemFunctions.buscarViagem);
 // routes.get("/contarViagens/:uidPassageiro1", viagemFunctions.contarViagens);
 // routes.put("/atualizarViagem", viagemFunctions.atualizarViagem);

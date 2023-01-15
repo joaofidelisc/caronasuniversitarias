@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       PassageiroViagem.belongsTo(models.User, {foreignKey: 'userId'});
       
       //Revisar aqui!
-      PassageiroViagem.hasOne(models.Viagem, {foreignKey:'idViagem'});
+      // PassageiroViagem.hasOne(models.Viagem, {foreignKey:'idViagem'});
     }
   }
   PassageiroViagem.init({

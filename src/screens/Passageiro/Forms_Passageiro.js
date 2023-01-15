@@ -25,7 +25,7 @@ function Forms_Passageiro({route, navigation}) {
     }
     
     useEffect(() => {
-        // console.log(userID);
+        console.log(userID);
         const backAction = () => {
             Alert.alert("Descartar informações", "Tem certeza que deseja voltar?\nSuas informações serão descartadas.", [
                 {
