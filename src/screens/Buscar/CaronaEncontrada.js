@@ -152,7 +152,7 @@ function Options({navigation, route}) {
       });
       const res = await reqs.json();
       if (res != 'Falha'){
-          return res.motorista;
+          return res.nome;
       }else{
         return '';
       }

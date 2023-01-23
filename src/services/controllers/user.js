@@ -69,10 +69,17 @@
             }
         })
         if (reqs){
-            res.send(JSON.stringify(reqs));
+            if (JSON.stringify(reqs).length == 2){
+                res.send(JSON.stringify('Não encontrou'));
+            }else{
+                res.send(JSON.stringify(reqs));
+            }
+            // res.send(JSON.stringify(reqs));
+            // console.log('reqs:', JSON.stringify(reqs).length);
+            // console.log('reqs:', JSON.stringify(reqs));
         }else{
             //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
-            res.send(JSON.stringify('Falha'));
+            res.send(JSON.stringify('Falha na busca'));
         }
     }
 

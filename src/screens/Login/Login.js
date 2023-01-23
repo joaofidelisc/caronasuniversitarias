@@ -60,7 +60,8 @@ function Login({navigation}) {
     });
     const res = await reqs.json();
     // console.log('resposta:', res[0]);
-    if (res[0] == undefined || res == 'Falha'){
+    if (res === 'Falha' || res === 'Não encontrou'){
+    // if (res[0] == undefined || res == 'Falha'){
         return '';
     }else{
       return res;
@@ -72,7 +73,7 @@ function Login({navigation}) {
     if (email == ''){
       await AsyncStorage.setItem('email', emailGoogle);
       const objUsuario = await buscarEmail(emailGoogle);
-      if (objUsuario == ''){
+      if (objUsuario == '' || objUsuario == 'Não encontrou'){
         navigation.navigate("Como_Comecar", {email: emailGoogle});
       }else{
         if (objUsuario[0].motorista == true){
@@ -101,7 +102,7 @@ function Login({navigation}) {
       await AsyncStorage.setItem('email', email);
       await AsyncStorage.setItem('password', password);
       const objUsuario = await buscarEmail(email);
-      if (objUsuario == ''){
+      if (objUsuario == '' || objUsuario == 'Não encontrou'){
         navigation.navigate("Como_Comecar", {email: email});
       }else{
         if (objUsuario[0].motorista == true){

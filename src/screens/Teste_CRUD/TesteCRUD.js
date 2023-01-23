@@ -261,21 +261,53 @@ function TesteCRUD() {
             }
         });
         const res = await reqs.json();
-        console.log('resposta:', res);
-        console.log('resposta:', res[0]);
-        if (res[0] == undefined || res == 'Falha'){
-            console.log('Usuário não encontrado!');
+
+        // console.log('res:', res);
+        if (res !== 'Falha' && res !== 'Não encontrou'){
+          console.log('encontrou!');
         }else{
-          return res;
+          console.log('não encontrou!')
         }
+        return res;
     }
 
 
+    const buscarVeiculo = async()=>{
+      console.log('Buscar Email');
+      let reqs = await fetch(configBD.urlRootNode+`buscarVeiculo/0sVtQXRifF8PdbcKCrthdOtlnah12`,{
+          method: 'GET',
+          mode: 'cors',
+          headers:{
+            'Accept':'application/json',
+            'Content-type':'application/json'
+          }
+      });
+      const res = await reqs.json();
+
+      console.log('res:', res);
+      if (res !== 'Falha' && res !== 'Não encontrou'){
+        console.log('encontrou!');
+      }else{
+        console.log('não encontrou!')
+      }
+      return res;
+  } 
 
     const teste = async()=>{
-      let objUsuario = await buscarEmail();
-      console.log('objUsuario', objUsuario[0].CPF);
-      console.log('tipo objUsuario:', typeof(objUsuario));
+      // let objUsuario = await buscarEmail();
+      let objVeiculo = await buscarVeiculo();
+      console.log('objVeiculo:', objVeiculo);
+      // console.log('objUsuario', objUsuario[0].id);
+      if (objVeiculo == 'Não encontrou'){
+        console.log('teste!!!!!!!!111');
+      }
+      // if (objUsuario){
+      //   console.log('encontrado!');
+      // }else{
+      //   console.log('deu ruim!');
+      // }
+      // console.log('objUsuario', objUsuario[0].CPF);
+      // console.log('tipo objUsuario:', typeof(objUsuario));
 
     }
     //LER NOME DO CARRO DO MOTORISTA;
@@ -369,6 +401,7 @@ function TesteCRUD() {
 
       //pegar id da última viagem do motorista;
     }
+
     
     //----------------------------------------------------
     return (
@@ -393,6 +426,7 @@ function TesteCRUD() {
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Buscar Usuário</Text>
           </TouchableOpacity>
+          */}
           <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
             // onPress={buscarEmail}  
@@ -405,7 +439,7 @@ function TesteCRUD() {
             onPress={cadastrarVeiculo}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Cadastrar Veiculo</Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity> 
           <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
             onPress={cadastrarViagem}  
@@ -436,11 +470,18 @@ function TesteCRUD() {
           >
             <Text style={{color:'white', fontSize: width*0.05}}>CadastrarViagemPassageiro</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          {/* <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
             onPress={contarViagemPassageiro}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>ContarViagemPassageiro</Text>
+          </TouchableOpacity> */}
+          <TouchableOpacity 
+            style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
+            // onPress={buscarVeiculo}  
+            onPress={teste}  
+          >
+            <Text style={{color:'white', fontSize: width*0.05}}>BuscarVeiculo</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

@@ -13,7 +13,7 @@
             'updatedAt': new Date(),
         });
         if (reqs){
-            res.send(JSON.stringify('Usuário cadastrado com sucesso!'));
+            res.send(JSON.stringify('Veículo cadastrado com sucesso!'));
         }else{
             //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
             res.send(JSON.stringify('Falha'));
@@ -30,11 +30,14 @@
             }
         });
         if (reqs){
-            res.send(JSON.stringify(reqs));
+            if (JSON.stringify(reqs).length == 2){
+                res.send(JSON.stringify('Não encontrou'));
+            }else{
+                res.send(JSON.stringify(reqs));
+            }
         }else{
-            //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
-            res.send(JSON.stringify('Falha'));
-        }        
+            res.send(JSON.stringify('Falha na busca'));
+        }       
     }
     
     

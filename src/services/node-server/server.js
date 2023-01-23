@@ -9,7 +9,11 @@ const cors = require('cors');
 
 const app = express();
 
+//ignorar o cors quando for subir pro servidor
+//ou aceitar requisições de server diferentes - fazer essa configuração;
 app.use(cors());
+
+
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 app.use(routes);
