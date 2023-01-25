@@ -280,7 +280,7 @@ function Oferecer({route, navigation}) {
   /*
     Função responsável por retornar o nome do caronista.
   */
-  const getNomeCaronista = async(userUID)=>{
+  /*const getNomeCaronista = async(userUID)=>{
     console.log("OFERECER!!!!!!!!!!!!! - getNomeCaronista");
     try{
       await firestore().collection('Users').doc(userUID).get().then((doc)=>{
@@ -291,9 +291,26 @@ function Oferecer({route, navigation}) {
     }catch(error){
       console.log('erro em getNomeCaronista');
     }
+  }*/
+  
+  async function getNomeCaronista(userUID){
+    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${userUID}`,{
+        method: 'GET',
+        mode: 'cors',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        }
+    });
+    const res = await reqs.json();
+    if (res != 'Falha'){
+        setNomeCaronista(res.nome);
+        return res.nome;
+    }else{
+      return '';
+    }
   }
 
-  
   /* 
     Função responsável por obter o destino do caronista com base em seu UserID;
     Essa função é chamada apenas quando um marcador é pressionado.
@@ -312,7 +329,7 @@ function Oferecer({route, navigation}) {
   /*
     Função responsável por recuperar a classificação do caronista.
   */
-  const getClassificacaoCaronista = async(caronistaUID)=>{
+  /*const getClassificacaoCaronista = async(caronistaUID)=>{
     console.log("OFERECER!!!!!!!!!!!!! - getClassificacaoCaronista");
     let classificacaoAtual = 0;
     let classificacaoAtualizada = 0;
@@ -332,8 +349,29 @@ function Oferecer({route, navigation}) {
     }catch(error){
       console.log('erro em recuperaClassificacaoMotorista');
     }
-  }
+  }*/
 
+  const getClassificacaoCaronista = async(userUID)=>{
+    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${userUID}`,{
+      method: 'GET',
+      mode: 'cors',
+      headers:{
+        'Accept':'application/json',
+        'Content-type':'application/json'
+      }
+    });
+    const res = await reqs.json();
+    if(res.classificacao == undefined){
+      res.classificacao = 0;
+    }
+    if (res != 'Falha' && res.classificacao != undefined){
+        setClassificacaoCaronista(res.classificacao)
+        return parseFloat(res.classificacao.toFixed(2));
+    }else{
+      return '';
+    }
+  }
+    
 
   /*
     Função responsável por buscar e exibir o modal do usuário após o motorista clicar no pin do caronista;
@@ -701,8 +739,8 @@ function Oferecer({route, navigation}) {
    /*
      Função responsável por obter o token do passageiro armazenado no banco de dados e enviar a notificação de carona encontrada ou motorista está chegando.
    */
-   const sendNotification = async (uidPassageiro, tituloNotificacao, mensagemNotificacao) => {
-     let docRef = firestore().collection('Users').doc(uidPassageiro);
+   /*const sendNotification = async (uidPassageiro, tituloNotificacao, mensagemNotificacao) => {
+     //let docRef = firestore().collection('Users').doc(uidPassageiro);
      try{
        docRef.get().then((doc)=>{
          if (doc.exists){
@@ -721,8 +759,34 @@ function Oferecer({route, navigation}) {
      }catch(error){
        console.log('erro em armazenaToken');
      }
-   };
- 
+   };*/
+   
+   const sendNotification = async (uidPassageiro, tituloNotificacao, mensagemNotificacao) => {
+    let id = 0;
+    //let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${id}`,{
+      let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${id}`,{
+      method: 'GET',
+      mode: 'cors',
+      headers:{
+        'Accept':'application/json',
+        'Content-type':'application/json'
+      }
+    });
+    const res = await reqs.json();
+    try{
+      if (res != 'Falha'){
+            let notificationData = {
+              title: tituloNotificacao,
+              body: mensagemNotificacao,
+              token:
+                res.token
+            };
+            NotificationService.sendSingleDeviceNotification(notificationData);
+          }
+    }catch(err){
+      console.log("erro ao enviar as notificações: " + err);
+    }
+   }
    
    /*
     Função responsável por atualizar o token armazenado no hook no banco de dados do motorista.
