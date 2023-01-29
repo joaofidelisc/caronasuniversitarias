@@ -1,5 +1,6 @@
 const express = require('express');
 const routes = express.Router();
+// const channel = require('../node-server/server.js');
 
 var userFunctions = require('../controllers/user.js');
 var veiculoFunctions = require('../controllers/veiculo.js');
@@ -42,3 +43,13 @@ routes.post("/cadastrarViagemPassageiro", passageiroViagemFunctions.cadastrarVia
 routes.get("/buscarViagemPassageiro/:userId/:idViagem", passageiroViagemFunctions.buscarViagemPassageiro);
 routes.get("/contarViagensPassageiro/:userId", passageiroViagemFunctions.contarViagensPassageiro);
 module.exports = routes;
+
+
+//Rotas para atualização de coordenadas em tempo real
+//Colocar em um controler esse trecho
+// routes.put('/coordenadas', (req, res) =>{
+//     console.log('atualizarCoordenadas!!!!!!!!!!1111');
+//     let coordenadas = req.body.coordenadas;
+//     channel.sendToQueue(queue, Buffer.from(coordenadas));
+//     res.send('Coordenadas atualizadas com sucesso');
+// })
