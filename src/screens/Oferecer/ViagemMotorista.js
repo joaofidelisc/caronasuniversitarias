@@ -119,7 +119,7 @@ function ViagemMotorista({route, navigation}){
       // }
     }
 
-    const getNomePassageiro = async(uidPassageiro)=>{
+    /*const getNomePassageiro = async(uidPassageiro)=>{
       let nomePassageiro = '';
       let docRef = firestore().collection('Users').doc(uidPassageiro);
       return docRef.get().then((doc)=>{
@@ -130,6 +130,25 @@ function ViagemMotorista({route, navigation}){
           return '';
         }
       })
+    }*/
+
+    async function getNomePassageiro(uidPassageiro){
+      let nomePassageiro = '';
+      let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${uidPassageiro}`,{
+        method: 'GET',
+        mode: 'cors',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        }
+    });
+    const res = await reqs.json();
+    if (res != 'Falha'){
+      nomePassageiro = res.nome;
+      return nomePassageiro;
+    }else{
+      return '';
+    }
     }
 
     const getFotoPassageiro = async(uidPassageiro)=>{
@@ -162,7 +181,7 @@ function ViagemMotorista({route, navigation}){
 
 
     //exibir a classificação do passageiro ao oferecer carona!!!!!!!!!!!!!!!!!1111
-    const getClassificacaoPassageiro = async(uidPassageiro)=>{
+    /*const getClassificacaoPassageiro = async(uidPassageiro)=>{
       let classificacaoAtual = 0;
       const reference_passageiro = firestore().collection('Users').doc(uidPassageiro);
       try{
@@ -179,6 +198,23 @@ function ViagemMotorista({route, navigation}){
         console.log('erro em recuperaClassificacaoMotorista');
       }
       return parseFloat(classificacaoAtual.toFixed(2));
+    }*/
+
+    async function getClassificacaoPassageiro(uidPassageiro){
+      let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${uidPassageiro}`,{
+        method: 'GET',
+        mode: 'cors',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        }
+      });
+      const res = await reqs.json();
+      if(res.classificacao == undefined){
+        res.classificacao = 0;
+      }else if (res != 'Falha' && res.classificacao != undefined){
+        return parseFloat(res.classificacao.toFixed(2)); //parseF converte string em PF
+      }
     }
 
     const dataAtualFormatada = async()=>{
@@ -210,6 +246,20 @@ function ViagemMotorista({route, navigation}){
         console.log('erro em escreveHistoricoViagem');
       }
     }
+
+     /*async function escreveHistoricoViagem(destinoPassageiro, nomePassageiro, passageiroIMG){
+      const data = await dataAtualFormatada();
+      let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${currentUser}`,{
+        method: 'GET',
+        mode: 'cors',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        }
+      });
+      const res = await reqs.json();
+      const reference_passageiro = ;
+    }*/
 
    
     const finalizarViagemPassageiro = async(uidPassageiro, destinoPassageiro, nomePassageiro, passageiroIMG)=>{
