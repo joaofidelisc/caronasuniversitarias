@@ -1,8 +1,8 @@
 
 
 const express = require('express');
-const routes = require('../routes/routes.js');
-const db = require('../sequelize/index.js');
+const routes = require('./src/services/routes/routes');
+const db = require('./src/services/sequelize/index');
 
 
 const bodyParser=require('body-parser');

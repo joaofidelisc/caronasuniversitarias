@@ -814,18 +814,14 @@ function Oferecer({route, navigation}) {
       headers:{
         'Accept':'application/json',
         'Content-type':'application/json'
-      }
+      },
+      body: JSON.stringify({
+        id: currentUser,
+        token: token
+      })
     });
     const res = await reqs.json();
-    try{
-      if(res.token == undefined || res.token == null || res.token == ''){
-      res.token = token;
-    }
-    }catch(err){
-      console.log("erro em armazenaToken");
-    }finally{
-      console.log('token armazenado: ' + res.token);
-    }
+    console.log('token armazenado' + res.token);
    }
 
    useEffect(()=>{
