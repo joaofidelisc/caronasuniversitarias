@@ -41,6 +41,33 @@ function Perfil_Conta({navigation}){
     })
   }
 
+  /*function modoAtuacao() {
+    const motorista = 'motorista';
+    const passageiro = 'passageiro';
+    const userID = auth().currentUser.uid;
+    //busca pelo id de usuario o valor bool para modo motorista ou passageiro
+    let reqs = await fetch(configBD.urlRootNode + `buscarUsuario/${userID}`, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json',
+        'Content-type': 'application/json'
+      }
+    });
+    const res = await reqs.json();
+    try{
+      if (res != 'Falha' && res.motorista == true) {
+            setModoApp(motorista);
+          } else {
+            setModoApp(passageiro);
+          }
+    }catch(err){
+      console.log('erro em modo atuacao'+err);
+    }finally{
+      console.log(res.motorista)
+    }
+  }*/
+
   const signOut = async()=>{
     const providerID = auth().currentUser?.providerData[0].providerId;
     console.log(auth().currentUser?.providerData[0].providerId);
