@@ -792,7 +792,7 @@ function Oferecer({route, navigation}) {
     Função responsável por atualizar o token armazenado no hook no banco de dados do motorista.
     Dúvida: devemos enviar notificação para o motorista?
    */
-   const armazenaToken = async()=>{
+   /*const armazenaToken = async()=>{
      let docRef = firestore().collection('Users').doc(currentUser);
      try{
        docRef.get().then((doc)=>{
@@ -805,6 +805,23 @@ function Oferecer({route, navigation}) {
      }catch(error){
        console.log('erro em armazenaToken');
      }
+   }*/
+
+   async function armazenaToken(){
+    let reqs = await fetch(configBD.urlRootNode+`atualizarToken`,{
+      method: 'PUT',
+      mode: 'cors',
+      headers:{
+        'Accept':'application/json',
+        'Content-type':'application/json'
+      },
+      body: JSON.stringify({
+        id: currentUser,
+        token: token
+      })
+    });
+    const res = await reqs.json();
+    console.log('token armazenado' + res.token);
    }
 
    useEffect(()=>{

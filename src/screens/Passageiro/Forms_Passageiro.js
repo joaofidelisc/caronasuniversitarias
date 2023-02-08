@@ -50,7 +50,7 @@ function Forms_Passageiro({route, navigation}) {
     
     
     
-    const insertDataNewUser = async() => {
+    /*const insertDataNewUser = async() => {
         // await AsyncStorage.setItem('modoApp', 'passageiro');
         if (nome == '' || CPF == '' || data_nasc == '' || num_cel == '' || universidade == ''){
             setWarning('Preencha todos os campos!');
@@ -85,6 +85,52 @@ function Forms_Passageiro({route, navigation}) {
                 navigation.navigate('ModoPassageiro', {userID: userID});
             });
         }
+    }*/
+
+    async function insertDataNewUser(){
+        if (nome == '' || CPF == '' || data_nasc == '' || num_cel == '' || universidade == ''){
+            setWarning('Preencha todos os campos!');
+            setModalVisible(true);
+        }
+        else if (CPF.length != 14){
+            setWarning('CPF incorreto.');
+            setModalVisible(true);
+        }
+        else if (data_nasc.length != 10){
+            setWarning('Data de nascimento incorreta.');
+            setModalVisible(true);
+        }
+        else if (num_cel.length != 14){
+            setWarning('Número de celular incorreto.');
+            setModalVisible(true);
+            
+        }
+        else{
+            var reqs = await fetch(configBD.urlRootNode+'cadastrarUsuario',{
+                method: 'POST',
+                headers:{
+                  'Accept':'application/json',
+                  'Content-type':'application/json'
+                },
+                body: JSON.stringify({
+                nome: nome,
+                CPF: CPF,
+                data_nasc: data_nasc,
+                num_cel: num_cel,
+                universidade: universidade,
+                email: email,
+                placa_veiculo: "",
+                ano_veiculo: "",
+                cor_veiculo: "",
+                nome_veiculo: "",
+                motorista: false,
+            }).then(()=>{
+                navigation.navigate('ModoPassageiro', {userID: userID});
+            })
+         });
+        }
+        let res = await reqs.json();
+        console.log('req:', res);
     }
 
     return (

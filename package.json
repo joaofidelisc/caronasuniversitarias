@@ -59,6 +59,11 @@
     "react-native-screens": "^3.15.0",
     "react-native-sqlite-storage": "^6.0.1",
     "react-native-vector-icons": "^9.2.0",
+<<<<<<< HEAD
+=======
+    "react-native-websocket": "^1.0.2",
+    "rmqlite": "github:KealPub/node-rabbit-lite",
+>>>>>>> 4dd717be477912c7b1ff46b92adce30d4485b4c1
     "sequelize": "^6.26.0",
     "socket.io": "^4.6.0",
     "stream": "^0.0.2",
