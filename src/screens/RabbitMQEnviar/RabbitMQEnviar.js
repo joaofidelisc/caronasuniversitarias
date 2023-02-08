@@ -38,6 +38,45 @@ function RabbitMQEnviar() {
         console.log(err);
     }
   }
+
+  const sendMessage2 = async()=>{
+    // try{
+    //   let reqs = await fetch('http://192.168.15.165:8000/api/rabbit/enviar_mensagem',{
+    //       method: 'POST',
+    //       headers:{
+    //         'Accept':'application/json',
+    //         'Content-type':'application/json'
+    //       },
+    //       body: JSON.stringify({
+    //         mensagem: 'Testando rabbitMQ!!!!'
+    //       })
+    //   });
+
+    //   let res = await reqs.json();
+    //   console.log('req:', res);
+    // }catch(error){
+    //   console.log(error);
+    // }
+
+    fetch('http://192.168.15.165:8000/api/rabbit/enviar_mensagem', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ mensagem: 'JOÃO VITOR' })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('-------------------------------------------------\n\n');
+      console.log('Tela Enviar');
+      console.log('STATUS:', data.status);
+      console.log('-------------------------------------------------\n\n');
+    })
+    .catch(error => {
+      console.error(error);
+    });
+
+  }
        
     return (
       <SafeAreaView>
@@ -47,7 +86,7 @@ function RabbitMQEnviar() {
           <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
             onPress={()=>{
-                sendMessage('123456');                
+                sendMessage2();                
             }}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Enviar</Text>

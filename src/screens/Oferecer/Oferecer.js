@@ -816,6 +816,7 @@ function Oferecer({route, navigation}) {
         defineEstadoAtual().catch(console.error);
       }
   }, []);
+
  
   useEffect(()=>{
     console.log('TELA: Oferecer');

@@ -2,6 +2,7 @@
 
 const express = require('express');
 const routes = require('../routes/routes.js');
+const rabbitRoutes = require('../rabbitMQ/routesRabbit.js');
 const db = require('../sequelize/index.js');
 
 
@@ -15,8 +16,13 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
+
 app.use(routes);
+app.use('/api/rabbit', rabbitRoutes);
+
 db.sync(()=>console.log('Banco de dados conectado!'));
+
+
 
 let port = process.env.PORT || 8000;
 
@@ -25,4 +31,5 @@ app.listen(8000, (req, res)=>{
     console.log('Servidor Rodando');
     console.log('PORT:', port);
 });
+
 
