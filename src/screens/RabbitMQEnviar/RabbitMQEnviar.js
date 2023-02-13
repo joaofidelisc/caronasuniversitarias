@@ -58,7 +58,8 @@ function RabbitMQEnviar() {
     //   console.log(error);
     // }
 
-    fetch('http://192.168.15.165:8000/api/rabbit/enviar_mensagem', {
+    // fetch('http://192.168.15.165:8000/api/rabbit/enviar_mensagem', {
+    fetch('http://192.168.15.165:8000/enviar_mensagem', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

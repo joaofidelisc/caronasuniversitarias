@@ -1,35 +1,46 @@
-
-
+const compression = require('compression');
 const express = require('express');
 const routes = require('../routes/routes.js');
-const rabbitRoutes = require('../rabbitMQ/routesRabbit.js');
 const db = require('../sequelize/index.js');
-
-
-const bodyParser=require('body-parser');
+const bodyParser = require('body-parser');
 const cors = require('cors');
+const SSE = require('express-sse');
 
 const app = express();
+app.use(compression());
 
-//ignorar o cors quando for subir pro servidor
-//ou aceitar requisições de server diferentes - fazer essa configuração;
-app.use(cors());
-app.use(bodyParser.urlencoded({extended:false}));
-app.use(bodyParser.json());
+const sse = new SSE();
 
-app.use(routes);
-app.use('/api/rabbit', rabbitRoutes);
-
-db.sync(()=>console.log('Banco de dados conectado!'));
-
-
-
-let port = process.env.PORT || 8000;
-
-
-app.listen(8000, (req, res)=>{
-    console.log('Servidor Rodando');
-    console.log('PORT:', port);
+app.get('/stream', (req, res)=>{
+    sse.init(req, res);
+    // sse.on()
 });
 
+// app.get('/stream', (req, res) => {
+//   sse.init(req, res);
+// //   console.log('inicializando /stream');
+// //   sse.send('Hello, client!');
+// //   sse.on('connection', (stream) => {
+// //     console.log('someone connected!');
+// //   });
+// });
 
+app.post('/enviar_mensagem', (req, res)=>{
+    console.log('Enviando mensagem...');
+    sse.send('teste', 'message');
+    res.send({ status: 'Mensagem enviada com sucesso -> ->!'})
+})
+
+app.use(cors());
+app.get('/updates', sse.init);
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(routes);
+
+db.sync(() => console.log('Banco de dados conectado!'));
+
+const port = process.env.PORT || 8000;
+app.listen(port, () => {
+  console.log('Servidor Rodando');
+  console.log(`PORT: ${port}`);
+});

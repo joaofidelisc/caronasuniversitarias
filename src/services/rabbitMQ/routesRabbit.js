@@ -1,16 +1,32 @@
   const express = require('express');
   const amqp = require('amqplib/callback_api');
   const router = express.Router();
-  const socketIo = require('socket.io');
+  // const sse = require('../SSE/sse.js');
+  var SSE = require('express-sse');
 
+  
+  // const app = express();
+  var sse = new SSE();
+  // var sse = new SSE(["array", "containing", "initial", "content", "(optional)"]);
   let conn, ch;
+  
+  // const app = express();
+  
+ 
+  router.get('/stream', function(req, res){
+    console.log('Entrou no /stream!');
+    sse.init(req, res)
+    sse.on('open', function(){
+      console.log('Conexão SSE estabelecida');
+    })
+  });
+  
+  function sendSSE(data){
+    // sse.init();
+    console.log('Enviando mensagem SSE...');
+    sse.send(data, "message");
+  }
 
-  const app = express();
-  const server = app.listen(3000, ()=>{
-    console.log(`Listening on port ${3000}`);
-  })
-
-  const io = socketIo(server);
 
   function connectAndCreateCh(){
     amqp.connect('amqp://localhost:5672', function (err, connection) {
@@ -60,6 +76,7 @@ connectAndCreateCh();
     console.log('Mensagem que tô enviando:', mensagem);
     ch.assertQueue('fila_de_mensagens', {durable: false});
     ch.sendToQueue('fila_de_mensagens', Buffer.from(mensagem));
+    sendSSE(mensagem)
     res.send({ status: 'Mensagem enviada com sucesso' });
   });
   
@@ -68,13 +85,9 @@ connectAndCreateCh();
     ch.assertQueue('fila_de_mensagens', {durable: false});
     console.log('Aguardando por mensagens...\n');
     ch.consume('fila_de_mensagens', function(msg){
-      io.emit('Nova mensagem:', msg.content.toString());
       console.log(msg.content.toString());
     }, { noAck:true });
-
   });
 
-  //biblioteca de streaming;
-  //streamming http2;
-  
+
 module.exports = router;
