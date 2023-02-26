@@ -12,7 +12,7 @@ import messaging from '@react-native-firebase/messaging';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 
 const {height, width} = Dimensions.get('screen')
@@ -135,7 +135,7 @@ function BuscandoCarona({navigation, route}) {
 
   const atualizaToken = async()=>{
     console.log('atualizarToken');
-    let reqs = await fetch(configBD.urlRootNode+'atualizarToken',{
+    let reqs = await fetch(serverConfig.urlRootNode+'atualizarToken',{
     method: 'PUT',
     headers:{
         'Accept':'application/json',

@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 
 const {height,width} = Dimensions.get('screen')
@@ -142,7 +142,7 @@ function Options({navigation, route}) {
   // }
 
     async function getNomeMotorista(motoristaUID){
-      let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${motoristaUID}`,{
+      let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${motoristaUID}`,{
           method: 'GET',
           mode: 'cors',
           headers:{
@@ -175,7 +175,7 @@ function Options({navigation, route}) {
 
   //refazer essa aqui
   /*async function getNomeCarroMotorista(motoristaUID){
-    let reqs = await fetch(configBD.urlRootNode+`buscarVeiculo/${motoristaUID}`,{
+    let reqs = await fetch(serverConfig.urlRootNode+`buscarVeiculo/${motoristaUID}`,{
         method: 'GET',
         mode: 'cors',
         headers:{
@@ -192,7 +192,7 @@ function Options({navigation, route}) {
   }*/
 
   async function getNomeCarroMotorista(motoristaUID){
-    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${motoristaUID}`,{
+    let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${motoristaUID}`,{
         method: 'GET',
         mode: 'cors',
         headers:{
@@ -224,7 +224,7 @@ function Options({navigation, route}) {
   }*/
 
   async function getPlacaCarroMotorista(motoristaUID){
-    let reqs = await fetch(configBD.urlRootNode+`buscarVeiculo/${motoristaUID}`,{
+    let reqs = await fetch(serverConfig.urlRootNode+`buscarVeiculo/${motoristaUID}`,{
         method: 'GET',
         mode: 'cors',
         headers:{
@@ -261,7 +261,7 @@ function Options({navigation, route}) {
 
   
   async function getClassificacaoMotorista(motoristaUID){
-    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${motoristaUID}`,{
+    let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${motoristaUID}`,{
         method: 'GET',
         mode: 'cors',
         headers:{

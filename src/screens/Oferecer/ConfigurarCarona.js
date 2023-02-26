@@ -13,7 +13,7 @@ import auth from '@react-native-firebase/auth'
 
 import EstadoApp from '../../services/sqlite/EstadoApp';
 // const queryHandler = require('../../services/node-server/index');
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -179,7 +179,7 @@ function ConfigurarCarona({navigation}) {
 
       /*
       ////EXEMPLO DE INSERÇÃO DE DADOS;
-      // let reqs = await fetch(configBD.urlRootNode+'inserirUsuario',{
+      // let reqs = await fetch(serverConfig.urlRootNode+'inserirUsuario',{
       //   method: 'POST',
       //   headers:{
       //     'Accept':'application/json',
@@ -208,7 +208,7 @@ function ConfigurarCarona({navigation}) {
      //---------------------------------------------------------------------
       
       
-      // let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/0VtQXRifF8PdbcKCrthdOtlnah12`,{
+      // let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/0VtQXRifF8PdbcKCrthdOtlnah12`,{
       //     method: 'GET',
       //     mode: 'cors',
       //     headers:{
@@ -223,7 +223,7 @@ function ConfigurarCarona({navigation}) {
       //---------------------------------------------------------------------
 
       // ATUALIZA UMA INFORMAÇÃO DO BANCO
-      let reqs = await fetch(configBD.urlRootNode+'atualizarModo',{
+      let reqs = await fetch(serverConfig.urlRootNode+'atualizarModo',{
         method: 'PUT',
         headers:{
           'Accept':'application/json',

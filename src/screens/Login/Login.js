@@ -21,7 +21,7 @@ import firestore from '@react-native-firebase/firestore';
 
 import dominios from '../../dominios/dominios.json';
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 // incluir aqui dominios permitidos (válido para email e autenticação com Google)
 // const dominios_permitidos = ["estudante.ufscar.br"];
@@ -50,7 +50,7 @@ function Login({navigation}) {
 
   const buscarEmail = async(email)=>{
     console.log('Buscar Email');
-    let reqs = await fetch(configBD.urlRootNode+`buscarPorEmail/${email}`,{
+    let reqs = await fetch(serverConfig.urlRootNode+`buscarPorEmail/${email}`,{
         method: 'GET',
         mode: 'cors',
         headers:{

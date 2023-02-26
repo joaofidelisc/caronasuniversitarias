@@ -1,76 +1,53 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, SafeAreaView, StatusBar, Image, Dimensions, TouchableOpacity} from 'react-native';
-import EventSource from "react-native-sse";
+// import EventSource from "react-native-sse";
+import EventSource from 'react-native-event-source';
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 const {width, height} = Dimensions.get('screen');
 
 function RabbitMQReceber() {
-  // const [coordenadas, setCoordenadas] = useState(null);  
   const [msg, setMsg] = useState('');    
   
-
-  const receiveMessage = async()=>{
-    console.log('----------------------------------------------------\n');
-    console.log("Função receiveMessage\n");
-    // await fetch('http://192.168.15.165:8000/api/rabbit/stream').then(response=>{
-      //   console.log('Conectando...');
-      // })
-      
-      // const es = new EventSource('http://192.168.15.165:8000/api/rabbit/stream');
-      // var es = new EventSource('http://192.168.15.165:8000/stream');
-      var es = new EventSource('http://192.168.15.165:8000/stream');
-      // console.log('es:', es);
-      // const es = new EventSource("https://your-sse-server.com/.well-known/mercure");
-      // const EventSource = require('eventsource')
-      es.addEventListener("open", (event) => {
-        console.log("Open SSE connection.");
-      });
-      
-      es.addEventListener('message', function(message){
-        console.log('message:', message);
-      })
-      // es.addEventListener('message', (event) => {
-      //   console.log("New message event:", event.data);
-      // });
-      
-      es.addEventListener("error", (event) => {
-        if (event.type === "error") {
-          console.error("Connection error:", event.message);
-        } else if (event.type === "exception") {
-          console.error("Error:", event.message, event.error);
+  const receiveMessageRabbit = async()=>{
+      await fetch(`${serverConfig.urlRootNode}api/rabbit/obter_mensagem`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Erro ao receber mensagem: ${response.status}`);
         }
-      });
-      
-      es.addEventListener("close", (event) => {
-        console.log("Close SSE connection.");
+        return response.json();
       })
-
-    // await fetch('http://192.168.15.165:8000/api/rabbit/obter_mensagem')
-    // .then(response => {
-    //   // console.log('teste!!!!');
-    //   if (!response.ok) {
-    //     throw new Error(`Erro ao receber mensagem: ${response.status}`);
-    //   }
-
-    //   // setMsg(response.json());
-    //   // console.log('resposta:', response.json());
-    //   return response.json();
-    // })
-    // .then(data => {
-    //   console.log('-------------------------------------------------\n\n');
-    //   console.log('Tela Receber');
+      .then(data => {
+        console.log('-------------------------------------------------\n\n');
+        console.log('Tela Receber');  
+        console.log('STATUS:', data.mensagem);
+        // setMsg(data.mensagem);
+        console.log('-------------------------------------------------\n\n');
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  
+  
+  }
+  
+  const receiveMessage = async()=>{
+    console.log('--------------------------------\n');
+    console.log('Function receiveMessage...');    
+    try{
+      // const events = new EventSource('http://192.168.15.165:8000/eventos');
+      const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obter_mensagem`);
+        
+      events.addEventListener('chatmessage', (event)=>{
+        console.log('opa, nova mensagem!');
+        console.log(`Nova mensagem: ${event.data}`);
+      })
       
-    //   // console.log('printando mensagem!!!');
-    //   console.log('STATUS:', data.mensagem);
-    //   setMsg(data.mensagem);
-    //   console.log('-------------------------------------------------\n\n');
-    // })
-    // .catch(error => {
-    //   console.error(error);
-    // });
-}
+    }catch(error){
+      console.log(error);
+    }
+  }
 
     return (
       <SafeAreaView>
@@ -81,6 +58,8 @@ function RabbitMQReceber() {
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
             onPress={()=>{
               receiveMessage();
+              // receiveMessage2();
+              // receiveMessageRabbit();
             }}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Receber</Text>

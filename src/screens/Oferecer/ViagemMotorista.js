@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Lottie from 'lottie-react-native';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 
 /*
@@ -134,7 +134,7 @@ function ViagemMotorista({route, navigation}){
 
     async function getNomePassageiro(uidPassageiro){
       let nomePassageiro = '';
-      let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${uidPassageiro}`,{
+      let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${uidPassageiro}`,{
         method: 'GET',
         mode: 'cors',
         headers:{
@@ -201,7 +201,7 @@ function ViagemMotorista({route, navigation}){
     }*/
 
     async function getClassificacaoPassageiro(uidPassageiro){
-      let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${uidPassageiro}`,{
+      let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${uidPassageiro}`,{
         method: 'GET',
         mode: 'cors',
         headers:{
@@ -249,7 +249,7 @@ function ViagemMotorista({route, navigation}){
 
      /*async function escreveHistoricoViagem(destinoPassageiro, nomePassageiro, passageiroIMG){
       const data = await dataAtualFormatada();
-      let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${currentUser}`,{
+      let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${currentUser}`,{
         method: 'GET',
         mode: 'cors',
         headers:{

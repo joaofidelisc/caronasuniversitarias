@@ -8,7 +8,7 @@ import auth from '@react-native-firebase/auth'
 import FotoPerfil from '../../components/Perfil/FotoPerfil';
 import ModoAplicativo from '../../components/Perfil/ModoAplicativo';
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 
 const {height,width} = Dimensions.get('screen')
@@ -42,7 +42,7 @@ function Perfil_Detalhes({navigation, route}){
   
   async function recuperarDados(){
     const userID = auth().currentUser.uid;
-    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${userID}`,{
+    let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${userID}`,{
       method: 'GET',
       mode: 'cors',
       headers:{

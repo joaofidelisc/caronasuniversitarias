@@ -21,7 +21,7 @@ import messaging from '@react-native-firebase/messaging';
 import NotificationService from '../Notificacoes/PushNotifications';
 import { AndroidImportance } from '@notifee/react-native';
 import EstadoApp from '../../services/sqlite/EstadoApp';
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 
 const {width, height} = Dimensions.get('screen');
@@ -294,7 +294,7 @@ function Oferecer({route, navigation}) {
   }*/
   
   async function getNomeCaronista(userUID){
-    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${userUID}`,{
+    let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${userUID}`,{
         method: 'GET',
         mode: 'cors',
         headers:{
@@ -352,7 +352,7 @@ function Oferecer({route, navigation}) {
   }*/
 
   const getClassificacaoCaronista = async(userUID)=>{
-    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${userUID}`,{
+    let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${userUID}`,{
       method: 'GET',
       mode: 'cors',
       headers:{
@@ -763,8 +763,8 @@ function Oferecer({route, navigation}) {
    
    const sendNotification = async (uidPassageiro, tituloNotificacao, mensagemNotificacao) => {
     let id = 0;
-    //let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${id}`,{
-      let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${id}`,{
+    //let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${id}`,{
+      let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${id}`,{
       method: 'GET',
       mode: 'cors',
       headers:{
@@ -808,7 +808,7 @@ function Oferecer({route, navigation}) {
    }*/
 
    async function armazenaToken(){
-    let reqs = await fetch(configBD.urlRootNode+`atualizarToken`,{
+    let reqs = await fetch(serverConfig.urlRootNode+`atualizarToken`,{
       method: 'PUT',
       mode: 'cors',
       headers:{

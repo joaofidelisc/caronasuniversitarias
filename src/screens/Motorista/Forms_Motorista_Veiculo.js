@@ -35,7 +35,7 @@ function Forms_Motorista_Veiculo({navigation, route}) {
 
 
     const cadastrarUsuario = async()=>{
-        let reqs = await fetch(configBD.urlRootNode+'cadastrarUsuario',{
+        let reqs = await fetch(serverConfig.urlRootNode+'cadastrarUsuario',{
             method: 'POST',
             headers:{
                 'Accept':'application/json',
@@ -62,7 +62,7 @@ function Forms_Motorista_Veiculo({navigation, route}) {
 
 
     const cadastrarVeiculo = async()=>{
-        let reqs = await fetch(configBD.urlRootNode+'cadastrarVeiculo',{
+        let reqs = await fetch(serverConfig.urlRootNode+'cadastrarVeiculo',{
             method: 'POST',
             headers:{
                 'Accept':'application/json',
@@ -164,7 +164,7 @@ function Forms_Motorista_Veiculo({navigation, route}) {
 
     const modoPassageiro = async()=>{
         console.log('atualizarModoApp');
-           let reqs = await fetch(configBD.urlRootNode+'atualizarModoApp',{
+           let reqs = await fetch(serverConfig.urlRootNode+'atualizarModoApp',{
             method: 'PUT',
             headers:{
               'Accept':'application/json',

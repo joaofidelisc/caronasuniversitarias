@@ -1,31 +1,9 @@
   const express = require('express');
   const amqp = require('amqplib/callback_api');
   const router = express.Router();
-  // const sse = require('../SSE/sse.js');
-  var SSE = require('express-sse');
 
-  
-  // const app = express();
-  var sse = new SSE();
-  // var sse = new SSE(["array", "containing", "initial", "content", "(optional)"]);
   let conn, ch;
-  
-  // const app = express();
-  
- 
-  router.get('/stream', function(req, res){
-    console.log('Entrou no /stream!');
-    sse.init(req, res)
-    sse.on('open', function(){
-      console.log('Conexão SSE estabelecida');
-    })
-  });
-  
-  function sendSSE(data){
-    // sse.init();
-    console.log('Enviando mensagem SSE...');
-    sse.send(data, "message");
-  }
+
 
 
   function connectAndCreateCh(){
@@ -76,16 +54,30 @@ connectAndCreateCh();
     console.log('Mensagem que tô enviando:', mensagem);
     ch.assertQueue('fila_de_mensagens', {durable: false});
     ch.sendToQueue('fila_de_mensagens', Buffer.from(mensagem));
-    sendSSE(mensagem)
+    // sendSSE(mensagem)
     res.send({ status: 'Mensagem enviada com sucesso' });
   });
   
   router.get('/obter_mensagem', (req, res) => {
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Accept',
+      'Connection': 'keep-alive',
+    });
+
     console.log('entrando em obter_mensagem');
     ch.assertQueue('fila_de_mensagens', {durable: false});
     console.log('Aguardando por mensagens...\n');
     ch.consume('fila_de_mensagens', function(msg){
-      console.log(msg.content.toString());
+      // console.log('MENSAGEM RECEBIDA:',msg.content.toString());
+      // res.write('data:', msg.content.toString(), '\n\n');
+      // res.write('data:\n\n');
+      res.write('event: chatmessage\n');
+      res.write('data:'+ msg.content.toString() + '\n\n');
+      // await new Promise(resolve => setTimeout(resolve, 1000));
+      // res.send({mensagem: msg.content.toString()});
     }, { noAck:true });
   });
 

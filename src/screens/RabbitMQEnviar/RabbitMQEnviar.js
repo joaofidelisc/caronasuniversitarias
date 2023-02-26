@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, SafeAreaView, StatusBar, Image, Dimensions, TouchableOpacity} from 'react-native';
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 import amqp from 'amqplib';
 
 
@@ -39,27 +39,8 @@ function RabbitMQEnviar() {
     }
   }
 
-  const sendMessage2 = async()=>{
-    // try{
-    //   let reqs = await fetch('http://192.168.15.165:8000/api/rabbit/enviar_mensagem',{
-    //       method: 'POST',
-    //       headers:{
-    //         'Accept':'application/json',
-    //         'Content-type':'application/json'
-    //       },
-    //       body: JSON.stringify({
-    //         mensagem: 'Testando rabbitMQ!!!!'
-    //       })
-    //   });
-
-    //   let res = await reqs.json();
-    //   console.log('req:', res);
-    // }catch(error){
-    //   console.log(error);
-    // }
-
-    // fetch('http://192.168.15.165:8000/api/rabbit/enviar_mensagem', {
-    fetch('http://192.168.15.165:8000/enviar_mensagem', {
+  const sendMessageRabbit = async()=>{
+    fetch('http://192.168.15.165:8000/api/rabbit/enviar_mensagem', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -78,6 +59,13 @@ function RabbitMQEnviar() {
     });
 
   }
+
+  const sendMessageSSE = async()=>{
+    console.log('--------------------------------\n');
+    console.log('Function sendMessageSSE...');
+    console.log('--------------------------------\n');
+
+  }
        
     return (
       <SafeAreaView>
@@ -87,8 +75,10 @@ function RabbitMQEnviar() {
           <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
             onPress={()=>{
-                sendMessage2();                
-            }}  
+                // sendMessage2();
+                // sendMessageSSE();                
+                sendMessageRabbit();
+              }}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Enviar</Text>
           </TouchableOpacity>

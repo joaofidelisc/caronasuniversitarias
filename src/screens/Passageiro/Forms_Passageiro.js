@@ -5,7 +5,7 @@ import { TextInputMask } from 'react-native-masked-text'
 import { ScrollView } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 const {height,width} = Dimensions.get('screen')
 
@@ -106,7 +106,7 @@ function Forms_Passageiro({route, navigation}) {
             
         }
         else{
-            var reqs = await fetch(configBD.urlRootNode+'cadastrarUsuario',{
+            var reqs = await fetch(serverConfig.urlRootNode+'cadastrarUsuario',{
                 method: 'POST',
                 headers:{
                   'Accept':'application/json',

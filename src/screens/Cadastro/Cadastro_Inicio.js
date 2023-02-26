@@ -9,7 +9,7 @@ import dominios from '../../dominios/dominios.json';
 
 const {height, width} = Dimensions.get('screen')
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 
 GoogleSignin.configure({
@@ -44,7 +44,7 @@ function Cadastro_Inicio({navigation}) {
   
   const redirecionamentoLogin = async(emailGoogle)=>{
     await AsyncStorage.setItem('email', emailGoogle);
-    let reqs = await fetch(configBD.urlRootNode+`buscarPorEmail/${emailGoogle}`,{
+    let reqs = await fetch(serverConfig.urlRootNode+`buscarPorEmail/${emailGoogle}`,{
       method: 'GET',
       mode: 'cors',
       headers:{

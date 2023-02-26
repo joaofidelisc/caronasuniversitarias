@@ -13,7 +13,7 @@ import ModoAplicativo from '../../components/Perfil/ModoAplicativo';
 import auth from '@react-native-firebase/auth'
 import RNRestart from 'react-native-restart';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 
 const {height,width} = Dimensions.get('screen')
@@ -46,7 +46,7 @@ function Perfil_Conta({navigation}){
     const passageiro = 'passageiro';
     const userID = auth().currentUser.uid;
     //busca pelo id de usuario o valor bool para modo motorista ou passageiro
-    let reqs = await fetch(configBD.urlRootNode + `buscarUsuario/${userID}`, {
+    let reqs = await fetch(serverConfig.urlRootNode + `buscarUsuario/${userID}`, {
       method: 'GET',
       mode: 'cors',
       headers: {

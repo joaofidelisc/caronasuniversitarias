@@ -12,7 +12,7 @@ import auth from '@react-native-firebase/auth'
   
 // const objJSON = JSON.parse(objString);
 // console.log('objJSON:', objJSON);
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 
 const {width, height} = Dimensions.get('screen');
@@ -59,7 +59,7 @@ function ClassificarPassageiro({route, navigation}) {
     }
 
     const contarViagemPassageiro = async(uidPassageiro)=>{
-      let reqs = await fetch(configBD.urlRootNode+`contarViagensPassageiro/${uidPassageiro}`,{
+      let reqs = await fetch(serverConfig.urlRootNode+`contarViagensPassageiro/${uidPassageiro}`,{
         method: 'GET',
         mode: 'cors',
         headers:{
@@ -72,7 +72,7 @@ function ClassificarPassageiro({route, navigation}) {
     }
 
     const retornaClassificacao = async(uidPassageiro)=>{
-      let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${uidPassageiro}`,{
+      let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${uidPassageiro}`,{
           method: 'GET',
           mode: 'cors',
           headers:{
@@ -90,7 +90,7 @@ function ClassificarPassageiro({route, navigation}) {
 
     const atualizarClassificacao = async(novaClassificacao, uidPassageiro)=>{
       console.log('atualizarClassificacao');
-      let reqs = await fetch(configBD.urlRootNode+'atualizarClassificacao',{
+      let reqs = await fetch(serverConfig.urlRootNode+'atualizarClassificacao',{
        method: 'PUT',
        headers:{
          'Accept':'application/json',

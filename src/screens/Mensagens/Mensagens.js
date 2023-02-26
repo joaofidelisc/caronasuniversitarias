@@ -10,7 +10,7 @@ import Lottie from 'lottie-react-native';
 
 const {height,width} = Dimensions.get('screen');
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 
 export default function Mensagens({route, navigation}) {
@@ -69,7 +69,7 @@ export default function Mensagens({route, navigation}) {
   async function getNomeStorage(userUID1, userUID2){
     console.log('Renderizando...2');
     const userUID = userUID1==currentUser?userUID2:userUID1;
-    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${userUID}`,{
+    let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${userUID}`,{
         method: 'GET',
         mode: 'cors',
         headers:{

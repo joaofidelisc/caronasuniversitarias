@@ -8,7 +8,7 @@ import auth from '@react-native-firebase/auth';
 
 import EstadoApp from '../../services/sqlite/EstadoApp';
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 
 const {height, width} = Dimensions.get('screen')
@@ -182,7 +182,7 @@ function ViagemEmAndamento({navigation, route}) {
     //cadastrar viagem;
     //viagem em andamento do passageiro
     // const escreveHistoricoViagem = async()=>{
-      // let reqs = await fetch(configBD.urlRootNode+'cadastrarViagem',{
+      // let reqs = await fetch(serverConfig.urlRootNode+'cadastrarViagem',{
       //     method: 'POST',
       //     headers:{
       //       'Accept':'application/json',
@@ -232,7 +232,7 @@ function ViagemEmAndamento({navigation, route}) {
 
   const retornaIdUltimaViagem = async()=>{
     console.log('Buscar Viagem');
-    let reqs = await fetch(configBD.urlRootNode+`buscarUltimaViagem/${uidMotorista}`,{
+    let reqs = await fetch(serverConfig.urlRootNode+`buscarUltimaViagem/${uidMotorista}`,{
         method: 'GET',
         mode: 'cors',
         headers:{
@@ -250,7 +250,7 @@ function ViagemEmAndamento({navigation, route}) {
     console.log('currentUser:', currentUser);
     console.log('idViagem:', idViagem);
     console.log('destino:', nomeDestino);
-    let reqs = await fetch(configBD.urlRootNode+'cadastrarViagemPassageiro',{
+    let reqs = await fetch(serverConfig.urlRootNode+'cadastrarViagemPassageiro',{
         method: 'POST',
         headers:{
           'Accept':'application/json',

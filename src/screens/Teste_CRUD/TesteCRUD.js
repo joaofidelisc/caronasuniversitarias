@@ -3,7 +3,7 @@ import {View, Text, SafeAreaView, StatusBar, Image, Dimensions, TouchableOpacity
 import auth from '@react-native-firebase/auth'
 // import WebSocket from 'react-native-websocket';
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -13,7 +13,7 @@ function TesteCRUD() {
     const atualizarCoordenadas = (userId, coordenadas)=>{
       console.log('typeOFUSERID:', typeof(userId));
       console.log('atualizarCoordenadas');
-      let reqs = fetch(configBD.urlRootNode+'coordenadas',{
+      let reqs = fetch(serverConfig.urlRootNode+'coordenadas',{
        method: 'PUT',
        headers:{
          'Accept':'application/json',

@@ -1,45 +1,61 @@
-const compression = require('compression');
 const express = require('express');
 const routes = require('../routes/routes.js');
 const db = require('../sequelize/index.js');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const SSE = require('express-sse');
+const rabbitRoutes = require('../rabbitMQ/routesRabbit.js');
+
+//
+const sseExpress = require('sse-express');
 
 const app = express();
-app.use(compression());
 
-const sse = new SSE();
+app.get('/eventos', async function (req, res){
+  console.log('Request /eventos');
+  console.log('Nova conexão recebida', req.headers.host);
+  // res.set({
+  //   'Content-Type': 'text/event-stream',
+  //   'Cache-Control': 'no-cache',
+  //   'Access-Control-Allow-Origin': '*',
+  //   'Access-Control-Allow-Headers': 'Accept',
+  //   'Connection': 'keep-alive',
+  // });
+  
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Accept',
+    'Connection': 'keep-alive',
+  });
+  // res.flushHeaders();
+  
+  let count = 0;
 
-app.get('/stream', (req, res)=>{
-    sse.init(req, res);
-    // sse.on()
-});
+  while(true){
+    // const data = `data: Evento ${++count}\n\n`;
+    // const data = `event: chat-message\n`;
+    res.write('event: chatmessage\n');
+    res.write('data: bla\n\n');
 
-// app.get('/stream', (req, res) => {
-//   sse.init(req, res);
-// //   console.log('inicializando /stream');
-// //   sse.send('Hello, client!');
-// //   sse.on('connection', (stream) => {
-// //     console.log('someone connected!');
-// //   });
-// });
-
-app.post('/enviar_mensagem', (req, res)=>{
-    console.log('Enviando mensagem...');
-    sse.send('teste', 'message');
-    res.send({ status: 'Mensagem enviada com sucesso -> ->!'})
+    // res.send(data);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    // console.log('Dentro do while3...\n');
+  }
 })
 
+// 
 app.use(cors());
-app.get('/updates', sse.init);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
 app.use(routes);
+app.use('/api/rabbit', rabbitRoutes);
 
 db.sync(() => console.log('Banco de dados conectado!'));
 
 const port = process.env.PORT || 8000;
+
 app.listen(port, () => {
   console.log('Servidor Rodando');
   console.log(`PORT: ${port}`);

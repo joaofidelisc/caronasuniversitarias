@@ -7,7 +7,7 @@ import auth from '@react-native-firebase/auth'
 import database from '@react-native-firebase/database';
 import Lottie from 'lottie-react-native';
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 
 const {height, width} = Dimensions.get('screen')

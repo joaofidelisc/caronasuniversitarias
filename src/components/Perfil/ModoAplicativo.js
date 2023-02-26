@@ -6,7 +6,7 @@ import RNRestart from 'react-native-restart';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 import database from '@react-native-firebase/database';
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 const {height,width} = Dimensions.get('screen')
 
@@ -68,7 +68,7 @@ function ModoAplicativo(){
   
 
   const modoAtuacao = async()=>{
-    let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${userID}`,{
+    let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${userID}`,{
       method: 'GET',
       mode: 'cors',
       headers:{
@@ -93,7 +93,7 @@ function ModoAplicativo(){
     //
     const atualizarModoApp = async(motorista)=>{
       console.log('atualizarModoApp');
-         let reqs = await fetch(configBD.urlRootNode+'atualizarModoApp',{
+         let reqs = await fetch(serverConfig.urlRootNode+'atualizarModoApp',{
           method: 'PUT',
           headers:{
             'Accept':'application/json',

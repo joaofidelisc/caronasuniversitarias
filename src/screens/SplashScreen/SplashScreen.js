@@ -25,7 +25,8 @@ export function Splash(){
             autoSize={false}
             loop = {false}
             speed = {1}
-            onAnimationFinish={()=> navigation.navigate(/*'Entrada'*/ 'Teste')}
+            // onAnimationFinish={()=> navigation.navigate('Teste')}
+            onAnimationFinish={()=> navigation.navigate('Entrada')}
         /> 
         </View>
     )

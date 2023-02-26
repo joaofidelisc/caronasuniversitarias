@@ -10,7 +10,7 @@ import database from '@react-native-firebase/database';
 import Lottie from 'lottie-react-native';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 
 const {height,width} = Dimensions.get('screen')
@@ -88,7 +88,7 @@ function Classificacao({navigation, route}){
     
     const contarViagem = async()=>{
       console.log('Contar Viagem');
-      let reqs = await fetch(configBD.urlRootNode+`contarViagens/${uidMotorista}`,{
+      let reqs = await fetch(serverConfig.urlRootNode+`contarViagens/${uidMotorista}`,{
           method: 'GET',
           mode: 'cors',
           headers:{
@@ -102,7 +102,7 @@ function Classificacao({navigation, route}){
 
 
       const retornaClassificacao = async()=>{
-        let reqs = await fetch(configBD.urlRootNode+`buscarUsuario/${uidMotorista}`,{
+        let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${uidMotorista}`,{
             method: 'GET',
             mode: 'cors',
             headers:{
@@ -120,7 +120,7 @@ function Classificacao({navigation, route}){
 
       const atualizarClassificacao = async(novaClassificacao)=>{
         console.log('atualizarClassificacao');
-        let reqs = await fetch(configBD.urlRootNode+'atualizarClassificacao',{
+        let reqs = await fetch(serverConfig.urlRootNode+'atualizarClassificacao',{
          method: 'PUT',
          headers:{
            'Accept':'application/json',

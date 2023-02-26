@@ -6,7 +6,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth'
 import database, {firebase} from '@react-native-firebase/database';
 
-import configBD from '../../../config/config.json';
+import serverConfig from '../../../config/config.json';
 
 
 const {height,width}=Dimensions.get('window')
@@ -17,7 +17,7 @@ function Entrada({navigation}){
   /*
   const redirecionamentoLogin = async(email)=>{  
     try{
-      let reqs = await fetch(configBD.urlRootNode+`buscarPorEmail/${email}`,{
+      let reqs = await fetch(serverConfig.urlRootNode+`buscarPorEmail/${email}`,{
           method: 'GET',
           mode: 'cors',
           headers:{
@@ -28,7 +28,7 @@ function Entrada({navigation}){
       const res_user = await reqs.json();
       console.log('resposta:', res_user[0]);
       if (res_user[0] != undefined && res_user != 'Falha'){
-        let reqs_veiculo = await fetch(configBD.urlRootNode+`buscarVeiculo/${res_user.id}`,{
+        let reqs_veiculo = await fetch(serverConfig.urlRootNode+`buscarVeiculo/${res_user.id}`,{
           method: 'GET',
           mode: 'cors',
           headers:{
@@ -98,7 +98,7 @@ function Entrada({navigation}){
 
   const buscarEmail = async(email)=>{
     console.log('Buscar Email');
-    let reqs = await fetch(configBD.urlRootNode+`buscarPorEmail/${email}`,{
+    let reqs = await fetch(serverConfig.urlRootNode+`buscarPorEmail/${email}`,{
         method: 'GET',
         mode: 'cors',
         headers:{
@@ -118,7 +118,7 @@ function Entrada({navigation}){
 
   const buscarVeiculo = async(userID)=>{
     console.log('Buscar Email');
-    let reqs = await fetch(configBD.urlRootNode+`buscarVeiculo/${userID}`,{
+    let reqs = await fetch(serverConfig.urlRootNode+`buscarVeiculo/${userID}`,{
         method: 'GET',
         mode: 'cors',
         headers:{
