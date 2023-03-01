@@ -49,6 +49,34 @@ function RabbitMQReceber() {
     }
   }
 
+  const receberInfoMotorista = ()=>{
+    console.log('receberInfoMotorista');
+    //implementação funcionando com fetch!
+    // fetch(`http://192.168.15.165:8000/api/rabbit/obterInfo/motorista/SP/Sao_Carlos`,{
+    //     method: 'GET',
+    //     mode: 'cors',
+    //     headers:{
+    //       'Accept':'application/json',
+    //       'Content-type':'application/json'
+    //     }
+    //   });
+      
+
+
+      try{
+        // const events = new EventSource('http://192.168.15.165:8000/eventos');
+        const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/SP/Sao_Carlos`);
+          
+        events.addEventListener('chatmessage', (event)=>{
+          console.log('Atualização informações:\n');
+          console.log(`Usuário: ${event.data}`);
+        })
+        
+      }catch(error){
+        console.log(error);
+      }
+  }
+
     return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -57,9 +85,8 @@ function RabbitMQReceber() {
           <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
             onPress={()=>{
-              receiveMessage();
-              // receiveMessage2();
-              // receiveMessageRabbit();
+              // receiveMessage();
+              receberInfoMotorista();
             }}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Receber</Text>
