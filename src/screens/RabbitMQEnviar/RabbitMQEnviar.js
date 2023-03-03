@@ -12,10 +12,10 @@ const {width, height} = Dimensions.get('screen');
 function RabbitMQEnviar() {
   const [coordenadas, setCoordenadas] = useState([]);      
   
-  
+  // http://192.168.150.223:8000/
   const enviarInfoMotorista = async()=>{
     console.log('Testando função enviarInfoMotorista!');
-    let reqs = await fetch('http://192.168.15.165:8000/api/rabbit/enviarInfo/motorista',{
+    let reqs = await fetch('http://192.168.150.223:8000/api/rabbit/enviarInfo/motorista',{
         method: 'POST',
         headers:{
           'Accept':'application/json',
