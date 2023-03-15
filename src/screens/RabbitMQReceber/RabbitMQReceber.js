@@ -9,67 +9,37 @@ const {width, height} = Dimensions.get('screen');
 
 function RabbitMQReceber() {
   const [msg, setMsg] = useState('');    
-  
-  const receiveMessageRabbit = async()=>{
-      await fetch(`${serverConfig.urlRootNode}api/rabbit/obter_mensagem`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Erro ao receber mensagem: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('-------------------------------------------------\n\n');
-        console.log('Tela Receber');  
-        console.log('STATUS:', data.mensagem);
-        // setMsg(data.mensagem);
-        console.log('-------------------------------------------------\n\n');
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  
-  
-  }
-  
-  const receiveMessage = async()=>{
-    console.log('--------------------------------\n');
-    console.log('Function receiveMessage...');    
-    try{
-      // const events = new EventSource('http://192.168.15.165:8000/eventos');
-      const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obter_mensagem`);
-        
-      events.addEventListener('chatmessage', (event)=>{
-        console.log('opa, nova mensagem!');
-        console.log(`Nova mensagem: ${event.data}`);
-      })
-      
-    }catch(error){
-      console.log(error);
+  const [vetorCaronistas, setCaronistas] = useState([]);
+
+  function getCaronistasMarker(data){
+    console.log('getCaronistasMarker!');
+    console.log('latitude:', data.latitudePassageiro);
+    console.log('longitude:', data.longitudePassageiro);
+    console.log('uid:', data.uid);
+    console.log('caronasAceitas:', data.caronasAceitas);
+    
+    const index = vetorCaronistas.findIndex(obj => obj.uid === data.uid);
+    if (index >= 0){
+      vetorCaronistas[index].latitude = data.latitudePassageiro;
+      vetorCaronistas[index].longitude = data.longitudePassagero;
+    }else{
+      setCaronistas([...vetorCaronistas, {
+        latitude: data.latitudePassageiro,
+        longitude: data.longitudePassageiro,
+        uid: data.uid,
+        caronasAceitas: data.caronasAceitas
+      }])
     }
+
   }
 
   const receberInfoMotorista = ()=>{
-    console.log('receberInfoMotorista');
-    //implementação funcionando com fetch!
-    // fetch(`http://192.168.15.165:8000/api/rabbit/obterInfo/motorista/SP/Sao_Carlos`,{
-    //     method: 'GET',
-    //     mode: 'cors',
-    //     headers:{
-    //       'Accept':'application/json',
-    //       'Content-type':'application/json'
-    //     }
-    //   });
-      
-
-
+      console.log('receberInfoMotorista');
       try{
-        // const events = new EventSource('http://192.168.15.165:8000/eventos');
         const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/SP/Sao_Carlos`);
-          
-        events.addEventListener('chatmessage', (event)=>{
+        events.addEventListener('getInfoMotorista', (event)=>{
           console.log('Atualização informações:\n');
-          console.log(`Usuário: ${event.data}`);
+          // console.log(`Usuário: ${event.data}`);
         })
         
       }catch(error){
@@ -77,6 +47,27 @@ function RabbitMQReceber() {
       }
   }
 
+  const receberInfoPassageiro = ()=>{
+    console.log('receberInfoPassageiro');
+    try{
+      const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/SP/Sao_Carlos`);
+      events.addEventListener('getInfoPassageiro', (event)=>{
+        console.log('Atualização informações:\n');
+        let objPassageiro = JSON.parse(event.data);
+        getCaronistasMarker(objPassageiro);
+      })
+      
+    }catch(error){
+      console.log(error);
+    }
+  }
+
+  useEffect(()=>{
+    console.log('...............................\n')
+    console.log('Atualização vetor caronistas...\n');
+    console.log(vetorCaronistas);
+    console.log('...............................\n')
+  }, [vetorCaronistas])
     return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -85,8 +76,8 @@ function RabbitMQReceber() {
           <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
             onPress={()=>{
-              // receiveMessage();
-              receberInfoMotorista();
+              // receberInfoMotorista();
+              receberInfoPassageiro();
             }}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Receber</Text>

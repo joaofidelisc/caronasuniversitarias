@@ -23,6 +23,8 @@ import { AndroidImportance } from '@notifee/react-native';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 import serverConfig from '../../../config/config.json';
 
+import EventSource from 'react-native-event-source';
+
 
 const {width, height} = Dimensions.get('screen');
 
@@ -54,7 +56,7 @@ function Oferecer({route, navigation}) {
     const [faltaPassageiros, setFaltaPassageiros] = useState(false);
     const [definiuEstado, setDefiniuEstado] = useState(false);
     const [infoCarregadas, setInfoCarregadas] = useState(false);
-
+    
     const [token, setToken] = useState(""); //Armazena o token atual obtido do dispositivo do usuário.
     //Informações do motorista e banco de dados
     const currentUser = auth().currentUser.uid;
@@ -68,6 +70,25 @@ function Oferecer({route, navigation}) {
     // const estado = route.params?.estado;
     // const destino = route.params?.destino;
     // const vagasDisponiveis = route.params?.vagas;
+
+
+    const getInfoPassageiro = ()=>{
+      const cidade_com_espaco = cidade;
+      const cidade_aux = cidade_com_espaco.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+      const cidade_param = cidade_aux.replace(/\s+/g, "_");
+      console.log('cidade_param:', cidade_param);
+      console.log('estado:', estado);
+      try{
+        const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/${cidade_param}`);
+        events.addEventListener('getInfoPassageiro', (event)=>{
+          console.log('Atualização informações:\n');
+          console.log(`Usuário: ${event.data}`);
+        })
+        //Desconectar ao voltar tela e ao trocar de tela!
+      }catch(error){
+        console.log(error);
+      }
+    }
 
     function carregarInformacoes(){
       if (route.params?.cidade == undefined || route.params?.estado == undefined || route.params?.destino == undefined){
@@ -119,6 +140,13 @@ function Oferecer({route, navigation}) {
       A lógica empregada é iterar por todos os marcadores na primeira vez e caso tenha algum marcador a ser inserido, apenas inserimos; 
       caso um marcador mude de posição, ele é apenas atualizado e, caso um caronista desista de buscar carona, o marcador é removido.
     */
+
+
+    function getCaronistasMarkerTeste(){
+        console.log('vetorCaronistas:', vetorCaronistas);
+    } 
+    
+    
     function getCaronistasMarker(){
     console.log("OFERECER!!!!!!!!!!!!! - getCaronistasMarker");
     let jaExiste = false;
@@ -851,6 +879,7 @@ function Oferecer({route, navigation}) {
     if (infoCarregadas){
       getMyLocation();
       getCaronistasMarker();
+      getInfoPassageiro();
     }else{
       carregarInformacoes();
     }
@@ -883,7 +912,9 @@ function Oferecer({route, navigation}) {
     }
   }, [token]);
 
-
+  useEffect(()=>{
+    getCaronistasMarkerTeste();
+  })
   // useEffect(()=>{
   //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
   //   if (numPassageirosABordo == 0){
@@ -929,7 +960,9 @@ function Oferecer({route, navigation}) {
                 <Marker
                   key={caronista.uid}
                   coordinate={{ latitude : caronista.latitude , longitude : caronista.longitude}}
-                  tappable={caronista.caronasAceitas.includes(currentUser)?true:false}
+                  tappable={caronista.caronasAceitas && currentUser && caronista.caronasAceitas.includes(currentUser)?true:false}
+                  // tappable={caronista.caronasAceitas?.includes(currentUser)}
+
                   onPress={()=>{
                     getDadosUsuario(caronista.uid, caronista.caronasAceitas, caronista.latitude, caronista.longitude);
                   }}  

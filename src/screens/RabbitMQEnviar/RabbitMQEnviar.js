@@ -12,10 +12,9 @@ const {width, height} = Dimensions.get('screen');
 function RabbitMQEnviar() {
   const [coordenadas, setCoordenadas] = useState([]);      
   
-  // http://192.168.150.223:8000/
   const enviarInfoMotorista = async()=>{
     console.log('Testando função enviarInfoMotorista!');
-    let reqs = await fetch('http://192.168.150.223:8000/api/rabbit/enviarInfo/motorista',{
+    let reqs = await fetch(`${serverConfig.urlRootNode}api/rabbit/enviarInfo/motorista`,{
         method: 'POST',
         headers:{
           'Accept':'application/json',
@@ -37,29 +36,37 @@ function RabbitMQEnviar() {
 
     let res = await reqs.json();
     console.log('req:', res);
-}
-
-
-  const sendMessageRabbit = async()=>{
-    fetch('http://192.168.15.165:8000/api/rabbit/enviar_mensagem', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ mensagem: 'JOÃO VITOR' })
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('-------------------------------------------------\n\n');
-      console.log('STATUS:', data.status);
-      console.log('-------------------------------------------------\n\n');
-    })
-    .catch(error => {
-      console.error(error);
-    });
   }
 
-       
+
+  const enviarInfoPassageiro = async()=>{
+    console.log('Testando função enviarInfoPassageiro');
+    let reqs = await fetch(`${serverConfig.urlRootNode}api/rabbit/enviarInfo/passageiro`,{
+        method: 'POST',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        },
+        body: JSON.stringify({
+          uid: 'CARD',
+          estado: 'SP',
+          cidade: 'São Carlos',
+          ativo: true,
+          caronasAceitas: "",
+          latitudeDestino: -4444444,
+          latitudePassageiro: -222222,
+          longitudeDestino: -3333333,
+          longitudePassageiro: -33333,
+          nomeDestino: "Kamzu",
+          ofertasCaronas: "",
+        })
+    });
+
+    let res = await reqs.json();
+    console.log('req:', res);
+  }
+
+    
     return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -68,8 +75,8 @@ function RabbitMQEnviar() {
           <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
             onPress={()=>{
-                // sendMessageRabbit();
-                enviarInfoMotorista();
+                // enviarInfoMotorista();
+                enviarInfoPassageiro();
               }}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Enviar</Text>
