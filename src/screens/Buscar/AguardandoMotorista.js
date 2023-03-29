@@ -134,7 +134,7 @@ function AguardandoMotorista({navigation, route}){
         })
         events.addEventListener('getInfoPassageiro', (event)=>{
           let objMotorista = JSON.parse(event.data);
-          if (Object.keys(objPassageiro).length == 0){
+          if (Object.keys(objMotorista).length == 0){
           }else{
             if (objMotorista.uid == uidMotorista){
               atualizaPosicaoMotorista(objMotorista);

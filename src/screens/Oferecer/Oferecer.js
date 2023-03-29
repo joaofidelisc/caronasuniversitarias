@@ -50,6 +50,9 @@ function Oferecer({route, navigation, children}) {
     const [exibeModalOferecer, setExibeModalOferecer] = useState(true); //Controla se o modal com o texto de oferecer carona para o caronista é exibido ou não;
     const [existePassageiroAbordo, setExistePassageiroAbordo] = useState(false); //Se existe algum passageiro a bordo, o botão de iniciar viagem é exibido;
     const [numPassageirosABordo, setNumPassageirosABordo] = useState(0); //Controla o número de passageiros que estão a bordo do veículo;
+    
+    const [uidsPassageirosABordo, setUidsPassageirosABordo] = useState([]);
+    
     const [ofertasAceitas, setOfertasAceitas] = useState([]); ////Vetor com todos os uids dos passageiros que aceitaram a carona do motorista corrente (motorista atual);
     const [arrayOfertasAceitas, setArrayOfertasAceitas] = useState([]);
     const [modalBuscarPassageiro, setModalBuscarPassageiro] = useState(false);
@@ -74,7 +77,34 @@ function Oferecer({route, navigation, children}) {
     // const vagasDisponiveis = route.params?.vagas;
 
 
-
+    const getInfoMotorista = ()=>{
+      const cidade_com_espaco = cidade;
+      const cidade_aux = cidade_com_espaco.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+      const cidade_param = cidade_aux.replace(/\s+/g, "_");
+      try{
+        const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/${estado}/${cidade_param}`);
+        events.addEventListener('open', ()=>{
+          console.log('Conexão estabelecida!');
+        })
+        events.addEventListener('getInfoPassageiro', (event)=>{
+          let objMotorista = JSON.parse(event.data);
+          if (Object.keys(objMotorista).length == 0){
+          }else{
+            if (objMotorista.uid == currentUser){
+              caronasAceitas(objMotorista);
+              //buscarPassageiro(); -> talvez
+              //embarquePassageiro(); ->talvez
+              //desistir da oferta(); ->talvez
+            }
+          }
+        })
+        events.addEventListener('error', error => {
+          console.log('Erro em getInfoPassageiro', error);
+        });
+      }catch(error){
+        console.log(error);
+      }
+    }
 
     const getInfoPassageiro = ()=>{
       const cidade_com_espaco = cidade;
@@ -99,6 +129,32 @@ function Oferecer({route, navigation, children}) {
       }catch(error){
         console.log(error);
       }
+    }
+
+    const enviarInfoMotorista = async(uidCaronista, caronistasAbordo, latitudeMotorista, longitudeMotorista)=>{
+      console.log('Testando função enviarInfoMotorista!');
+      let reqs = await fetch(`${serverConfig.urlRootNode}api/rabbit/enviarInfo/motorista`,{
+          method: 'POST',
+          headers:{
+            'Accept':'application/json',
+            'Content-type':'application/json'
+          },
+          body: JSON.stringify({
+            uid: currentUser,
+            estado: estado,
+            cidade: cidade,
+            ativo: true,
+            buscandoCaronista: uidCaronista,
+            // caronasAceitas: "",
+            caronistasAbordo: caronistasAbordo,
+            latitudeMotorista: latitudeMotorista,
+            longitudeMotorista: longitudeMotorista,
+            // nomeDestino: "Centro, São Carlos - SP, Brasil"
+          })
+      });
+  
+      let res = await reqs.json();
+      console.log('req:', res);
     }
 
 
@@ -237,11 +293,13 @@ function Oferecer({route, navigation, children}) {
   console.log("OFERECER!!!!!!!!!!!!! - atualizaEstado");
    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
    try{
-     reference.update({
-       latitudeMotorista: region.latitude,
-       longitudeMotorista: region.longitude,
-       ativo: true,
-      });
+    //  reference.update({
+    //    latitudeMotorista: region.latitude,
+    //    longitudeMotorista: region.longitude,
+    //    ativo: true,
+    //   });
+      //Corrigir uidCaronista
+      enviarInfoMotorista('', region.latitude, region.longitude);
     }catch(error){
       console.log('atualizaEstado, ERRO:', error.code);
     }
@@ -635,6 +693,8 @@ function Oferecer({route, navigation, children}) {
     // }
     
 
+    
+
     //Depende do passageiro escrever na fila do Rabbit do motorista.
     const caronasAceitas = async()=>{
       let strUIDs = '';
@@ -671,6 +731,42 @@ function Oferecer({route, navigation, children}) {
     }
 
 
+    // //Depende da parte do Guilherme;
+    // const caronasAceitas = async(data)=>{
+    //   let strUIDs = '';
+    //   let arrayUIDs = [];
+    //   // const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`);
+    //   let strCaronasAceitas = data.caronasAceitas;
+    //   if (oferecerMaisCaronas){
+    //     // reference.on('value', function(snapshot){
+    //     if (strCaronasAceitas != '' && strCaronasAceitas != undefined){
+    //       if (vagasDisponiveis>numCaronasAceitas){
+    //         if (!ofertasAceitas.includes(snapshot.val())){
+    //           strUIDs = snapshot.val();
+    //           arrayUIDs = strUIDs.split(', ');
+    //           setArrayOfertasAceitas(arrayUIDs);
+    //           setOfertasAceitas(snapshot.val());
+    //           setNumCaronasAceitas(arrayUIDs.length);
+    //           if (cancelarOferta){
+    //             setCancelarOferta(false);
+    //           }
+    //         }else if (vagasDisponiveis == numCaronasAceitas){
+    //           console.log('vagas esgotadas!');
+    //         }
+    //       }else{
+    //         setOferecerMaisCaronas(false);
+    //         setExibeModalOferecer(false);
+    //         setModalVisible(!modalVisible);
+    //       }
+    //     }else{
+    //       //complementar essa função aqui;
+    //       //não vai acontecer essa situação, mas quando zerar o vetor de caronasAceitas?
+    //       setNumCaronasAceitas(0);
+    //     }
+    //     // })  
+    //   }
+    // }
+
   /*
     A função abaixo é responsável por impedir que um passageiro dê carona a ele mesmo como motorista;
     Esse 'impedimento' é realizado, verificando o banco de dados dos passageiros e excluindo-o caso o motorista esteja incluso lá.
@@ -705,9 +801,9 @@ function Oferecer({route, navigation, children}) {
     });
     //
     try{
-      reference.update({
-        buscandoCaronista: uidCaronista,
-      })
+      // reference.update({
+      //   buscandoCaronista: uidCaronista,
+      // })
       buscarPassageiro(latitude, longitude, nome, uidCaronista);
     }catch(error){
       console.log('erro em rotaPassageiro');
@@ -745,24 +841,21 @@ function Oferecer({route, navigation, children}) {
     Ao chegar no passageiro, é possível embarcá-lo, pressionando no botão passageiro(a) a bordo.
   */
   const buscarPassageiro = async(latitude, longitude, nome, uidCaronista)=>{
-    console.log("OFERECER!!!!!!!!!!!!!");
-    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
     let distPassageiroMotorista = await distanciaPassageiroMotorista(latitude, longitude);
     let tituloNotificacao = '';
-    let mensagemNotificacao = '';    
-    reference.once('value', function(snapshot){
-      reference.update({
-        buscandoCaronista: uidCaronista
-    })
-      if (distPassageiroMotorista < 6 && !snapshot.val().caronistasAbordo.includes(uidCaronista)){
-        setEmbarcarPassageiro(uidCaronista);
-        tituloNotificacao = 'Seu motorista chegou!';
-        mensagemNotificacao = 'Embarque no veículo';
-        sendNotification(uidCaronista, tituloNotificacao, mensagemNotificacao);
-        setModalVisible(false);
-      }
-      })
+    let mensagemNotificacao = '';
+    enviarInfoMotorista(uidCaronista);
+    
+    //if (distPassageiroMotorista < 6 && !snapshot.val().caronistasAbordo.includes(uidCaronista)){
+    //criar array de caronistasAbordo;
+    if (distPassageiroMotorista < 6 ){
+      setEmbarcarPassageiro(uidCaronista);
+      tituloNotificacao = 'Seu motorista chegou!';
+      mensagemNotificacao = 'Embarque no veículo';
+      sendNotification(uidCaronista, tituloNotificacao, mensagemNotificacao);
+      setModalVisible(false);
     }
+  }
     
 
     /*
@@ -789,6 +882,7 @@ function Oferecer({route, navigation, children}) {
           caronistasAbordo: listaPassageirosAtualizada,
           buscandoCaronista: '',
         });
+        
         // setCaronistas(vetorCaronistas.filter((uid)=>(uid.uid != uidPassageiro)));
         setPassageiros([...passageiros, uidPassageiro]);
         setArrayOfertasAceitas(arrayOfertasAceitas.filter((uid)=>(uid != uidPassageiro)));
