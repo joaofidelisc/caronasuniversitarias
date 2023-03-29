@@ -1,6 +1,6 @@
 # caronasuniversitarias
 
-Aplicativo sendo desenvolvido em React Native com Javascript para estudo.
+Aplicativo sendo desenvolvido em React Native com JavaScript para servir como ferramenta de pesquisa.
 
 Como executar o aplicativo em meu celular?
 
