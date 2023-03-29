@@ -24,13 +24,13 @@ connectAndCreateCh();
     const cidade_aux = cidade_com_espaco.normalize("NFD").replace(/\p{Diacritic}/gu, "");
     const cidade = cidade_aux.replace(/\s+/g, "_");
     const ativo = req.body.ativo;
-    const caronasAceitas = req.body.caronasAceitas;
-    const latitudeDestino = req.body.latitudeDestino;
-    const latitudePassageiro = req.body.latitudePassageiro;
-    const longitudeDestino = req.body.longitudeDestino;
-    const longitudePassageiro = req.body.longitudePassageiro;
-    const nomeDestino = req.body.nomeDestino;
-    const ofertasCaronas = req.body.ofertasCaronas;
+    const caronasAceitas = req.body.caronasAceitas || "";
+    const latitudeDestino = req.body.latitudeDestino || null;
+    const latitudePassageiro = req.body.latitudePassageiro || null;
+    const longitudeDestino = req.body.longitudeDestino || null;
+    const longitudePassageiro = req.body.longitudePassageiro || null;
+    const nomeDestino = req.body.nomeDestino || "";
+    const ofertasCaronas = req.body.ofertasCaronas || "";
 
     const objInfo = {
       uid: uid,
@@ -58,7 +58,6 @@ connectAndCreateCh();
 
   });
   
-  //antes de enviar um objeto é necessário serializar (usar JSON.stringfy);
   router.post('/enviarInfo/motorista', (req, res) =>{
     const uid = req.body.uid;
     const estado = req.body.estado;
@@ -110,7 +109,7 @@ connectAndCreateCh();
     console.log('Rota obterInfo/motorista');
     const estado = req.params.estado;
     const cidade = req.params.cidade;
-    const queueName = `${estado}_${cidade}_motoristas`;
+    const queueName = estado+'_'+cidade+'_motoristas';
   
     ch.assertExchange('localizacoes', 'direct', { durable: false });
     ch.assertQueue(queueName, { durable: false });

@@ -48,16 +48,16 @@ function RabbitMQEnviar() {
           'Content-type':'application/json'
         },
         body: JSON.stringify({
-          uid: 'CARD',
+          uid: '0VtQXRifF8PdbcKCrthdOtlnah12',
           estado: 'SP',
           cidade: 'São Carlos',
           ativo: true,
           caronasAceitas: "",
-          latitudeDestino: -4444444,
-          latitudePassageiro: -222222,
-          longitudeDestino: -3333333,
-          longitudePassageiro: -33333,
-          nomeDestino: "Kamzu",
+          latitudeDestino: -22.0094691,
+          latitudePassageiro: -21.9852354,
+          longitudeDestino: -47.891227,
+          longitudePassageiro: -47.8952023,
+          nomeDestino: "Kamzu, São Carlos - SP, Brasil",
           ofertasCaronas: "",
         })
     });
@@ -65,8 +65,7 @@ function RabbitMQEnviar() {
     let res = await reqs.json();
     console.log('req:', res);
   }
-
-    
+      
     return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -75,8 +74,8 @@ function RabbitMQEnviar() {
           <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
             onPress={()=>{
-                // enviarInfoMotorista();
-                enviarInfoPassageiro();
+                enviarInfoMotorista();
+                // enviarInfoPassageiro();
               }}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Enviar</Text>

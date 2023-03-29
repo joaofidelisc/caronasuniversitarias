@@ -31,6 +31,7 @@ function AguardandoMotorista({navigation, route}){
     const [placaVeiculoMotorista, setPlacaVeiculoMotorista] = useState(null);
     const [motoristaUrl, setMotoristaUrl] = useState(null);
 
+    const [infoMotorista, setInfoMotorista] = useState({});
     // const cidade = route.params?.cidade;
     // const estado = route.params?.estado;
     // const uidMotorista = route.params?.uidMotorista;
@@ -92,22 +93,83 @@ function AguardandoMotorista({navigation, route}){
         });
     }
 
-    const motoristaMeBuscando = async()=>{
-        const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}/buscandoCaronista`);
-        reference.on('value', function(snapshot){
-          if (snapshot.exists()){
-            if (snapshot.val().includes(currentUser) && !motoristaAcaminho){
-              setMotoristaAcaminho(true);
+    //Função getPosicaoMotorista substituída por essa.
+    function atualizaPosicaoMotorista(data){
+      setPosicaoMotorista({
+        latitude: data.latitudeMotorista,
+        longitude: data.longitudeMotorista,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421  
+      })
+    }
+
+    const motoristaMeBuscando = async(data)=>{
+      let passageirosBuscando = data.buscandoCaronista;
+      if (passageirosBuscando.includes(currentUser) && !motoristaAcaminho){
+        setMotoristaAcaminho(true);
+      }
+    }
+
+    const viagemIniciada = async(data)=>{
+      let caronistasAbordo = data.caronistasAbordo;
+      if (caronistasAbordo.includes(currentUser) && !viagemEmAndamento){
+        setViagemEmAndamento(true);
+        navigateToViagemEmAndamento();
+      }else{
+        console.log('Viagem ainda não começou!');
+        if (viagemEmAndamento){
+          navigateToViagemEmAndamento();
+        }
+      }
+    }
+
+    const getInfoMotorista = ()=>{
+      const cidade_com_espaco = cidade;
+      const cidade_aux = cidade_com_espaco.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+      const cidade_param = cidade_aux.replace(/\s+/g, "_");
+      try{
+        const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/${estado}/${cidade_param}`);
+        events.addEventListener('open', ()=>{
+          console.log('Conexão estabelecida!');
+        })
+        events.addEventListener('getInfoPassageiro', (event)=>{
+          let objMotorista = JSON.parse(event.data);
+          if (Object.keys(objPassageiro).length == 0){
+          }else{
+            if (objMotorista.uid == uidMotorista){
+              atualizaPosicaoMotorista(objMotorista);
+              motoristaMeBuscando(objMotorista);
+              viagemIniciada(objMotorista);
             }
+          // getPosicaoMotorista();
+          // motoristaMeBuscando();
+          // viagemIniciada();
           }
         })
+        events.addEventListener('error', error => {
+          console.log('Erro em getInfoPassageiro', error);
+        });
+      }catch(error){
+        console.log(error);
       }
+    }
+
+    // const motoristaMeBuscando = async()=>{
+    //     const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}/buscandoCaronista`);
+    //     reference.on('value', function(snapshot){
+    //       if (snapshot.exists()){
+    //         if (snapshot.val().includes(currentUser) && !motoristaAcaminho){
+    //           setMotoristaAcaminho(true);
+    //         }
+    //       }
+    //     })
+    //   }
       
     
     const navigateToViagemEmAndamento = async()=>{
-      const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
+      // const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
       if (viagemEmAndamento){
-        reference_motorista.off('value');
+        // reference_motorista.off('value');
         console.log('--------------------------------------------');
         console.log('uidMOTORISTA::::', uidMotorista);
         console.log('MOTORISTAURL AGUARDANDO MOTORISTA:', motoristaUrl);
@@ -116,27 +178,26 @@ function AguardandoMotorista({navigation, route}){
       }
     }
 
-    const viagemIniciada = async()=>{
-        const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
-        try{
-          reference.on('value', function(snapshot){
-            if (snapshot.child('caronistasAbordo').exists()){
-              if (snapshot.val().caronistasAbordo.includes(currentUser) && !viagemEmAndamento){
-                setViagemEmAndamento(true);
-                navigateToViagemEmAndamento();
-              }else{
-                console.log('viagem ainda não começou!');
-                if (viagemEmAndamento){
-                  navigateToViagemEmAndamento();
-                }
-              }  
-            }
-          })
-        }catch(error){
-          console.log('erro em viagemIniciada');
-        }
-
-    }
+    // const viagemIniciada = async()=>{
+    //     const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
+    //     try{
+    //       reference.on('value', function(snapshot){
+    //         if (snapshot.child('caronistasAbordo').exists()){
+    //           if (snapshot.val().caronistasAbordo.includes(currentUser) && !viagemEmAndamento){
+    //             setViagemEmAndamento(true);
+    //             navigateToViagemEmAndamento();
+    //           }else{
+    //             console.log('viagem ainda não começou!');
+    //             if (viagemEmAndamento){
+    //               navigateToViagemEmAndamento();
+    //             }
+    //           }  
+    //         }
+    //       })
+    //     }catch(error){
+    //       console.log('erro em viagemIniciada');
+    //     }
+    // }
     
 
     function atualizaEstado(){
@@ -172,30 +233,30 @@ function AguardandoMotorista({navigation, route}){
         }
       }
     
-    function getPosicaoMotorista(){
-      console.log('----------------------------------')
-      console.log('dentro de getPosicaoMotorista:');
-      console.log('uidMotorista:', uidMotorista);
-      //UIDMOTORISTA NÃO ESTÁ ATUALIZANDO...
-      console.log('cidade:', cidade, 'estado:', estado);
-      const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
-      try{
-        //bug aqui
-        reference.on('value', function(snapshot){
-          if (snapshot.exists()){
-            setPosicaoMotorista({
-              latitude: snapshot.val().latitudeMotorista,
-              longitude: snapshot.val().longitudeMotorista,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421
-            })
-          }
-        })
-      }catch(error){
-        console.log('erro em getPosicaoMotorista');
-      }
-      console.log('----------------------------------')
-    }
+    // function getPosicaoMotorista(){
+    //   console.log('----------------------------------')
+    //   console.log('dentro de getPosicaoMotorista:');
+    //   console.log('uidMotorista:', uidMotorista);
+    //   //UIDMOTORISTA NÃO ESTÁ ATUALIZANDO...
+    //   console.log('cidade:', cidade, 'estado:', estado);
+    //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
+    //   try{
+    //     //bug aqui
+    //     reference.on('value', function(snapshot){
+    //       if (snapshot.exists()){
+    //         setPosicaoMotorista({
+    //           latitude: snapshot.val().latitudeMotorista,
+    //           longitude: snapshot.val().longitudeMotorista,
+    //           latitudeDelta: 0.0922,
+    //           longitudeDelta: 0.0421
+    //         })
+    //       }
+    //     })
+    //   }catch(error){
+    //     console.log('erro em getPosicaoMotorista');
+    //   }
+    //   console.log('----------------------------------')
+    // }
 
     useEffect(()=>{
       const defineEstadoAtual = async()=>{
@@ -208,9 +269,10 @@ function AguardandoMotorista({navigation, route}){
     useEffect(()=>{
         getMyLocation();
         if (infoCarregadas){
-          getPosicaoMotorista();
-          motoristaMeBuscando();
-          viagemIniciada();
+          getInfoMotorista();
+          // getPosicaoMotorista();
+          // motoristaMeBuscando();
+          // viagemIniciada();
         }else{
           console.log('é necessário carregar as informações');
           carregarInformacoes();

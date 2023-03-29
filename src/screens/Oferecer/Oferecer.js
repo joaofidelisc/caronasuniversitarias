@@ -24,11 +24,13 @@ import EstadoApp from '../../services/sqlite/EstadoApp';
 import serverConfig from '../../../config/config.json';
 
 import EventSource from 'react-native-event-source';
+import { createContext } from 'react';
 
 
 const {width, height} = Dimensions.get('screen');
+const DataContext = createContext();
 
-function Oferecer({route, navigation}) {
+function Oferecer({route, navigation, children}) {
     const [region, setRegion] = useState(null);  //Coordenadsa atuais do motorista (latitude e longitude);
     const [modalVisible, setModalVisible] = useState(false); //Define se o modal é mostrado ou não;
     const [imageUser, setImageUser] = useState('');  //Define a url da imagem do possível caronista para cada caronista e para cada vez que é chamada a função buscaUsuario;
@@ -72,21 +74,49 @@ function Oferecer({route, navigation}) {
     // const vagasDisponiveis = route.params?.vagas;
 
 
+
+
     const getInfoPassageiro = ()=>{
       const cidade_com_espaco = cidade;
       const cidade_aux = cidade_com_espaco.normalize("NFD").replace(/\p{Diacritic}/gu, "");
       const cidade_param = cidade_aux.replace(/\s+/g, "_");
-      console.log('cidade_param:', cidade_param);
-      console.log('estado:', estado);
+      // let objPassageiro = {};
       try{
         const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/${cidade_param}`);
-        events.addEventListener('getInfoPassageiro', (event)=>{
-          console.log('Atualização informações:\n');
-          console.log(`Usuário: ${event.data}`);
+        events.addEventListener('open', ()=>{
+          console.log('Conexão estabelecida!');
         })
-        //Desconectar ao voltar tela e ao trocar de tela!
+        events.addEventListener('getInfoPassageiro', (event)=>{
+          let objPassageiro = JSON.parse(event.data);
+          if (Object.keys(objPassageiro).length == 0){
+          }else{
+            getCaronistasMarker(objPassageiro);
+          }
+        })
+        events.addEventListener('error', error => {
+          console.log('Erro em getInfoPassageiro', error);
+        });
       }catch(error){
         console.log(error);
+      }
+    }
+
+
+    function getCaronistasMarker(data){
+      const index = vetorCaronistas.findIndex(obj => obj.uid === data.uid);
+      if (index >= 0){
+        vetorCaronistas[index].latitude = data.latitudePassageiro;
+        vetorCaronistas[index].longitude = data.longitudePassagero;
+        vetorCaronistas[index].ofertasCaronas = data.ofertasCaronas;
+      }else{
+        setCaronistas([...vetorCaronistas, {
+          latitude: data.latitudePassageiro,
+          longitude: data.longitudePassageiro,
+          uid: data.uid,
+          caronasAceitas: data.caronasAceitas,
+          nomeDestino: data.nomeDestino,
+          ofertasCaronas: data.ofertasCaronas
+        }])
       }
     }
 
@@ -142,61 +172,61 @@ function Oferecer({route, navigation}) {
     */
 
 
-    function getCaronistasMarkerTeste(){
-        console.log('vetorCaronistas:', vetorCaronistas);
-    } 
+    // function getCaronistasMarkerTeste(){
+    //     console.log('vetorCaronistas:', vetorCaronistas);
+    // } 
     
     
-    function getCaronistasMarker(){
-    console.log("OFERECER!!!!!!!!!!!!! - getCaronistasMarker");
-    let jaExiste = false;
-    if (jaExiste == true){
-      jaExiste = false;
-    }
-    let filhoRemovido = '';
-    if (filhoRemovido != ''){
-      filhoRemovido = '';
-    }
-    try{
-      database().ref().child(`${estado}/${cidade}/Passageiros`).on('child_removed', function(snapshot){
-        setCaronistas(vetorCaronistas.filter((uid)=>(uid.uid != snapshot.key)));
-      })
-      database().ref().child(`${estado}/${cidade}/Passageiros`).on('value', function(snapshot){
-        if (snapshot.exists()){
-          snapshot.forEach(function(userSnapshot){       
-            if (vetorCaronistas.length == 0){
-              setCaronistas([{
-                latitude: userSnapshot.val().latitudePassageiro,
-                longitude: userSnapshot.val().longitudePassageiro,
-                uid: userSnapshot.key,  
-                caronasAceitas: userSnapshot.val().caronasAceitas,        
-                }
-              ])
-            }
-            else{
-              vetorCaronistas.some(caronista=>{
-                if (caronista.uid === userSnapshot.key){
-                  vetorCaronistas[vetorCaronistas.indexOf(caronista)].latitude = userSnapshot.val().latitudePassageiro;
-                  vetorCaronistas[vetorCaronistas.indexOf(caronista)].longitude = userSnapshot.val().longitudePassageiro;
-                  jaExiste = true;
-                }
-              })
-              if (!jaExiste){
-                setCaronistas([...vetorCaronistas, {
-                  latitude: userSnapshot.val().latitudePassageiro,
-                  longitude: userSnapshot.val().longitudePassageiro,
-                  uid: userSnapshot.key,
-                  caronasAceitas: userSnapshot.val().caronasAceitas,      
-                  }
-                ])
-              }
-            }
-          })
-        }
-      })
-    }catch(error){
-    }
-  }
+  //   function getCaronistasMarker(){
+  //   let jaExiste = false;
+  //   if (jaExiste == true){
+  //     jaExiste = false;
+  //   }
+  //   let filhoRemovido = '';
+  //   if (filhoRemovido != ''){
+  //     filhoRemovido = '';
+  //   }
+  //   try{
+  //     database().ref().child(`${estado}/${cidade}/Passageiros`).on('child_removed', function(snapshot){
+  //       setCaronistas(vetorCaronistas.filter((uid)=>(uid.uid != snapshot.key)));
+  //     })
+  //     database().ref().child(`${estado}/${cidade}/Passageiros`).on('value', function(snapshot){
+  //       if (snapshot.exists()){
+  //         snapshot.forEach(function(userSnapshot){       
+  //           if (vetorCaronistas.length == 0){
+  //             setCaronistas([{
+  //               latitude: userSnapshot.val().latitudePassageiro,
+  //               longitude: userSnapshot.val().longitudePassageiro,
+  //               uid: userSnapshot.key,  
+  //               caronasAceitas: userSnapshot.val().caronasAceitas,        
+  //               }
+  //             ])
+  //           }
+  //           else{
+  //             vetorCaronistas.some(caronista=>{
+  //               if (caronista.uid === userSnapshot.key){
+  //                 vetorCaronistas[vetorCaronistas.indexOf(caronista)].latitude = userSnapshot.val().latitudePassageiro;
+  //                 vetorCaronistas[vetorCaronistas.indexOf(caronista)].longitude = userSnapshot.val().longitudePassageiro;
+  //                 jaExiste = true;
+  //               }
+  //             })
+  //             if (!jaExiste){
+  //               setCaronistas([...vetorCaronistas, {
+  //                 latitude: userSnapshot.val().latitudePassageiro,
+  //                 longitude: userSnapshot.val().longitudePassageiro,
+  //                 uid: userSnapshot.key,
+  //                 caronasAceitas: userSnapshot.val().caronasAceitas,      
+  //                 }
+  //               ])
+  //             }
+  //           }
+  //         })
+  //       }
+  //     })
+  //   }catch(error){
+  //     console.log(error);
+  //   }
+  // }
 
 
   /*
@@ -218,40 +248,68 @@ function Oferecer({route, navigation}) {
   }
 
 
-  /*
-    Função responsável por definir um estado inicial para o motorista, ou seja, sua posição inicial ao iniciar o App;
-    Quando o app é iniciado, é necessário verificar se o banco de dados para esse motorista já existe e, caso contrário, ele deve ser criado;
-    O banco de dados nessa parte utilizado é em tempo real (Realtime Database).
-  */
-  function estadoInicial(){
-    console.log("OFERECER!!!!!!!!!!!!! - estadoInicial");
-    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-    if (!existeBanco){
-      try{
-        reference.once('value').then(function(snapshot){
-          setExisteBanco(snapshot.exists());
-        })
-      }catch(error){
-        console.log('erro em estadoInicial()');
-      }
-    }
+  // const atualizaEstado = async()=>{
+  //   console.log('Testando função enviarInfoMotorista!');
+  //   let reqs = await fetch(`${serverConfig.urlRootNode}api/rabbit/enviarInfo/motorista`,{
+  //       method: 'POST',
+  //       headers:{
+  //         'Accept':'application/json',
+  //         'Content-type':'application/json'
+  //       },
+  //       body: JSON.stringify({
+  //         uid: currentUser,
+  //         estado: estado,
+  //         cidade: cidade,
+  //         ativo: true,
+  //         buscandoCaronista: "",
+  //         caronasAceitas: "",
+  //         caronistasAbordo: "",
+  //         latitudeMotorista: region.latitude || 0, //atualizar o valor default
+  //         longitudeMotorista: region.longitude || 0, //atualizar o valor default
+  //         nomeDestino: destino
+  //       })
+  //   });
 
-    if (!existeBanco){
-      try{
-        reference.set({
-          latitudeMotorista: region.latitude,
-          longitudeMotorista: region.longitude,
-          caronasAceitas:'',
-          ativo: true,
-          nomeDestino: destino,
-          buscandoCaronista: '',
-          caronistasAbordo: '',
-        });
-      }catch(error){
-        console.log('atualizaEstado, ERRO:', error.code);
-      }
-    }
-  }
+  //   let res = await reqs.json();
+  //   console.log('req:', res);
+  // }
+
+  //Função de estado inicial não é mais necessária, pois o RabbitMQ garante a criação da fila!
+
+  // /*
+  //   Função responsável por definir um estado inicial para o motorista, ou seja, sua posição inicial ao iniciar o App;
+  //   Quando o app é iniciado, é necessário verificar se o banco de dados para esse motorista já existe e, caso contrário, ele deve ser criado;
+  //   O banco de dados nessa parte utilizado é em tempo real (Realtime Database).
+  // */
+  // function estadoInicial(){
+  //   console.log("OFERECER!!!!!!!!!!!!! - estadoInicial");
+  //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+  //   if (!existeBanco){
+  //     try{
+  //       reference.once('value').then(function(snapshot){
+  //         setExisteBanco(snapshot.exists());
+  //       })
+  //     }catch(error){
+  //       console.log('erro em estadoInicial()');
+  //     }
+  //   }
+
+  //   if (!existeBanco){
+  //     try{
+  //       reference.set({
+  //         latitudeMotorista: region.latitude,
+  //         longitudeMotorista: region.longitude,
+  //         caronasAceitas:'',
+  //         ativo: true,
+  //         nomeDestino: destino,
+  //         buscandoCaronista: '',
+  //         caronistasAbordo: '',
+  //       });
+  //     }catch(error){
+  //       console.log('atualizaEstado, ERRO:', error.code);
+  //     }
+  //   }
+  // }
   
 
   /*
@@ -272,10 +330,10 @@ function Oferecer({route, navigation}) {
         enableHighAccuracy:false,
         timeout:2000,
       })
-      if (!existeBanco){
-        console.log('NÃO EXISTE BANCO...');
-        estadoInicial();
-      }
+      // if (!existeBanco){
+      //   console.log('NÃO EXISTE BANCO...');
+      //   estadoInicial();
+      // }
       atualizaEstado();
     }catch(error){
       console.log(error.code);
@@ -343,12 +401,29 @@ function Oferecer({route, navigation}) {
     Função responsável por obter o destino do caronista com base em seu UserID;
     Essa função é chamada apenas quando um marcador é pressionado.
   */
+  // const getDestinoCaronista =  async(userUID)=>{
+  //   console.log("OFERECER!!!!!!!!!!!!! - getDestinoCaronista");
+
+  //   try{
+  //     await database().ref(`${estado}/${cidade}/Passageiros/${userUID}`).once('value').then(snapshot=>{
+  //       setNomeDestinoCaronista(snapshot.val().nomeDestino);
+  //     })
+  //   }catch(error){
+  //     console.log(error.code);
+  //   }
+  // }
+
+
   const getDestinoCaronista =  async(userUID)=>{
-    console.log("OFERECER!!!!!!!!!!!!! - getDestinoCaronista");
+    console.log("ENTRANDO EM GETDESTINOCARONISTA!!");
     try{
-      await database().ref(`${estado}/${cidade}/Passageiros/${userUID}`).once('value').then(snapshot=>{
-        setNomeDestinoCaronista(snapshot.val().nomeDestino);
-      })
+      const caronista = vetorCaronistas.find(obj => obj.uid == userUID);
+      if (caronista){
+        console.log("caronista.nomeDestino:", caronista.nomeDestino);
+        setNomeDestinoCaronista(caronista.nomeDestino);
+        // return caronista.nomeDestino;
+      }
+      // return null;
     }catch(error){
       console.log(error.code);
     }
@@ -406,7 +481,6 @@ function Oferecer({route, navigation}) {
     Busca o nome, foto de perfil, destino e classificação e define o UID no hook para ser possível oferecer carona.
   */
   const getDadosUsuario = async(userUID, caronaAceita, latitude, longitude)=>{
-    console.log("OFERECER!!!!!!!!!!!!! - getDadosUsuario");
     if (exibeModalOferecer == false){
       setExibeModalOferecer(true);
     }
@@ -447,6 +521,55 @@ function Oferecer({route, navigation}) {
     A ideia é concatenar a string da caronas já existente em 'ofertasCaronas' do passageiro com o UID do motorista, mantendo assim, os demais motoristas oferecedores
     de carona.
   */
+  // function oferecerCarona(){
+  //   console.log("OFERECER!!!!!!!!!!!!! - oferecerCarona");
+  //   let tituloNotificacao = 'Opa! Um motorista te ofereceu carona!';
+  //   let mensagemNotificacao = 'Encontramos uma carona para você!';
+  //   let listaCaronas = '';
+  //   setModalVisible(false);
+  //   try{
+  //     database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).once('value').then(snapshot=>{
+  //       listaCaronas = snapshot.val().ofertasCaronas;
+  //       if (!listaCaronas.includes(currentUser)){
+  //         if (listaCaronas == ''){
+  //           listaCaronas = currentUser;
+  //         }else{
+  //           listaCaronas = listaCaronas.concat(', ',currentUser); 
+  //         }
+  //         sendNotification(uidPassageiro, tituloNotificacao, mensagemNotificacao);
+  //       }        
+  //       database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).update({
+  //         ofertasCaronas: listaCaronas
+  //       });
+  //     })
+  //   }catch(error){
+  //     console.log('Deu algum erro aqui :(');
+  //   }
+  // }
+  
+  
+
+  const enviarInfoPassageiro = async(uid, estado, cidade, ofertasCaronas)=>{
+    console.log('função enviarInfoPassageiro');
+    let reqs = await fetch(`${serverConfig.urlRootNode}api/rabbit/enviarInfo/passageiro`,{
+        method: 'POST',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
+        },
+        body: JSON.stringify({
+          uid: uid,
+          estado: estado,
+          cidade: cidade,
+          ativo: true,
+          ofertasCaronas: ofertasCaronas,
+        })
+    });
+
+    let res = await reqs.json();
+    console.log('req:', res);
+  }
+
   function oferecerCarona(){
     console.log("OFERECER!!!!!!!!!!!!! - oferecerCarona");
     let tituloNotificacao = 'Opa! Um motorista te ofereceu carona!';
@@ -454,8 +577,9 @@ function Oferecer({route, navigation}) {
     let listaCaronas = '';
     setModalVisible(false);
     try{
-      database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).once('value').then(snapshot=>{
-        listaCaronas = snapshot.val().ofertasCaronas;
+      const caronista = vetorCaronistas.find(obj => obj.uid == uidPassageiro);
+      if (caronista){
+        listaCaronas = caronista.ofertasCaronas;
         if (!listaCaronas.includes(currentUser)){
           if (listaCaronas == ''){
             listaCaronas = currentUser;
@@ -463,16 +587,14 @@ function Oferecer({route, navigation}) {
             listaCaronas = listaCaronas.concat(', ',currentUser); 
           }
           sendNotification(uidPassageiro, tituloNotificacao, mensagemNotificacao);
-        }        
-        database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).update({
-          ofertasCaronas: listaCaronas
-        });
-      })
+        }
+        enviarInfoPassageiro(uidPassageiro, estado, cidade, listaCaronas);        
+      }
     }catch(error){
-      console.log('Deu algum erro aqui :(');
+      console.log('erro em oferecerCarona');
+      console.log(error.code);
     }
   }
-
 
   /*
     A função abaixo é responsável por criar e atualizar um vetor de caronistas que aceitaram a carona proposta, chamado de passageiros;
@@ -512,6 +634,8 @@ function Oferecer({route, navigation}) {
     //   }
     // }
     
+
+    //Depende do passageiro escrever na fila do Rabbit do motorista.
     const caronasAceitas = async()=>{
       let strUIDs = '';
       let arrayUIDs = [];
@@ -551,18 +675,18 @@ function Oferecer({route, navigation}) {
     A função abaixo é responsável por impedir que um passageiro dê carona a ele mesmo como motorista;
     Esse 'impedimento' é realizado, verificando o banco de dados dos passageiros e excluindo-o caso o motorista esteja incluso lá.
   */
-  const excluiBancoMotoristaPassageiro = async()=>{
-    console.log("OFERECER!!!!!!!!!!!!! - excluiBancoMotoristaPassageiro");
-    // const currentUser = auth().currentUser.uid;
-    const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
-    try{
-      reference.on('child_added', snapshot=>{
-        reference.remove();
-      })
-    }catch(error){
-      console.log('excluiBancoMotoristaPassageiro');
-    }
-  }
+  // const excluiBancoMotoristaPassageiro = async()=>{
+  //   console.log("OFERECER!!!!!!!!!!!!! - excluiBancoMotoristaPassageiro");
+  //   // const currentUser = auth().currentUser.uid;
+  //   const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+  //   try{
+  //     reference.on('child_added', snapshot=>{
+  //       reference.remove();
+  //     })
+  //   }catch(error){
+  //     console.log('excluiBancoMotoristaPassageiro');
+  //   }
+  // }
   
 
   /*
@@ -868,9 +992,7 @@ function Oferecer({route, navigation}) {
     console.log('vagas ofertas:', vagasDisponiveis);
     console.log('vagas ocupadas:', numCaronasAceitas);
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
-    if (infoCarregadas){
-      estadoInicial();
-    }else{
+    if (!infoCarregadas){
       carregarInformacoes();
     }
   }, [infoCarregadas]);
@@ -878,7 +1000,7 @@ function Oferecer({route, navigation}) {
   useEffect(()=>{
     if (infoCarregadas){
       getMyLocation();
-      getCaronistasMarker();
+      // getCaronistasMarker();
       getInfoPassageiro();
     }else{
       carregarInformacoes();
@@ -912,9 +1034,9 @@ function Oferecer({route, navigation}) {
     }
   }, [token]);
 
-  useEffect(()=>{
-    getCaronistasMarkerTeste();
-  })
+  // useEffect(()=>{
+  //   getCaronistasMarkerTeste();
+  // })
   // useEffect(()=>{
   //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
   //   if (numPassageirosABordo == 0){

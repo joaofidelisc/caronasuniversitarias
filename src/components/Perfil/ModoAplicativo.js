@@ -33,22 +33,27 @@ function ModoAplicativo(){
     ).catch(err=> console.log(err));
   }
 
-  const trocaDeModoLiberada = async(modo)=>{
-    const reference = database().ref(`${estado}/${cidade}/${modo}/${userID}`);
-    try{  
-      reference.once('value').then(snapshot=>{
-        if (snapshot.exists()){
-          setTrocaLiberada(false);
-          // setModalAlert(true);
-        }else{
-          setTrocaLiberada(true);
-        }
-      })
-    }catch(error){
-      console.log(error);
-    }
-  }
+  // const trocaDeModoLiberada = async(modo)=>{
+  //   const reference = database().ref(`${estado}/${cidade}/${modo}/${userID}`);
+  //   try{  
+  //     reference.once('value').then(snapshot=>{
+  //       if (snapshot.exists()){
+  //         setTrocaLiberada(false);
+  //         // setModalAlert(true);
+  //       }else{
+  //         setTrocaLiberada(true);
+  //       }
+  //     })
+  //   }catch(error){
+  //     console.log(error);
+  //   }
+  // }
 
+  //Nesse caso, não tem problema realizar a troca de modo sem verificar, pois a fila do RabbitMQ
+  //não é durável, logo, um passageiro pode virar motorista sem persistir as informações no "banco de dados".
+  const trocaDeModoLiberada = async(modo)=>{
+    setTrocaLiberada(true);
+  }
 
   // const modoAtuacao = async()=>{
   //   firestore().collection('Users').doc(userID).get().then(doc=>{

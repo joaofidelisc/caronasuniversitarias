@@ -39,7 +39,7 @@ function RabbitMQReceber() {
         const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/SP/Sao_Carlos`);
         events.addEventListener('getInfoMotorista', (event)=>{
           console.log('Atualização informações:\n');
-          // console.log(`Usuário: ${event.data}`);
+          console.log(`Usuário: ${event.data}`);
         })
         
       }catch(error){
@@ -53,8 +53,9 @@ function RabbitMQReceber() {
       const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/SP/Sao_Carlos`);
       events.addEventListener('getInfoPassageiro', (event)=>{
         console.log('Atualização informações:\n');
-        let objPassageiro = JSON.parse(event.data);
-        getCaronistasMarker(objPassageiro);
+        console.log('event.data:', event.data);
+        // let objPassageiro = JSON.parse(event.data);
+        // getCaronistasMarker(objPassageiro);
       })
       
     }catch(error){
@@ -62,12 +63,12 @@ function RabbitMQReceber() {
     }
   }
 
-  useEffect(()=>{
-    console.log('...............................\n')
-    console.log('Atualização vetor caronistas...\n');
-    console.log(vetorCaronistas);
-    console.log('...............................\n')
-  }, [vetorCaronistas])
+  // useEffect(()=>{
+  //   console.log('...............................\n')
+  //   console.log('Atualização vetor caronistas...\n');
+  //   console.log(vetorCaronistas);
+  //   console.log('...............................\n')
+  // }, [vetorCaronistas])
     return (
       <SafeAreaView>
         <StatusBar barStyle={'light-content'} />
@@ -76,8 +77,8 @@ function RabbitMQReceber() {
           <TouchableOpacity 
             style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.05, borderRadius: 15, justifyContent:'center', alignItems:'center', marginTop: width*0.04}}
             onPress={()=>{
-              // receberInfoMotorista();
-              receberInfoPassageiro();
+              receberInfoMotorista();
+              // receberInfoPassageiro();
             }}  
           >
             <Text style={{color:'white', fontSize: width*0.05}}>Receber</Text>

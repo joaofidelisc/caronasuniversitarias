@@ -10,6 +10,7 @@ import { useNetInfo } from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth'
 
+import EventSource from 'react-native-event-source';
 
 import EstadoApp from '../../services/sqlite/EstadoApp';
 // const queryHandler = require('../../services/node-server/index');
@@ -85,6 +86,7 @@ function ConfigurarCarona({navigation}) {
       });
       await EstadoApp.removeData(1).then(console.log('dados removidos!')).catch(console.log('algum erro ocorreu!'));
       if (nomeDestino != ''){
+        // receberInfoPassageiro(filtro_estado, filtro_cidade);
         await EstadoApp.insertData({cidade: filtro_cidade[0].short_name, estado: filtro_estado[0].short_name, nomeDestino:nomeDestino, uidMotorista:'alterar', nomeMotorista:'alterar', veiculoMotorista:'alterar', placaVeiculoMotorista:'alterar', motoristaUrl:'alterar', numVagas:vagas, passageiros:'atualizar', id:1});
         navigation.navigate('OferecerCarona', {cidade:filtro_cidade[0].short_name, estado:filtro_estado[0].short_name, destino:nomeDestino, vagas:vagas})
       }else{
@@ -92,6 +94,26 @@ function ConfigurarCarona({navigation}) {
       }
 
     }
+
+    const receberInfoPassageiro = (estado, cidade)=>{
+      //tratar cidade!
+      console.log("estado:", estado);
+      console.log('receberInfoPassageiro');
+      console.log('ENTROU NA FUNÇÃO!!!!\n');
+      try{
+        const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/Sao_Carlos`);
+        events.addEventListener('getInfoPassageiro', (event)=>{
+          console.log('Atualização informações:\n');
+          console.log('event.data:', event.data);
+          // let objPassageiro = JSON.parse(event.data);
+          // getCaronistasMarker(objPassageiro);
+        })
+        
+      }catch(error){
+        console.log(error);
+      }
+    }
+
 
     // const printValor = (valor) => {
     //   console.log('valor:')
