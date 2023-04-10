@@ -105,6 +105,10 @@ function ViagemEmAndamento({navigation, route}) {
         console.log('erro em newChatRoom');
       }
     }
+
+    function viagemTerminou(){
+
+    }
     
     const viagemTerminou = async()=>{
       const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
@@ -134,6 +138,33 @@ function ViagemEmAndamento({navigation, route}) {
       }  
     }
 
+    /*const viagemTerminou = async()=>{
+      try {
+        const events_motorista = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/${estado}/${cidade}`);
+        events_motorista.addEventListener('getInfoMotorista', (event)=>{
+          console.log('Atualização informações motorista:\n');
+          let objMotorista = JSON.parse(event.data);
+          if (!objMotorista) {
+            console.log("apagou!");
+            fimDaViagem();
+          } else {
+            console.log("ainda existe!!!!");
+          }
+        });
+      
+        const events_passageiro = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/${cidade}`);
+        events_passageiro.addEventListener('getInfoPassageiro', (event)=>{
+          console.log('Atualização informações passageiro:\n');
+          let objPassageiro = JSON.parse(event.data);
+          if(objPassageiro.viagemTerminou){
+            fimDaViagem();
+          }
+        });
+      } catch(error){
+        console.log('Error', error.code);
+      }  
+    };*/
+    
     
     // const excluiBancoPassageiro = async()=>{
     //   const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
