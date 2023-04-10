@@ -1,9 +1,9 @@
 const express = require('express');
-const routes = require('../routes/routes.js');
-const db = require('../sequelize/index.js');
+const routes = require('../routes/routes');
+const db = require('../sequelize/index');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const rabbitRoutes = require('../rabbitMQ/routesRabbit.js');
+const rabbitRoutes = require('../rabbitMQ/routesRabbit');
 
 const app = express();
 
