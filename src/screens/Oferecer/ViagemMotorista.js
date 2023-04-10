@@ -179,6 +179,21 @@ function ViagemMotorista({route, navigation}){
       })
     }
 
+    /*const getDestinoPassageiro = async () => {
+      try {
+        const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/SP/Sao_Carlos`);
+        events.addEventListener('getInfoPassageiro', (event)=>{
+        console.log('Atualização informações:\n');
+        let objPassageiro = JSON.parse(event.data);
+        console.log(objPassageiro.nomeDestino)
+        return objPassageiro.nomeDestino;
+      })
+      }catch (error) {
+        console.log('Error', error);
+        return '';
+      }
+    }*/
+
 
     //exibir a classificação do passageiro ao oferecer carona!!!!!!!!!!!!!!!!!1111
     /*const getClassificacaoPassageiro = async(uidPassageiro)=>{
