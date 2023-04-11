@@ -105,10 +105,6 @@ function ViagemEmAndamento({navigation, route}) {
         console.log('erro em newChatRoom');
       }
     }
-
-    function viagemTerminou(){
-
-    }
     
     const viagemTerminou = async()=>{
       const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
