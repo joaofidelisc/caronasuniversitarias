@@ -135,32 +135,33 @@ function ViagemEmAndamento({navigation, route}) {
     }
 
     //Versão RABBITMQ
-    /*const viagemTerminou = async () => {
-      const url_motorista = "`${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/SP/Sao_Carlos`";
-      const url_passageiro = "`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/SP/Sao_Carlos`";
-      
-      try {
-        const response_motorista = await fetch(url_motorista);
-        const json_motorista = await response_motorista.json();
-        if (!json_motorista) {
-          console.log("apagou!");
-          fimDaViagem();
-          return;
-        }
-      } catch (error) {
-        console.log(error);
+    /*
+    const viagemTerminou = async () => {
+    const url_motorista = `${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/${estado}/${cidade}/${uidMotorista}`;
+    const url_passageiro = `${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/${cidade}/${currentUser}`;
+
+    const eventSource_motorista = new EventSource(url_motorista);
+    const eventSource_passageiro = new EventSource(url_passageiro);
+
+    eventSource_motorista.onmessage = function(event) {
+      const json_motorista = JSON.parse(event.data);
+      if (!json_motorista) {
+        console.log("apagou!");
+        fimDaViagem();
+        return;
       }
+    }
+
+    eventSource_passageiro.onmessage = function(event) {
+      const json_passageiro = JSON.parse(event.data);
+      if (json_passageiro.viagemTerminou) {
+        fimDaViagem();
+      }
+    }
+  }
+
     
-      try {
-        const response_passageiro = await fetch(url_passageiro);
-        const json_passageiro = await response_passageiro.json();
-        if (json_passageiro.viagemTerminou) {
-          fimDaViagem();
-        }
-      } catch (error) {
-        console.log('Error', error.code);
-      }
-    }*/
+    */
     
 
     /*const viagemTerminou = async()=>{
