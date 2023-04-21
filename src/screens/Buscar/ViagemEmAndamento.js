@@ -136,8 +136,8 @@ function ViagemEmAndamento({navigation, route}) {
 
     //Versão RABBITMQ
     /*const viagemTerminou = async () => {
-      const url_motorista = `http://${rabbitMQHost}/motoristas/${uidMotorista}`;
-      const url_passageiro = `http://${rabbitMQHost}/passageiros/${currentUser}`;
+      const url_motorista = "`${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/SP/Sao_Carlos`";
+      const url_passageiro = "`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/SP/Sao_Carlos`";
       
       try {
         const response_motorista = await fetch(url_motorista);
