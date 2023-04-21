@@ -134,6 +134,35 @@ function ViagemEmAndamento({navigation, route}) {
       }  
     }
 
+    //Versão RABBITMQ
+    /*const viagemTerminou = async () => {
+      const url_motorista = `http://${rabbitMQHost}/motoristas/${uidMotorista}`;
+      const url_passageiro = `http://${rabbitMQHost}/passageiros/${currentUser}`;
+      
+      try {
+        const response_motorista = await fetch(url_motorista);
+        const json_motorista = await response_motorista.json();
+        if (!json_motorista) {
+          console.log("apagou!");
+          fimDaViagem();
+          return;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    
+      try {
+        const response_passageiro = await fetch(url_passageiro);
+        const json_passageiro = await response_passageiro.json();
+        if (json_passageiro.viagemTerminou) {
+          fimDaViagem();
+        }
+      } catch (error) {
+        console.log('Error', error.code);
+      }
+    }*/
+    
+
     /*const viagemTerminou = async()=>{
       try {
         const events_motorista = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/${estado}/${cidade}`);
