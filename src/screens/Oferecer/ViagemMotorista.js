@@ -179,6 +179,30 @@ function ViagemMotorista({route, navigation}){
       })
     }
 
+    /*const getDestinoPassageiro = async(uidPassageiro)=>{
+      console.log('rodando função getDestinoPassageiro');
+      let destino = null;
+      const eventSource = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/${cidade}/${uidPassageiro}`);
+    
+      return new Promise((resolve, reject) => {
+        eventSource.addEventListener('message', (event) => {
+          const data = JSON.parse(event.data);
+          if (data.nomeDestino) {
+            destino = data.nomeDestino;
+            resolve(destino);
+          } else {
+            resolve('');
+          }
+        });
+    
+        eventSource.addEventListener('error', (event) => {
+          console.error('Error', event);
+          reject();
+        });
+      });
+    }*/
+    
+
     /*const getDestinoPassageiro = async () => {
       try {
         const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/SP/Sao_Carlos`);
