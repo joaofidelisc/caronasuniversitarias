@@ -334,6 +334,85 @@ function Options({navigation, route}) {
     console.log('Carona recusada!');
   }
 
+  /*function recusarCarona(motoristaUID) {
+    let totalOfertas = "";
+    let arrayOfertasRestantes = [];
+    let ofertasRestantes = "";
+  
+    const body = JSON.stringify({
+      motoristaUID,
+      estado,
+      cidade,
+      currentUser,
+    });
+    
+    const url = "`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/SP/Sao_Carlos`"
+    const eventSource = new EventSource(url);
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log("data", data);
+  
+      if (data.status === "success") {
+        if (data.totalOfertas !== undefined) {
+          totalOfertas = data.totalOfertas;
+        }
+        if (totalOfertas !== "" || totalOfertas.split(", ").length > 1) {
+          arrayOfertasRestantes = totalOfertas.split(", ");
+          if (totalOfertas.includes(motoristaUID)) {
+            arrayOfertasRestantes.splice(
+              arrayOfertasRestantes.indexOf(motoristaUID),
+              1
+            );
+            ofertasRestantes = arrayOfertasRestantes.join(", ");
+            console.log("ofertas restantes:", ofertasRestantes);
+            if (ofertasRestantes === "") {
+              setMotoristas([]);
+              voltouTela();
+              navigation.navigate("Buscando_Carona", {
+                cidade: cidade,
+                estado: estado,
+                voltouEstado: true,
+              });
+            }
+  
+            const removeMotorista = (motorista) => {
+              return motorista.uid !== motoristaUID;
+            };
+  
+            vetorMotoristas = vetorMotoristas.filter(removeMotorista);
+  
+            console.log("Carona recusada!");
+  
+            eventSource.close();
+          }
+        }
+      }
+    };
+  
+    eventSource.onerror = (error) => {
+      console.log("error", error);
+      eventSource.close();
+    };
+  
+    fetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body,
+      credentials: "include",
+    })
+      .then((response) => response.json())
+      .then((json) => console.log("json", json))
+      .catch((error) => {
+        console.log("error", error);
+      });
+  }*/
+  
+
+
+
   //Função responsável por complementar a função abaixo.
   //Escreve no banco do motorista o UID do passageiro.
   async function aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL){
@@ -367,6 +446,60 @@ function Options({navigation, route}) {
     navigation.navigate('AguardandoMotorista', {cidade: cidade, estado: estado, uidMotorista:uidMotorista, currentUser: currentUser, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, motoristaUrl: motoristaURL, nomeDestino: nomeDestino});
   }
   
+  /*async function aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL) {
+    const body = JSON.stringify({
+      uidMotorista,
+      nomeMotorista,
+      veiculoMotorista,
+      placaVeiculoMotorista,
+      motoristaURL,
+      currentUser,
+    });
+    
+    const url = "`${serverConfig.urlRootNode}api/rabbit/atualizarInfo/motorista/SP/Sao_Carlos/${uidMotorista}`";
+    
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body,
+        credentials: 'include',
+      });
+      
+      const data = await response.json();
+      console.log('data', data);
+      
+      if (data.status === 'success') {
+        console.log('Carona aceita!');
+        EstadoApp.updateData({
+          uidMotorista,
+          nomeMotorista,
+          veiculoMotorista,
+          placaVeiculoMotorista,
+          motoristaUrl: motoristaURL,
+          passageiros: 'att',
+        });
+        navigation.navigate('AguardandoMotorista', {
+          cidade: cidade,
+          estado: estado,
+          uidMotorista: uidMotorista,
+          currentUser: currentUser,
+          nomeMotorista: nomeMotorista,
+          veiculoMotorista: veiculoMotorista,
+          placaVeiculoMotorista: placaVeiculoMotorista,
+          motoristaUrl: motoristaURL,
+          nomeDestino: nomeDestino,
+        });
+      } else {
+        console.log('Erro ao atualizar informações do motorista');
+      }
+    } catch (error) {
+      console.log('error', error);
+    }
+  }*/
   
   //Função responsável por aceitar carona - escreve no banco do banco do passageiro o uid do motorista e reseta o vetor de ofertas de caronas;
   //Além disso, invoca a função aceitarCarona_ (complementar desta), que é responsável por escrever no banco do motorista o uid do passageiro;
