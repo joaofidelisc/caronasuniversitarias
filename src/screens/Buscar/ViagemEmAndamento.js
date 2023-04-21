@@ -134,11 +134,11 @@ function ViagemEmAndamento({navigation, route}) {
       }  
     }
 
-    //Versão RABBITMQ
+    //Versão 1 RABBITMQ
     /*
     const viagemTerminou = async () => {
-    const url_motorista = `${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/${estado}/${cidade}/${uidMotorista}`;
-    const url_passageiro = `${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/${cidade}/${currentUser}`;
+    const url_motorista = `${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/${estado}/${cidade}`;
+    const url_passageiro = `${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/${cidade}`;
 
     const eventSource_motorista = new EventSource(url_motorista);
     const eventSource_passageiro = new EventSource(url_passageiro);
@@ -164,7 +164,9 @@ function ViagemEmAndamento({navigation, route}) {
     */
     
 
-    /*const viagemTerminou = async()=>{
+    /* Versão 2 RABBITMQ
+    
+    const viagemTerminou = async()=>{
       try {
         const events_motorista = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/${estado}/${cidade}`);
         events_motorista.addEventListener('getInfoMotorista', (event)=>{

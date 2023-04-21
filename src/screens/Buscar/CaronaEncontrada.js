@@ -456,7 +456,7 @@ function Options({navigation, route}) {
       currentUser,
     });
     
-    const url = "`${serverConfig.urlRootNode}api/rabbit/atualizarInfo/motorista/SP/Sao_Carlos/${uidMotorista}`";
+    const url = "`${serverConfig.urlRootNode}api/rabbit/atualizarInfo/motorista/SP/Sao_Carlos`";
     
     try {
       const response = await fetch(url, {

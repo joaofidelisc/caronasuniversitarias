@@ -119,6 +119,68 @@ function ViagemMotorista({route, navigation}){
       // }
     }
 
+    /*async function getDadosPassageiros(){
+      let listaPassageiros = '';
+      let arrayUIDs = [];
+      let jaExiste = false;
+      if (jaExiste == true){
+        jaExiste = false;
+      }
+    
+      const url = `${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/${cidade}/`;
+      const eventSource = new EventSource(url);
+    
+      eventSource.onmessage = async (event) => {
+        const data = JSON.parse(event.data);
+        const snapshot = data.snapshot;
+    
+        if (snapshot.exists() && snapshot.val().caronistasAbordo != undefined && snapshot.val().caronistasAbordo != ''){
+          listaPassageiros = snapshot.val().caronistasAbordo;
+        }
+        arrayUIDs = listaPassageiros.split(', ');
+    
+        if (atualizarNumPassageiros){
+          setNumPassageirosABordo(arrayUIDs.length);
+          setAtualizarNumPassageiros(false);
+          setUIDsPassageiros(arrayUIDs);
+        }
+    
+        arrayUIDs.forEach(async uid =>{
+          if (passageirosABordo.length == 0){
+            setPassageirosABordo([{
+              url: await getFotoPassageiro(uid),
+              uid: uid,
+              nome: await getNomePassageiro(uid),
+              classificacao: await getClassificacaoPassageiro(uid),
+              destino: await getDestinoPassageiro(uid)
+            }])
+          }else{
+            passageirosABordo.some(motorista=>{
+              if (motorista.uid == uid){
+                jaExiste = true;
+              }
+            })
+            if (!jaExiste){
+              setPassageirosABordo([...passageirosABordo, {
+                url: await getFotoPassageiro(uid),
+                uid: uid,
+                nome: await getNomePassageiro(uid),
+                classificacao: await getClassificacaoPassageiro(uid),
+                destino: await getDestinoPassageiro(uid) 
+              }])
+            }
+          }
+        });
+    
+        setAtualizouPassageiros(true);
+      };
+    
+      eventSource.onerror = (error) => {
+        console.log('error:', error);
+      };
+    }*/
+    
+
     /*const getNomePassageiro = async(uidPassageiro)=>{
       let nomePassageiro = '';
       let docRef = firestore().collection('Users').doc(uidPassageiro);
@@ -134,22 +196,15 @@ function ViagemMotorista({route, navigation}){
 
     async function getNomePassageiro(uidPassageiro){
       let nomePassageiro = '';
-      let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${uidPassageiro}`,{
-        method: 'GET',
-        mode: 'cors',
-        headers:{
-          'Accept':'application/json',
-          'Content-type':'application/json'
-        }
-    });
-    const res = await reqs.json();
-    if (res != 'Falha'){
-      nomePassageiro = res.nome;
+      const eventSource = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/${cidade}/${uidPassageiro}`);
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        nomePassageiro = data.nome;
+        eventSource.close();
+      };
       return nomePassageiro;
-    }else{
-      return '';
     }
-    }
+    
 
     const getFotoPassageiro = async(uidPassageiro)=>{
       let caminhoFirebase = uidPassageiro.concat('Perfil');    
