@@ -2,14 +2,6 @@
 
 
     /*
-    Dúvidas:
-
-    ATUALIZAR NÚMERO DE VIAGENS REALIZADAS;
-        - contar o número de linhas encontradas  ou criar uma coluna em user?
-    */
-
-
-    /*
     A função abaixo, cumpre os seguintes requisitos:
     - CADASTRAR USUÁRIO (PASSAGEIRO OU MOTORISTA).
 
@@ -34,7 +26,6 @@
         if (reqs){
             res.send(JSON.stringify('Usuário cadastrado com sucesso!'));
         }else{
-            //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
             res.send(JSON.stringify('Falha'));
         }
     }
@@ -55,6 +46,7 @@
         let reqs = await model.User.findByPk(req.params.id);
         if (reqs){
             res.send(JSON.stringify(reqs));
+
         }else{
             //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
             res.send(JSON.stringify('Falha'));
@@ -74,12 +66,8 @@
             }else{
                 res.send(JSON.stringify(reqs));
             }
-            // res.send(JSON.stringify(reqs));
-            // console.log('reqs:', JSON.stringify(reqs).length);
-            // console.log('reqs:', JSON.stringify(reqs));
         }else{
-            //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
-            res.send(JSON.stringify('Falha na busca'));
+            res.send(JSON.stringify('Falha'));
         }
     }
 
@@ -99,11 +87,9 @@
         if (reqs){
             res.send(JSON.stringify('Modo atualizado!'));
         }else{
-            //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
             res.send(JSON.stringify('Falha'));
         }
     }
-    
     
     
     async function atualizarToken(req, res){
@@ -115,7 +101,6 @@
         if (reqs){
             res.send(JSON.stringify('Token atualizado!'));
         }else{
-            //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
             res.send(JSON.stringify('Falha'));
         }
     }
@@ -129,7 +114,6 @@
         if (reqs){
             res.send(JSON.stringify('Classificação atualizada!'));
         }else{
-            //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
             res.send(JSON.stringify('Falha'));
         }
     }

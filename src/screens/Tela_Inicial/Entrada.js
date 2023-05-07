@@ -14,90 +14,8 @@ const {height,width}=Dimensions.get('window')
 function Entrada({navigation}){
   const [falhaLogin, setFalhaLogin] = useState(false);
 
-  /*
-  const redirecionamentoLogin = async(email)=>{  
-    try{
-      let reqs = await fetch(serverConfig.urlRootNode+`buscarPorEmail/${email}`,{
-          method: 'GET',
-          mode: 'cors',
-          headers:{
-            'Accept':'application/json',
-            'Content-type':'application/json'
-          }
-      });
-      const res_user = await reqs.json();
-      console.log('resposta:', res_user[0]);
-      if (res_user[0] != undefined && res_user != 'Falha'){
-        let reqs_veiculo = await fetch(serverConfig.urlRootNode+`buscarVeiculo/${res_user.id}`,{
-          method: 'GET',
-          mode: 'cors',
-          headers:{
-            'Accept':'application/json',
-            'Content-type':'application/json'
-          }
-        });
-        const res_veiculo = await reqs_veiculo.json();
-        if (res_veiculo != 'Falha'){
-          //existe veiculo;
-        }else{
-          //não existe veiculo;
-        }
-          //encontrou
-      }else{
-        // n encontrou
-      }
-      // firestore().collection('Users').where('email', '==', email).get().then(querySnapshot=>{
-      //   const valor = querySnapshot.docs;
-      //   const motorista = (valor == "" || valor == undefined)? '' : valor[0].data().motorista;
-      //   const cadastro_veiculo = (valor == "" || valor == undefined)? '' : valor[0].data().nome_veiculo;
-      //   const nome = (valor == "" || valor == undefined)? '' : valor[0].data().nome;
-      //   const cpf = (valor == "" || valor == undefined)? '' : valor[0].data().CPF;
-      //   const data_nasc = (valor == "" || valor == undefined)? '' : valor[0].data().data_nasc;
-      //   const num_cel = (valor == "" || valor == undefined)? '' : valor[0].data().num_cel;
-      //   const universidade = (valor == "" || valor == undefined)? '' : valor[0].data().universidade;
-      //   const email_banco = (valor == "" || valor == undefined)? '' : valor[0].data().email;
-      //   console.log('informações:', nome, cpf, data_nasc, num_cel, universidade, email_banco);
-      //   if (valor == ""){
-      //     if (email_banco != ''){
-      //       navigation.navigate("Como_Comecar", {email: email});
-      //     }else{
-      //       setFalhaLogin(true);
-      //     }
-      //   }
-      //   else{
-      //     if (motorista == true && cadastro_veiculo!=''){
-      //       // navigation.navigate("ModoMotorista");
-      //       navigation.navigate("MenuTeste");
-      //     }else if (motorista == true && cadastro_veiculo == ''){
-      //       console.log('navegando para a tela de cadastro de veículo');
-      //       console.log('informações:', nome, cpf, data_nasc, num_cel, universidade, email_banco);
-      //       navigation.navigate('Forms_Motorista_Veiculo', {trocaDeModo:true});
-      //     } else{
-      //       navigation.navigate("MenuTeste");
-      //       // navigation.navigate("ModoPassageiro");
-      //     }
-      //   }
-      // })
-    }catch(error){
-      if (error.code == 'auth/missing-identifier'){
-        console.log('missing identifier!');
-      }
-      setFalhaLogin(true);
-      Alert.alert(
-        "Algum erro ocorreu",
-        "Tente entrar novamente...",
-        [
-          // { text: "OKs", onPress: () => verificarConexao()}
-        ]
-      );
-      console.log('erro no redirecionamento');
-    }   
-  }
-  
-  */
 
   const buscarEmail = async(email)=>{
-    console.log('Buscar Email');
     let reqs = await fetch(serverConfig.urlRootNode+`buscarPorEmail/${email}`,{
         method: 'GET',
         mode: 'cors',
@@ -107,10 +25,11 @@ function Entrada({navigation}){
         }
     });
     const res = await reqs.json();
-    // console.log('resposta:', res[0]);
     if (res === 'Falha' || res === 'Não encontrou'){
-    // if (res[0] == undefined || res == 'Falha'){
-        return '';
+        if (res == 'Falha'){
+          return 'Falha';
+        }
+        return 'Não encontrou';
     }else{
       return res;
     }
@@ -127,38 +46,34 @@ function Entrada({navigation}){
         }
     });
     const res = await reqs.json();
-
-    console.log('res:', res);
-    if (res !== 'Falha' && res !== 'Não encontrou'){
-      console.log('encontrou!');
+    if (res == 'Falha' || res == 'Não encontrou'){
+      if (res == 'Falha'){
+        return 'Falha';
+      }
+      return 'Não encontrou';
     }else{
-      console.log('não encontrou!')
+      return res;
     }
-    return res;
-} 
+  } 
 
   const redirecionamentoLogin = async(email)=>{
     try{
       const objUsuario = await buscarEmail(email);
-      if (objUsuario == 'Não encontrou'){
-        navigation.navigate("Como_Comecar", {email: email});
-      }else if (objUsuario == 'Falha'){
-        console.log("Algo inesperado aconteceu, tente novamente!");
-        Alert.alert(
-          "Algum erro ocorreu",
-          "Tente entrar novamente...",
-          [
-            // { text: "OKs", onPress: () => verificarConexao()}
-          ]
-        );
+      if (objUsuario == 'Não encontrou' || objUsuario == 'Falha'){
+        setFalhaLogin(true);
+        if (objUsuario == 'Falha'){
+          Alert.alert(
+            "Algum erro ocorreu",
+            "Tente entrar novamente...",
+          );
+        }
       }else{
         const objVeiculo = await buscarVeiculo(objUsuario[0].id);
-        if (objUsuario[0].motorista == true && objVeiculo != 'Não encontrou'){
+        if (objUsuario[0].motorista == true && objVeiculo != 'Não encontrou' && objVeiculo != 'Falha'){
           // navigation.navigate("ModoMotorista");
           navigation.navigate("MenuTeste");
         }else if (objUsuario[0].motorista == true && objVeiculo == 'Não encontrou'){
           console.log('navegando para a tela de cadastro de veículo');
-          // console.log('informações:', nome, cpf, data_nasc, num_cel, universidade, email_banco);
           navigation.navigate('Forms_Motorista_Veiculo', {trocaDeModo:true});
         }else{
           navigation.navigate("MenuTeste");
@@ -173,67 +88,9 @@ function Entrada({navigation}){
       Alert.alert(
         "Algum erro ocorreu",
         "Tente entrar novamente...",
-        [
-          // { text: "OKs", onPress: () => verificarConexao()}
-        ]
       );
-      console.log('erro no redirecionamento');
     }   
   }
-  
-
-  // const redirecionamentoLogin = async(email)=>{  
-  //   try{
-  //     firestore().collection('Users').where('email', '==', email).get().then(querySnapshot=>{
-  //       const valor = querySnapshot.docs;
-  //       console.log('--------------------------------------\n');
-  //       console.log('printando valor:', valor);
-  //       console.log('--------------------------------------\n');
-  //       const motorista = (valor == "" || valor == undefined)? '' : valor[0].data().motorista;
-  //       const cadastro_veiculo = (valor == "" || valor == undefined)? '' : valor[0].data().nome_veiculo;
-  //       const nome = (valor == "" || valor == undefined)? '' : valor[0].data().nome;
-  //       const cpf = (valor == "" || valor == undefined)? '' : valor[0].data().CPF;
-  //       const data_nasc = (valor == "" || valor == undefined)? '' : valor[0].data().data_nasc;
-  //       const num_cel = (valor == "" || valor == undefined)? '' : valor[0].data().num_cel;
-  //       const universidade = (valor == "" || valor == undefined)? '' : valor[0].data().universidade;
-  //       const email_banco = (valor == "" || valor == undefined)? '' : valor[0].data().email;
-  //       console.log('informações:', nome, cpf, data_nasc, num_cel, universidade, email_banco);
-  //       if (valor == ""){
-  //         if (email_banco != ''){
-  //           navigation.navigate("Como_Comecar", {email: email});
-  //         }else{
-  //           setFalhaLogin(true);
-  //         }
-  //       }
-  //       else{
-  //         if (motorista == true && cadastro_veiculo!=''){
-  //           // navigation.navigate("ModoMotorista");
-  //           navigation.navigate("MenuTeste");
-  //         }else if (motorista == true && cadastro_veiculo == ''){
-  //           console.log('navegando para a tela de cadastro de veículo');
-  //           console.log('informações:', nome, cpf, data_nasc, num_cel, universidade, email_banco);
-  //           navigation.navigate('Forms_Motorista_Veiculo', {trocaDeModo:true});
-  //         } else{
-  //           navigation.navigate("MenuTeste");
-  //           // navigation.navigate("ModoPassageiro");
-  //         }
-  //       }
-  //     })
-  //   }catch(error){
-  //     if (error.code == 'auth/missing-identifier'){
-  //       console.log('missing identifier!');
-  //     }
-  //     setFalhaLogin(true);
-  //     Alert.alert(
-  //       "Algum erro ocorreu",
-  //       "Tente entrar novamente...",
-  //       [
-  //         // { text: "OKs", onPress: () => verificarConexao()}
-  //       ]
-  //     );
-  //     console.log('erro no redirecionamento');
-  //   }   
-  // }
   
   const SignInToken = async() =>{
     let token = await AsyncStorage.getItem("token");
@@ -259,7 +116,6 @@ function Entrada({navigation}){
     }
   }
 
-  //travar o botão voltar para evitar repetição indesejada da splash screen
   useEffect(()=> {
     SignInToken();
     BackHandler.addEventListener('hardwareBackPress', ()=>{
@@ -315,9 +171,6 @@ function Entrada({navigation}){
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={()=>navigation.navigate('Login')}
-                // onPress={()=>{
-                //   testeBanco();
-                // }}
                 style={{alignSelf:'center'}}
                 >
                 <Text style={styles.txtBtnEntrar}>Entrar</Text>

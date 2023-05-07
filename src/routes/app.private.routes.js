@@ -22,10 +22,7 @@ import ClassificarPassageiro from '../screens/Oferecer/ClassificarPassageiro';
 import ViagemMotorista from '../screens/Oferecer/ViagemMotorista';
 
 import TesteCRUD from '../screens/Teste_CRUD/TesteCRUD';
-import RabbitMQEnviar from '../screens/RabbitMQEnviar/RabbitMQEnviar';
-import RabbitMQReceber from '../screens/RabbitMQReceber/RabbitMQReceber';
 
-import Erro from '../screens/Erro/Erro';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -112,7 +109,7 @@ function RotaPerfil(){
   )
 }
 
-function AppRoutes({route, navigation}) {
+function AppRoutes() {
   useEffect(() => {
     BackHandler.addEventListener('backPress', () => true)
     return () => BackHandler.removeEventListener('backPress', () => true)
@@ -160,28 +157,10 @@ function AppRoutes({route, navigation}) {
               )
             }}
         />
-        {/* <Tab.Screen name="Suas Viagens" component={Suas_Viagens}  */}
-        {/* <Tab.Screen name="CRUD" component={TesteCRUD} 
-        // <Tab.Screen name="Erro" component={Erro} 
+        <Tab.Screen name="CRUD" component={TesteCRUD} 
           options={{
             tabBarIcon:(({color})=>
               <Icon name="list-alt" size={height*0.025} color = {color}/>
-                )
-          }}
-        /> */}
-         <Tab.Screen name="Enviar" component={RabbitMQEnviar} 
-        // <Tab.Screen name="Erro" component={Erro} 
-          options={{
-            tabBarIcon:(({color})=>
-              <Icon name="send" size={height*0.025} color = {color}/>
-                )
-          }}
-        />
-          <Tab.Screen name="Receber" component={RabbitMQReceber} 
-        // <Tab.Screen name="Erro" component={Erro} 
-          options={{
-            tabBarIcon:(({color})=>
-              <Icon name="cloud-download" size={height*0.025} color = {color}/>
                 )
           }}
         />

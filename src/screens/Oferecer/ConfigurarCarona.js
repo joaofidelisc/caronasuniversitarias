@@ -114,36 +114,7 @@ function ConfigurarCarona({navigation}) {
       }
     }
 
-
-    // const printValor = (valor) => {
-    //   console.log('valor:')
-    //   console.log(`cidade:${valor.cidade}, estado:${valor.estado}, id:${valor.id}`)
-    // }
-
-    // //TESTE BANCO
-    // const testeBanco = async()=>{
-    //   // await EstadoApp.createTable();
-    //   console.log('----------------------------------');
-    //   console.log('testando banco...');
-    //   console.log('rodando getAll...')
-    //   // EstadoApp.updateData(1, {cidade: 'Matão', estado: 'SP', id:1})
-    //   // EstadoApp.insertData({cidade: 'São Carlos', estado: 'SP', nomeDestino: 'centro', localDestino: 'centro-2', id:1});
-    //   EstadoApp.updateData({uidMotorista: '123456', nomeMotorista: 'joao', veiculoMotorista: 'ferrari', placaVeiculoMotorista: '123456', motoristaUrl: 123456}, 0);
-
-    //   EstadoApp.findData(1).then(info => console.log(info)).catch(err=> console.log(err));
-    //   // EstadoApp.getAll().then(info => printValor(info)).catch(err=> console.log(err));
-    //   // console.log('rodando getAll2...')
-    //   // EstadoApp.getAll2();
-    //   // EstadoApp.getData();
-    //   // EstadoApp.getData().then(info => info.forEach(c => console.log(c)));
-      
-    //   // EstadoApp.getData().then( 
-    //   //   info => info.forEach( c => printValor(c) )
-    //   //   )
-    //   console.log('----------------------------------');
-
-    // }
-    // //TESTE BANCO
+    
   useEffect(()=>{
     const recuperaEstadoApp = async()=>{
       console.log('rodando recuperaEstadoApp...');

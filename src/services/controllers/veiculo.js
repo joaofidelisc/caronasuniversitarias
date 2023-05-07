@@ -36,7 +36,7 @@
                 res.send(JSON.stringify(reqs));
             }
         }else{
-            res.send(JSON.stringify('Falha na busca'));
+            res.send(JSON.stringify('Falha'));
         }       
     }
     
