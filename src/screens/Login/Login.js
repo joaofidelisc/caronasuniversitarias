@@ -16,15 +16,8 @@ import auth from '@react-native-firebase/auth'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-import firestore from '@react-native-firebase/firestore';
-
 import dominios from '../../dominios/dominios.json';
-
 import serverConfig from '../../../config/config.json';
-
-// incluir aqui dominios permitidos (válido para email e autenticação com Google)
-// const dominios_permitidos = ["estudante.ufscar.br"];
 
 GoogleSignin.configure({
   webClientId: '97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com',
@@ -48,8 +41,7 @@ function Login({navigation}) {
     }
   })
 
-  const buscarEmail = async(email)=>{
-    console.log('Buscar Email');
+  const buscarPorEmail = async(email)=>{
     let reqs = await fetch(serverConfig.urlRootNode+`buscarPorEmail/${email}`,{
         method: 'GET',
         mode: 'cors',
@@ -59,22 +51,29 @@ function Login({navigation}) {
         }
     });
     const res = await reqs.json();
-    // console.log('resposta:', res[0]);
     if (res === 'Falha' || res === 'Não encontrou'){
-    // if (res[0] == undefined || res == 'Falha'){
-        return '';
+      if (res == 'Falha'){
+        return 'Falha';
+      }
+      return 'Não encontrou';
     }else{
       return res;
     }
   }
   
   const redirecionamentoLogin = async(emailGoogle)=>{  
-    console.log('entrando em redirecionamento login')
     if (email == ''){
       await AsyncStorage.setItem('email', emailGoogle);
-      const objUsuario = await buscarEmail(emailGoogle);
-      if (objUsuario == '' || objUsuario == 'Não encontrou'){
-        navigation.navigate("Como_Comecar", {email: emailGoogle});
+      const objUsuario = await buscarPorEmail(emailGoogle);
+      if (objUsuario == 'Não encontrou' || objUsuario == 'Falha'){
+        if (objUsuario == 'Falha'){
+          Alert.alert(
+            "Algum erro ocorreu",
+            "Tente entrar novamente...",
+          );
+        }else{
+          navigation.navigate("Como_Comecar", {email: emailGoogle});
+        }
       }else{
         if (objUsuario[0].motorista == true){
           // navigation.navigate("ModoMotorista");
@@ -84,24 +83,10 @@ function Login({navigation}) {
           // navigation.navigate("ModoPassageiro");
         }
       }
-      // firestore().collection('Users').where('email', '==', emailGoogle).get().then(querySnapshot=>{
-        //   const valor = querySnapshot.docs;
-        //   const motorista = (valor == "" || valor == undefined)? '' : valor[0].data().motorista;
-        //   if (valor == ""){
-          //     navigation.navigate("Como_Comecar", {email: emailGoogle});
-          //   }
-      //   else{
-        //     if (motorista == true){
-      //       navigation.navigate("ModoMotorista");
-      //     }else{
-      //       navigation.navigate("ModoPassageiro");
-      //     }
-      //   }
-      // })
     }else{
       await AsyncStorage.setItem('email', email);
       await AsyncStorage.setItem('password', password);
-      const objUsuario = await buscarEmail(email);
+      const objUsuario = await buscarPorEmail(email);
       if (objUsuario == '' || objUsuario == 'Não encontrou'){
         navigation.navigate("Como_Comecar", {email: email});
       }else{
@@ -113,21 +98,6 @@ function Login({navigation}) {
           // navigation.navigate("ModoPassageiro");
         }
       }
-
-      // firestore().collection('Users').where('email', '==', email).get().then(querySnapshot=>{
-      //   const valor = querySnapshot.docs;
-      //   const motorista = (valor == "" || valor == undefined)? '' : valor[0].data().motorista;
-      //   if (valor == ""){
-      //     navigation.navigate("Como_Comecar", {email: email});
-      //   }
-      //   else{
-      //     if (motorista == true){
-      //       navigation.navigate("ModoMotorista");
-      //     }else{
-      //       navigation.navigate("ModoPassageiro");
-      //     }
-      //   }
-      // })
     }
   }
 
@@ -142,7 +112,6 @@ function Login({navigation}) {
   const SignInGoogle = async() =>{
     try{
       const { idToken } = await GoogleSignin.signIn();
-      console.log('ID GOOGLE:', idToken);
       await AsyncStorage.setItem('token', idToken);
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       const res = await auth().signInWithCredential(googleCredential);
@@ -191,8 +160,6 @@ function Login({navigation}) {
     }
   }
 
-  //https://blog.logrocket.com/email-authentication-react-native-react-navigation-firebase/
-  //tratar e-mails e contexto
   const SignInWithEmail = async() =>{
     if (email == '' && password == ''){
       setWarning('Preencha os campos de e-mail e senha!');

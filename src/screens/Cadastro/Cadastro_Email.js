@@ -20,9 +20,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import dominios from '../../dominios/dominios.json';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-// incluir aqui dominios permitidos (válido para email e autenticação com Google)
-// const dominios_permitidos = ["estudante.ufscar.br"];
-
 
 GoogleSignin.configure({
   webClientId: '97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com',
@@ -54,7 +51,6 @@ function Cadastro_Email({navigation}) {
     }
   }
 
-  
   const InsertUserWithEmail = async() =>{
     if (email == '' && password == ''){
       setWarning('Os campos de e-mail e senha\n não podem estar vazios!');

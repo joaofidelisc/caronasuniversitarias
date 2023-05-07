@@ -45,11 +45,3 @@ routes.get("/contarViagensPassageiro/:userId", passageiroViagemFunctions.contarV
 module.exports = routes;
 
 
-//Rotas para atualização de coordenadas em tempo real
-//Colocar em um controler esse trecho
-// routes.put('/coordenadas', (req, res) =>{
-//     console.log('atualizarCoordenadas!!!!!!!!!!1111');
-//     let coordenadas = req.body.coordenadas;
-//     channel.sendToQueue(queue, Buffer.from(coordenadas));
-//     res.send('Coordenadas atualizadas com sucesso');
-// })

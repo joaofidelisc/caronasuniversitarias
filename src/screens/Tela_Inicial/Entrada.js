@@ -2,9 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Image, SafeAreaView, StatusBar, Dimensions, BackHandler, Alert } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth'
-import database, {firebase} from '@react-native-firebase/database';
 
 import serverConfig from '../../../config/config.json';
 
@@ -15,7 +13,7 @@ function Entrada({navigation}){
   const [falhaLogin, setFalhaLogin] = useState(false);
 
 
-  const buscarEmail = async(email)=>{
+  const buscarPorEmail = async(email)=>{
     let reqs = await fetch(serverConfig.urlRootNode+`buscarPorEmail/${email}`,{
         method: 'GET',
         mode: 'cors',
@@ -58,7 +56,7 @@ function Entrada({navigation}){
 
   const redirecionamentoLogin = async(email)=>{
     try{
-      const objUsuario = await buscarEmail(email);
+      const objUsuario = await buscarPorEmail(email);
       if (objUsuario == 'Não encontrou' || objUsuario == 'Falha'){
         setFalhaLogin(true);
         if (objUsuario == 'Falha'){
