@@ -8,8 +8,6 @@ import auth from '@react-native-firebase/auth';
 
 import EstadoApp from '../../services/sqlite/EstadoApp';
 
-import serverConfig from '../../../config/config.json';
-
 
 const {height, width} = Dimensions.get('screen')
 
@@ -134,65 +132,6 @@ function ViagemEmAndamento({navigation, route}) {
       }  
     }
 
-    //Versão 1 RABBITMQ
-    /*
-    const viagemTerminou = async () => {
-    const url_motorista = `${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/${estado}/${cidade}`;
-    const url_passageiro = `${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/${cidade}`;
-
-    const eventSource_motorista = new EventSource(url_motorista);
-    const eventSource_passageiro = new EventSource(url_passageiro);
-
-    eventSource_motorista.onmessage = function(event) {
-      const json_motorista = JSON.parse(event.data);
-      if (!json_motorista) {
-        console.log("apagou!");
-        fimDaViagem();
-        return;
-      }
-    }
-
-    eventSource_passageiro.onmessage = function(event) {
-      const json_passageiro = JSON.parse(event.data);
-      if (json_passageiro.viagemTerminou) {
-        fimDaViagem();
-      }
-    }
-  }
-
-    
-    */
-    
-
-    /* Versão 2 RABBITMQ
-    
-    const viagemTerminou = async()=>{
-      try {
-        const events_motorista = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/${estado}/${cidade}`);
-        events_motorista.addEventListener('getInfoMotorista', (event)=>{
-          console.log('Atualização informações motorista:\n');
-          let objMotorista = JSON.parse(event.data);
-          if (!objMotorista) {
-            console.log("apagou!");
-            fimDaViagem();
-          } else {
-            console.log("ainda existe!!!!");
-          }
-        });
-      
-        const events_passageiro = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/${cidade}`);
-        events_passageiro.addEventListener('getInfoPassageiro', (event)=>{
-          console.log('Atualização informações passageiro:\n');
-          let objPassageiro = JSON.parse(event.data);
-          if(objPassageiro.viagemTerminou){
-            fimDaViagem();
-          }
-        });
-      } catch(error){
-        console.log('Error', error.code);
-      }  
-    };*/
-    
     
     // const excluiBancoPassageiro = async()=>{
     //   const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
@@ -238,98 +177,31 @@ function ViagemEmAndamento({navigation, route}) {
     }
 
 
-    //cadastrar viagem;
-    //viagem em andamento do passageiro
-    // const escreveHistoricoViagem = async()=>{
-      // let reqs = await fetch(serverConfig.urlRootNode+'cadastrarViagem',{
-      //     method: 'POST',
-      //     headers:{
-      //       'Accept':'application/json',
-      //       'Content-type':'application/json'
-      //     },
-      //     body: JSON.stringify({
-      //       nomeMotorista: 'João Cardozo',
-      //       uidPassageiro2: '0VtQXRifF8PdbcKCrthdOtlnah12',
-      //       uidMotorista: '0VtQXRifF8PdbcKCrthdOtlnah12',
-      //       fotoPerfil: 'linkFoto',
-      //       destino: 'UFSCar',
-      //       dataViagem: "2023-01-10"
-      //     })
-      // });
-
-      // let res = await reqs.json();
-      // console.log('req:', res);
     
-      //buscar a viagem mais recente que linka com o uid do passageiro e atualizar viagem;
-      
-    // }
-
-    // const escreveHistoricoViagem = async()=>{
-    //   const data = await dataAtualFormatada();
-    //   const reference_passageiro = firestore().collection('Users').doc(currentUser); 
-    //   try{
-    //     reference_passageiro.update({
-    //       historicoViagens: firebase.firestore.FieldValue.arrayUnion({
-    //         uidMotorista: uidMotorista,
-    //         dataViagem: data,
-    //         nome: nomeMotorista,
-    //         destino: nomeDestino,
-    //         fotoPerfil: motoristaURL,
-    //         refViagem: Date.now()
-    //       })
-    //     })
-    //   }catch(error){
-    //     console.log('erro em escreveHistoricoViagem');
-    //   }
-    // }
+    const escreveHistoricoViagem = async()=>{
+      const data = await dataAtualFormatada();
+      const reference_passageiro = firestore().collection('Users').doc(currentUser); 
+      try{
+        reference_passageiro.update({
+          historicoViagens: firebase.firestore.FieldValue.arrayUnion({
+            uidMotorista: uidMotorista,
+            dataViagem: data,
+            nome: nomeMotorista,
+            destino: nomeDestino,
+            fotoPerfil: motoristaURL,
+            refViagem: Date.now()
+          })
+        })
+      }catch(error){
+        console.log('erro em escreveHistoricoViagem');
+      }
+    }
 
     
   // async function defineEstadoAtual(){
   //   await AsyncStorage.removeItem('ViagemEmAndamento');
   //   await AsyncStorage.setItem('Classificacao', true);
   // }
-
-  const retornaIdUltimaViagem = async()=>{
-    console.log('Buscar Viagem');
-    let reqs = await fetch(serverConfig.urlRootNode+`buscarUltimaViagem/${uidMotorista}`,{
-        method: 'GET',
-        mode: 'cors',
-        headers:{
-          'Accept':'application/json',
-          'Content-type':'application/json'
-        }
-    });
-    const res = await reqs.json();
-    return res.idViagem;
-  }
-
-
-  
-  const cadastrarViagemPassageiro = async(idViagem)=>{
-    console.log('currentUser:', currentUser);
-    console.log('idViagem:', idViagem);
-    console.log('destino:', nomeDestino);
-    let reqs = await fetch(serverConfig.urlRootNode+'cadastrarViagemPassageiro',{
-        method: 'POST',
-        headers:{
-          'Accept':'application/json',
-          'Content-type':'application/json'
-        },
-        body: JSON.stringify({
-          userId:currentUser,
-          idViagem: idViagem,
-          destino:nomeDestino
-        })
-    });
-
-    let res = await reqs.json();
-    console.log('req:', res);
-}
-  
-  const escreveHistoricoViagem = async()=>{
-    const idViagem = await retornaIdUltimaViagem(uidMotorista);
-    await cadastrarViagemPassageiro(idViagem);
-  }
 
     const fimDaViagem = async()=>{
       // await excluiBancoPassageiro();
@@ -404,7 +276,7 @@ function ViagemEmAndamento({navigation, route}) {
             onRequestClose={() => {setModalVisible(!modalVisible);}}
             
           >
-            <View style={{justifyContent: 'center', alignItems: 'center', position: 'absolute', top: height*0.31, alignSelf: 'center'}}>
+            <View style={{justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 268, alignSelf: 'center'}}>
                 <View style={styles.modalView}>
                 <Text style={{color:'#06444C', fontWeight:'700', fontSize: 20, lineHeight:24}}>Viagem em andamento...</Text>
                 <Image 
@@ -457,17 +329,17 @@ function ViagemEmAndamento({navigation, route}) {
 const styles = StyleSheet.create({
   modalView: {
     backgroundColor: "white",
-    borderRadius: height*0.04,
-    padding: height*0.04,
-    height:height*0.5,
+    borderRadius: 20,
+    padding: 35,
     alignItems: "center",
     shadowColor: "#FF5F55",
     shadowOffset: {
-      height: height*0.002
+      width: 0,
+      height: 2
     },
     shadowOpacity: 0.05,
-    shadowRadius: height*0.03,
-    elevation: height*0.01
+    shadowRadius: 10,
+    elevation: 10
   },
 });
 

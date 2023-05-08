@@ -72,9 +72,6 @@ function Como_Comecar({navigation, route}) {
             >
               <Text style={{textAlign: 'center', fontWeight: '700', fontSize: height*0.02, lineHeight: 20, color:'white'}}>Sou motorista</Text>
             </TouchableOpacity>
-            {/* <TouchableOpacity style={{position:'absolute', top: 537}}>
-              <Text style={{fontWeight: '700', fontSize: 16, lineHeight: 20, textAlign: 'center', color:'#06444C'}}>Avançar</Text>
-            </TouchableOpacity> */}
              <Lottie 
                 style={{height:height*0.35, width:width*0.35, top:'12%'}}
                 source={require('../../assets/JSON/car.json')} 

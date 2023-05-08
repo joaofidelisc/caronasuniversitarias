@@ -15,7 +15,6 @@ import Forms_Passageiro from '../screens/Passageiro/Forms_Passageiro';
 import Forms_Motorista from '../screens/Motorista/Forms_Motorista';
 import Forms_Motorista_Veiculo from '../screens/Motorista/Forms_Motorista_Veiculo';
 import Erro from '../screens/Erro/Erro';
-import Teste from '../services/Socketio/Teste'
 
 import { Splash } from '../screens/SplashScreen/SplashScreen';
 
@@ -40,7 +39,6 @@ function RotaEntrada() {
           <Stack.Screen name="ModoMotorista" component={ModoMotorista} options={{headerShown:false}}/>
           <Stack.Screen name="MenuTeste" component={MenuTeste} options={{headerShown:false}}/>
           <Stack.Screen name="Erro" component={Erro} options={{headerShown:false}} />
-          <Stack.Screen name= "Teste" component={Teste} options={{headerShown:false}}/>
         </Stack.Navigator>
       </NavigationContainer>
     );

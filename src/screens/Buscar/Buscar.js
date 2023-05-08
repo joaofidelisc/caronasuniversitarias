@@ -172,22 +172,6 @@ export default function Buscar({navigation}) {
     }
   }
 
-  // async function excluiBancoPassageiroMotorista(estado, cidade, currentUser){
-  //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-  //   try{
-  //     reference.on('value', snapshot=>{
-  //       if (snapshot.exists()){
-  //         reference.remove();
-  //       }
-  //     })
-  //   }catch(error){
-  //     console.log('excluiBancoMotoristaPassageiro');
-  //   }
-  // }
-
-  
-  //PARA A VERSÃO PASSAGEIRO:
-
   useEffect(()=>{
     const recuperaEstadoApp = async()=>{
       console.log('rodando recuperaEstadoApp...');
@@ -243,31 +227,13 @@ export default function Buscar({navigation}) {
         ]
       );
     }
-    // console.log('netInfo:', netInfo);
-    // console.log('conectado:', netInfo.isConnected);
   })
 
   useEffect(()=>{
-    // if (netInfo.isConnected == true){
     console.log('TELA: Buscar');
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
     ligarLocalizacao();    
-    // excluiBancoPassageiroMotorista();
-    // }
   }, [])
-
-
-  // useEffect(()=>{
-
-  //   // const criaTabela = async()=>{
-  //   //   // await EstadoApp.createTable();
-  //   // }
-  //   // if (criouTabela == false){
-  //   //   // criaTabela();
-  //   //   console.log("TABELA CRIADA!");
-  //   //   setCriouTabela(true);
-  //   // }
-  // });
   
   return (
     <SafeAreaView>
@@ -378,6 +344,7 @@ export default function Buscar({navigation}) {
     </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   modalView: {

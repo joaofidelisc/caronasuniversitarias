@@ -9,8 +9,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 
-import serverConfig from '../../../config/config.json';
-
 
 const {height,width} = Dimensions.get('screen')
 
@@ -127,90 +125,36 @@ function Options({navigation, route}) {
 
 
 
-  //Função responsável por obter o nome do motorista e atualizar no vetor;
-  // async function getNomeMotorista(motoristaUID){
-  //   let nomeMotorista = '';
-  //   let docRef = firestore().collection('Users').doc(motoristaUID);
-  //   return docRef.get().then((doc)=>{
-  //     if (doc.exists){
-  //       nomeMotorista = doc.data().nome;
-  //       return nomeMotorista;
-  //     }else{
-  //       return '';
-  //     }
-  //   })
-  // }
-
-    async function getNomeMotorista(motoristaUID){
-      let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${motoristaUID}`,{
-          method: 'GET',
-          mode: 'cors',
-          headers:{
-            'Accept':'application/json',
-            'Content-type':'application/json'
-          }
-      });
-      const res = await reqs.json();
-      if (res != 'Falha'){
-          return res.nome;
+  //Função responsável por get o nome do motorista e atualizar no vetor;
+  async function getNomeMotorista(motoristaUID){
+    let nomeMotorista = '';
+    let docRef = firestore().collection('Users').doc(motoristaUID);
+    return docRef.get().then((doc)=>{
+      if (doc.exists){
+        nomeMotorista = doc.data().nome;
+        return nomeMotorista;
       }else{
         return '';
       }
-    }
-
-
-  //Função responsável por obter o nome do carro do motorista
-  // async function getNomeCarroMotorista(motoristaUID){
-  //   let nomeCarroMotorista = '';
-  //   let docRef = firestore().collection('Users').doc(motoristaUID);
-  //   return docRef.get().then((doc)=>{
-  //     if (doc.exists){
-  //       nomeCarroMotorista = doc.data().nome_veiculo;
-  //       return nomeCarroMotorista;
-  //     }else{
-  //       return '';
-  //     }
-  //   })
-  // }
-
-  //refazer essa aqui
-  /*async function getNomeCarroMotorista(motoristaUID){
-    let reqs = await fetch(serverConfig.urlRootNode+`buscarVeiculo/${motoristaUID}`,{
-        method: 'GET',
-        mode: 'cors',
-        headers:{
-          'Accept':'application/json',
-          'Content-type':'application/json'
-        }
-    });
-    const res = await reqs.json();
-    if (res != 'Falha'){
-        return res.nomeVeiculo;
-    }else{
-      return '';
-    }
-  }*/
-
-  async function getNomeCarroMotorista(motoristaUID){
-    let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${motoristaUID}`,{
-        method: 'GET',
-        mode: 'cors',
-        headers:{
-          'Accept':'application/json',
-          'Content-type':'application/json'
-        }
-    });
-    const res = await reqs.json();
-    if (res != 'Falha'){
-        return res.nomeVeiculo;
-    }else{
-      return '';
-    }
+    })
   }
 
-  //fazer ESSA AQUI
-  //Função responsável por obter a placa do carro do motorista
-  /*async function getPlacaCarroMotorista(motoristaUID){
+  //Função responsável por get o nome do carro do motorista
+  async function getNomeCarroMotorista(motoristaUID){
+    let nomeCarroMotorista = '';
+    let docRef = firestore().collection('Users').doc(motoristaUID);
+    return docRef.get().then((doc)=>{
+      if (doc.exists){
+        nomeCarroMotorista = doc.data().nome_veiculo;
+        return nomeCarroMotorista;
+      }else{
+        return '';
+      }
+    })
+  }
+
+  //Função responsável por get a placa do carro do motorista
+  async function getPlacaCarroMotorista(motoristaUID){
     let placaCarroMotorista = '';
     let docRef = firestore().collection('Users').doc(motoristaUID);
     return docRef.get().then((doc)=>{
@@ -221,61 +165,27 @@ function Options({navigation, route}) {
         return '';
       }
     })
-  }*/
-
-  async function getPlacaCarroMotorista(motoristaUID){
-    let reqs = await fetch(serverConfig.urlRootNode+`buscarVeiculo/${motoristaUID}`,{
-        method: 'GET',
-        mode: 'cors',
-        headers:{
-          'Accept':'application/json',
-          'Content-type':'application/json'
-        }
-    });
-    const res = await reqs.json();
-    if (res != 'Falha'){
-        return res.placaVeiculo;
-    }else{
-      return '';
-    }
   }
 
-  // const getClassificacaoMotorista = async(motoristaUID)=>{
-  //   let classificacaoAtual = 0;
-  //   const reference_motorista = firestore().collection('Users').doc(motoristaUID);
-  //   try{
-  //     await reference_motorista.get().then((reference)=>{
-  //       if (reference.exists){
-  //         classificacaoAtual = reference.data().classificacao;
-  //         if (classificacaoAtual == undefined){
-  //           classificacaoAtual = 0;
-  //         }
-  //         return parseFloat(classificacaoAtual.toFixed(2));
-  //       }
-  //     })
-  //   }catch(error){
-  //     console.log('erro em recuperaClassificacaoMotorista');
-  //   }
-  //   return parseFloat(classificacaoAtual.toFixed(2));
-  // }
-
-  
-  async function getClassificacaoMotorista(motoristaUID){
-    let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${motoristaUID}`,{
-        method: 'GET',
-        mode: 'cors',
-        headers:{
-          'Accept':'application/json',
-          'Content-type':'application/json'
+  const getClassificacaoMotorista = async(motoristaUID)=>{
+    let classificacaoAtual = 0;
+    const reference_motorista = firestore().collection('Users').doc(motoristaUID);
+    try{
+      await reference_motorista.get().then((reference)=>{
+        if (reference.exists){
+          classificacaoAtual = reference.data().classificacao;
+          if (classificacaoAtual == undefined){
+            classificacaoAtual = 0;
+          }
+          return parseFloat(classificacaoAtual.toFixed(2));
         }
-    });
-    const res = await reqs.json();
-    if (res != 'Falha'){
-        return parseFloat(res.classificacao);
-    }else{
-      return 0;
+      })
+    }catch(error){
+      console.log('erro em recuperaClassificacaoMotorista');
     }
+    return parseFloat(classificacaoAtual.toFixed(2));
   }
+
 
   //Função responsável por receber um UID e retornar a url para a imagem do motorista.
   const getFotoMotorista = async(motoristaUID)=>{
@@ -334,85 +244,6 @@ function Options({navigation, route}) {
     console.log('Carona recusada!');
   }
 
-  /*function recusarCarona(motoristaUID) {
-    let totalOfertas = "";
-    let arrayOfertasRestantes = [];
-    let ofertasRestantes = "";
-  
-    const body = JSON.stringify({
-      motoristaUID,
-      estado,
-      cidade,
-      currentUser,
-    });
-    
-    const url = "`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/SP/Sao_Carlos`"
-    const eventSource = new EventSource(url);
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log("data", data);
-  
-      if (data.status === "success") {
-        if (data.totalOfertas !== undefined) {
-          totalOfertas = data.totalOfertas;
-        }
-        if (totalOfertas !== "" || totalOfertas.split(", ").length > 1) {
-          arrayOfertasRestantes = totalOfertas.split(", ");
-          if (totalOfertas.includes(motoristaUID)) {
-            arrayOfertasRestantes.splice(
-              arrayOfertasRestantes.indexOf(motoristaUID),
-              1
-            );
-            ofertasRestantes = arrayOfertasRestantes.join(", ");
-            console.log("ofertas restantes:", ofertasRestantes);
-            if (ofertasRestantes === "") {
-              setMotoristas([]);
-              voltouTela();
-              navigation.navigate("Buscando_Carona", {
-                cidade: cidade,
-                estado: estado,
-                voltouEstado: true,
-              });
-            }
-  
-            const removeMotorista = (motorista) => {
-              return motorista.uid !== motoristaUID;
-            };
-  
-            vetorMotoristas = vetorMotoristas.filter(removeMotorista);
-  
-            console.log("Carona recusada!");
-  
-            eventSource.close();
-          }
-        }
-      }
-    };
-  
-    eventSource.onerror = (error) => {
-      console.log("error", error);
-      eventSource.close();
-    };
-  
-    fetch(url, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body,
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((json) => console.log("json", json))
-      .catch((error) => {
-        console.log("error", error);
-      });
-  }*/
-  
-
-
-
   //Função responsável por complementar a função abaixo.
   //Escreve no banco do motorista o UID do passageiro.
   async function aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL){
@@ -446,60 +277,6 @@ function Options({navigation, route}) {
     navigation.navigate('AguardandoMotorista', {cidade: cidade, estado: estado, uidMotorista:uidMotorista, currentUser: currentUser, nomeMotorista: nomeMotorista, veiculoMotorista: veiculoMotorista, placaVeiculoMotorista: placaVeiculoMotorista, motoristaUrl: motoristaURL, nomeDestino: nomeDestino});
   }
   
-  /*async function aceitarCarona_(uidMotorista, nomeMotorista, veiculoMotorista, placaVeiculoMotorista, motoristaURL) {
-    const body = JSON.stringify({
-      uidMotorista,
-      nomeMotorista,
-      veiculoMotorista,
-      placaVeiculoMotorista,
-      motoristaURL,
-      currentUser,
-    });
-    
-    const url = "`${serverConfig.urlRootNode}api/rabbit/atualizarInfo/motorista/SP/Sao_Carlos`";
-    
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body,
-        credentials: 'include',
-      });
-      
-      const data = await response.json();
-      console.log('data', data);
-      
-      if (data.status === 'success') {
-        console.log('Carona aceita!');
-        EstadoApp.updateData({
-          uidMotorista,
-          nomeMotorista,
-          veiculoMotorista,
-          placaVeiculoMotorista,
-          motoristaUrl: motoristaURL,
-          passageiros: 'att',
-        });
-        navigation.navigate('AguardandoMotorista', {
-          cidade: cidade,
-          estado: estado,
-          uidMotorista: uidMotorista,
-          currentUser: currentUser,
-          nomeMotorista: nomeMotorista,
-          veiculoMotorista: veiculoMotorista,
-          placaVeiculoMotorista: placaVeiculoMotorista,
-          motoristaUrl: motoristaURL,
-          nomeDestino: nomeDestino,
-        });
-      } else {
-        console.log('Erro ao atualizar informações do motorista');
-      }
-    } catch (error) {
-      console.log('error', error);
-    }
-  }*/
   
   //Função responsável por aceitar carona - escreve no banco do banco do passageiro o uid do motorista e reseta o vetor de ofertas de caronas;
   //Além disso, invoca a função aceitarCarona_ (complementar desta), que é responsável por escrever no banco do motorista o uid do passageiro;

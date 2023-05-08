@@ -12,8 +12,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Lottie from 'lottie-react-native';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 
-import serverConfig from '../../../config/config.json';
-
 
 /*
 Ideias para essa tela:
@@ -119,69 +117,7 @@ function ViagemMotorista({route, navigation}){
       // }
     }
 
-    /*async function getDadosPassageiros(){
-      let listaPassageiros = '';
-      let arrayUIDs = [];
-      let jaExiste = false;
-      if (jaExiste == true){
-        jaExiste = false;
-      }
-    
-      const url = `${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/${cidade}/`;
-      const eventSource = new EventSource(url);
-    
-      eventSource.onmessage = async (event) => {
-        const data = JSON.parse(event.data);
-        const snapshot = data.snapshot;
-    
-        if (snapshot.exists() && snapshot.val().caronistasAbordo != undefined && snapshot.val().caronistasAbordo != ''){
-          listaPassageiros = snapshot.val().caronistasAbordo;
-        }
-        arrayUIDs = listaPassageiros.split(', ');
-    
-        if (atualizarNumPassageiros){
-          setNumPassageirosABordo(arrayUIDs.length);
-          setAtualizarNumPassageiros(false);
-          setUIDsPassageiros(arrayUIDs);
-        }
-    
-        arrayUIDs.forEach(async uid =>{
-          if (passageirosABordo.length == 0){
-            setPassageirosABordo([{
-              url: await getFotoPassageiro(uid),
-              uid: uid,
-              nome: await getNomePassageiro(uid),
-              classificacao: await getClassificacaoPassageiro(uid),
-              destino: await getDestinoPassageiro(uid)
-            }])
-          }else{
-            passageirosABordo.some(motorista=>{
-              if (motorista.uid == uid){
-                jaExiste = true;
-              }
-            })
-            if (!jaExiste){
-              setPassageirosABordo([...passageirosABordo, {
-                url: await getFotoPassageiro(uid),
-                uid: uid,
-                nome: await getNomePassageiro(uid),
-                classificacao: await getClassificacaoPassageiro(uid),
-                destino: await getDestinoPassageiro(uid) 
-              }])
-            }
-          }
-        });
-    
-        setAtualizouPassageiros(true);
-      };
-    
-      eventSource.onerror = (error) => {
-        console.log('error:', error);
-      };
-    }*/
-    
-
-    /*const getNomePassageiro = async(uidPassageiro)=>{
+    const getNomePassageiro = async(uidPassageiro)=>{
       let nomePassageiro = '';
       let docRef = firestore().collection('Users').doc(uidPassageiro);
       return docRef.get().then((doc)=>{
@@ -192,19 +128,7 @@ function ViagemMotorista({route, navigation}){
           return '';
         }
       })
-    }*/
-
-    async function getNomePassageiro(uidPassageiro){
-      let nomePassageiro = '';
-      const eventSource = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/${cidade}/${uidPassageiro}`);
-      eventSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        nomePassageiro = data.nome;
-        eventSource.close();
-      };
-      return nomePassageiro;
     }
-    
 
     const getFotoPassageiro = async(uidPassageiro)=>{
       let caminhoFirebase = uidPassageiro.concat('Perfil');    
@@ -234,48 +158,9 @@ function ViagemMotorista({route, navigation}){
       })
     }
 
-    /*const getDestinoPassageiro = async(uidPassageiro)=>{
-      console.log('rodando função getDestinoPassageiro');
-      let destino = null;
-      const eventSource = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/${cidade}/${uidPassageiro}`);
-    
-      return new Promise((resolve, reject) => {
-        eventSource.addEventListener('message', (event) => {
-          const data = JSON.parse(event.data);
-          if (data.nomeDestino) {
-            destino = data.nomeDestino;
-            resolve(destino);
-          } else {
-            resolve('');
-          }
-        });
-    
-        eventSource.addEventListener('error', (event) => {
-          console.error('Error', event);
-          reject();
-        });
-      });
-    }*/
-    
-
-    /*const getDestinoPassageiro = async () => {
-      try {
-        const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/SP/Sao_Carlos`);
-        events.addEventListener('getInfoPassageiro', (event)=>{
-        console.log('Atualização informações:\n');
-        let objPassageiro = JSON.parse(event.data);
-        console.log(objPassageiro.nomeDestino)
-        return objPassageiro.nomeDestino;
-      })
-      }catch (error) {
-        console.log('Error', error);
-        return '';
-      }
-    }*/
-
 
     //exibir a classificação do passageiro ao oferecer carona!!!!!!!!!!!!!!!!!1111
-    /*const getClassificacaoPassageiro = async(uidPassageiro)=>{
+    const getClassificacaoPassageiro = async(uidPassageiro)=>{
       let classificacaoAtual = 0;
       const reference_passageiro = firestore().collection('Users').doc(uidPassageiro);
       try{
@@ -292,23 +177,6 @@ function ViagemMotorista({route, navigation}){
         console.log('erro em recuperaClassificacaoMotorista');
       }
       return parseFloat(classificacaoAtual.toFixed(2));
-    }*/
-
-    async function getClassificacaoPassageiro(uidPassageiro){
-      let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${uidPassageiro}`,{
-        method: 'GET',
-        mode: 'cors',
-        headers:{
-          'Accept':'application/json',
-          'Content-type':'application/json'
-        }
-      });
-      const res = await reqs.json();
-      if(res.classificacao == undefined){
-        res.classificacao = 0;
-      }else if (res != 'Falha' && res.classificacao != undefined){
-        return parseFloat(res.classificacao.toFixed(2)); //parseF converte string em PF
-      }
     }
 
     const dataAtualFormatada = async()=>{
@@ -340,20 +208,6 @@ function ViagemMotorista({route, navigation}){
         console.log('erro em escreveHistoricoViagem');
       }
     }
-
-     /*async function escreveHistoricoViagem(destinoPassageiro, nomePassageiro, passageiroIMG){
-      const data = await dataAtualFormatada();
-      let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${currentUser}`,{
-        method: 'GET',
-        mode: 'cors',
-        headers:{
-          'Accept':'application/json',
-          'Content-type':'application/json'
-        }
-      });
-      const res = await reqs.json();
-      const reference_passageiro = ;
-    }*/
 
    
     const finalizarViagemPassageiro = async(uidPassageiro, destinoPassageiro, nomePassageiro, passageiroIMG)=>{

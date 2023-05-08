@@ -12,9 +12,6 @@ import messaging from '@react-native-firebase/messaging';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
-import serverConfig from '../../../config/config.json';
-
-
 const {height, width} = Dimensions.get('screen')
 
 function BuscandoCarona({navigation, route}) {
@@ -62,7 +59,7 @@ function BuscandoCarona({navigation, route}) {
     }
   }
 
-  /*function buscarCarona(){
+  function buscarCarona(){
     console.log('rodando buscar carona!');
     const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
     try{
@@ -79,26 +76,7 @@ function BuscandoCarona({navigation, route}) {
     } catch(error){
       console.log('Error', error.code);
     }
-  }*/
-
-  function buscarCarona(){
-    try{
-      const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/SP/Sao_Carlos`);
-       events.addEventListener('getInfoPassageiro', (event)=>{
-       console.log('Atualização informações:\n');
-          let objPassageiro = JSON.parse(event.data);
-          console.log(objPassageiro.ofertasCaronas);
-          if(objPassageiro.ofertasCaronas != '' && objPassageiro.ofertasCaronas != null && objPassageiro.ofertasCaronas != undefined){
-            setEncontrouCarona(true);
-            console.log('Encontrou carona?:', encontrouCarona);
-          } else{
-            setEncontrouCarona(false);
-          }
-       })
-  }catch(err){
-    console.log("erro em buscar Carona");
   }
-}
 
   async function caronaEncontrada(){
     const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
@@ -137,40 +115,20 @@ function BuscandoCarona({navigation, route}) {
        });
    };
 
-  // const armazenaToken = async()=>{
-  //   let docRef = firestore().collection('Users').doc(currentUser);
-  //   try{
-  //     docRef.get().then((doc)=>{
-  //       if (doc.exists){
-  //         docRef.update({
-  //           token: token
-  //         })
-  //       }
-  //     })
-  //   }catch(error){
-  //     console.log('erro em armazenaToken');
-  //   }
-  // }
-
-  const atualizaToken = async()=>{
-    console.log('atualizarToken');
-    let reqs = await fetch(serverConfig.urlRootNode+'atualizarToken',{
-    method: 'PUT',
-    headers:{
-        'Accept':'application/json',
-        'Content-type':'application/json'
-    },
-    body: JSON.stringify({
-        id: currentUser,
-        token: token
-    })
-    });
-
-    let res = await reqs.json();
-    console.log('req:', res);
-    // console.log('passou!');
+  const armazenaToken = async()=>{
+    let docRef = firestore().collection('Users').doc(currentUser);
+    try{
+      docRef.get().then((doc)=>{
+        if (doc.exists){
+          docRef.update({
+            token: token
+          })
+        }
+      })
+    }catch(error){
+      console.log('erro em armazenaToken');
+    }
   }
-
 
   const atualizaEstadoAtual = async()=>{
     await AsyncStorage.removeItem('BuscandoCarona');
@@ -192,7 +150,7 @@ function BuscandoCarona({navigation, route}) {
       console.log('Tela: BuscandoCarona');
       getFCMToken();
       requestPermission();
-      atualizaToken();
+      armazenaToken();
     }, [token])
   );
 

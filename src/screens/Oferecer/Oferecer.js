@@ -21,16 +21,11 @@ import messaging from '@react-native-firebase/messaging';
 import NotificationService from '../Notificacoes/PushNotifications';
 import { AndroidImportance } from '@notifee/react-native';
 import EstadoApp from '../../services/sqlite/EstadoApp';
-import serverConfig from '../../../config/config.json';
-
-import EventSource from 'react-native-event-source';
-import { createContext } from 'react';
 
 
 const {width, height} = Dimensions.get('screen');
-const DataContext = createContext();
 
-function Oferecer({route, navigation, children}) {
+function Oferecer({route, navigation}) {
     const [region, setRegion] = useState(null);  //Coordenadsa atuais do motorista (latitude e longitude);
     const [modalVisible, setModalVisible] = useState(false); //Define se o modal é mostrado ou não;
     const [imageUser, setImageUser] = useState('');  //Define a url da imagem do possível caronista para cada caronista e para cada vez que é chamada a função buscaUsuario;
@@ -50,9 +45,6 @@ function Oferecer({route, navigation, children}) {
     const [exibeModalOferecer, setExibeModalOferecer] = useState(true); //Controla se o modal com o texto de oferecer carona para o caronista é exibido ou não;
     const [existePassageiroAbordo, setExistePassageiroAbordo] = useState(false); //Se existe algum passageiro a bordo, o botão de iniciar viagem é exibido;
     const [numPassageirosABordo, setNumPassageirosABordo] = useState(0); //Controla o número de passageiros que estão a bordo do veículo;
-    
-    const [uidsPassageirosABordo, setUidsPassageirosABordo] = useState([]);
-    
     const [ofertasAceitas, setOfertasAceitas] = useState([]); ////Vetor com todos os uids dos passageiros que aceitaram a carona do motorista corrente (motorista atual);
     const [arrayOfertasAceitas, setArrayOfertasAceitas] = useState([]);
     const [modalBuscarPassageiro, setModalBuscarPassageiro] = useState(false);
@@ -61,7 +53,7 @@ function Oferecer({route, navigation, children}) {
     const [faltaPassageiros, setFaltaPassageiros] = useState(false);
     const [definiuEstado, setDefiniuEstado] = useState(false);
     const [infoCarregadas, setInfoCarregadas] = useState(false);
-    
+
     const [token, setToken] = useState(""); //Armazena o token atual obtido do dispositivo do usuário.
     //Informações do motorista e banco de dados
     const currentUser = auth().currentUser.uid;
@@ -75,106 +67,6 @@ function Oferecer({route, navigation, children}) {
     // const estado = route.params?.estado;
     // const destino = route.params?.destino;
     // const vagasDisponiveis = route.params?.vagas;
-
-
-    const getInfoMotorista = ()=>{
-      const cidade_com_espaco = cidade;
-      const cidade_aux = cidade_com_espaco.normalize("NFD").replace(/\p{Diacritic}/gu, "");
-      const cidade_param = cidade_aux.replace(/\s+/g, "_");
-      try{
-        const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/motorista/${estado}/${cidade_param}`);
-        events.addEventListener('open', ()=>{
-          console.log('Conexão estabelecida!');
-        })
-        events.addEventListener('getInfoPassageiro', (event)=>{
-          let objMotorista = JSON.parse(event.data);
-          if (Object.keys(objMotorista).length == 0){
-          }else{
-            if (objMotorista.uid == currentUser){
-              caronasAceitas(objMotorista);
-              //buscarPassageiro(); -> talvez
-              //embarquePassageiro(); ->talvez
-              //desistir da oferta(); ->talvez
-            }
-          }
-        })
-        events.addEventListener('error', error => {
-          console.log('Erro em getInfoPassageiro', error);
-        });
-      }catch(error){
-        console.log(error);
-      }
-    }
-
-    const getInfoPassageiro = ()=>{
-      const cidade_com_espaco = cidade;
-      const cidade_aux = cidade_com_espaco.normalize("NFD").replace(/\p{Diacritic}/gu, "");
-      const cidade_param = cidade_aux.replace(/\s+/g, "_");
-      // let objPassageiro = {};
-      try{
-        const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/${cidade_param}`);
-        events.addEventListener('open', ()=>{
-          console.log('Conexão estabelecida!');
-        })
-        events.addEventListener('getInfoPassageiro', (event)=>{
-          let objPassageiro = JSON.parse(event.data);
-          if (Object.keys(objPassageiro).length == 0){
-          }else{
-            getCaronistasMarker(objPassageiro);
-          }
-        })
-        events.addEventListener('error', error => {
-          console.log('Erro em getInfoPassageiro', error);
-        });
-      }catch(error){
-        console.log(error);
-      }
-    }
-
-    const enviarInfoMotorista = async(uidCaronista, caronistasAbordo, latitudeMotorista, longitudeMotorista)=>{
-      console.log('Testando função enviarInfoMotorista!');
-      let reqs = await fetch(`${serverConfig.urlRootNode}api/rabbit/enviarInfo/motorista`,{
-          method: 'POST',
-          headers:{
-            'Accept':'application/json',
-            'Content-type':'application/json'
-          },
-          body: JSON.stringify({
-            uid: currentUser,
-            estado: estado,
-            cidade: cidade,
-            ativo: true,
-            buscandoCaronista: uidCaronista,
-            // caronasAceitas: "",
-            caronistasAbordo: caronistasAbordo,
-            latitudeMotorista: latitudeMotorista,
-            longitudeMotorista: longitudeMotorista,
-            // nomeDestino: "Centro, São Carlos - SP, Brasil"
-          })
-      });
-  
-      let res = await reqs.json();
-      console.log('req:', res);
-    }
-
-
-    function getCaronistasMarker(data){
-      const index = vetorCaronistas.findIndex(obj => obj.uid === data.uid);
-      if (index >= 0){
-        vetorCaronistas[index].latitude = data.latitudePassageiro;
-        vetorCaronistas[index].longitude = data.longitudePassagero;
-        vetorCaronistas[index].ofertasCaronas = data.ofertasCaronas;
-      }else{
-        setCaronistas([...vetorCaronistas, {
-          latitude: data.latitudePassageiro,
-          longitude: data.longitudePassageiro,
-          uid: data.uid,
-          caronasAceitas: data.caronasAceitas,
-          nomeDestino: data.nomeDestino,
-          ofertasCaronas: data.ofertasCaronas
-        }])
-      }
-    }
 
     function carregarInformacoes(){
       if (route.params?.cidade == undefined || route.params?.estado == undefined || route.params?.destino == undefined){
@@ -220,69 +112,61 @@ function Oferecer({route, navigation, children}) {
       });
     }
 
-  
+    
     /*
       Função responsável por 'desenhar' os marcadores (caronistas) no mapa;
       A lógica empregada é iterar por todos os marcadores na primeira vez e caso tenha algum marcador a ser inserido, apenas inserimos; 
       caso um marcador mude de posição, ele é apenas atualizado e, caso um caronista desista de buscar carona, o marcador é removido.
     */
-
-
-    // function getCaronistasMarkerTeste(){
-    //     console.log('vetorCaronistas:', vetorCaronistas);
-    // } 
-    
-    
-  //   function getCaronistasMarker(){
-  //   let jaExiste = false;
-  //   if (jaExiste == true){
-  //     jaExiste = false;
-  //   }
-  //   let filhoRemovido = '';
-  //   if (filhoRemovido != ''){
-  //     filhoRemovido = '';
-  //   }
-  //   try{
-  //     database().ref().child(`${estado}/${cidade}/Passageiros`).on('child_removed', function(snapshot){
-  //       setCaronistas(vetorCaronistas.filter((uid)=>(uid.uid != snapshot.key)));
-  //     })
-  //     database().ref().child(`${estado}/${cidade}/Passageiros`).on('value', function(snapshot){
-  //       if (snapshot.exists()){
-  //         snapshot.forEach(function(userSnapshot){       
-  //           if (vetorCaronistas.length == 0){
-  //             setCaronistas([{
-  //               latitude: userSnapshot.val().latitudePassageiro,
-  //               longitude: userSnapshot.val().longitudePassageiro,
-  //               uid: userSnapshot.key,  
-  //               caronasAceitas: userSnapshot.val().caronasAceitas,        
-  //               }
-  //             ])
-  //           }
-  //           else{
-  //             vetorCaronistas.some(caronista=>{
-  //               if (caronista.uid === userSnapshot.key){
-  //                 vetorCaronistas[vetorCaronistas.indexOf(caronista)].latitude = userSnapshot.val().latitudePassageiro;
-  //                 vetorCaronistas[vetorCaronistas.indexOf(caronista)].longitude = userSnapshot.val().longitudePassageiro;
-  //                 jaExiste = true;
-  //               }
-  //             })
-  //             if (!jaExiste){
-  //               setCaronistas([...vetorCaronistas, {
-  //                 latitude: userSnapshot.val().latitudePassageiro,
-  //                 longitude: userSnapshot.val().longitudePassageiro,
-  //                 uid: userSnapshot.key,
-  //                 caronasAceitas: userSnapshot.val().caronasAceitas,      
-  //                 }
-  //               ])
-  //             }
-  //           }
-  //         })
-  //       }
-  //     })
-  //   }catch(error){
-  //     console.log(error);
-  //   }
-  // }
+    function getCaronistasMarker(){
+    let jaExiste = false;
+    if (jaExiste == true){
+      jaExiste = false;
+    }
+    let filhoRemovido = '';
+    if (filhoRemovido != ''){
+      filhoRemovido = '';
+    }
+    try{
+      database().ref().child(`${estado}/${cidade}/Passageiros`).on('child_removed', function(snapshot){
+        setCaronistas(vetorCaronistas.filter((uid)=>(uid.uid != snapshot.key)));
+      })
+      database().ref().child(`${estado}/${cidade}/Passageiros`).on('value', function(snapshot){
+        if (snapshot.exists()){
+          snapshot.forEach(function(userSnapshot){       
+            if (vetorCaronistas.length == 0){
+              setCaronistas([{
+                latitude: userSnapshot.val().latitudePassageiro,
+                longitude: userSnapshot.val().longitudePassageiro,
+                uid: userSnapshot.key,  
+                caronasAceitas: userSnapshot.val().caronasAceitas,        
+                }
+              ])
+            }
+            else{
+              vetorCaronistas.some(caronista=>{
+                if (caronista.uid === userSnapshot.key){
+                  vetorCaronistas[vetorCaronistas.indexOf(caronista)].latitude = userSnapshot.val().latitudePassageiro;
+                  vetorCaronistas[vetorCaronistas.indexOf(caronista)].longitude = userSnapshot.val().longitudePassageiro;
+                  jaExiste = true;
+                }
+              })
+              if (!jaExiste){
+                setCaronistas([...vetorCaronistas, {
+                  latitude: userSnapshot.val().latitudePassageiro,
+                  longitude: userSnapshot.val().longitudePassageiro,
+                  uid: userSnapshot.key,
+                  caronasAceitas: userSnapshot.val().caronasAceitas,      
+                  }
+                ])
+              }
+            }
+          })
+        }
+      })
+    }catch(error){
+    }
+  }
 
 
   /*
@@ -293,81 +177,51 @@ function Oferecer({route, navigation, children}) {
   console.log("OFERECER!!!!!!!!!!!!! - atualizaEstado");
    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
    try{
-    //  reference.update({
-    //    latitudeMotorista: region.latitude,
-    //    longitudeMotorista: region.longitude,
-    //    ativo: true,
-    //   });
-      //Corrigir uidCaronista
-      enviarInfoMotorista('', region.latitude, region.longitude);
+     reference.update({
+       latitudeMotorista: region.latitude,
+       longitudeMotorista: region.longitude,
+       ativo: true,
+      });
     }catch(error){
       console.log('atualizaEstado, ERRO:', error.code);
     }
   }
 
 
-  // const atualizaEstado = async()=>{
-  //   console.log('Testando função enviarInfoMotorista!');
-  //   let reqs = await fetch(`${serverConfig.urlRootNode}api/rabbit/enviarInfo/motorista`,{
-  //       method: 'POST',
-  //       headers:{
-  //         'Accept':'application/json',
-  //         'Content-type':'application/json'
-  //       },
-  //       body: JSON.stringify({
-  //         uid: currentUser,
-  //         estado: estado,
-  //         cidade: cidade,
-  //         ativo: true,
-  //         buscandoCaronista: "",
-  //         caronasAceitas: "",
-  //         caronistasAbordo: "",
-  //         latitudeMotorista: region.latitude || 0, //atualizar o valor default
-  //         longitudeMotorista: region.longitude || 0, //atualizar o valor default
-  //         nomeDestino: destino
-  //       })
-  //   });
+  /*
+    Função responsável por definir um estado inicial para o motorista, ou seja, sua posição inicial ao iniciar o App;
+    Quando o app é iniciado, é necessário verificar se o banco de dados para esse motorista já existe e, caso contrário, ele deve ser criado;
+    O banco de dados nessa parte utilizado é em tempo real (Realtime Database).
+  */
+  function estadoInicial(){
+    console.log("OFERECER!!!!!!!!!!!!! - estadoInicial");
+    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
+    if (!existeBanco){
+      try{
+        reference.once('value').then(function(snapshot){
+          setExisteBanco(snapshot.exists());
+        })
+      }catch(error){
+        console.log('erro em estadoInicial()');
+      }
+    }
 
-  //   let res = await reqs.json();
-  //   console.log('req:', res);
-  // }
-
-  //Função de estado inicial não é mais necessária, pois o RabbitMQ garante a criação da fila!
-
-  // /*
-  //   Função responsável por definir um estado inicial para o motorista, ou seja, sua posição inicial ao iniciar o App;
-  //   Quando o app é iniciado, é necessário verificar se o banco de dados para esse motorista já existe e, caso contrário, ele deve ser criado;
-  //   O banco de dados nessa parte utilizado é em tempo real (Realtime Database).
-  // */
-  // function estadoInicial(){
-  //   console.log("OFERECER!!!!!!!!!!!!! - estadoInicial");
-  //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-  //   if (!existeBanco){
-  //     try{
-  //       reference.once('value').then(function(snapshot){
-  //         setExisteBanco(snapshot.exists());
-  //       })
-  //     }catch(error){
-  //       console.log('erro em estadoInicial()');
-  //     }
-  //   }
-
-  //   if (!existeBanco){
-  //     try{
-  //       reference.set({
-  //         latitudeMotorista: region.latitude,
-  //         longitudeMotorista: region.longitude,
-  //         caronasAceitas:'',
-  //         ativo: true,
-  //         nomeDestino: destino,
-  //         buscandoCaronista: '',
-  //         caronistasAbordo: '',
-  //       });
-  //     }catch(error){
-  //       console.log('atualizaEstado, ERRO:', error.code);
-  //     }
-  //   }
-  // }
+    if (!existeBanco){
+      try{
+        reference.set({
+          latitudeMotorista: region.latitude,
+          longitudeMotorista: region.longitude,
+          caronasAceitas:'',
+          ativo: true,
+          nomeDestino: destino,
+          buscandoCaronista: '',
+          caronistasAbordo: '',
+        });
+      }catch(error){
+        console.log('atualizaEstado, ERRO:', error.code);
+      }
+    }
+  }
   
 
   /*
@@ -388,10 +242,10 @@ function Oferecer({route, navigation, children}) {
         enableHighAccuracy:false,
         timeout:2000,
       })
-      // if (!existeBanco){
-      //   console.log('NÃO EXISTE BANCO...');
-      //   estadoInicial();
-      // }
+      if (!existeBanco){
+        console.log('NÃO EXISTE BANCO...');
+        estadoInicial();
+      }
       atualizaEstado();
     }catch(error){
       console.log(error.code);
@@ -424,7 +278,7 @@ function Oferecer({route, navigation, children}) {
   /*
     Função responsável por retornar o nome do caronista.
   */
-  /*const getNomeCaronista = async(userUID)=>{
+  const getNomeCaronista = async(userUID)=>{
     console.log("OFERECER!!!!!!!!!!!!! - getNomeCaronista");
     try{
       await firestore().collection('Users').doc(userUID).get().then((doc)=>{
@@ -435,53 +289,19 @@ function Oferecer({route, navigation, children}) {
     }catch(error){
       console.log('erro em getNomeCaronista');
     }
-  }*/
-  
-  async function getNomeCaronista(userUID){
-    let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${userUID}`,{
-        method: 'GET',
-        mode: 'cors',
-        headers:{
-          'Accept':'application/json',
-          'Content-type':'application/json'
-        }
-    });
-    const res = await reqs.json();
-    if (res != 'Falha'){
-        setNomeCaronista(res.nome);
-        return res.nome;
-    }else{
-      return '';
-    }
   }
 
+  
   /* 
     Função responsável por obter o destino do caronista com base em seu UserID;
     Essa função é chamada apenas quando um marcador é pressionado.
   */
-  // const getDestinoCaronista =  async(userUID)=>{
-  //   console.log("OFERECER!!!!!!!!!!!!! - getDestinoCaronista");
-
-  //   try{
-  //     await database().ref(`${estado}/${cidade}/Passageiros/${userUID}`).once('value').then(snapshot=>{
-  //       setNomeDestinoCaronista(snapshot.val().nomeDestino);
-  //     })
-  //   }catch(error){
-  //     console.log(error.code);
-  //   }
-  // }
-
-
   const getDestinoCaronista =  async(userUID)=>{
-    console.log("ENTRANDO EM GETDESTINOCARONISTA!!");
+    console.log("OFERECER!!!!!!!!!!!!! - getDestinoCaronista");
     try{
-      const caronista = vetorCaronistas.find(obj => obj.uid == userUID);
-      if (caronista){
-        console.log("caronista.nomeDestino:", caronista.nomeDestino);
-        setNomeDestinoCaronista(caronista.nomeDestino);
-        // return caronista.nomeDestino;
-      }
-      // return null;
+      await database().ref(`${estado}/${cidade}/Passageiros/${userUID}`).once('value').then(snapshot=>{
+        setNomeDestinoCaronista(snapshot.val().nomeDestino);
+      })
     }catch(error){
       console.log(error.code);
     }
@@ -490,7 +310,7 @@ function Oferecer({route, navigation, children}) {
   /*
     Função responsável por recuperar a classificação do caronista.
   */
-  /*const getClassificacaoCaronista = async(caronistaUID)=>{
+  const getClassificacaoCaronista = async(caronistaUID)=>{
     console.log("OFERECER!!!!!!!!!!!!! - getClassificacaoCaronista");
     let classificacaoAtual = 0;
     let classificacaoAtualizada = 0;
@@ -510,35 +330,15 @@ function Oferecer({route, navigation, children}) {
     }catch(error){
       console.log('erro em recuperaClassificacaoMotorista');
     }
-  }*/
-
-  const getClassificacaoCaronista = async(userUID)=>{
-    let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${userUID}`,{
-      method: 'GET',
-      mode: 'cors',
-      headers:{
-        'Accept':'application/json',
-        'Content-type':'application/json'
-      }
-    });
-    const res = await reqs.json();
-    if(res.classificacao == undefined){
-      res.classificacao = 0;
-    }
-    if (res != 'Falha' && res.classificacao != undefined){
-        setClassificacaoCaronista(res.classificacao)
-        return parseFloat(res.classificacao.toFixed(2));
-    }else{
-      return '';
-    }
   }
-    
+
 
   /*
     Função responsável por buscar e exibir o modal do usuário após o motorista clicar no pin do caronista;
     Busca o nome, foto de perfil, destino e classificação e define o UID no hook para ser possível oferecer carona.
   */
   const getDadosUsuario = async(userUID, caronaAceita, latitude, longitude)=>{
+    console.log("OFERECER!!!!!!!!!!!!! - getDadosUsuario");
     if (exibeModalOferecer == false){
       setExibeModalOferecer(true);
     }
@@ -579,55 +379,6 @@ function Oferecer({route, navigation, children}) {
     A ideia é concatenar a string da caronas já existente em 'ofertasCaronas' do passageiro com o UID do motorista, mantendo assim, os demais motoristas oferecedores
     de carona.
   */
-  // function oferecerCarona(){
-  //   console.log("OFERECER!!!!!!!!!!!!! - oferecerCarona");
-  //   let tituloNotificacao = 'Opa! Um motorista te ofereceu carona!';
-  //   let mensagemNotificacao = 'Encontramos uma carona para você!';
-  //   let listaCaronas = '';
-  //   setModalVisible(false);
-  //   try{
-  //     database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).once('value').then(snapshot=>{
-  //       listaCaronas = snapshot.val().ofertasCaronas;
-  //       if (!listaCaronas.includes(currentUser)){
-  //         if (listaCaronas == ''){
-  //           listaCaronas = currentUser;
-  //         }else{
-  //           listaCaronas = listaCaronas.concat(', ',currentUser); 
-  //         }
-  //         sendNotification(uidPassageiro, tituloNotificacao, mensagemNotificacao);
-  //       }        
-  //       database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).update({
-  //         ofertasCaronas: listaCaronas
-  //       });
-  //     })
-  //   }catch(error){
-  //     console.log('Deu algum erro aqui :(');
-  //   }
-  // }
-  
-  
-
-  const enviarInfoPassageiro = async(uid, estado, cidade, ofertasCaronas)=>{
-    console.log('função enviarInfoPassageiro');
-    let reqs = await fetch(`${serverConfig.urlRootNode}api/rabbit/enviarInfo/passageiro`,{
-        method: 'POST',
-        headers:{
-          'Accept':'application/json',
-          'Content-type':'application/json'
-        },
-        body: JSON.stringify({
-          uid: uid,
-          estado: estado,
-          cidade: cidade,
-          ativo: true,
-          ofertasCaronas: ofertasCaronas,
-        })
-    });
-
-    let res = await reqs.json();
-    console.log('req:', res);
-  }
-
   function oferecerCarona(){
     console.log("OFERECER!!!!!!!!!!!!! - oferecerCarona");
     let tituloNotificacao = 'Opa! Um motorista te ofereceu carona!';
@@ -635,9 +386,8 @@ function Oferecer({route, navigation, children}) {
     let listaCaronas = '';
     setModalVisible(false);
     try{
-      const caronista = vetorCaronistas.find(obj => obj.uid == uidPassageiro);
-      if (caronista){
-        listaCaronas = caronista.ofertasCaronas;
+      database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).once('value').then(snapshot=>{
+        listaCaronas = snapshot.val().ofertasCaronas;
         if (!listaCaronas.includes(currentUser)){
           if (listaCaronas == ''){
             listaCaronas = currentUser;
@@ -645,14 +395,16 @@ function Oferecer({route, navigation, children}) {
             listaCaronas = listaCaronas.concat(', ',currentUser); 
           }
           sendNotification(uidPassageiro, tituloNotificacao, mensagemNotificacao);
-        }
-        enviarInfoPassageiro(uidPassageiro, estado, cidade, listaCaronas);        
-      }
+        }        
+        database().ref(`${estado}/${cidade}/Passageiros/${uidPassageiro}`).update({
+          ofertasCaronas: listaCaronas
+        });
+      })
     }catch(error){
-      console.log('erro em oferecerCarona');
-      console.log(error.code);
+      console.log('Deu algum erro aqui :(');
     }
   }
+
 
   /*
     A função abaixo é responsável por criar e atualizar um vetor de caronistas que aceitaram a carona proposta, chamado de passageiros;
@@ -692,10 +444,6 @@ function Oferecer({route, navigation, children}) {
     //   }
     // }
     
-
-    
-
-    //Depende do passageiro escrever na fila do Rabbit do motorista.
     const caronasAceitas = async()=>{
       let strUIDs = '';
       let arrayUIDs = [];
@@ -731,58 +479,22 @@ function Oferecer({route, navigation, children}) {
     }
 
 
-    // //Depende da parte do Guilherme;
-    // const caronasAceitas = async(data)=>{
-    //   let strUIDs = '';
-    //   let arrayUIDs = [];
-    //   // const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}/caronasAceitas`);
-    //   let strCaronasAceitas = data.caronasAceitas;
-    //   if (oferecerMaisCaronas){
-    //     // reference.on('value', function(snapshot){
-    //     if (strCaronasAceitas != '' && strCaronasAceitas != undefined){
-    //       if (vagasDisponiveis>numCaronasAceitas){
-    //         if (!ofertasAceitas.includes(snapshot.val())){
-    //           strUIDs = snapshot.val();
-    //           arrayUIDs = strUIDs.split(', ');
-    //           setArrayOfertasAceitas(arrayUIDs);
-    //           setOfertasAceitas(snapshot.val());
-    //           setNumCaronasAceitas(arrayUIDs.length);
-    //           if (cancelarOferta){
-    //             setCancelarOferta(false);
-    //           }
-    //         }else if (vagasDisponiveis == numCaronasAceitas){
-    //           console.log('vagas esgotadas!');
-    //         }
-    //       }else{
-    //         setOferecerMaisCaronas(false);
-    //         setExibeModalOferecer(false);
-    //         setModalVisible(!modalVisible);
-    //       }
-    //     }else{
-    //       //complementar essa função aqui;
-    //       //não vai acontecer essa situação, mas quando zerar o vetor de caronasAceitas?
-    //       setNumCaronasAceitas(0);
-    //     }
-    //     // })  
-    //   }
-    // }
-
   /*
     A função abaixo é responsável por impedir que um passageiro dê carona a ele mesmo como motorista;
     Esse 'impedimento' é realizado, verificando o banco de dados dos passageiros e excluindo-o caso o motorista esteja incluso lá.
   */
-  // const excluiBancoMotoristaPassageiro = async()=>{
-  //   console.log("OFERECER!!!!!!!!!!!!! - excluiBancoMotoristaPassageiro");
-  //   // const currentUser = auth().currentUser.uid;
-  //   const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
-  //   try{
-  //     reference.on('child_added', snapshot=>{
-  //       reference.remove();
-  //     })
-  //   }catch(error){
-  //     console.log('excluiBancoMotoristaPassageiro');
-  //   }
-  // }
+  const excluiBancoMotoristaPassageiro = async()=>{
+    console.log("OFERECER!!!!!!!!!!!!! - excluiBancoMotoristaPassageiro");
+    // const currentUser = auth().currentUser.uid;
+    const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+    try{
+      reference.on('child_added', snapshot=>{
+        reference.remove();
+      })
+    }catch(error){
+      console.log('excluiBancoMotoristaPassageiro');
+    }
+  }
   
 
   /*
@@ -801,9 +513,9 @@ function Oferecer({route, navigation, children}) {
     });
     //
     try{
-      // reference.update({
-      //   buscandoCaronista: uidCaronista,
-      // })
+      reference.update({
+        buscandoCaronista: uidCaronista,
+      })
       buscarPassageiro(latitude, longitude, nome, uidCaronista);
     }catch(error){
       console.log('erro em rotaPassageiro');
@@ -841,21 +553,24 @@ function Oferecer({route, navigation, children}) {
     Ao chegar no passageiro, é possível embarcá-lo, pressionando no botão passageiro(a) a bordo.
   */
   const buscarPassageiro = async(latitude, longitude, nome, uidCaronista)=>{
+    console.log("OFERECER!!!!!!!!!!!!!");
+    const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
     let distPassageiroMotorista = await distanciaPassageiroMotorista(latitude, longitude);
     let tituloNotificacao = '';
-    let mensagemNotificacao = '';
-    enviarInfoMotorista(uidCaronista);
-    
-    //if (distPassageiroMotorista < 6 && !snapshot.val().caronistasAbordo.includes(uidCaronista)){
-    //criar array de caronistasAbordo;
-    if (distPassageiroMotorista < 6 ){
-      setEmbarcarPassageiro(uidCaronista);
-      tituloNotificacao = 'Seu motorista chegou!';
-      mensagemNotificacao = 'Embarque no veículo';
-      sendNotification(uidCaronista, tituloNotificacao, mensagemNotificacao);
-      setModalVisible(false);
+    let mensagemNotificacao = '';    
+    reference.once('value', function(snapshot){
+      reference.update({
+        buscandoCaronista: uidCaronista
+    })
+      if (distPassageiroMotorista < 6 && !snapshot.val().caronistasAbordo.includes(uidCaronista)){
+        setEmbarcarPassageiro(uidCaronista);
+        tituloNotificacao = 'Seu motorista chegou!';
+        mensagemNotificacao = 'Embarque no veículo';
+        sendNotification(uidCaronista, tituloNotificacao, mensagemNotificacao);
+        setModalVisible(false);
+      }
+      })
     }
-  }
     
 
     /*
@@ -882,7 +597,6 @@ function Oferecer({route, navigation, children}) {
           caronistasAbordo: listaPassageirosAtualizada,
           buscandoCaronista: '',
         });
-        
         // setCaronistas(vetorCaronistas.filter((uid)=>(uid.uid != uidPassageiro)));
         setPassageiros([...passageiros, uidPassageiro]);
         setArrayOfertasAceitas(arrayOfertasAceitas.filter((uid)=>(uid != uidPassageiro)));
@@ -985,8 +699,8 @@ function Oferecer({route, navigation, children}) {
    /*
      Função responsável por obter o token do passageiro armazenado no banco de dados e enviar a notificação de carona encontrada ou motorista está chegando.
    */
-   /*const sendNotification = async (uidPassageiro, tituloNotificacao, mensagemNotificacao) => {
-     //let docRef = firestore().collection('Users').doc(uidPassageiro);
+   const sendNotification = async (uidPassageiro, tituloNotificacao, mensagemNotificacao) => {
+     let docRef = firestore().collection('Users').doc(uidPassageiro);
      try{
        docRef.get().then((doc)=>{
          if (doc.exists){
@@ -1005,40 +719,14 @@ function Oferecer({route, navigation, children}) {
      }catch(error){
        console.log('erro em armazenaToken');
      }
-   };*/
-   
-   const sendNotification = async (uidPassageiro, tituloNotificacao, mensagemNotificacao) => {
-    let id = 0;
-    //let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${id}`,{
-      let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/${id}`,{
-      method: 'GET',
-      mode: 'cors',
-      headers:{
-        'Accept':'application/json',
-        'Content-type':'application/json'
-      }
-    });
-    const res = await reqs.json();
-    try{
-      if (res != 'Falha'){
-            let notificationData = {
-              title: tituloNotificacao,
-              body: mensagemNotificacao,
-              token:
-                res.token
-            };
-            NotificationService.sendSingleDeviceNotification(notificationData);
-          }
-    }catch(err){
-      console.log("erro ao enviar as notificações: " + err);
-    }
-   }
+   };
+ 
    
    /*
     Função responsável por atualizar o token armazenado no hook no banco de dados do motorista.
     Dúvida: devemos enviar notificação para o motorista?
    */
-   /*const armazenaToken = async()=>{
+   const armazenaToken = async()=>{
      let docRef = firestore().collection('Users').doc(currentUser);
      try{
        docRef.get().then((doc)=>{
@@ -1051,23 +739,6 @@ function Oferecer({route, navigation, children}) {
      }catch(error){
        console.log('erro em armazenaToken');
      }
-   }*/
-
-   async function armazenaToken(){
-    let reqs = await fetch(serverConfig.urlRootNode+`atualizarToken`,{
-      method: 'PUT',
-      mode: 'cors',
-      headers:{
-        'Accept':'application/json',
-        'Content-type':'application/json'
-      },
-      body: JSON.stringify({
-        id: currentUser,
-        token: token
-      })
-    });
-    const res = await reqs.json();
-    console.log('token armazenado' + res.token);
    }
 
    useEffect(()=>{
@@ -1079,14 +750,15 @@ function Oferecer({route, navigation, children}) {
         defineEstadoAtual().catch(console.error);
       }
   }, []);
-
  
   useEffect(()=>{
     console.log('TELA: Oferecer');
     console.log('vagas ofertas:', vagasDisponiveis);
     console.log('vagas ocupadas:', numCaronasAceitas);
     Geocoder.init(config.googleAPI, {language:'pt-BR'});
-    if (!infoCarregadas){
+    if (infoCarregadas){
+      estadoInicial();
+    }else{
       carregarInformacoes();
     }
   }, [infoCarregadas]);
@@ -1094,8 +766,7 @@ function Oferecer({route, navigation, children}) {
   useEffect(()=>{
     if (infoCarregadas){
       getMyLocation();
-      // getCaronistasMarker();
-      getInfoPassageiro();
+      getCaronistasMarker();
     }else{
       carregarInformacoes();
     }
@@ -1128,9 +799,7 @@ function Oferecer({route, navigation, children}) {
     }
   }, [token]);
 
-  // useEffect(()=>{
-  //   getCaronistasMarkerTeste();
-  // })
+
   // useEffect(()=>{
   //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
   //   if (numPassageirosABordo == 0){
@@ -1141,348 +810,346 @@ function Oferecer({route, navigation, children}) {
   // })
 
   return (
-      <SafeAreaView>
-        <StatusBar barStyle={'light-content'} />
-        <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
-          <MapView
-            onMapReady={()=>{
-              console.log('carregou!!!!');
-              PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
-                .then(()=>{
-                  console.log('Permissão aceita');  
-                  localizacaoLigada();
-                })
-            }}
-            provider={PROVIDER_GOOGLE}
-            style={{width:width, height:height, flex:1}}
-            region={region}
-            zoomEnabled={true}
-            minZoomLevel={17}
-            showsUserLocation={true}
-            loadingEnabled={false}
-            // onRegionChange={getMyLocation}
-            initialRegion={{
-              latitude: -21.983311,
-              longitude: -47.883154,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
-          >
-            {
-              oferecerMaisCaronas &&
-              vetorCaronistas.map(caronista=>(
-                !passageiros.includes(caronista.uid)?
-                <Marker
-                  key={caronista.uid}
-                  coordinate={{ latitude : caronista.latitude , longitude : caronista.longitude}}
-                  tappable={caronista.caronasAceitas && currentUser && caronista.caronasAceitas.includes(currentUser)?true:false}
-                  // tappable={caronista.caronasAceitas?.includes(currentUser)}
+    <SafeAreaView>
+      <StatusBar barStyle={'light-content'} />
+      <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
+        <MapView
+          onMapReady={()=>{
+            console.log('carregou!!!!');
+            PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
+              .then(()=>{
+                console.log('Permissão aceita');  
+                localizacaoLigada();
+              })
+          }}
+          provider={PROVIDER_GOOGLE}
+          style={{width:width, height:height, flex:1}}
+          region={region}
+          zoomEnabled={true}
+          minZoomLevel={17}
+          showsUserLocation={true}
+          loadingEnabled={false}
+          // onRegionChange={getMyLocation}
+          initialRegion={{
+            latitude: -21.983311,
+            longitude: -47.883154,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        >
+          {
+            oferecerMaisCaronas &&
+            vetorCaronistas.map(caronista=>(
+              !passageiros.includes(caronista.uid)?
+              <Marker
+                key={caronista.uid}
+                coordinate={{ latitude : caronista.latitude , longitude : caronista.longitude}}
+                tappable={caronista.caronasAceitas && currentUser && caronista.caronasAceitas.includes(currentUser)?true:false}
+                // tappable={caronista.caronasAceitas?.includes(currentUser)}
 
-                  onPress={()=>{
-                    getDadosUsuario(caronista.uid, caronista.caronasAceitas, caronista.latitude, caronista.longitude);
-                  }}  
-                  // icon={
-                  //   caronista.caronasAceitas==''?require('../../assets/icons/caronista.png'):caronista.caronasAceitas.includes(currentUser)?require('../../assets/icons/carona_aceita.png'):require('../../assets/icons/caronista-nao-clicavel.png')
-                  // }
-                >
-                  <Image
-                    source={
-                      caronista.caronasAceitas==''?require('../../assets/icons/caronista.png'):caronista.caronasAceitas.includes(currentUser)?require('../../assets/icons/carona_aceita.png'):require('../../assets/icons/caronista-nao-clicavel.png')
-                    }
-                    style={{width: width*0.0742, height: width*0.0742}}
-                    resizeMode="center"
-                  />
-                </Marker>:null
-              ))
-            }
-            {
-              !oferecerMaisCaronas &&
-              vetorCaronistas.map(caronista=>(
-                arrayOfertasAceitas.includes(caronista.uid)?
-                <Marker
-                  key={caronista.uid}
-                  coordinate={{ latitude : caronista.latitude , longitude : caronista.longitude}}
-                  onPress={()=>{
-                    getDadosUsuario(caronista.uid, caronista.caronasAceitas, caronista.latitude, caronista.longitude);
-                  }}
-                  // icon={require('../../assets/icons/carona_aceita.png')}
-                >
-                  <Image
-                    source={
-                      require('../../assets/icons/carona_aceita.png')
-                    }
-                    style={{width: width*0.0742, height: width*0.0742}}
-                    resizeMode="contain"
-                  />
-                </Marker>:null
-              ))
-            }
-            {/* {
-              //utilizado para traçar a rota
-              destination &&
-              <MapViewDirections
-                  origin={region}
-                  destination={destination}
-                  apikey={config.googleAPI}
-                  strokeWidth={3}
-                  strokeColor='#FF5F55'
+                onPress={()=>{
+                  getDadosUsuario(caronista.uid, caronista.caronasAceitas, caronista.latitude, caronista.longitude);
+                }}  
+                // icon={
+                //   caronista.caronasAceitas==''?require('../../assets/icons/caronista.png'):caronista.caronasAceitas.includes(currentUser)?require('../../assets/icons/carona_aceita.png'):require('../../assets/icons/caronista-nao-clicavel.png')
+                // }
+              >
+                <Image
+                  source={
+                    caronista.caronasAceitas==''?require('../../assets/icons/caronista.png'):caronista.caronasAceitas.includes(currentUser)?require('../../assets/icons/carona_aceita.png'):require('../../assets/icons/caronista-nao-clicavel.png')
+                  }
+                  style={{width: width*0.0742, height: width*0.0742}}
+                  resizeMode="center"
                 />
-            } */}
-          </MapView>
-          {
-            embarcarPassageiro &&
-            <View style={[styles.viewCaronistas, {position: 'absolute', bottom: '12%', height: '28%', justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
-              <Text style={{color:'#06444C', fontWeight: '600', fontSize: height*0.015, lineHeight: 24, textAlign: 'center'}}>
-                  Passageiro(a) próximo!{'\n'}Assim que ele estiver no carro, pressione no botão abaixo.
-              </Text>
-              <TouchableOpacity
-                style={{backgroundColor: '#FF5F55', width: '75%', height:'22%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', top:'5%'}}
-                onPress={()=>{
-                  embarquePassageiro(embarcarPassageiro);
-                }}
-              >
-                <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.019, lineHeight: 24, textAlign: 'center'}}>
-                  Passageiro(a) a bordo
-                </Text>
-              </TouchableOpacity>
-            </View>
+              </Marker>:null
+            ))
           }
           {
-            existePassageiroAbordo &&
-            <View style={[styles.viewCaronistas, {position: 'absolute', bottom: '12%', height: '28%', justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
-              <Text style={{color:'#06444C', fontWeight: '600', fontSize: height*0.015, lineHeight: 24, textAlign: 'center'}}>
-                  Pronto para iniciar a viagem...{'\n'}Pressione no botão abaixo para começar.
-              </Text>
-              <TouchableOpacity
-                style={{backgroundColor: '#FF5F55', width: '75%', height: '22%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', top:'5%'}}
+            !oferecerMaisCaronas &&
+            vetorCaronistas.map(caronista=>(
+              arrayOfertasAceitas.includes(caronista.uid)?
+              <Marker
+                key={caronista.uid}
+                coordinate={{ latitude : caronista.latitude , longitude : caronista.longitude}}
                 onPress={()=>{
-                  iniciarViagem();
+                  getDadosUsuario(caronista.uid, caronista.caronasAceitas, caronista.latitude, caronista.longitude);
                 }}
+                // icon={require('../../assets/icons/carona_aceita.png')}
               >
-                <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.019, lineHeight: 24, textAlign: 'center'}}>
-                  Iniciar viagem
-                </Text>
-              </TouchableOpacity>
-            </View>
+                <Image
+                  source={
+                    require('../../assets/icons/carona_aceita.png')
+                  }
+                  style={{width: width*0.0742, height: width*0.0742}}
+                  resizeMode="contain"
+                />
+              </Marker>:null
+            ))
           }
-          
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {setModalVisible(!modalVisible);}}
-          >
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 190, alignSelf: 'center'}}>
-                <View style={styles.modalView}>
-                      {/* <TouchableOpacity
-                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
-                          onPress={()=>{
-
-                            console.log('teste');
-                            console.log('oferecerMaisCaronas:', oferecerMaisCaronas);
-                            console.log('exibeModalOferecer:', exibeModalOferecer);
-                            console.log('alertaVagas:', alertaVagas)
-                          }}
-                          // onPressOut={sendNotification}
-                      >
-                          <Text style={styles.textStyle}>TESTE</Text>
-                      </TouchableOpacity> */}
-                  {
-                    oferecerMaisCaronas && exibeModalOferecer &&
-                    <>
-                      <Image 
-                        source={imageUser!=''?{uri:imageUser}:null}
-                        style={{height:70, width: 70, borderRadius: 100, marginBottom:10}}  
-                      />
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{nomeCaronista}</Text>
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
-                      <View style={{flexDirection:'row', justifyContent:'center'}}>
-                        <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{classificacaoCaronista}</Text>
-                        <Icon name="star" size={18} color="#06444C" style={{marginLeft:'1%'}}/>
-                      </View>
-                      <TouchableOpacity
-                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
-                          onPress={()=>{oferecerCarona()}}
-                          // onPressOut={sendNotification}
-                      >
-                          <Text style={styles.textStyle}>Oferecer carona</Text>
-                      </TouchableOpacity>
-                     <TouchableOpacity
-                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
-                          onPress={() => {
-                            setModalVisible(!modalVisible)}}
-                      >
-                        <Text style={styles.textStyle}>Cancelar</Text>
-                    </TouchableOpacity>
-                    </>
-                  }
-                  {
-                    !oferecerMaisCaronas && alertaVagas &&
-                    <>
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '700'}}>Você atingiu o número máximo de caronistas!</Text>
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>
-                        Para buscar um(a) passageiro(a), pressione uma vez no ícone em verde e clique em buscar passageiro(a).
-                      </Text>
-                      <TouchableOpacity
-                            style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
-                            onPress={() => {
-                              setModalVisible(!modalVisible);
-                              setAlertaVagas(!alertaVagas);
-                            }}
-                        >
-                          <Text style={styles.textStyle}>Entendi</Text>
-                      </TouchableOpacity>
-                    </>
-                  }
-              </View>
-            </View>
-          </Modal>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={alertaViagem}
-            onRequestClose={() => {setAlertaViagem(!alertaViagem)}}
-          >
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 260, alignSelf: 'center'}}>
+          {/* {
+            //utilizado para traçar a rota
+            destination &&
+            <MapViewDirections
+                origin={region}
+                destination={destination}
+                apikey={config.googleAPI}
+                strokeWidth={3}
+                strokeColor='#FF5F55'
+              />
+          } */}
+        </MapView>
+        {
+          embarcarPassageiro &&
+          <View style={[styles.viewCaronistas, {position: 'absolute', bottom: '12%', height: '28%', justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
+            <Text style={{color:'#06444C', fontWeight: '600', fontSize: height*0.015, lineHeight: 24, textAlign: 'center'}}>
+                Passageiro(a) próximo!{'\n'}Assim que ele estiver no carro, pressione no botão abaixo.
+            </Text>
+            <TouchableOpacity
+              style={{backgroundColor: '#FF5F55', width: '75%', height:'22%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', top:'5%'}}
+              onPress={()=>{
+                embarquePassageiro(embarcarPassageiro);
+              }}
+            >
+              <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.019, lineHeight: 24, textAlign: 'center'}}>
+                Passageiro(a) a bordo
+              </Text>
+            </TouchableOpacity>
+          </View>
+        }
+        {
+          existePassageiroAbordo &&
+          <View style={[styles.viewCaronistas, {position: 'absolute', bottom: '12%', height: '28%', justifyContent: 'center', borderBottomColor: '#FF5F55', borderBottomWidth: 1}]}>
+            <Text style={{color:'#06444C', fontWeight: '600', fontSize: height*0.015, lineHeight: 24, textAlign: 'center'}}>
+                Pronto para iniciar a viagem...{'\n'}Pressione no botão abaixo para começar.
+            </Text>
+            <TouchableOpacity
+              style={{backgroundColor: '#FF5F55', width: '75%', height: '22%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', top:'5%'}}
+              onPress={()=>{
+                iniciarViagem();
+              }}
+            >
+              <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.019, lineHeight: 24, textAlign: 'center'}}>
+                Iniciar viagem
+              </Text>
+            </TouchableOpacity>
+          </View>
+        }
+        
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {setModalVisible(!modalVisible);}}
+        >
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 190, alignSelf: 'center'}}>
               <View style={styles.modalView}>
-                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '700'}}>Ainda tem vagas no seu veículo...</Text>
+                    {/* <TouchableOpacity
+                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
+                        onPress={()=>{
+                          console.log('teste');
+                          console.log('oferecerMaisCaronas:', oferecerMaisCaronas);
+                          console.log('exibeModalOferecer:', exibeModalOferecer);
+                          console.log('alertaVagas:', alertaVagas)
+                        }}
+                        // onPressOut={sendNotification}
+                    >
+                        <Text style={styles.textStyle}>TESTE</Text>
+                    </TouchableOpacity> */}
+                {
+                  oferecerMaisCaronas && exibeModalOferecer &&
+                  <>
+                    <Image 
+                      source={imageUser!=''?{uri:imageUser}:null}
+                      style={{height:70, width: 70, borderRadius: 100, marginBottom:10}}  
+                    />
+                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{nomeCaronista}</Text>
+                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
+                    <View style={{flexDirection:'row', justifyContent:'center'}}>
+                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{classificacaoCaronista}</Text>
+                      <Icon name="star" size={18} color="#06444C" style={{marginLeft:'1%'}}/>
+                    </View>
+                    <TouchableOpacity
+                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
+                        onPress={()=>{oferecerCarona()}}
+                        // onPressOut={sendNotification}
+                    >
+                        <Text style={styles.textStyle}>Oferecer carona</Text>
+                    </TouchableOpacity>
+                   <TouchableOpacity
+                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
+                        onPress={() => {
+                          setModalVisible(!modalVisible)}}
+                    >
+                      <Text style={styles.textStyle}>Cancelar</Text>
+                  </TouchableOpacity>
+                  </>
+                }
+                {
+                  !oferecerMaisCaronas && alertaVagas &&
+                  <>
+                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '700'}}>Você atingiu o número máximo de caronistas!</Text>
                     <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>
-                      Tem certeza que deseja iniciar a viagem mesmo não tendo preenchido todas as vagas?
+                      Para buscar um(a) passageiro(a), pressione uma vez no ícone em verde e clique em buscar passageiro(a).
                     </Text>
                     <TouchableOpacity
                           style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
                           onPress={() => {
-                            setAlertaViagem(!alertaViagem);
-                            navigation.navigate('ViagemMotorista', {cidade: cidade, estado: estado});
+                            setModalVisible(!modalVisible);
+                            setAlertaVagas(!alertaVagas);
                           }}
                       >
-                        <Text style={styles.textStyle}>Sim</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
-                          onPress={() => {
-                            setAlertaViagem(!alertaViagem)
-                          }}
-                      >
-                        <Text style={styles.textStyle}>Não</Text>
-                    </TouchableOpacity>
-                </View>
-                </View>
-          </Modal>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={modalBuscarPassageiro}
-            onRequestClose={() => {setModalBuscarPassageiro(!modalBuscarPassageiro)}}
-          >
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 260, alignSelf: 'center'}}>
-              <View style={styles.modalView}>
-              {
-                    !exibeModalOferecer &&
-                    <>
-                      <Image 
-                        source={imageUser!=''?{uri:imageUser}:null}
-                        style={{height:70, width: 70, borderRadius: 100, marginBottom:10}}  
-                      />
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{nomeCaronista}</Text>
-                      <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
-                      <TouchableOpacity
-                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
-                          onPress={()=>{
-                            rotaPassageiro(latitudePassageiro, longitudePassageiro, nomeCaronista, uidPassageiro)
-                            setModalBuscarPassageiro(false)
-                          }}
-                      >
-                          <Text style={styles.textStyle}>Buscar passageiro(a)</Text>
-                      </TouchableOpacity>
-                    <TouchableOpacity
-                          style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
-                          onPress={() => {
-                            setModalBuscarPassageiro(false);
-                          }}
-                      >
-                        <Text style={styles.textStyle}>Cancelar</Text>
+                        <Text style={styles.textStyle}>Entendi</Text>
                     </TouchableOpacity>
                   </>
-                  }
-              </View>
-              </View>
-          </Modal>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={faltaPassageiros}
-            onRequestClose={() => {setFaltaPassageiros(!faltaPassageiros)}}
-          >
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 260, alignSelf: 'center'}}>
-              <View style={styles.modalView}>
-              <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '700'}}>Você não buscou todos os seus passageiros...</Text>
+                }
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={alertaViagem}
+          onRequestClose={() => {setAlertaViagem(!alertaViagem)}}
+        >
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 260, alignSelf: 'center'}}>
+            <View style={styles.modalView}>
+                  <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '700'}}>Ainda tem vagas no seu veículo...</Text>
                   <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>
-                    Busque os passageiros que aceitaram a sua carona para iniciar a viagem.
+                    Tem certeza que deseja iniciar a viagem mesmo não tendo preenchido todas as vagas?
                   </Text>
                   <TouchableOpacity
                         style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
                         onPress={() => {
-                          setFaltaPassageiros(!faltaPassageiros);
+                          setAlertaViagem(!alertaViagem);
+                          navigation.navigate('ViagemMotorista', {cidade: cidade, estado: estado});
                         }}
                     >
-                      <Text style={styles.textStyle}>Entendi</Text>
+                      <Text style={styles.textStyle}>Sim</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
+                        onPress={() => {
+                          setAlertaViagem(!alertaViagem)
+                        }}
+                    >
+                      <Text style={styles.textStyle}>Não</Text>
                   </TouchableOpacity>
               </View>
+              </View>
+        </Modal>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalBuscarPassageiro}
+          onRequestClose={() => {setModalBuscarPassageiro(!modalBuscarPassageiro)}}
+        >
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 260, alignSelf: 'center'}}>
+            <View style={styles.modalView}>
+            {
+                  !exibeModalOferecer &&
+                  <>
+                    <Image 
+                      source={imageUser!=''?{uri:imageUser}:null}
+                      style={{height:70, width: 70, borderRadius: 100, marginBottom:10}}  
+                    />
+                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>{nomeCaronista}</Text>
+                    <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>Destino: {nomeDestinoCaronista}</Text>
+                    <TouchableOpacity
+                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center'}}
+                        onPress={()=>{
+                          rotaPassageiro(latitudePassageiro, longitudePassageiro, nomeCaronista, uidPassageiro)
+                          setModalBuscarPassageiro(false)
+                        }}
+                    >
+                        <Text style={styles.textStyle}>Buscar passageiro(a)</Text>
+                    </TouchableOpacity>
+                  <TouchableOpacity
+                        style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
+                        onPress={() => {
+                          setModalBuscarPassageiro(false);
+                        }}
+                    >
+                      <Text style={styles.textStyle}>Cancelar</Text>
+                  </TouchableOpacity>
+                </>
+                }
             </View>
-          </Modal>
-          {
-            cancelarOferta &&
-            <TouchableOpacity
-                style={{backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, justifyContent: 'center', position: 'absolute', top: 10, left: 10, borderWidth: 1, borderColor: '#FF5F55'}}
-                onPress={desistirDaOferta}
-            >
-              <Icon name="arrow-left" size={30} color="#FF5F55" style={{alignSelf:'center'}}/>
-            </TouchableOpacity>
-          }
-        </View>
-      </SafeAreaView>
-    );
+            </View>
+        </Modal>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={faltaPassageiros}
+          onRequestClose={() => {setFaltaPassageiros(!faltaPassageiros)}}
+        >
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22, position: 'absolute', top: 260, alignSelf: 'center'}}>
+            <View style={styles.modalView}>
+            <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '700'}}>Você não buscou todos os seus passageiros...</Text>
+                <Text style={{color: '#06444C', textAlign: 'center', marginBottom: 10, fontWeight: '500'}}>
+                  Busque os passageiros que aceitaram a sua carona para iniciar a viagem.
+                </Text>
+                <TouchableOpacity
+                      style={{backgroundColor:'#FF5F55', width: 200, height: 35, borderRadius: 15, justifyContent: 'center', marginTop: 15}}
+                      onPress={() => {
+                        setFaltaPassageiros(!faltaPassageiros);
+                      }}
+                  >
+                    <Text style={styles.textStyle}>Entendi</Text>
+                </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+        {
+          cancelarOferta &&
+          <TouchableOpacity
+              style={{backgroundColor: 'white', width: 40, height: 40, borderRadius: 20, justifyContent: 'center', position: 'absolute', top: 10, left: 10, borderWidth: 1, borderColor: '#FF5F55'}}
+              onPress={desistirDaOferta}
+          >
+            <Icon name="arrow-left" size={30} color="#FF5F55" style={{alignSelf:'center'}}/>
+          </TouchableOpacity>
+        }
+      </View>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
-  modalView: {
-    margin: height*0.01,
-    backgroundColor: "white",
-    borderRadius: height*0.02,
-    padding: height*0.04,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5
+modalView: {
+  margin: height*0.01,
+  backgroundColor: "white",
+  borderRadius: height*0.02,
+  padding: height*0.04,
+  alignItems: "center",
+  shadowColor: "#000",
+  shadowOffset: {
+    width: 0,
+    height: 2
   },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center"
+  shadowOpacity: 0.25,
+  shadowRadius: 4,
+  elevation: 5
+},
+textStyle: {
+  color: "white",
+  fontWeight: "bold",
+  textAlign: "center"
+},
+viewCaronistas:{
+  shadowColor: "#000",
+  shadowOffset: {
+    width: 0,
+    height: 2
   },
-  viewCaronistas:{
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 1,
-    shadowRadius: 25,
-    elevation: 20,
-    width: 330,
-    backgroundColor: 'white', 
-    borderRadius: 15, 
-    alignSelf:'center', 
-    // marginTop: 50,
-    alignContent:'center'
-  }
+  shadowOpacity: 1,
+  shadowRadius: 25,
+  elevation: 20,
+  width: 330,
+  backgroundColor: 'white', 
+  borderRadius: 15, 
+  alignSelf:'center', 
+  alignContent:'center'
+}
 });
 
 export default Oferecer;

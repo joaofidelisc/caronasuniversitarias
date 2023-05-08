@@ -8,13 +8,9 @@ import Geocoder from 'react-native-geocoding';
 import config from '../../config';
 import { useNetInfo } from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import auth from '@react-native-firebase/auth'
 
-import EventSource from 'react-native-event-source';
 
 import EstadoApp from '../../services/sqlite/EstadoApp';
-// const queryHandler = require('../../services/node-server/index');
-import serverConfig from '../../../config/config.json';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -86,7 +82,6 @@ function ConfigurarCarona({navigation}) {
       });
       await EstadoApp.removeData(1).then(console.log('dados removidos!')).catch(console.log('algum erro ocorreu!'));
       if (nomeDestino != ''){
-        // receberInfoPassageiro(filtro_estado, filtro_cidade);
         await EstadoApp.insertData({cidade: filtro_cidade[0].short_name, estado: filtro_estado[0].short_name, nomeDestino:nomeDestino, uidMotorista:'alterar', nomeMotorista:'alterar', veiculoMotorista:'alterar', placaVeiculoMotorista:'alterar', motoristaUrl:'alterar', numVagas:vagas, passageiros:'atualizar', id:1});
         navigation.navigate('OferecerCarona', {cidade:filtro_cidade[0].short_name, estado:filtro_estado[0].short_name, destino:nomeDestino, vagas:vagas})
       }else{
@@ -95,26 +90,35 @@ function ConfigurarCarona({navigation}) {
 
     }
 
-    const receberInfoPassageiro = (estado, cidade)=>{
-      //tratar cidade!
-      console.log("estado:", estado);
-      console.log('receberInfoPassageiro');
-      console.log('ENTROU NA FUNÇÃO!!!!\n');
-      try{
-        const events = new EventSource(`${serverConfig.urlRootNode}api/rabbit/obterInfo/passageiro/${estado}/Sao_Carlos`);
-        events.addEventListener('getInfoPassageiro', (event)=>{
-          console.log('Atualização informações:\n');
-          console.log('event.data:', event.data);
-          // let objPassageiro = JSON.parse(event.data);
-          // getCaronistasMarker(objPassageiro);
-        })
-        
-      }catch(error){
-        console.log(error);
-      }
-    }
+    // const printValor = (valor) => {
+    //   console.log('valor:')
+    //   console.log(`cidade:${valor.cidade}, estado:${valor.estado}, id:${valor.id}`)
+    // }
 
-    
+    // //TESTE BANCO
+    // const testeBanco = async()=>{
+    //   // await EstadoApp.createTable();
+    //   console.log('----------------------------------');
+    //   console.log('testando banco...');
+    //   console.log('rodando getAll...')
+    //   // EstadoApp.updateData(1, {cidade: 'Matão', estado: 'SP', id:1})
+    //   // EstadoApp.insertData({cidade: 'São Carlos', estado: 'SP', nomeDestino: 'centro', localDestino: 'centro-2', id:1});
+    //   EstadoApp.updateData({uidMotorista: '123456', nomeMotorista: 'joao', veiculoMotorista: 'ferrari', placaVeiculoMotorista: '123456', motoristaUrl: 123456}, 0);
+
+    //   EstadoApp.findData(1).then(info => console.log(info)).catch(err=> console.log(err));
+    //   // EstadoApp.getAll().then(info => printValor(info)).catch(err=> console.log(err));
+    //   // console.log('rodando getAll2...')
+    //   // EstadoApp.getAll2();
+    //   // EstadoApp.getData();
+    //   // EstadoApp.getData().then(info => info.forEach(c => console.log(c)));
+      
+    //   // EstadoApp.getData().then( 
+    //   //   info => info.forEach( c => printValor(c) )
+    //   //   )
+    //   console.log('----------------------------------');
+
+    // }
+    // //TESTE BANCO
   useEffect(()=>{
     const recuperaEstadoApp = async()=>{
       console.log('rodando recuperaEstadoApp...');
@@ -167,76 +171,6 @@ function ConfigurarCarona({navigation}) {
       // console.log('netInfo:', netInfo);
       // console.log('conectado:', netInfo.isConnected);
     })
-
-    const testeNode = async()=>{
-
-      /*
-      ////EXEMPLO DE INSERÇÃO DE DADOS;
-      // let reqs = await fetch(serverConfig.urlRootNode+'inserirUsuario',{
-      //   method: 'POST',
-      //   headers:{
-      //     'Accept':'application/json',
-      //     'Content-type':'application/json'
-      //   },
-      //   body: JSON.stringify({
-      //     // id: Math.random().toString(),
-      //     id: auth().currentUser.uid,
-      //     nome: 'Inara Bueno',
-      //     CPF:"414.386.918-74",
-      //     dataNasc:"1998-06-10",
-      //     email:"joao.fidelis@estudante.ufscar.br",
-      //     numCel:'(16)99376-4191',
-      //     token:'dusahdasdl',
-      //     universidade:'UFSCar',
-      //     classificacao:4.65,
-      //     fotoPerfil:'duasdjasdl',
-      //     motorista:true
-      //   })
-      // });
-
-      // let res = await reqs.json();
-      // console.log('req:', res);
-      */
-     
-     //---------------------------------------------------------------------
-      
-      
-      // let reqs = await fetch(serverConfig.urlRootNode+`buscarUsuario/0VtQXRifF8PdbcKCrthdOtlnah12`,{
-      //     method: 'GET',
-      //     mode: 'cors',
-      //     headers:{
-      //       'Accept':'application/json',
-      //       'Content-type':'application/json'
-      //     }
-      //   });
-        
-      //   const res = await reqs.json();
-      //   console.log('resposta:', res);
-  
-      //---------------------------------------------------------------------
-
-      // ATUALIZA UMA INFORMAÇÃO DO BANCO
-      let reqs = await fetch(serverConfig.urlRootNode+'atualizarModo',{
-        method: 'PUT',
-        headers:{
-          'Accept':'application/json',
-          'Content-type':'application/json'
-        },
-        body: JSON.stringify({
-          id: auth().currentUser.uid,
-          motorista:false
-        })
-      });
-
-      let res = await reqs.json();
-
-      console.log('req:', res);
-      // console.log('passou!');
-
-
-      // console.log()
-     
-    }
 
     useEffect(()=>{
       Geocoder.init(config.googleAPI, {language:'pt-BR'});
@@ -352,10 +286,10 @@ function ConfigurarCarona({navigation}) {
           </TouchableOpacity>
           {/* <TouchableOpacity
             style={{backgroundColor: '#FF5F55', width: 260, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', position: 'absolute', top: 670}}
-            onPress={testeNode}
+            onPress={testeBanco}
           >
             <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
-              Teste Node
+              Teste Banco
             </Text>
           </TouchableOpacity> */}
           <Modal

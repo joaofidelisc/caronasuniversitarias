@@ -1,4 +1,4 @@
-const model = require('../../../models');
+const model = require('../../../../models');
 
 async function cadastrarViagem(req, res){
     let reqs = await model.Viagem.create({

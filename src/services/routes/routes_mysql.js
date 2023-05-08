@@ -1,11 +1,10 @@
 const express = require('express');
 const routes = express.Router();
-// const channel = require('../node-server/server.js');
 
-var userFunctions = require('../controllers/user.js');
-var veiculoFunctions = require('../controllers/veiculo.js');
-var viagemFunctions = require('../controllers/viagem.js');
-var passageiroViagemFunctions = require('../controllers/passageiroviagem.js');
+var userFunctions = require('../controllers/mysql/user.js');
+var veiculoFunctions = require('../controllers/mysql/veiculo.js');
+var viagemFunctions = require('../controllers/mysql/viagem.js');
+var passageiroViagemFunctions = require('../controllers/mysql/passageiroviagem.js');
 
 
 routes.get("/", (req, res)=>{

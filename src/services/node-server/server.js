@@ -1,9 +1,10 @@
+
 const express = require('express');
-const routes = require('../routes/routes');
+const routes_mysql = require('../routes/routes_mysql');
+const routes_firebase = require('../routes/routes_firebase');
 const db = require('../sequelize/index');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const rabbitRoutes = require('../rabbitMQ/routesRabbit');
 
 const app = express();
 
@@ -11,8 +12,8 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use(routes);
-app.use('/api/rabbit', rabbitRoutes);
+app.use(routes_mysql);
+app.use(routes_firebase);
 
 db.sync(() => console.log('Banco de dados conectado!'));
 

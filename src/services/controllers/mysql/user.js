@@ -1,4 +1,4 @@
-    const model = require('../../../models');
+const model = require('../../../../models');
 
 
     /*
@@ -46,7 +46,6 @@
         let reqs = await model.User.findByPk(req.params.id);
         if (reqs){
             res.send(JSON.stringify(reqs));
-
         }else{
             //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
             res.send(JSON.stringify('Falha'));
