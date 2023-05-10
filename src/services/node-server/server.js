@@ -1,5 +1,13 @@
 
 const express = require('express');
+var admin = require("firebase-admin");
+var serviceAccount = require("../../../creds.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://caronasuniversitarias-c98eb-default-rtdb.firebaseio.com"
+});
+
 const routes_mysql = require('../routes/routes_mysql');
 const routes_firebase = require('../routes/routes_firebase');
 const db = require('../sequelize/index');

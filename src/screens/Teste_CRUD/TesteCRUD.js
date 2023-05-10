@@ -10,8 +10,11 @@ const {width, height} = Dimensions.get('screen');
 function TesteCRUD() {
   const [coordenadas, setCoordenadas] = useState(null);      
    
- async function buscarCarona(){
-    let reqs = await fetch(serverConfig.urlRootNode+`buscarCarona/SP/São Carlos/0VtQXRifF8PdbcKCrthdOtlnah12`, {
+  async function buscarCarona(){
+    let cidade = "São Carlos";
+    cidade = encodeURIComponent(cidade);
+    
+    let reqs = await fetch(serverConfig.urlRootNode + `buscarCarona/SP/${cidade}/0VtQXRifF8PdbcKCrthdOtlnah12`, {
       method: 'GET',
       mode: 'cors',
       headers:{
@@ -21,6 +24,7 @@ function TesteCRUD() {
     });
     const res = await reqs.json();
   }
+  
 
     
     //----------------------------------------------------

@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "caronasuniversitarias-c98eb",
+  "private_key_id": "31b4f57707071f20fca3ee9fe542c1703ca4137a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCtRGIo3H5poBUr\n7XnAWCJAQTGX1gjT3c7DEJKITQjTRc7cO9N7R0/khBNTAQ7tR0xs/c0hWE8p3Xum\nzVma4J61czJqgbYRazUZxHTYfRbAKgbhIPgPKyUsdiL7uMEjHJ1gPjRS2P9rHW/I\ncplFUDBbn7EA9cyx4/+H/wMpC6HTyNbW0RgPgTW30jQ174gU/krztLB4tgd6Tuq4\nT1b2uwC+vHRSPl0Sca44gggDRQoUNxYUXXTDmJecRbrmJi4ab3CotcV7TwQDuZ1f\n28akFhY8FKDB4lDe0SbCFNhCr6s9BVlIg1v/fPUzjeWotj3mmBoXO3azji7TksSp\n1lGkX8yDAgMBAAECggEACb6DHV8rxiRC7IyCFgd0LamSRhgQY7HhXeZXB06lxL6e\nn+jGv55xZ3LnZKSg7UaJjXDx51fVuToD0+FP5744JBDixfXzgk6a1uR4hHBMe5Qh\nfOm4vvRN4Tk88GvMg31UJcR5zCr4pP0r0IRkCu+JOK3mFh1nXJ3A539iSHL8r9yk\nwnKTUDJSqYrCVqvJXrKrynEnJqcEVwHMUJ562ngFoL2ArTt31KicM5ZPVbkCAdvT\n0lT9GNjFVCuGzHEDF/kp6c6FNGjUHFKg/qWAMZyTiMdepXQWp3eqLjnu0ygEXd8j\nxboVxVWfJvT6assOtReI0w5dRJ9B6HhILMcp2wGJuQKBgQDvvZG4Bw9XOiPK4sqc\n8MigOoE+iti+zQ3V25LmeNQGM2kPCWmY8Qwpj5HRFhg6/Pw6euoOeeIXSXG6j45M\nL8lLZ75hHr8XtgJ/r44FuFNWWG5g3FF5HnBOCMt+cq2SFEZiSA8Hzy4yEX5+6XtM\nq1oYL65DHaq3rLnCPtKQ60rUzwKBgQC5BLATgX1Q/Z4HDsnhCU2kcPHzdY0PZSuM\n224+Lzb2+No1VJUpQLzoCn3eV33onUXO4KKxqV24rnQgwRvuiS5iWx88tK3klUxt\n3uYiCffISs01lTiTtpXv6EFt1V4SLL1GudkxqXZADFtix9VQMZIaow136QRISU8X\nCv/1RJiiDQKBgQDgX3M54KGi6W8GOyuVpmSeUSMU/a3NJOyF8nKR8RO+me8Be7Ww\nxiiz3QKDxUH4Mz19HfxggAHx+XLPP/vVogOq5vVuv+/oqRe9mPg6skCM10a2sHwv\n9yT0Y5bQSVPZG9Cjuv0WOfjqMyVIcgxLvTMc38MgXWuha66O9Wzs5MmsUQKBgHnw\nTf+9ExOi41jxdTocgJCFY+E6M0rXOdmu8TyIr6gcIOyPH3O92ALyjzxP24rIxK5x\nPKjs3/kM+TpxK3CN9wUZ2z+OMSF7CJFNG82JVkYqjo7nFw+7gZxJLX4u5r4BwIlx\niWUCtA3IVx6GZ99fnFRz7DeAWrMtpbOhK0rB9/qtAoGAZ47fHpeZgxQLd5pKYfJN\n7eb7M4CH0yIkxdCJi8jVwSCwKl4+9eOClWJMXLXPWc9irddAl1NnX43szEYdOpag\na/JqPVJeircJifVLET6VZ/XtCXy8PAsN27fXBnVYLfSHqRdHQ3lDBb+5QPSgjeHn\n2t18u4BVoGjVCrDTWglDTEI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-4p91j@caronasuniversitarias-c98eb.iam.gserviceaccount.com",
+  "client_id": "103930341503182474351",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-4p91j%40caronasuniversitarias-c98eb.iam.gserviceaccount.com"
+}

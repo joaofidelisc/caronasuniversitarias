@@ -1,25 +1,21 @@
+const { database } = require('firebase/database');
 
-// const database = require('@react-native-firebase/database');
 
-function buscarCarona(estado, cidade, currentUser){
+
+function buscarCarona(req, res){
     console.log('rodando buscar carona!');
-    const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
-    try{
-      reference.on('value', function(snapshot){
-        console.log('alterou!!');
-        if(snapshot.child('ofertasCaronas').exists()){
-          if (snapshot.val().ofertasCaronas != '' && snapshot.val().ofertasCaronas != null && snapshot.val().ofertasCaronas != undefined){
-            console.log('Encontrou carona!!');
-            // setEncontrouCarona(true);
-          } else{
-            // setEncontrouCarona(false);
-            console.log('não encontrou carona :(');
-          }
-        }
-      })
-    } catch(error){
-      console.log('Error', error.code);
-    }
+    console.log('estado:', req.params.estado);
+    console.log('cidade:', req.params.cidade);
+    console.log('currentUser:', req.params.currentUser);
+    const reference = database.ref(`SP/Bebedouro/Passageiros/SeTTDbcdR6dyaTpNPruCrqVn0qm1`); 
+    // console.log('reference:', reference);
+    // try{
+    //   reference.on('value', function(snapshot){
+    //     console.log('alterou!!');
+    //   })
+    // } catch(error){
+    //   console.log('Error', error.code);
+    // }
 }
 
 module.exports = {
