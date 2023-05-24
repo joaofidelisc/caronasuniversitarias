@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, Dimensions} from 'react-native';
 import Lottie from 'lottie-react-native';
+import EventSource from 'react-native-event-source';
 
 
 import database from '@react-native-firebase/database';
@@ -11,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import serverConfig from '../../../config/config.json';
 
 const {height, width} = Dimensions.get('screen')
 
@@ -59,22 +61,35 @@ function BuscandoCarona({navigation, route}) {
     }
   }
 
-  function buscarCarona(){
-    console.log('rodando buscar carona!');
-    const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
+  // function buscarCarona(){
+  //   console.log('rodando buscar carona!');
+  //   const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
+  //   try{
+  //     reference.on('value', function(snapshot){
+  //       if(snapshot.child('ofertasCaronas').exists()){
+  //         if (snapshot.val().ofertasCaronas != '' && snapshot.val().ofertasCaronas != null && snapshot.val().ofertasCaronas != undefined){
+  //           setEncontrouCarona(true);
+  //           console.log('Encontrou carona?:', encontrouCarona);
+  //         } else{
+  //           setEncontrouCarona(false);
+  //         }
+  //       }
+  //     })
+  //   } catch(error){
+  //     console.log('Error', error.code);
+  //   }
+  // }
+
+  async function buscarCarona(){
     try{
-      reference.on('value', function(snapshot){
-        if(snapshot.child('ofertasCaronas').exists()){
-          if (snapshot.val().ofertasCaronas != '' && snapshot.val().ofertasCaronas != null && snapshot.val().ofertasCaronas != undefined){
-            setEncontrouCarona(true);
-            console.log('Encontrou carona?:', encontrouCarona);
-          } else{
-            setEncontrouCarona(false);
-          }
-        }
+      const events = new EventSource(`${serverConfig.urlRootNode}buscarCarona/${estado}/${cidade}/${currentUser}`);
+      events.addEventListener('encontrouCarona', (event) =>{
+        const data = JSON.parse(event.data); 
+        const encontrouCarona = data.encontrouCarona;
+        setEncontrouCarona(encontrouCarona);
       })
-    } catch(error){
-      console.log('Error', error.code);
+    }catch(error){
+      console.log(error.code);
     }
   }
 

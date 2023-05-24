@@ -8,6 +8,7 @@ import storage from '@react-native-firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EstadoApp from '../../services/sqlite/EstadoApp';
+import serverConfig from '../../../config/config.json';
 
 
 const {height,width} = Dimensions.get('screen')

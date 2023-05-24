@@ -17,6 +17,8 @@ import config from '../../config';
 import { onChange, set } from 'react-native-reanimated'; //?
 import Geocoder from 'react-native-geocoding';
 import EstadoApp from '../../services/sqlite/EstadoApp';
+import serverConfig from '../../../config/config.json';
+
 
 const {width, height} = Dimensions.get('screen');
 

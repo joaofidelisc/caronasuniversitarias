@@ -7,6 +7,8 @@ import Geolocation from '@react-native-community/geolocation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
 import EstadoApp from '../../services/sqlite/EstadoApp';
+import serverConfig from '../../../config/config.json';
+import EventSource from 'react-native-event-source';
 
 
 const {width, height} = Dimensions.get('screen');
@@ -92,16 +94,30 @@ function AguardandoMotorista({navigation, route}){
         });
     }
 
+    // const motoristaMeBuscando = async()=>{
+    //     const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}/buscandoCaronista`);
+    //     reference.on('value', function(snapshot){
+    //       if (snapshot.exists()){
+    //         if (snapshot.val().includes(currentUser) && !motoristaAcaminho){
+    //           setMotoristaAcaminho(true);
+    //         }
+    //       }
+    //     })
+    // }
+
     const motoristaMeBuscando = async()=>{
-        const reference = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}/buscandoCaronista`);
-        reference.on('value', function(snapshot){
-          if (snapshot.exists()){
-            if (snapshot.val().includes(currentUser) && !motoristaAcaminho){
-              setMotoristaAcaminho(true);
-            }
-          }
+      try{
+        const events = new EventSource(`${serverConfig.urlRootNode}motoristaMeBuscando/${estado}/${cidade}/${currentUser}/${uidMotorista}/${motoristaAcaminho}`);
+        events.addEventListener('motoristaMeBuscando', (event) =>{
+          const data = JSON.parse(event.data); 
+          const motoristaAcaminho = data.motoristaAcaminho;
+          setMotoristaAcaminho(motoristaAcaminho);
         })
+      }catch(error){
+        console.log(error.code);
       }
+    }
+
       
     
     const navigateToViagemEmAndamento = async()=>{

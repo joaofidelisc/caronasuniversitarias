@@ -3,7 +3,10 @@ import {View, Text, SafeAreaView, StatusBar, Image, Dimensions, TouchableOpacity
 import auth from '@react-native-firebase/auth'
 // import WebSocket from 'react-native-websocket';
 
+import EventSource from 'react-native-event-source';
+
 import serverConfig from '../../../config/config.json';
+import { response } from 'express';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -11,21 +14,25 @@ function TesteCRUD() {
   const [coordenadas, setCoordenadas] = useState(null);      
    
   async function buscarCarona(){
-    let cidade = "São Carlos";
+    let cidade = "Bebedouro";
     cidade = encodeURIComponent(cidade);
     
-    let reqs = await fetch(serverConfig.urlRootNode + `buscarCarona/SP/${cidade}/0VtQXRifF8PdbcKCrthdOtlnah12`, {
+    await fetch(serverConfig.urlRootNode + `buscarCarona/SP/${cidade}/SeTTDbcdR6dyaTpNPruCrqVn0qm1`, {
       method: 'GET',
       mode: 'cors',
       headers:{
         'Accept':'application/json',
         'Content-type':'application/json'
       }
-    });
-    const res = await reqs.json();
+    }).then(response => response.json())
+    .then(data =>{
+      const encontrouCarona = data.encontrouCarona;
+      console.log('encontrouCarona?', data.encontrouCarona);
+    })
+
+
   }
   
-
     
     //----------------------------------------------------
     return (
