@@ -217,7 +217,7 @@ function ClassificarPassageiro({route, navigation}) {
             </ScrollView>
             <Text style={{color:'#06444C', fontWeight:'700', fontSize: height*0.02, lineHeight:24, alignSelf:'center', top:'-29%', }}>Caso não queira classificar o(s) passageiro(s), finalize a viagem pressionando no botão abaixo.</Text>
             <TouchableOpacity
-              style={{backgroundColor: '#FF5F55', width: '50%', height: '5%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center',top:'-26%'}}
+              style={{backgroundColor: '#FF5F55', width: '50%', height: '50%', alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center',top:'-26%'}}
               onPress={finalizarViagem}
               >
             <Text style={{color: 'white', fontWeight: '600', fontSize: height*0.02, lineHeight: 24, textAlign: 'center'}}>

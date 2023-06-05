@@ -104,8 +104,24 @@ function ViagemEmAndamento({navigation, route}) {
         console.log('erro em newChatRoom');
       }
     }
-    
-    const viagemTerminou = async()=>{
+    //linha 320
+    async function viagemTerminou() {
+      try {
+        const events = new EventSource(`${serverConfig.urlRootNode}viagemTerminou/${estado}/${cidade}/${currentUser}/${uidMotorista}`);
+        
+        events.addEventListener('viagemTerminou', (event) => {
+          const data = JSON.parse(event.data);
+          const { viagemTerminou } = data;
+          if (viagemTerminou) fimDaViagem();
+          else console.log("corrida ainda existe");
+        });
+
+      } catch(error) {
+          console.log(error);
+      }
+    }
+
+    const viagemTerminou2 = async()=>{
       const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
       const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
       try{
@@ -301,7 +317,7 @@ function ViagemEmAndamento({navigation, route}) {
                 <TouchableOpacity
                   style={{backgroundColor: '#FF5F55', width: width*0.6, height: height*0.05, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.01, marginTop: height*0.018}}
                   onPress={()=>{
-                    // fimDaViagem();
+                    fimDaViagem();
                     console.log('finalizando viagem...');
                   }}
                 >

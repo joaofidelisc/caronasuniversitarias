@@ -119,52 +119,78 @@ function Oferecer({route, navigation}) {
       caso um marcador mude de posição, ele é apenas atualizado e, caso um caronista desista de buscar carona, o marcador é removido.
     */
     function getCaronistasMarker(){
-    let jaExiste = false;
-    if (jaExiste == true){
-      jaExiste = false;
-    }
-    let filhoRemovido = '';
-    if (filhoRemovido != ''){
-      filhoRemovido = '';
-    }
-    try{
-      database().ref().child(`${estado}/${cidade}/Passageiros`).on('child_removed', function(snapshot){
-        setCaronistas(vetorCaronistas.filter((uid)=>(uid.uid != snapshot.key)));
-      })
-      database().ref().child(`${estado}/${cidade}/Passageiros`).on('value', function(snapshot){
-        if (snapshot.exists()){
-          snapshot.forEach(function(userSnapshot){       
-            if (vetorCaronistas.length == 0){
-              setCaronistas([{
-                latitude: userSnapshot.val().latitudePassageiro,
-                longitude: userSnapshot.val().longitudePassageiro,
-                uid: userSnapshot.key,  
-                caronasAceitas: userSnapshot.val().caronasAceitas,        
-                }
-              ])
-            }
-            else{
-              vetorCaronistas.some(caronista=>{
-                if (caronista.uid === userSnapshot.key){
-                  vetorCaronistas[vetorCaronistas.indexOf(caronista)].latitude = userSnapshot.val().latitudePassageiro;
-                  vetorCaronistas[vetorCaronistas.indexOf(caronista)].longitude = userSnapshot.val().longitudePassageiro;
-                  jaExiste = true;
-                }
-              })
-              if (!jaExiste){
-                setCaronistas([...vetorCaronistas, {
+      let jaExiste = false;
+      if (jaExiste == true){
+        jaExiste = false;
+      }
+      let filhoRemovido = '';
+      if (filhoRemovido != ''){
+        filhoRemovido = '';
+      }
+      try{
+        database().ref().child(`${estado}/${cidade}/Passageiros`).on('child_removed', function(snapshot){
+          setCaronistas(vetorCaronistas.filter((uid)=>(uid.uid != snapshot.key)));
+        })
+        database().ref().child(`${estado}/${cidade}/Passageiros`).on('value', function(snapshot){
+          if (snapshot.exists()){
+            snapshot.forEach(function(userSnapshot){       
+              if (vetorCaronistas.length == 0){
+                setCaronistas([{
                   latitude: userSnapshot.val().latitudePassageiro,
                   longitude: userSnapshot.val().longitudePassageiro,
-                  uid: userSnapshot.key,
-                  caronasAceitas: userSnapshot.val().caronasAceitas,      
+                  uid: userSnapshot.key,  
+                  caronasAceitas: userSnapshot.val().caronasAceitas,        
                   }
                 ])
               }
-            }
-          })
-        }
-      })
+              else{
+                vetorCaronistas.some(caronista=>{
+                  if (caronista.uid === userSnapshot.key){
+                    vetorCaronistas[vetorCaronistas.indexOf(caronista)].latitude = userSnapshot.val().latitudePassageiro;
+                    vetorCaronistas[vetorCaronistas.indexOf(caronista)].longitude = userSnapshot.val().longitudePassageiro;
+                    jaExiste = true;
+                  }
+                })
+                if (!jaExiste){
+                  setCaronistas([...vetorCaronistas, {
+                    latitude: userSnapshot.val().latitudePassageiro,
+                    longitude: userSnapshot.val().longitudePassageiro,
+                    uid: userSnapshot.key,
+                    caronasAceitas: userSnapshot.val().caronasAceitas,      
+                    }
+                  ])
+                }
+              }
+            })
+          }
+        })
     }catch(error){
+      console.log(error);
+    }
+  }
+
+  function getCaronistasMarker2() {
+    try {
+      const events = new EventSource(`${serverConfig.urlRootNode}getCaronistasMarker/${estado}/${cidade}/${vetorCaronistas}`);
+      events.addEventListener('getCaronistasMarker', (event) => {
+        const data = JSON.parse(event.data);
+        const vetorCaronistas = data.vetorCaronistas;
+        const latitudePassageiro = data.latitudePassageiro;
+        const longitudePassageiro = data.longitudePassageiro;
+        const uid = data.uid;
+        const caronasAceitas = data.caronasAceitas;
+
+        setCaronistas(vetorCaronistas.filter((uid)=>(uid.uid != snapshot.key)));
+        setCaronistas([{
+          latitude: latitudePassageiro,
+          longitude: longitudePassageiro,
+          uid: uid,  
+          caronasAceitas: caronasAceitas,        
+          }
+        ])
+      })
+    } catch(error) {
+      console.log(error);
     }
   }
 
@@ -444,6 +470,40 @@ function Oferecer({route, navigation}) {
     //   }
     // }
     
+    
+    async function caronasAceitas2() {
+      try {
+        const events = new EventSource(`${serverConfig.urlRootNode}caronasAceitas/${estado}/${cidade}/${currentUser}/${oferecerMaisCaronas}/${vagasDisponiveis}
+                                      /${numCaronasAceitas}/${ofertasAceitas}/${cancelarOferta}/${modalVisible}`);
+        
+        events.addEventListener('caronasAceitas', (event) => {
+          const data = JSON.parse(event.data); 
+          const arrayOfertasAceitas = data.arrayOfertasAceitas;
+          const ofertasAceitas = data.ofertasAceitas;
+          const numCaronasAceitas = data.numCaronasAceitas;
+          const cancelarOferta = data.cancelarOferta;
+          const oferecerMaisCaronas = data.oferecerMaisCaronas;
+          const exibeModalOferecer = data.exibeModalOferecer;
+          const modalVisible = data.modalVisible;
+
+          setArrayOfertasAceitas(arrayOfertasAceitas);
+          setOfertasAceitas(ofertasAceitas);
+          setNumCaronasAceitas(numCaronasAceitas);
+          setCancelarOferta(cancelarOferta);
+          setOferecerMaisCaronas(oferecerMaisCaronas);
+          setExibeModalOferecer(exibeModalOferecer);
+          setModalVisible(modalVisible);
+        })
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
+// duvidas:
+// 1. passar tudo isso por params? como ficam objetos?
+// 2. retornar com send
+// 3.
+
     const caronasAceitas = async()=>{
       let strUIDs = '';
       let arrayUIDs = [];
