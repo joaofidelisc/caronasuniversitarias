@@ -317,7 +317,7 @@ function ViagemEmAndamento({navigation, route}) {
                 <TouchableOpacity
                   style={{backgroundColor: '#FF5F55', width: width*0.6, height: height*0.05, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.01, marginTop: height*0.018}}
                   onPress={()=>{
-                    fimDaViagem();
+                    //fimDaViagem();
                     console.log('finalizando viagem...');
                   }}
                 >
