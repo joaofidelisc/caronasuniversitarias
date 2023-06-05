@@ -64,7 +64,7 @@ routes.get("/motoristaMeBuscando/:estado/:cidade/:currentUser/:uidMotorista/:mot
   })
 
 
-routes.get("/viagemTerminou/:estado/:cidade/:currentUser", (req, res)=>{
+routes.get("/viagemTerminou/:estado/:cidade/:currentUser/:uidMotorista", (req, res)=>{
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
@@ -74,7 +74,7 @@ routes.get("/viagemTerminou/:estado/:cidade/:currentUser", (req, res)=>{
   });
 
   const { estado, cidade, currentUser, uidMotorista } = req.params;
-
+  console.log('estado:', estado, 'cidade:', cidade, 'currentUser:', currentUser, 'uidMotorista');
   const db = admin.database();
   const reference = db.ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
   const reference_motorista = db.ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
@@ -95,6 +95,7 @@ routes.get("/viagemTerminou/:estado/:cidade/:currentUser", (req, res)=>{
 
   try {
     reference.on('value', function(snapshot){
+      console.log('finalizar2');
       if(snapshot.child('viagemTerminou').exists()){
         if (snapshot.val().viagemTerminou != false && snapshot.val().viagemTerminou != undefined){
           res.write('event: viagemTerminou\n');

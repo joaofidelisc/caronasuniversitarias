@@ -8,6 +8,8 @@ import auth from '@react-native-firebase/auth';
 
 import EstadoApp from '../../services/sqlite/EstadoApp';
 import serverConfig from '../../../config/config.json';
+import EventSource from 'react-native-event-source';
+
 
 
 const {height, width} = Dimensions.get('screen')
