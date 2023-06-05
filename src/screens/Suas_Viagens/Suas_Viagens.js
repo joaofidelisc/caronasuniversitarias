@@ -8,6 +8,7 @@ import database from '@react-native-firebase/database';
 import Lottie from 'lottie-react-native';
 
 import serverConfig from '../../../config/config.json';
+import EventSource from 'react-native-event-source';
 
 
 const {height, width} = Dimensions.get('screen')
@@ -40,38 +41,91 @@ function Suas_Viagens({route, navigation}) {
 
 
   const buscaChat = async(secondUser)=>{
-    let idChatKey = null;
-    try{
-      await database().ref().child('chatrooms/').once('value', snapshot=>{
-        if (snapshot.exists()){
-          snapshot.forEach(idChat=>{
-            if (idChat.val().firstUser == currentUser && idChat.val().secondUser == secondUser || idChat.val().firstUser == secondUser && idChat.val().secondUser == currentUser){
-              idChatKey = idChat.key;
-              return idChatKey;
-            }
-          })
+    let reqs = await fetch(serverConfig.urlRootNode+`buscaChat/${currentUser}/${secondUser}`,{
+        method: 'GET',
+        mode: 'cors',
+        headers:{
+          'Accept':'application/json',
+          'Content-type':'application/json'
         }
-      })
-    }catch(error){
-      console.log('erro em buscaChat');
-    }
-    return idChatKey;
+    });
+    const res = await reqs.json();
+    return res;
   }
+
+  // const buscaChat = async(secondUser)=>{
+  //   let idChatKey = null;
+  //   try{
+  //     await database().ref().child('chatrooms/').once('value', snapshot=>{
+  //       if (snapshot.exists()){
+  //         snapshot.forEach(idChat=>{
+  //           if (idChat.val().firstUser == currentUser && idChat.val().secondUser == secondUser || idChat.val().firstUser == secondUser && idChat.val().secondUser == currentUser){
+  //             idChatKey = idChat.key;
+  //             return idChatKey;
+  //           }
+  //         })
+  //       }
+  //     })
+  //   }catch(error){
+  //     console.log('erro em buscaChat');
+  //   }
+  //   return idChatKey;
+  // }
   
   //ref.push cria um chat com uma chave única
+  // const newChatroom = (user2)=>{
+  //   const ref = database().ref(`chatrooms/`);
+  //   try{
+  //     ref.push({
+  //       firstUser: currentUser,
+  //       secondUser: user2,
+  //       messages: [],
+  //     })
+  //   }catch(error){
+  //     console.log('erro em newChatRoom');
+  //   }
+  // }
+
   const newChatroom = (user2)=>{
-    const ref = database().ref(`chatrooms/`);
-    try{
-      ref.push({
+    fetch(serverConfig.urlRootNode+'chatrooms/',{
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({
         firstUser: currentUser,
         secondUser: user2,
-        messages: [],
       })
-    }catch(error){
-      console.log('erro em newChatRoom');
-    }
+    });
   }
   
+
+//   const cadastrarUsuario = async()=>{
+//     let reqs = await fetch(serverConfig.urlRootNode+'cadastrarUsuario',{
+//         method: 'POST',
+//         headers:{
+//             'Accept':'application/json',
+//             'Content-type':'application/json'
+//         },
+//         body: JSON.stringify({
+//             id: userID,
+//             nome: nome,
+//             CPF: CPF,
+//             dataNasc: data_nasc, //conferir se data está no formato "xxxx-xx-xx"
+//             email: email,
+//             numCel: num_cel,
+//             token: 'atualizar',
+//             universidade: universidade,
+//             classificacao: 0,
+//             fotoPerfil:'atualizar',
+//             motorista: true
+//         })
+//     });
+
+//     let res = await reqs.json();
+//     console.log('req:', res);
+// }
   
   const entrarEmContato = async(uidUserContato)=>{
       let idChat = null;

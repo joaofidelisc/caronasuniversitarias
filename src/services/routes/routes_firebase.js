@@ -108,70 +108,40 @@ routes.get("/viagemTerminou/:estado/:cidade/:currentUser/:uidMotorista", (req, r
   }
 });
 
-routes.get("/getCaronistasMarker/:estado/:cidade", (req, res) => {
-  res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Accept',
-    'Connection': 'keep-alive',
-  });
-
-  let jaExiste = false;
-  if (jaExiste == true){
-    jaExiste = false;
-  }
-  let filhoRemovido = '';
-  if (filhoRemovido != ''){
-    filhoRemovido = '';
-  }
-
-  const { estado, cidade } = req.params;
-
+routes.get("/buscaChat/:currentUser/:secondUser", (req, res)=>{
+  let idChatKey = null;
   const db = admin.database();
-  const reference = db.ref().child(`${estado}/${cidade}/Passageiros`); 
-
-  try {
-    reference.on('child_removed', function(snapshot){
-      setCaronistas(vetorCaronistas.filter((uid)=>(uid.uid != snapshot.key)));
-    })
-    reference.on('value', function(snapshot){
+  try{
+    db.ref().child('chatrooms/').once('value', snapshot=>{
       if (snapshot.exists()){
-        snapshot.forEach(function(userSnapshot){       
-          if (vetorCaronistas.length == 0){
-            setCaronistas([{
-              latitude: userSnapshot.val().latitudePassageiro,
-              longitude: userSnapshot.val().longitudePassageiro,
-              uid: userSnapshot.key,  
-              caronasAceitas: userSnapshot.val().caronasAceitas,        
-              }
-            ])
-          }
-          else{
-            vetorCaronistas.some(caronista=>{
-              if (caronista.uid === userSnapshot.key){
-                vetorCaronistas[vetorCaronistas.indexOf(caronista)].latitude = userSnapshot.val().latitudePassageiro;
-                vetorCaronistas[vetorCaronistas.indexOf(caronista)].longitude = userSnapshot.val().longitudePassageiro;
-                jaExiste = true;
-              }
-            })
-            if (!jaExiste){
-              setCaronistas([...vetorCaronistas, {
-                latitude: userSnapshot.val().latitudePassageiro,
-                longitude: userSnapshot.val().longitudePassageiro,
-                uid: userSnapshot.key,
-                caronasAceitas: userSnapshot.val().caronasAceitas,      
-                }
-              ])
-            }
+        snapshot.forEach(idChat=>{
+          if (idChat.val().firstUser == req.params.currentUser && idChat.val().secondUser == req.params.secondUser || idChat.val().firstUser == req.params.secondUser && idChat.val().secondUser == req.params.currentUser){
+            idChatKey = idChat.key;
+            res.send(idChatKey);
           }
         })
       }
     })
-}catch(error){
-  console.log(error);
-}
+  }catch(error){
+    console.log('erro em buscaChat');
+  }
+  res.send(idChatKey);
 });
+
+routes.post("/newChatroom", (req, res)=>{
+  const db = admin.database();
+  const ref = db.ref(`chatrooms/`);
+  try{
+    ref.push({
+      firstUser: req.body.currentUser,
+      secondUser: req.body.user2,
+      messages: [],
+    })
+  }catch(error){
+    console.log('erro em newChatRoom');
+  }
+})
+
 
 routes.get("/caronasAceitas/:estado/:cidade/:currentUser", (req, res) => {
   res.writeHead(200, {
@@ -272,28 +242,25 @@ routes.get("/caronistasMarker/:estado/:cidade/:vetorCaronistas", (req, res) => {
   try{
     reference.on('child_removed', function(snapshot){
       vetorCaronistas = vetorCaronistas.filter((uid)=>(uid.uid != snapshot.key));
-      data = { vetorCaronistas };
-      res.write('event: getCaronistasMarker\n');
-      res.send(data);
     })
     reference.on('value', function(snapshot){
       if (snapshot.exists()){
         snapshot.forEach(function(userSnapshot){       
           if (vetorCaronistas.length == 0){
-            data = {
-              latitudePassageiro: userSnapshot.val().latitudePassageiro,
-              longitudePassageiro: userSnapshot.val().longitudePassageiro,
+            vetorCaronistas = [{
+              latitude: userSnapshot.val().latitudePassageiro,
+              longitude: userSnapshot.val().longitudePassageiro,
               uid: userSnapshot.key,  
-              caronasAceitas: userSnapshot.val().caronasAceitas, 
-            }
-            res.write('event: getCaronistasMarker\n');
-            res.send(data);
+              caronasAceitas: userSnapshot.val().caronasAceitas,        
+            }];
           }
           else{
             vetorCaronistas.some(caronista=>{
               if (caronista.uid === userSnapshot.key){
+                // deveria retornar?
                 vetorCaronistas[vetorCaronistas.indexOf(caronista)].latitude = userSnapshot.val().latitudePassageiro;
                 vetorCaronistas[vetorCaronistas.indexOf(caronista)].longitude = userSnapshot.val().longitudePassageiro;
+                
                 jaExiste = true;
               }
             })
@@ -305,12 +272,16 @@ routes.get("/caronistasMarker/:estado/:cidade/:vetorCaronistas", (req, res) => {
                 caronasAceitas: userSnapshot.val().caronasAceitas, 
               }
               res.write('event: getCaronistasMarker\n');
-              res.send(data);
+              res.send(data); // trocar tambem para write
             }
           }
         })
       }
     })
+
+    data = { vetorCaronistas };
+    res.write('event: getCaronistasMarker\n');
+    res.write(`${data}\n\n`)
   } catch(erro){
     console.log(erro);
   }
