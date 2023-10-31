@@ -6,7 +6,7 @@ db.transaction((tx)=>{
     tx.executeSql(
         "CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, cidade TEXT, estado TEXT, nomeDestino TEXT, uidMotorista TEXT, nomeMotorista TEXT, veiculoMotorista TEXT, placaVeiculoMotorista TEXT, motoristaUrl TEXT, numVagas INTEGER, passageiros TEXT);"
     );
-    console.log('tabela criada!');
+    console.log('Tabela `user` criada!');
 })
 
 const insertData = (obj) => {
@@ -77,106 +77,9 @@ const insertData = (obj) => {
     });
   };
 
-//   const getAll = () => {
-//     return new Promise((resolve, reject) => {
-//       db.transaction((tx) => {
-//         //comando SQL modificável
-//         tx.executeSql(
-//           "SELECT cidade, estado, id FROM user;",
-//           [],
-//           //-----------------------
-//           (_, { rows }) => resolve(rows._array),
-//           (_, error) => reject(error) // erro interno em tx.executeSql
-//         );
-//       });
-//     });
-//   };
-
-// const getAll2 = async()=>{
-//     try{
-//         (await db).transaction((tx)=>{
-//             tx.executeSql(
-//                 "SELECT cidade, estado, id FROM user",
-//                 [],
-//                 (tx, results)=>{
-//                     var len = results.rows.length;
-//                     if (len>0){
-//                         var cidade = results.rows.item(0).cidade;
-//                         var estado = results.rows.item(0).estado;
-//                         var id = results.rows.item(0).id;
-//                         console.log('cidade:', cidade);
-//                         console.log('estado:', estado);
-//                         console.log('id:', id);
-//                         return [results.rows.item(0).cidade, estado];
-//                         //utilizar hooks aqui (setCidade, setEstado, etc...);
-//                     }else{
-//                         console.log('caiu no else do getData!');
-//                     }
-//                 }
-//             );
-//         })
-//     }catch(error){
-//         console.log('erro em getData');
-//     }
-// }
-
-// const getAll = async()=>{
-//     try{
-//         (await db).transaction((tx)=>{
-//             tx.executeSql(
-//                 "SELECT * FROM user",
-//                 [],
-//                 (tx, results)=>{
-//                     var len = results.rows.length;
-//                     if (len>0){
-//                         console.log(results.rows.item(0));
-//                     }
-//                 }
-//             )
-//         })
-//     }catch(error){
-//         console.log(error);
-//     }
-// }
-
-// // const getData = () => {
-// //     return new Promise((resolve, reject) => {
-// //       db.transaction((tx) => {
-// //         //comando SQL modificável
-// //         tx.executeSql(
-// //           "SELECT * FROM user;",
-// //           [],
-// //           //-----------------------
-// //           (_, { rows }) => resolve(rows._array),
-// //           (_, error) => reject(error) // erro interno em tx.executeSql
-// //         );
-// //       });
-// //     });
-// //   };
-
-
-
-
-// const removeData = async()=>{
-//     try{
-//         (await db).transaction((tx)=>{
-//             tx.executeSql(
-//                 "DELETE FROM user",
-//                 [],
-//                 ()=>{console.log('informacoes apagadas!')},
-//                 error=>{ console.log(error) }
-//             )
-//         })
-//     }catch(error){
-//         console.log('erro em removeData')
-//     }
-// }
-
 export default {
     insertData,
     updateData,
     findData,
     removeData
-    // getAll,
-    // getAll2
 };
