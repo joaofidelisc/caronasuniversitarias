@@ -1,15 +1,24 @@
 import React, {useEffect, useState} from 'react';
-import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, StatusBar, Modal, PermissionsAndroid, Dimensions} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  StatusBar,
+  Modal,
+  PermissionsAndroid,
+  Dimensions,
+} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import RNRestart from 'react-native-restart';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 import database from '@react-native-firebase/database';
 
+const {height, width} = Dimensions.get('screen');
 
-const {height,width} = Dimensions.get('screen')
-
-function ModoAplicativo(){
+function ModoAplicativo() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAlert, setModalAlert] = useState(false);
 
@@ -19,160 +28,241 @@ function ModoAplicativo(){
   const [cidade, setCidade] = useState(null);
   const [estado, setEstado] = useState(null);
   const [trocaLiberada, setTrocaLiberada] = useState(null);
-  
+
   const userID = auth().currentUser.uid;
 
-  function carregarInformacoes(){
-    EstadoApp.findData(1).then(
-      info =>{
+  function carregarInformacoes() {
+    EstadoApp.findData(1)
+      .then(info => {
         setCidade(info.cidade);
         setEstado(info.estado);
         setInfoCarregadas(true);
-      }
-    ).catch(err=> console.log(err));
+      })
+      .catch(err => console.log(err));
   }
 
-  const trocaDeModoLiberada = async(modo)=>{
+  const trocaDeModoLiberada = async modo => {
     const reference = database().ref(`${estado}/${cidade}/${modo}/${userID}`);
-    try{  
-      reference.once('value').then(snapshot=>{
-        if (snapshot.exists()){
+    try {
+      reference.once('value').then(snapshot => {
+        if (snapshot.exists()) {
           setTrocaLiberada(false);
           // setModalAlert(true);
-        }else{
+        } else {
           setTrocaLiberada(true);
         }
-      })
-    }catch(error){
+      });
+    } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-
-  const modoAtuacao = async()=>{
-    firestore().collection('Users').doc(userID).get().then(doc=>{
-      if (doc && doc.exists){
-        if (doc.data().motorista == true){
-          setModoApp('motorista');
-          setMessage('passageiro');
-          trocaDeModoLiberada('Passageiros');
-        }else{
-          setModoApp('passageiro');
-          setMessage('motorista');
-          trocaDeModoLiberada('Motoristas');
+  const modoAtuacao = async () => {
+    firestore()
+      .collection('Users')
+      .doc(userID)
+      .get()
+      .then(doc => {
+        if (doc && doc.exists) {
+          if (doc.data().motorista == true) {
+            setModoApp('motorista');
+            setMessage('passageiro');
+            trocaDeModoLiberada('Passageiros');
+          } else {
+            setModoApp('passageiro');
+            setMessage('motorista');
+            trocaDeModoLiberada('Motoristas');
+          }
         }
-      }
-    })
-  }
-  
-  const navegarParaPassageiro = async()=>{
+      });
+  };
+
+  const navegarParaPassageiro = async () => {
     await trocaDeModoLiberada('Motoristas');
     console.log('troca liberada?', trocaLiberada);
-    if (trocaLiberada){
-      console.log('pode trocar!')
-      try{
+    if (trocaLiberada) {
+      console.log('pode trocar!');
+      try {
         await firestore().collection('Users').doc(userID).update({
-          motorista: false
-        })
+          motorista: false,
+        });
         setModalVisible(!modalVisible);
         RNRestart.Restart();
-      }catch(error){
+      } catch (error) {
         console.log('erro em navegarParaPassageiro');
       }
-    }else{
+    } else {
       setModalVisible(!modalVisible);
       setModalAlert(true);
-      
-      console.log("não pode trocar!");
+
+      console.log('não pode trocar!');
     }
-  }
-  
-  const navegarParaMotorista = async()=>{
+  };
+
+  const navegarParaMotorista = async () => {
     await trocaDeModoLiberada('Passageiros');
     console.log('troca liberada?', trocaLiberada);
-    if (trocaLiberada){
-      try{
+    if (trocaLiberada) {
+      try {
         await firestore().collection('Users').doc(userID).update({
-          motorista: true
-        })
+          motorista: true,
+        });
         setModalVisible(!modalVisible);
-        RNRestart.Restart(); 
-      }catch(error){
+        RNRestart.Restart();
+      } catch (error) {
         console.log('erro em navegarParaMotorista');
-      }   
-    }else{
+      }
+    } else {
       setModalVisible(!modalVisible);
       setModalAlert(true);
-      console.log("não pode trocar!");
+      console.log('não pode trocar!');
     }
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     modoAtuacao();
   });
 
-  useEffect(()=>{
-    if (!infoCarregadas){
+  useEffect(() => {
+    if (!infoCarregadas) {
       carregarInformacoes();
     }
-  })
-  
+  });
+
   return (
     <SafeAreaView>
-      <TouchableOpacity 
-        style={{position: 'absolute', top:height*0.17, backgroundColor: '#FF5F55', width: width*0.5, height: height*0.05, borderWidth: 1, borderColor: 'white', borderRadius: 10, justifyContent: 'center', alignItems:'center', alignSelf: 'center'}}
-        onPress={()=>{
-          setModalVisible(!modalVisible)
+      <TouchableOpacity
+        style={{
+          position: 'absolute',
+          top: height * 0.17,
+          backgroundColor: '#FF5F55',
+          width: width * 0.5,
+          height: height * 0.05,
+          borderWidth: 1,
+          borderColor: 'white',
+          borderRadius: 10,
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignSelf: 'center',
+        }}
+        onPress={() => {
+          setModalVisible(!modalVisible);
           console.log('modoApp:', modoApp);
-        }}  
-      >
-        <Text style={{color: 'white', fontWeight: 'bold', fontSize: width*0.04}}>Modo {modoApp}</Text>
+        }}>
+        <Text
+          style={{color: 'white', fontWeight: 'bold', fontSize: width * 0.04}}>
+          Modo {modoApp}
+        </Text>
       </TouchableOpacity>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {setModalVisible(!modalVisible);}}
-        >
-          <TouchableOpacity 
-            style={{position: 'absolute', top:height*0.223, backgroundColor: '#FF5F55', width: width*0.5, height: height*0.05, borderWidth: 1, borderColor: 'white', borderRadius: 10, justifyContent: 'center', alignItems:'center', alignSelf: 'center'}}
-            onPress={()=>{
-              console.log('modo app!', message);
-              if (message == 'passageiro'){
-                navegarParaPassageiro();
-                // setModalVisible(!modalVisible);
-                // RNRestart.Restart();
-              }else{
-                navegarParaMotorista();
-                // setModalVisible(!modalVisible);
-                // RNRestart.Restart();
-              }
-            }}  
-          >
-            <Text style={{color: 'white', fontWeight: 'bold', fontSize: width*0.04}}>Modo {message}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={{position: 'absolute', top:height*0.273, backgroundColor: '#FF5F55', width: width*0.5, height: height*0.05, borderWidth: 1, borderColor: 'white', borderRadius: 10, justifyContent: 'center', alignItems:'center', alignSelf: 'center'}}
-            onPress={()=>{
-              setModalVisible(!modalVisible)}}  
-          >
-            <Text style={{color: 'white', fontWeight: 'bold', fontSize: width*0.04}}>Fechar</Text>
-          </TouchableOpacity>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}>
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            top: height * 0.223,
+            backgroundColor: '#FF5F55',
+            width: width * 0.5,
+            height: height * 0.05,
+            borderWidth: 1,
+            borderColor: 'white',
+            borderRadius: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignSelf: 'center',
+          }}
+          onPress={() => {
+            console.log('modo app!', message);
+            if (message == 'passageiro') {
+              navegarParaPassageiro();
+              // setModalVisible(!modalVisible);
+              // RNRestart.Restart();
+            } else {
+              navegarParaMotorista();
+              // setModalVisible(!modalVisible);
+              // RNRestart.Restart();
+            }
+          }}>
+          <Text
+            style={{
+              color: 'white',
+              fontWeight: 'bold',
+              fontSize: width * 0.04,
+            }}>
+            Modo {message}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            top: height * 0.273,
+            backgroundColor: '#FF5F55',
+            width: width * 0.5,
+            height: height * 0.05,
+            borderWidth: 1,
+            borderColor: 'white',
+            borderRadius: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignSelf: 'center',
+          }}
+          onPress={() => {
+            setModalVisible(!modalVisible);
+          }}>
+          <Text
+            style={{
+              color: 'white',
+              fontWeight: 'bold',
+              fontSize: width * 0.04,
+            }}>
+            Fechar
+          </Text>
+        </TouchableOpacity>
       </Modal>
       <Modal
-          animationType="fade"
-          transparent={true}
-          visible={modalAlert}
-          onRequestClose={() => {setModalAlert(!modalAlert);}}
-      >
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: '50%', position: 'absolute', alignSelf: 'center'}}>
+        animationType="fade"
+        transparent={true}
+        visible={modalAlert}
+        onRequestClose={() => {
+          setModalAlert(!modalAlert);
+        }}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: '50%',
+            position: 'absolute',
+            alignSelf: 'center',
+          }}>
           <View style={styles.modalView}>
-            <Text style={{color: 'black', textAlign: 'center', marginBottom: '5%', fontWeight:'600'}}>Ops...</Text>
-            <Text style={{color: 'black', textAlign: 'center', marginBottom: '5%'}}>Finalize a viagem ou cancele a busca por carona/oferta antes de trocar de modo!</Text>
+            <Text
+              style={{
+                color: 'black',
+                textAlign: 'center',
+                marginBottom: '5%',
+                fontWeight: '600',
+              }}>
+              Ops...
+            </Text>
+            <Text
+              style={{color: 'black', textAlign: 'center', marginBottom: '5%'}}>
+              Finalize a viagem ou cancele a busca por carona/oferta antes de
+              trocar de modo!
+            </Text>
             <TouchableOpacity
-              style={{backgroundColor:'#FF5F55', width: width*0.5, height: height*0.04, borderRadius: 15, justifyContent: 'center'}}
-              onPress={() => setModalAlert(!modalAlert)}
-            >
+              style={{
+                backgroundColor: '#FF5F55',
+                width: width * 0.5,
+                height: height * 0.04,
+                borderRadius: 15,
+                justifyContent: 'center',
+              }}
+              onPress={() => setModalAlert(!modalAlert)}>
               <Text style={styles.textStyle}>Entendi</Text>
             </TouchableOpacity>
           </View>
@@ -185,32 +275,32 @@ function ModoAplicativo(){
 const styles = StyleSheet.create({
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
   textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center"
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
-  btnFechar:{
+  btnFechar: {
     position: 'absolute',
     width: 14,
     height: 29,
     left: 22,
     top: 20,
   },
-  txtBtnFechar:{
+  txtBtnFechar: {
     fontWeight: '600',
     fontSize: 24,
     lineHeight: 29,
