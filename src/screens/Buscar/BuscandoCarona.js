@@ -70,7 +70,7 @@ function BuscandoCarona({navigation, route}) {
   }
 
   function buscarCarona() {
-    console.log('rodando buscar carona!');
+    console.log('Rodando buscar carona!');
     const reference = database().ref(
       `${estado}/${cidade}/Passageiros/${currentUser}`,
     );

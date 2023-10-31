@@ -66,7 +66,7 @@ function Oferecer({route, navigation}) {
   const [definiuEstado, setDefiniuEstado] = useState(false);
   const [infoCarregadas, setInfoCarregadas] = useState(false);
 
-  const [token, setToken] = useState(''); //Armazena o token atual obtido do dispositivo do usuário.
+  const [token, setToken] = useState('');
   //Informações do motorista e banco de dados
   const currentUser = auth().currentUser.uid;
 
@@ -93,7 +93,7 @@ function Oferecer({route, navigation}) {
         })
         .catch(err => console.log(err));
     } else {
-      console.log('info carregadas por default!');
+      console.log('Informações inseridas - carregadas');
       setCidade(route.params?.cidade);
       setEstado(route.params?.estado);
       setDestino(route.params?.nomeDestino);
@@ -129,7 +129,7 @@ function Oferecer({route, navigation}) {
       caso um marcador mude de posição, ele é apenas atualizado e, caso um caronista desista de buscar carona, o marcador é removido.
     */
   function getCaronistasMarker() {
-    console.log('getCaronistasMarker');
+    console.log('getCaronistasMarker\n');
     let jaExiste = false;
     if (jaExiste == true) {
       jaExiste = false;
@@ -188,7 +188,7 @@ function Oferecer({route, navigation}) {
           }
         });
     } catch (error) {
-      console.log(error.code);
+      console.log('Erro em getCaronistasMarker');
     }
   }
 
@@ -208,7 +208,7 @@ function Oferecer({route, navigation}) {
         ativo: true,
       });
     } catch (error) {
-      console.log(error.code);
+      console.log('Erro em atualizaEstado');
     }
   }
 
@@ -228,7 +228,7 @@ function Oferecer({route, navigation}) {
           setExisteBanco(snapshot.exists());
         });
       } catch (error) {
-        console.log(error.code);
+        console.log('Erro em estadoInicial');
       }
     }
 
@@ -244,7 +244,7 @@ function Oferecer({route, navigation}) {
           caronistasAbordo: '',
         });
       } catch (error) {
-        console.log(error.code);
+        console.log('Erro em estadoInicial');
       }
     }
   }
@@ -253,7 +253,7 @@ function Oferecer({route, navigation}) {
       Função responsável por obter a localização do motorista em tempo real.
     */
   function getMyLocation() {
-    console.log('getMyLocation');
+    console.log('getMyLocation\n');
     try {
       Geolocation.getCurrentPosition(
         info => {
@@ -277,7 +277,7 @@ function Oferecer({route, navigation}) {
       }
       atualizaEstado();
     } catch (error) {
-      console.log(error.code);
+      console.log('Erro em getMyLocation');
     }
   }
 
@@ -286,7 +286,7 @@ function Oferecer({route, navigation}) {
       A foto é exibida no modal e na lista de caronas aceitas.
     */
   const getFotoStorage = async userUID => {
-    console.log('getFotoStorage');
+    console.log('getFotoStorage\n');
     const uidCaronista = userUID;
     var caminhoFirebase = uidCaronista.concat('Perfil');
     var url = '';
@@ -306,7 +306,7 @@ function Oferecer({route, navigation}) {
       Função responsável por retornar o nome do caronista.
     */
   const getNomeCaronista = async userUID => {
-    console.log('getNomeCaronista');
+    console.log('getNomeCaronista\n');
     try {
       await firestore()
         .collection('Users')
@@ -318,7 +318,7 @@ function Oferecer({route, navigation}) {
           }
         });
     } catch (error) {
-      console.log(error.code);
+      console.log('Erro em getNomeCaronista');
     }
   };
 
@@ -327,7 +327,7 @@ function Oferecer({route, navigation}) {
       Essa função é chamada apenas quando um marcador é pressionado.
     */
   const getDestinoCaronista = async userUID => {
-    console.log('getDestinoCaronista');
+    console.log('getDestinoCaronista\n');
     try {
       await database()
         .ref(`${estado}/${cidade}/Passageiros/${userUID}`)
@@ -336,7 +336,7 @@ function Oferecer({route, navigation}) {
           setNomeDestinoCaronista(snapshot.val().nomeDestino);
         });
     } catch (error) {
-      console.log(error.code);
+      console.log('Erro em getDestinoCaronista');
     }
   };
 
@@ -344,7 +344,7 @@ function Oferecer({route, navigation}) {
       Função responsável por recuperar a classificação do caronista.
     */
   const getClassificacaoCaronista = async caronistaUID => {
-    console.log('getClassificacaoCaronista');
+    console.log('getClassificacaoCaronista\n');
     let classificacaoAtual = 0;
     let classificacaoAtualizada = 0;
     const reference_caronista = firestore()
@@ -363,7 +363,7 @@ function Oferecer({route, navigation}) {
         }
       });
     } catch (error) {
-      console.log(error.code);
+      console.log('Erro em getClassificacaoCaronista');
     }
   };
 
@@ -377,7 +377,7 @@ function Oferecer({route, navigation}) {
     latitude,
     longitude,
   ) => {
-    console.log('getDadosUsuario');
+    console.log('getDadosUsuario\n');
     if (exibeModalOferecer == false) {
       setExibeModalOferecer(true);
     }
@@ -401,7 +401,7 @@ function Oferecer({route, navigation}) {
           await getDestinoCaronista(userUID);
           await getClassificacaoCaronista(userUID);
         } catch (error) {
-          console.log(error.code);
+          console.log('Erro em getDadosUsuario');
         }
         setUidPassageiro(userUID);
         setModalVisible(true);
@@ -416,7 +416,7 @@ function Oferecer({route, navigation}) {
       de carona.
     */
   function oferecerCarona() {
-    console.log('oferecerCarona');
+    console.log('oferecerCarona\n');
     let tituloNotificacao = 'Opa! Um motorista te ofereceu carona!';
     let mensagemNotificacao = 'Encontramos uma carona para você!';
     let listaCaronas = '';
@@ -446,7 +446,7 @@ function Oferecer({route, navigation}) {
             });
         });
     } catch (error) {
-      console.log(error.code);
+      console.log('Erro em oferecerCarona');
     }
   }
 
@@ -489,7 +489,7 @@ function Oferecer({route, navigation}) {
       Esse 'impedimento' é realizado, verificando o banco de dados dos passageiros e excluindo-o caso o motorista esteja incluso lá.
     */
   const excluiBancoMotoristaPassageiro = async () => {
-    console.log('excluiBancoMotoristaPassageiro');
+    console.log('excluiBancoMotoristaPassageiro\n');
     const reference = database().ref(
       `${estado}/${cidade}/Passageiros/${currentUser}`,
     );
@@ -498,7 +498,7 @@ function Oferecer({route, navigation}) {
         reference.remove();
       });
     } catch (error) {
-      console.log(error.code);
+      console.log('Erro em excluiBancoMotoristaPassageiro');
     }
   };
 
@@ -507,7 +507,7 @@ function Oferecer({route, navigation}) {
       Após realizada essa chamada, é passado o nome e coordenadas do passageiro.
     */
   const rotaPassageiro = async (latitude, longitude, nome, uidCaronista) => {
-    console.log('rotaPassageiro');
+    console.log('rotaPassageiro\n');
     const reference = database().ref(
       `${estado}/${cidade}/Motoristas/${currentUser}`,
     );
@@ -524,7 +524,7 @@ function Oferecer({route, navigation}) {
       });
       buscarPassageiro(latitude, longitude, nome, uidCaronista);
     } catch (error) {
-      console.log(error.code);
+      console.log('Erro em rotaPassageiro');
     }
     Linking.openURL(url);
   };
@@ -533,7 +533,7 @@ function Oferecer({route, navigation}) {
       Função responsável por calcular a distância entre o passageiro e o motorista (em metros).
     */
   const distanciaPassageiroMotorista = async (latitude, longitude) => {
-    console.log('distanciaPassageiroMotorista');
+    console.log('distanciaPassageiroMotorista\n');
     const latitudePassageiro = latitude;
     const longitudePassageiro = longitude;
     const latitudeMotorista = region.latitude;
@@ -561,7 +561,7 @@ function Oferecer({route, navigation}) {
       Ao chegar no passageiro, é possível embarcá-lo, pressionando no botão passageiro(a) a bordo.
     */
   const buscarPassageiro = async (latitude, longitude, nome, uidCaronista) => {
-    console.log('buscarPassageiro');
+    console.log('buscarPassageiro\n');
     const reference = database().ref(
       `${estado}/${cidade}/Motoristas/${currentUser}`,
     );
@@ -592,7 +592,7 @@ function Oferecer({route, navigation}) {
       Função responsável por iniciar a viagem do passageiro e atualizar os caronistas a bordo no carro do motorista.
     */
   const embarquePassageiro = async uidPassageiro => {
-    console.log('embarquePassageiro');
+    console.log('embarquePassageiro\n');
     setEmbarcarPassageiro(null);
     setNumPassageirosABordo(numPassageirosABordo + 1);
     setExistePassageiroAbordo(true);
@@ -628,7 +628,7 @@ function Oferecer({route, navigation}) {
       Função responsável por iniciar a viagem do motorista e navegar para a próxima tela de viagem em andamento;
     */
   const iniciarViagem = async () => {
-    console.log('iniciarViagem');
+    console.log('iniciarViagem\n');
     if (numCaronasAceitas > numPassageirosABordo) {
       navigation.navigate('ViagemMotorista', {cidade: cidade, estado: estado});
     } else {
@@ -648,7 +648,7 @@ function Oferecer({route, navigation}) {
       Implica que o motorista desistiu de oferecer carona.
     */
   const desistirDaOferta = async () => {
-    console.log('desistirDaOferta');
+    console.log('desistirDaOferta\n');
     const referece_motorista = database().ref(
       `${estado}/${cidade}/Motoristas/${currentUser}`,
     );
@@ -665,7 +665,7 @@ function Oferecer({route, navigation}) {
         }
       });
     } catch (error) {
-      console.log(error.code);
+      console.log('Erro em desistirDaOferta\n');
     }
   };
 
@@ -674,6 +674,7 @@ function Oferecer({route, navigation}) {
       Além de obter o token, ele é armazendo no hook token para ser salvo (ou atualizado) posteriormente, no banco de dados.
     */
   const getFCMToken = async () => {
+    console.log('getFCMToken\n');
     await messaging()
       .getToken()
       .then(token => {
@@ -686,6 +687,7 @@ function Oferecer({route, navigation}) {
      Verificação de permissão para envio de mensagens (geralmente no android a permissão é concedida por padrão)
    */
   const requestPermission = async () => {
+    console.log('requestPermission\n');
     const authStatus = await messaging().requestPermission();
   };
 
@@ -737,7 +739,7 @@ function Oferecer({route, navigation}) {
         }
       });
     } catch (error) {
-      console.log(error.code);
+      console.log('Erro em sendNotification');
     }
   };
 
@@ -756,7 +758,7 @@ function Oferecer({route, navigation}) {
         }
       });
     } catch (error) {
-      console.log(error.code);
+      console.log('Erro em armazenaToken');
     }
   };
 

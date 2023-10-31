@@ -56,7 +56,7 @@ export default function Buscar({navigation}) {
     var estado = filtro_estado[0].short_name;
     await EstadoApp.removeData(1)
       .then(console.log('Dados removidos!'))
-      .catch(console.log(error.code));
+      .catch(console.log('Erro em removeData'));
     console.log('Dados inseridos!');
 
     const reference = database().ref(
@@ -95,7 +95,7 @@ export default function Buscar({navigation}) {
         estado: estado,
       });
     } catch (error) {
-      console.log(error.code);
+      console.log('Erro em enviarLocalizacaoPassageiro');
     }
   }
 
@@ -122,7 +122,7 @@ export default function Buscar({navigation}) {
               );
             },
             () => {
-              console.log(error.code);
+              console.log('Erro em getLocalPassageiro');
             },
             {
               enableHighAccuracy: false,
@@ -130,7 +130,7 @@ export default function Buscar({navigation}) {
             },
           );
         } catch (error) {
-          console.log(error.code);
+          console.log('Erro em getLocalPassageiro');
         }
       } else {
         setModalVisible(true);
@@ -176,7 +176,7 @@ export default function Buscar({navigation}) {
           });
         },
         () => {
-          console.log(error.code);
+          console.log('Erro em estadoInicial');
         },
         {
           enableHighAccuracy: false,
@@ -184,7 +184,7 @@ export default function Buscar({navigation}) {
         },
       );
     } catch (error) {
-      console.log(error.code);
+      console.log('Erro em estadoInicial');
     }
   };
 

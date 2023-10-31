@@ -56,15 +56,15 @@ function Entrada({navigation}) {
             }
           } else {
             if (motorista == true && cadastro_veiculo != '') {
-              navigation.navigate('ModoMotorista');
-              // navigation.navigate("MenuTeste");
+              // navigation.navigate('ModoMotorista');
+              navigation.navigate("MenuTeste");
             } else if (motorista == true && cadastro_veiculo == '') {
               navigation.navigate('Forms_Motorista_Veiculo', {
                 trocaDeModo: true,
               });
             } else {
-              // navigation.navigate("MenuTeste");
-              navigation.navigate('ModoPassageiro');
+              navigation.navigate("MenuTeste");
+              // navigation.navigate('ModoPassageiro');
             }
           }
         });
