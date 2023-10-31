@@ -8,20 +8,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:97527742455:android:0a20e83e30f66d110138f2",
+        "mobilesdk_app_id": "1:97527742455:android:de1f50976091bce10138f2",
         "android_client_info": {
-          "package_name": "com.caronasuniversitarias"
+          "package_name": "caronas.universitarias"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "97527742455-lsbb98vnmv41e120s31khkaagce2n8kg.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.caronasuniversitarias",
-            "certificate_hash": "9b10402f3177a1ad2dbdccd471993bbc1fb6ec13"
-          }
-        },
         {
           "client_id": "97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com",
           "client_type": 3
