@@ -66,37 +66,40 @@ function Login({navigation}) {
   const redirecionamentoLogin = async emailGoogle => {
     if (email == '') {
       await AsyncStorage.setItem('email', emailGoogle);
-      const objUsuario = await buscarPorEmail(emailGoogle);
-      if (objUsuario == 'Não encontrou' || objUsuario == 'Falha') {
-        if (objUsuario == 'Falha') {
-          Alert.alert('Algum erro ocorreu', 'Tente entrar novamente...');
+      await buscarPorEmail(emailGoogle).then(resultado => {
+        if (resultado == 'Não encontrou' || resultado == 'Falha') {
+          if (resultado == 'Falha') {
+            Alert.alert('Algum erro ocorreu', 'Tente entrar novamente...');
+          } else {
+            navigation.navigate('Como_Comecar', {email: emailGoogle});
+          }
         } else {
-          navigation.navigate('Como_Comecar', {email: emailGoogle});
+          if (resultado[0].motorista == true) {
+            navigation.navigate('ModoMotorista');
+            // navigation.navigate('MenuTeste');
+          } else {
+            navigation.navigate('ModoPassageiro');
+            // navigation.navigate('MenuTeste');
+          }
         }
-      } else {
-        if (objUsuario[0].motorista == true) {
-          // navigation.navigate("ModoMotorista");
-          navigation.navigate('MenuTeste');
-        } else {
-          navigation.navigate('MenuTeste');
-          // navigation.navigate("ModoPassageiro");
-        }
-      }
+      });
     } else {
       await AsyncStorage.setItem('email', email);
       await AsyncStorage.setItem('password', password);
-      const objUsuario = await buscarPorEmail(email);
-      if (objUsuario == '' || objUsuario == 'Não encontrou') {
-        navigation.navigate('Como_Comecar', {email: email});
-      } else {
-        if (objUsuario[0].motorista == true) {
-          // navigation.navigate("ModoMotorista");
-          navigation.navigate('MenuTeste');
+      await buscarPorEmail(email).then(resultado => {
+        if (resultado == '' || resultado == 'Não encontrou') {
+          console.log('entrando em Como_Começar!')
+          navigation.navigate('Como_Comecar', {email: email});
         } else {
-          navigation.navigate('MenuTeste');
-          // navigation.navigate("ModoPassageiro");
+          if (resultado[0].motorista == true) {
+            navigation.navigate('ModoMotorista');
+            // navigation.navigate('MenuTeste');
+          } else {
+            navigation.navigate('ModoPassageiro');
+            // navigation.navigate('MenuTeste');
+          }
         }
-      }
+      });
     }
   };
 

@@ -41,6 +41,10 @@ Caso você precise recarregar o App ou executar novamente em um momento posterio
   - PASSWORD:"root",
   - DB:"caronasuniversitarias"
 
+3º) Exemplo de inserção na tabela user
+ - INSERT INTO user (id, nome, CPF, dataNasc, email, numCel, token, universidade, classificacao, fotoPerfil, motorista, createdAt, updatedAt) VALUES ('1', 'Nome1', '123.456.789-01', '2000-01-01 00:00:00', 'email1@example.com', '123456789', 'token1', 'Universidade1', 8.5, 'perfil1.jpg', 1, '2023-12-10 12:00:00', '2023-12-10 12:00:00');
+
+
 ## Instruções para a execução do back-end
 
 1º) Instale o nodemon por linha de comando:

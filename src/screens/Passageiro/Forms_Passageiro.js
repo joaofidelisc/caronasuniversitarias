@@ -13,11 +13,8 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
 import {TextInputMask} from 'react-native-masked-text';
 import {ScrollView} from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import serverConfig from '../../../config/config.json';
 
 const {height, width} = Dimensions.get('screen');
@@ -28,6 +25,7 @@ function Forms_Passageiro({route, navigation}) {
   const [data_nasc, setDataNasc] = useState('');
   const [num_cel, setNumCel] = useState('');
   const [universidade, setUniversidade] = useState('');
+
   const CPFRef = useRef(null);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -68,7 +66,7 @@ function Forms_Passageiro({route, navigation}) {
     return () => backHandler.remove();
   }, []);
 
-  async function insertDataNewUser() {
+  const insertDataNewUser = async () => {
     if (
       nome == '' ||
       CPF == '' ||
@@ -88,32 +86,44 @@ function Forms_Passageiro({route, navigation}) {
       setWarning('Número de celular incorreto.');
       setModalVisible(true);
     } else {
-      let reqs = await fetch(serverConfig.urlRootNode + 'cadastrarUsuario', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          nome: nome,
-          CPF: CPF,
-          data_nasc: data_nasc,
-          num_cel: num_cel,
-          universidade: universidade,
-          email: email,
-          placa_veiculo: '',
-          ano_veiculo: '',
-          cor_veiculo: '',
-          nome_veiculo: '',
-          motorista: false,
-        }).then(() => {
+      try {
+        const response = await fetch(
+          serverConfig.urlRootNode + 'cadastrarUsuario',
+          {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-type': 'application/json',
+            },
+            body: JSON.stringify({
+              id: userID,
+              nome: nome,
+              CPF: CPF,
+              data_nasc: data_nasc,
+              num_cel: num_cel,
+              universidade: universidade,
+              email: route.params?.email,
+              placa_veiculo: '',
+              ano_veiculo: '',
+              cor_veiculo: '',
+              nome_veiculo: '',
+              motorista: false,
+            }),
+          },
+        );
+
+        if (response.ok) {
+          const resultado = await response.text();
+          console.log('Inseriu com sucesso:', resultado);
           navigation.navigate('ModoPassageiro', {userID: userID});
-        }),
-      });
+        } else {
+          console.error('Erro ao inserir:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro inesperado:', error);
+      }
     }
-    let res = await reqs.json();
-    console.log('req:', res);
-  }
+  };
 
   return (
     <SafeAreaView>

@@ -41,9 +41,6 @@ function Como_Comecar({navigation, route}) {
   };
 
   useEffect(() => {
-    console.log('email:', email);
-    // navigation.navigate('ModoPassageiro', {userID: userID});
-    navigation.navigate('MenuTeste');
 
     const backAction = () => {
       Alert.alert(
