@@ -1,9 +1,9 @@
 import React, {useEffect} from 'react';
-import { LogBox } from 'react-native';
+import {LogBox} from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import auth, { firebase } from '@react-native-firebase/auth';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import auth, {firebase} from '@react-native-firebase/auth';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 import Perfil_Conta from './src/screens/Perfil/Perfil_Conta';
 import Perfil_Detalhes from './src/screens/Perfil/Perfil_Detalhes';
@@ -23,7 +23,5 @@ LogBox.ignoreAllLogs(['Warning: ...']);
 LogBox.ignoreAllLogs();
 
 export default function App() {
-  return (
-    <RotaEntrada/>
-  );
+  return <RotaEntrada />;
 }

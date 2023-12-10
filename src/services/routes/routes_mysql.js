@@ -1,10 +1,10 @@
 const express = require('express');
 const routes = express.Router();
 
-var userFunctions = require('../controllers/mysql/user.js');
-var veiculoFunctions = require('../controllers/mysql/veiculo.js');
-var viagemFunctions = require('../controllers/mysql/viagem.js');
-var passageiroViagemFunctions = require('../controllers/mysql/passageiroviagem.js');
+let userFunctions = require('../controllers/mysql/user.js');
+let veiculoFunctions = require('../controllers/mysql/veiculo.js');
+let viagemFunctions = require('../controllers/mysql/viagem.js');
+let passageiroViagemFunctions = require('../controllers/mysql/passageiroviagem.js');
 
 
 routes.get("/", (req, res)=>{

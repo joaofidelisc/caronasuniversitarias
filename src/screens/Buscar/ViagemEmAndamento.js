@@ -1,8 +1,18 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, Dimensions, Modal, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StatusBar,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+  Modal,
+  StyleSheet,
+} from 'react-native';
 import database from '@react-native-firebase/database';
 import firestore from '@react-native-firebase/firestore';
-import firebase from "@react-native-firebase/app";
+import firebase from '@react-native-firebase/app';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
 
@@ -10,232 +20,258 @@ import EstadoApp from '../../services/sqlite/EstadoApp';
 import serverConfig from '../../../config/config.json';
 import EventSource from 'react-native-event-source';
 
-
-
-const {height, width} = Dimensions.get('screen')
+const {height, width} = Dimensions.get('screen');
 
 function ViagemEmAndamento({navigation, route}) {
-    
-    const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
+  const [infoCarregadas, setInfoCarregadas] = useState(false);
 
-    const [infoCarregadas, setInfoCarregadas] = useState(false);
+  const [cidade, setCidade] = useState(null);
+  const [estado, setEstado] = useState(null);
+  const [nomeMotorista, setNomeMotorista] = useState(null);
+  const [veiculoMotorista, setVeiculoMotorista] = useState(null);
+  const [placaVeiculoMotorista, setPlacaVeiculoMotorista] = useState(null);
+  const [motoristaURL, setMotoristaURL] = useState(null);
+  const [nomeDestino, setNomeDestino] = useState(null);
+  const [uidMotorista, setUidMotorista] = useState(null);
+  const currentUser = auth().currentUser.uid;
 
-    const [cidade, setCidade] = useState(null);
-    const [estado, setEstado] = useState(null);
-    const [nomeMotorista, setNomeMotorista] = useState(null);
-    const [veiculoMotorista, setVeiculoMotorista] = useState(null);
-    const [placaVeiculoMotorista, setPlacaVeiculoMotorista] = useState(null);
-    const [motoristaURL, setMotoristaURL] = useState(null);
-    const [nomeDestino, setNomeDestino] = useState(null);
-    const [uidMotorista, setUidMotorista] = useState(null);
-    const currentUser = auth().currentUser.uid;
+  // const uidMotorista = route.params?.uidMotorista;
+  // const currentUser = route.params?.currentUser;
+  // const cidade = route.params?.cidade; //ok
+  // const estado = route.params?.estado; //ok
+  // const nomeMotorista = route.params?.nomeMotorista; //ok
+  // const veiculoMotorista = route.params?.veiculoMotorista; //ok
+  // const placaVeiculoMotorista = route.params?.placaVeiculoMotorista; //ok
+  // const motoristaURL = route.params?.motoristaUrl; //OK
+  // const nomeDestino = route.params?.nomeDestino; //OK
 
-    // const uidMotorista = route.params?.uidMotorista;
-    // const currentUser = route.params?.currentUser;
-    // const cidade = route.params?.cidade; //ok
-    // const estado = route.params?.estado; //ok
-    // const nomeMotorista = route.params?.nomeMotorista; //ok
-    // const veiculoMotorista = route.params?.veiculoMotorista; //ok
-    // const placaVeiculoMotorista = route.params?.placaVeiculoMotorista; //ok
-    // const motoristaURL = route.params?.motoristaUrl; //OK
-    // const nomeDestino = route.params?.nomeDestino; //OK
+  //cidade, estado, currentUser, uidMotorista, nomeMotorista, nomeDestino, motoristaURL
 
-    //cidade, estado, currentUser, uidMotorista, nomeMotorista, nomeDestino, motoristaURL
-
-    function carregarInformacoes(){
-      if (route.params?.cidade == undefined || route.params?.estado == undefined){
-        //buscar do banco
-        EstadoApp.findData(1).then(
-          info => {
-            console.log(info)
-            setCidade(info.cidade);
-            setEstado(info.estado);
-            setNomeMotorista(info.nomeMotorista);
-            setVeiculoMotorista(info.veiculoMotorista);
-            setPlacaVeiculoMotorista(info.placaVeiculoMotorista);
-            setMotoristaURL(info.motoristaUrl);
-            setNomeDestino(info.nomeDestino);
-            setUidMotorista(info.uidMotorista);
-            setInfoCarregadas(true);
-          }
-        ).catch(err=> console.log(err));
-      }else{
-        console.log('info carregadas por default!');
-        setCidade(route.params?.cidade);
-        setEstado(route.params?.estado);
-        setNomeMotorista(route.params?.nomeMotorista);
-        setVeiculoMotorista(route.params?.veiculoMotorista);
-        setPlacaVeiculoMotorista(route.params?.placaVeiculoMotorista);
-        setMotoristaURL(route.params?.motoristaUrl);
-        setNomeDestino(route.params?.nomeDestino);
-        setUidMotorista(route.params?.uidMotorista);
-        setInfoCarregadas(true);
-      }
+  function carregarInformacoes() {
+    if (
+      route.params?.cidade == undefined ||
+      route.params?.estado == undefined
+    ) {
+      //buscar do banco
+      EstadoApp.findData(1)
+        .then(info => {
+          console.log(info);
+          setCidade(info.cidade);
+          setEstado(info.estado);
+          setNomeMotorista(info.nomeMotorista);
+          setVeiculoMotorista(info.veiculoMotorista);
+          setPlacaVeiculoMotorista(info.placaVeiculoMotorista);
+          setMotoristaURL(info.motoristaUrl);
+          setNomeDestino(info.nomeDestino);
+          setUidMotorista(info.uidMotorista);
+          setInfoCarregadas(true);
+        })
+        .catch(err => console.log(err));
+    } else {
+      console.log('info carregadas por default!');
+      setCidade(route.params?.cidade);
+      setEstado(route.params?.estado);
+      setNomeMotorista(route.params?.nomeMotorista);
+      setVeiculoMotorista(route.params?.veiculoMotorista);
+      setPlacaVeiculoMotorista(route.params?.placaVeiculoMotorista);
+      setMotoristaURL(route.params?.motoristaUrl);
+      setNomeDestino(route.params?.nomeDestino);
+      setUidMotorista(route.params?.uidMotorista);
+      setInfoCarregadas(true);
     }
+  }
 
-    const buscaChat = async(secondUser)=>{
-      let idChatKey = null;
-      try{
-        await database().ref().child('chatrooms/').once('value', snapshot=>{
-          if (snapshot.exists()){
-            snapshot.forEach(idChat=>{
-              if (idChat.val().firstUser == currentUser && idChat.val().secondUser == secondUser || idChat.val().firstUser == secondUser && idChat.val().secondUser == currentUser){
+  const buscaChat = async secondUser => {
+    let idChatKey = null;
+    try {
+      await database()
+        .ref()
+        .child('chatrooms/')
+        .once('value', snapshot => {
+          if (snapshot.exists()) {
+            snapshot.forEach(idChat => {
+              if (
+                (idChat.val().firstUser == currentUser &&
+                  idChat.val().secondUser == secondUser) ||
+                (idChat.val().firstUser == secondUser &&
+                  idChat.val().secondUser == currentUser)
+              ) {
                 idChatKey = idChat.key;
                 return idChatKey;
               }
-            })
+            });
           }
-        })
-      }catch(error){
-        console.log('erro em buscaChat');
-      }
-      return idChatKey;
-    }
-
-     //ref.push cria um chat com uma chave única
-    const newChatroom = (user2)=>{
-      const ref = database().ref(`chatrooms/`);
-      try{
-        ref.push({
-          firstUser: currentUser,
-          secondUser: user2,
-          messages: [],
-        })
-      }catch(error){
-        console.log('erro em newChatRoom');
-      }
-    }
-    //linha 320
-    async function viagemTerminou() {
-      try {
-        const events = new EventSource(`${serverConfig.urlRootNode}viagemTerminou/${estado}/${cidade}/${currentUser}/${uidMotorista}`);
-        
-        events.addEventListener('viagemTerminou', (event) => {
-          const data = JSON.parse(event.data);
-          const { viagemTerminou } = data;
-          if (viagemTerminou) fimDaViagem();
-          else console.log("corrida ainda existe");
         });
-
-      } catch(error) {
-          console.log(error);
-      }
+    } catch (error) {
+      console.log('erro em buscaChat');
     }
+    return idChatKey;
+  };
 
-    const viagemTerminou2 = async()=>{
-      const reference = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`); 
-      const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
-      try{
-        reference_motorista.once('value', function(snapshot){
-          if (snapshot.exists()){
-            console.log("ainda existe!!!!")
-          }else{
-            console.log("apagou!");
+  //ref.push cria um chat com uma chave única
+  const newChatroom = user2 => {
+    const ref = database().ref(`chatrooms/`);
+    try {
+      ref.push({
+        firstUser: currentUser,
+        secondUser: user2,
+        messages: [],
+      });
+    } catch (error) {
+      console.log('erro em newChatRoom');
+    }
+  };
+  //linha 320
+  async function viagemTerminou() {
+    try {
+      const events = new EventSource(
+        `${serverConfig.urlRootNode}viagemTerminou/${estado}/${cidade}/${currentUser}/${uidMotorista}`,
+      );
+
+      events.addEventListener('viagemTerminou', event => {
+        const data = JSON.parse(event.data);
+        const {viagemTerminou} = data;
+        if (viagemTerminou) fimDaViagem();
+        else console.log('corrida ainda existe');
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const viagemTerminou2 = async () => {
+    const reference = database().ref(
+      `${estado}/${cidade}/Passageiros/${currentUser}`,
+    );
+    const reference_motorista = database().ref(
+      `${estado}/${cidade}/Motoristas/${uidMotorista}`,
+    );
+    try {
+      reference_motorista.once('value', function (snapshot) {
+        if (snapshot.exists()) {
+          console.log('ainda existe!!!!');
+        } else {
+          console.log('apagou!');
+          fimDaViagem();
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    try {
+      reference.on('value', function (snapshot) {
+        if (snapshot.child('viagemTerminou').exists()) {
+          if (
+            snapshot.val().viagemTerminou != false &&
+            snapshot.val().viagemTerminou != undefined
+          ) {
             fimDaViagem();
           }
-        })
-      }catch(error){
-        console.log(error);
-      }
-      try{
-        reference.on('value', function(snapshot){
-          if(snapshot.child('viagemTerminou').exists()){
-            if (snapshot.val().viagemTerminou != false && snapshot.val().viagemTerminou != undefined){
-              fimDaViagem();
-            } 
+        }
+      });
+    } catch (error) {
+      console.log('Error', error.code);
+    }
+  };
+
+  // const excluiBancoPassageiro = async()=>{
+  //   const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
+  //   try{
+  //     reference_passageiro.remove();
+  //   }catch(error){
+  //     console.log('excluiBancoPassageiro');
+  //   }
+  // }
+
+  //remove o uid do passageiro no banco de motoristas, porque por mais que tenha finalizado a minha viagem
+  //as vezes não finalizou a viagem de outro passageiro a bordo.
+  const removeUIDCaronista = async () => {
+    let todosCaronistasAbordo = '';
+    let arrayCaronistasRestantes = [];
+    let caronistasRestantes = '';
+    const reference_motorista = database().ref(
+      `${estado}/${cidade}/Motoristas/${uidMotorista}`,
+    );
+    try {
+      reference_motorista.once('value').then(snapshot => {
+        todosCaronistasAbordo = snapshot.val().caronistasAbordo;
+        if (
+          todosCaronistasAbordo != '' &&
+          todosCaronistasAbordo.split(', '.length > 1)
+        ) {
+          arrayCaronistasRestantes = todosCaronistasAbordo.split(', ');
+          if (todosCaronistasAbordo.includes(currentUser)) {
+            arrayCaronistasRestantes.splice(
+              arrayCaronistasRestantes.indexOf(currentUser),
+              1,
+            );
+            caronistasRestantes = arrayCaronistasRestantes.join(', ');
+            reference_motorista.update({
+              caronistasAbordo: caronistasRestantes,
+            });
           }
-        })
-      } catch(error){
-        console.log('Error', error.code);
-      }  
+        }
+      });
+    } catch (error) {
+      console.log('erro em removeUIDCaronista');
     }
+  };
 
-    
-    // const excluiBancoPassageiro = async()=>{
-    //   const reference_passageiro = database().ref(`${estado}/${cidade}/Passageiros/${currentUser}`);
-    //   try{
-    //     reference_passageiro.remove();
-    //   }catch(error){
-    //     console.log('excluiBancoPassageiro');
-    //   }
-    // }
-    
-    //remove o uid do passageiro no banco de motoristas, porque por mais que tenha finalizado a minha viagem
-    //as vezes não finalizou a viagem de outro passageiro a bordo.
-    const removeUIDCaronista = async()=>{
-      let todosCaronistasAbordo = '';
-      let arrayCaronistasRestantes = [];
-      let caronistasRestantes = '';
-      const reference_motorista = database().ref(`${estado}/${cidade}/Motoristas/${uidMotorista}`);
-      try{
-        reference_motorista.once('value').then(snapshot=>{
-          todosCaronistasAbordo = snapshot.val().caronistasAbordo;
-          if (todosCaronistasAbordo != '' && todosCaronistasAbordo.split(', '.length>1)){
-            arrayCaronistasRestantes = todosCaronistasAbordo.split(', ');
-            if (todosCaronistasAbordo.includes(currentUser)){
-              arrayCaronistasRestantes.splice(arrayCaronistasRestantes.indexOf(currentUser), 1);
-              caronistasRestantes = arrayCaronistasRestantes.join(', ');
-              reference_motorista.update({
-                caronistasAbordo: caronistasRestantes
-              })
-            }
-          }
-        })
-      }catch(error){
-        console.log('erro em removeUIDCaronista');
-      }
+  const dataAtualFormatada = async () => {
+    var data = new Date(),
+      dia = data.getDate().toString().padStart(2, '0'),
+      mes = (data.getMonth() + 1).toString().padStart(2, '0'), //+1 pois no getMonth Janeiro começa com zero.
+      ano = data.getFullYear();
+    return dia + '/' + mes + '/' + ano;
+  };
+
+  const escreveHistoricoViagem = async () => {
+    const data = await dataAtualFormatada();
+    const reference_passageiro = firestore()
+      .collection('Users')
+      .doc(currentUser);
+    try {
+      reference_passageiro.update({
+        historicoViagens: firebase.firestore.FieldValue.arrayUnion({
+          uidMotorista: uidMotorista,
+          dataViagem: data,
+          nome: nomeMotorista,
+          destino: nomeDestino,
+          fotoPerfil: motoristaURL,
+          refViagem: Date.now(),
+        }),
+      });
+    } catch (error) {
+      console.log('erro em escreveHistoricoViagem');
     }
+  };
 
-    const dataAtualFormatada = async()=>{
-        var data = new Date(),
-            dia  = data.getDate().toString().padStart(2, '0'),
-            mes  = (data.getMonth()+1).toString().padStart(2, '0'), //+1 pois no getMonth Janeiro começa com zero.
-            ano  = data.getFullYear();
-        return dia+"/"+mes+"/"+ano;
-    }
-
-
-    
-    const escreveHistoricoViagem = async()=>{
-      const data = await dataAtualFormatada();
-      const reference_passageiro = firestore().collection('Users').doc(currentUser); 
-      try{
-        reference_passageiro.update({
-          historicoViagens: firebase.firestore.FieldValue.arrayUnion({
-            uidMotorista: uidMotorista,
-            dataViagem: data,
-            nome: nomeMotorista,
-            destino: nomeDestino,
-            fotoPerfil: motoristaURL,
-            refViagem: Date.now()
-          })
-        })
-      }catch(error){
-        console.log('erro em escreveHistoricoViagem');
-      }
-    }
-
-    
   // async function defineEstadoAtual(){
   //   await AsyncStorage.removeItem('ViagemEmAndamento');
   //   await AsyncStorage.setItem('Classificacao', true);
   // }
 
-    const fimDaViagem = async()=>{
-      // await excluiBancoPassageiro();
-      // await defineEstadoAtual();
-      escreveHistoricoViagem();
-      navigateToClassificacao();
-      // await removeUIDCaronista();
-    }
-    
-    const navigateToClassificacao = async()=>{
-      navigation.navigate('Classificacao', {uidMotorista: uidMotorista, currentUser: currentUser, cidade: cidade, estado: estado});
-    }
+  const fimDaViagem = async () => {
+    // await excluiBancoPassageiro();
+    // await defineEstadoAtual();
+    escreveHistoricoViagem();
+    navigateToClassificacao();
+    // await removeUIDCaronista();
+  };
 
-    //CORRIGIR BUG AQUI, NÃO É POSSÍVEL NAVEGAR PARA ENTRAR EM CONTATO MOTORISTA
-    /*
+  const navigateToClassificacao = async () => {
+    navigation.navigate('Classificacao', {
+      uidMotorista: uidMotorista,
+      currentUser: currentUser,
+      cidade: cidade,
+      estado: estado,
+    });
+  };
+
+  //CORRIGIR BUG AQUI, NÃO É POSSÍVEL NAVEGAR PARA ENTRAR EM CONTATO MOTORISTA
+  /*
 
     The action 'NAVIGATE' with payload {"name":"Mensagens","params":{"ocultarChat":false,"idChat":"-NGwrYODPph157zIdChq"}} was not handled by any navigator.
     Do you have a screen named 'Mensagens'?
@@ -243,124 +279,238 @@ function ViagemEmAndamento({navigation, route}) {
     This is a development-only warning and won't be shown in production.  
 
     */
-    const entrarEmContatoMotorista = async()=>{
-      let idChat = null;
-      idChat = await buscaChat(uidMotorista);
-      if (idChat == null){
-          newChatroom(uidMotorista);
-          navigation.navigate('Mensagens');
-      }else{
-          navigation.navigate('Mensagens', {ocultarChat: false, idChat: idChat});
-      }
-      setModalVisible(!modalVisible);
+  const entrarEmContatoMotorista = async () => {
+    let idChat = null;
+    idChat = await buscaChat(uidMotorista);
+    if (idChat == null) {
+      newChatroom(uidMotorista);
+      navigation.navigate('Mensagens');
+    } else {
+      navigation.navigate('Mensagens', {ocultarChat: false, idChat: idChat});
     }
+    setModalVisible(!modalVisible);
+  };
 
-    useEffect(()=>{
-      const defineEstadoAtual = async()=>{
-        await AsyncStorage.removeItem('AguardandoMotorista');
-        await AsyncStorage.setItem('ViagemEmAndamento', 'true');
-      }
-      defineEstadoAtual().catch(console.error);
-    }, [])
+  useEffect(() => {
+    const defineEstadoAtual = async () => {
+      await AsyncStorage.removeItem('AguardandoMotorista');
+      await AsyncStorage.setItem('ViagemEmAndamento', 'true');
+    };
+    defineEstadoAtual().catch(console.error);
+  }, []);
 
-    useEffect(()=>{
-      if (infoCarregadas){
-        viagemTerminou(); 
-      }else{
-        console.log('carregando informações!');
-        carregarInformacoes();
-      }
-    }, [infoCarregadas]);
+  useEffect(() => {
+    if (infoCarregadas) {
+      viagemTerminou();
+    } else {
+      console.log('carregando informações!');
+      carregarInformacoes();
+    }
+  }, [infoCarregadas]);
 
-    useEffect(()=>{
-      console.log('---------------------------------------------------------------------');
-      console.log('imagem motorista:', motoristaURL);
-      console.log('imagem motorista PARAMS VIAGEM MOTORISTA:', route.params?.motoristaUrl);
-      console.log('---------------------------------------------------------------------');
-    });
+  useEffect(() => {
+    console.log(
+      '---------------------------------------------------------------------',
+    );
+    console.log('imagem motorista:', motoristaURL);
+    console.log(
+      'imagem motorista PARAMS VIAGEM MOTORISTA:',
+      route.params?.motoristaUrl,
+    );
+    console.log(
+      '---------------------------------------------------------------------',
+    );
+  });
 
-    return (
-      <SafeAreaView>
-        <StatusBar barStyle={'light-content'} />
-        <View style={{alignItems: 'center', backgroundColor: 'white', height: '100%'}}>
-        <Image source={
-              require('../../assets/images/viagem-em-andamento.png')} 
-              style={{height:300, width: width }}  
+  return (
+    <SafeAreaView>
+      <StatusBar barStyle={'light-content'} />
+      <View
+        style={{
+          alignItems: 'center',
+          backgroundColor: 'white',
+          height: '100%',
+        }}>
+        <Image
+          source={require('../../assets/images/viagem-em-andamento.png')}
+          style={{height: 300, width: width}}
         />
 
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {setModalVisible(!modalVisible);}}
-            
-          >
-            <View style={{justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 268, alignSelf: 'center'}}>
-                <View style={styles.modalView}>
-                <Text style={{color:'#06444C', fontWeight:'700', fontSize: 20, lineHeight:24}}>Viagem em andamento...</Text>
-                <Image 
-                    source={{
-                      uri: motoristaURL
-                    }}
-                    style={{height:70, width: 70, borderRadius: 100, marginBottom:10, alignSelf:'center', marginTop: 18}}  
-                />
-                <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, lineHeight:24, marginTop: 18}}>Motorista: {nomeMotorista}</Text>
-                <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, lineHeight:24, marginTop: 6}}>Veículo: {veiculoMotorista}</Text>
-                <Text style={{color:'#06444C', fontWeight:'600', fontSize: 18, lineHeight:24, marginTop: 6}}>Placa: {placaVeiculoMotorista}</Text>
-                <Text style={{color:'#06444C', fontWeight:'700', fontSize: 20, lineHeight:24, marginTop: 18}}>Ainda não está no carro?</Text>
-                <TouchableOpacity
-                  style={{ width: width*0.7, height: height*0.05, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginTop: height*0.012}}
-                  onPress={entrarEmContatoMotorista}
-                >
-                  <Text style={{color: '#FF5F55', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
-                    Entre em contato com o(a) motorista
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={{backgroundColor: '#FF5F55', width: width*0.6, height: height*0.05, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.01, marginTop: height*0.018}}
-                  onPress={()=>{
-                    //fimDaViagem();
-                    console.log('finalizando viagem...');
-                  }}
-                >
-                  <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
-                    Finalizar viagem
-                  </Text>
-                </TouchableOpacity>
-              </View>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}>
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              position: 'absolute',
+              top: 268,
+              alignSelf: 'center',
+            }}>
+            <View style={styles.modalView}>
+              <Text
+                style={{
+                  color: '#06444C',
+                  fontWeight: '700',
+                  fontSize: 20,
+                  lineHeight: 24,
+                }}>
+                Viagem em andamento...
+              </Text>
+              <Image
+                source={{
+                  uri: motoristaURL,
+                }}
+                style={{
+                  height: 70,
+                  width: 70,
+                  borderRadius: 100,
+                  marginBottom: 10,
+                  alignSelf: 'center',
+                  marginTop: 18,
+                }}
+              />
+              <Text
+                style={{
+                  color: '#06444C',
+                  fontWeight: '600',
+                  fontSize: 18,
+                  lineHeight: 24,
+                  marginTop: 18,
+                }}>
+                Motorista: {nomeMotorista}
+              </Text>
+              <Text
+                style={{
+                  color: '#06444C',
+                  fontWeight: '600',
+                  fontSize: 18,
+                  lineHeight: 24,
+                  marginTop: 6,
+                }}>
+                Veículo: {veiculoMotorista}
+              </Text>
+              <Text
+                style={{
+                  color: '#06444C',
+                  fontWeight: '600',
+                  fontSize: 18,
+                  lineHeight: 24,
+                  marginTop: 6,
+                }}>
+                Placa: {placaVeiculoMotorista}
+              </Text>
+              <Text
+                style={{
+                  color: '#06444C',
+                  fontWeight: '700',
+                  fontSize: 20,
+                  lineHeight: 24,
+                  marginTop: 18,
+                }}>
+                Ainda não está no carro?
+              </Text>
+              <TouchableOpacity
+                style={{
+                  width: width * 0.7,
+                  height: height * 0.05,
+                  alignItems: 'center',
+                  alignSelf: 'center',
+                  borderRadius: 15,
+                  justifyContent: 'center',
+                  marginTop: height * 0.012,
+                }}
+                onPress={entrarEmContatoMotorista}>
+                <Text
+                  style={{
+                    color: '#FF5F55',
+                    fontWeight: '600',
+                    fontSize: 18,
+                    lineHeight: 24,
+                    textAlign: 'center',
+                  }}>
+                  Entre em contato com o(a) motorista
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#FF5F55',
+                  width: width * 0.6,
+                  height: height * 0.05,
+                  alignItems: 'center',
+                  alignSelf: 'center',
+                  borderRadius: 15,
+                  justifyContent: 'center',
+                  marginBottom: height * 0.01,
+                  marginTop: height * 0.018,
+                }}
+                onPress={() => {
+                  //fimDaViagem();
+                  console.log('finalizando viagem...');
+                }}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontWeight: '600',
+                    fontSize: 18,
+                    lineHeight: 24,
+                    textAlign: 'center',
+                  }}>
+                  Finalizar viagem
+                </Text>
+              </TouchableOpacity>
             </View>
-          </Modal>
-          <TouchableOpacity
-            style={{backgroundColor: '#FF5F55', width: 280, height: 47, alignItems: 'center', alignSelf:'center', borderRadius: 15, justifyContent: 'center', marginBottom: height*0.03}}
-            onPress={()=>{
-              setModalVisible(!modalVisible);
-            }}
-          >
-            <Text style={{color: 'white', fontWeight: '600', fontSize: 18, lineHeight: 24, textAlign: 'center'}}>
-              Abrir modal
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    );
+          </View>
+        </Modal>
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#FF5F55',
+            width: 280,
+            height: 47,
+            alignItems: 'center',
+            alignSelf: 'center',
+            borderRadius: 15,
+            justifyContent: 'center',
+            marginBottom: height * 0.03,
+          }}
+          onPress={() => {
+            setModalVisible(!modalVisible);
+          }}>
+          <Text
+            style={{
+              color: 'white',
+              fontWeight: '600',
+              fontSize: 18,
+              lineHeight: 24,
+              textAlign: 'center',
+            }}>
+            Abrir modal
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
   modalView: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
-    alignItems: "center",
-    shadowColor: "#FF5F55",
+    alignItems: 'center',
+    shadowColor: '#FF5F55',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.05,
     shadowRadius: 10,
-    elevation: 10
+    elevation: 10,
   },
 });
-
 
 export default ViagemEmAndamento;
