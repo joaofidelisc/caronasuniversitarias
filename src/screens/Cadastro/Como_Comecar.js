@@ -41,7 +41,6 @@ function Como_Comecar({navigation, route}) {
   };
 
   useEffect(() => {
-
     const backAction = () => {
       Alert.alert(
         'Descartar alterações',

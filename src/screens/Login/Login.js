@@ -88,7 +88,7 @@ function Login({navigation}) {
       await AsyncStorage.setItem('password', password);
       await buscarPorEmail(email).then(resultado => {
         if (resultado == '' || resultado == 'Não encontrou') {
-          console.log('entrando em Como_Começar!')
+          console.log('entrando em Como_Começar!');
           navigation.navigate('Como_Comecar', {email: email});
         } else {
           if (resultado[0].motorista == true) {
