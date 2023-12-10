@@ -32,6 +32,25 @@ Caso você precise recarregar o App ou executar novamente em um momento posterio
 
 2º) Procure o ícone do App em seu celular e clique nele, que o mesmo será executado!
 
+## Criação database
+1º) O propósito desta arquitetura, é substituir parcialmente o Firestore do Firebase e portanto, para isso, foi escolhido o MySQL como banco de dados relacional. Dessa forma, instale o MySQL em sua máquina previamente;
+
+2º) Após instalado o MySQL, crie o banco de dados com as credenciais abaixo:
+  - HOST:"localhost",
+  - USER:"root",
+  - PASSWORD:"root",
+  - DB:"caronasuniversitarias"
+
+## Instruções para a execução do back-end
+
+1º) Instale o nodemon por linha de comando:
+* npm install nodemon
+
+2º) Após instalado o nodemon, acesse o diretório "caronasuniversitarias\src\services\node-server";
+
+3º) Execute o comando "nodemon server.js".
+
 ## Importante
 
 O aplicativo ainda está na fase de desenvolvimento e testes, por isso, ainda há algumas funcionalidades e telas a serem implementadas.
+
