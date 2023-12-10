@@ -67,7 +67,6 @@ function Forms_Passageiro({route, navigation}) {
   }, []);
 
   const insertDataNewUser = async () => {
-    // await AsyncStorage.setItem('modoApp', 'passageiro');
     if (
       nome == '' ||
       CPF == '' ||
@@ -87,25 +86,29 @@ function Forms_Passageiro({route, navigation}) {
       setWarning('Número de celular incorreto.');
       setModalVisible(true);
     } else {
-      firestore()
-        .collection('Users')
-        .doc(userID)
-        .set({
-          nome: nome,
-          CPF: CPF,
-          data_nasc: data_nasc,
-          num_cel: num_cel,
-          universidade: universidade,
-          email: route.params?.email,
-          placa_veiculo: '',
-          ano_veiculo: '',
-          cor_veiculo: '',
-          nome_veiculo: '',
-          motorista: false,
-        })
-        .then(() => {
-          navigation.navigate('ModoPassageiro', {userID: userID});
-        });
+      try {
+        await firestore()
+          .collection('Users')
+          .doc(userID)
+          .set({
+            nome: nome,
+            CPF: CPF,
+            data_nasc: data_nasc,
+            num_cel: num_cel,
+            universidade: universidade,
+            email: route.params?.email,
+            placa_veiculo: '',
+            ano_veiculo: '',
+            cor_veiculo: '',
+            nome_veiculo: '',
+            motorista: false,
+          })
+          .then(() => {
+            navigation.navigate('ModoPassageiro', {userID: userID});
+          });
+      } catch (error) {
+        console.error('Erro inesperado:', error);
+      }
     }
   };
 
