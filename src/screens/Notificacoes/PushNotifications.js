@@ -1,34 +1,31 @@
 import config from '../../config';
 
 const sendSingleDeviceNotification = data => {
-    var myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append(
-      'Authorization',
-      `key=${config.keyNotification}`,
-      );
-  
-    var raw = JSON.stringify({
-      data: {},
-      notification: {
-        body: data.body,
-        title: data.title,
-      },
-      to: data.token,
-    });
-  
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
-    };
-  
-    fetch('https://fcm.googleapis.com/fcm/send', requestOptions)
-      .then(response => response.text())
-      .then(result => console.log(result))
-      .catch(error => console.log('error', error));
+  var myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append('Authorization', `key=${config.keyNotification}`);
+
+  var raw = JSON.stringify({
+    data: {},
+    notification: {
+      body: data.body,
+      title: data.title,
+    },
+    to: data.token,
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
   };
-  export default {
-    sendSingleDeviceNotification
-  };
+
+  fetch('https://fcm.googleapis.com/fcm/send', requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+};
+export default {
+  sendSingleDeviceNotification,
+};
