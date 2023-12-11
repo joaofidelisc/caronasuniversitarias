@@ -1,80 +1,62 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {
   View,
   Text,
   SafeAreaView,
   StatusBar,
-  Image,
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
 
 import serverConfig from '../../../config/config.json';
-import amqp from 'amqplib';
 
 const {width, height} = Dimensions.get('screen');
-// const Buffer = require('buffer').Buffer;
 
 function RabbitMQEnviar() {
-  const [coordenadas, setCoordenadas] = useState([]);
 
-  const enviarInfoMotorista = async () => {
-    console.log('Testando função enviarInfoMotorista!');
-    let reqs = await fetch(
-      `${serverConfig.urlRootNode}api/rabbit/enviarInfo/motorista`,
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-type': 'application/json',
+  const sendData = async () => {
+    console.log('Enviando informações de cadastro para fila!');
+    try {
+      let reqs = await fetch(
+        `${serverConfig.urlRootNode}api/rabbit/enviarInfo/cadastroUsuario`,
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: '123456',
+            nome: 'João Vitor',
+            CPF: '123456789',
+            data_nasc: '10/06/1998',
+            num_cel: '16993764191',
+            universidade: 'UFSCar',
+            email: 'joao.fidelis@estudante.ufscar.br',
+            placa_veiculo: 'RHR3B01',
+            ano_veiculo: '2021',
+            cor_veiculo: 'Branco',
+            nome_veiculo: 'GOL',
+            motorista: false,
+          }),
         },
-        body: JSON.stringify({
-          uid: 'daushdasudhsa',
-          estado: 'SP',
-          cidade: 'São Carlos',
-          ativo: true,
-          buscandoCaronista: '',
-          caronasAceitas: '',
-          caronistasAbordo: '',
-          latitudeMotorista: -21.985245,
-          longitudeMotorista: -47.895199,
-          nomeDestino: 'Centro, São Carlos - SP, Brasil',
-        }),
-      },
-    );
+      );
 
-    let res = await reqs.json();
-    console.log('req:', res);
-  };
-
-  const enviarInfoPassageiro = async () => {
-    console.log('Testando função enviarInfoPassageiro');
-    let reqs = await fetch(
-      `${serverConfig.urlRootNode}api/rabbit/enviarInfo/passageiro`,
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          uid: '0VtQXRifF8PdbcKCrthdOtlnah12',
-          estado: 'SP',
-          cidade: 'São Carlos',
-          ativo: true,
-          caronasAceitas: '',
-          latitudeDestino: -22.0094691,
-          latitudePassageiro: -21.9852354,
-          longitudeDestino: -47.891227,
-          longitudePassageiro: -47.8952023,
-          nomeDestino: 'Kamzu, São Carlos - SP, Brasil',
-          ofertasCaronas: '',
-        }),
-      },
-    );
-
-    let res = await reqs.json();
-    console.log('req:', res);
+      if (reqs.ok) {
+        let res = await reqs.json();
+        console.log('req:', res);
+      } else {
+        console.error(
+          'Erro ao enviar informações de cadastro:',
+          reqs.statusText,
+        );
+      }
+    } catch (error) {
+      console.error(
+        'Erro inesperado ao enviar informações de cadastro:',
+        error,
+      );
+    }
   };
 
   return (
@@ -101,8 +83,7 @@ function RabbitMQEnviar() {
             marginTop: width * 0.04,
           }}
           onPress={() => {
-            enviarInfoMotorista();
-            // enviarInfoPassageiro();
+            sendData();
           }}>
           <Text style={{color: 'white', fontSize: width * 0.05}}>Enviar</Text>
         </TouchableOpacity>
