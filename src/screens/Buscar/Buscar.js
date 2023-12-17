@@ -4,12 +4,9 @@ import {
   Text,
   SafeAreaView,
   StatusBar,
-  Button,
   Image,
   Dimensions,
-  TextInput,
   TouchableOpacity,
-  Platform,
   Modal,
   StyleSheet,
   Alert,
@@ -221,21 +218,6 @@ export default function Buscar({navigation}) {
     }
   };
 
-  // async function excluiBancoPassageiroMotorista(estado, cidade, currentUser){
-  //   const reference = database().ref(`${estado}/${cidade}/Motoristas/${currentUser}`);
-  //   try{
-  //     reference.on('value', snapshot=>{
-  //       if (snapshot.exists()){
-  //         reference.remove();
-  //       }
-  //     })
-  //   }catch(error){
-  //     console.log('excluiBancoMotoristaPassageiro');
-  //   }
-  // }
-
-  //PARA A VERSÃO PASSAGEIRO:
-
   useEffect(() => {
     const recuperaEstadoApp = async () => {
       console.log('rodando recuperaEstadoApp...');
@@ -310,17 +292,105 @@ export default function Buscar({navigation}) {
     // }
   }, []);
 
-  // useEffect(()=>{
+  useEffect(() => {
+    const currentUser = auth().currentUser.uid;
+    const atualizaBanco = async () => {
+      try {
+        let response = await fetch(
+          `${serverConfig.urlRootNode}api/rabbit/consumirInfo/cadastroUsuario/${currentUser}`,
+        );
+        if (!response.ok) {
+          throw new Error('Falha na requisição');
+        }
+        const responseData = await response.json();
+        const postResponse = await fetch(
+          serverConfig.urlRootNode + 'cadastrarUsuario',
+          {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-type': 'application/json',
+            },
+            body: JSON.stringify({
+              id: responseData.data.id,
+              nome: responseData.data.nome,
+              CPF: responseData.data.CPF,
+              data_nasc: responseData.data.data_nasc,
+              num_cel: responseData.data.num_cel,
+              universidade: responseData.data.universidade,
+              email: responseData.data.email,
+              placa_veiculo: responseData.data.placa_veiculo,
+              ano_veiculo: responseData.data.ano_veiculo,
+              cor_veiculo: responseData.data.cor_veiculo,
+              nome_veiculo: responseData.data.nome_veiculo,
+              motorista: responseData.data.motorista,
+            }),
+          },
+        );
+        if (postResponse.ok) {
+          const resultado = await postResponse.json(); // Ou .text(), dependendo do que você espera receber
+          console.log('Inseriu com sucesso:', resultado);
+        } else {
+          console.error('Erro ao inserir:', postResponse.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao receber ou enviar dados:', error);
+      }
+    };
+    atualizaBanco();
+  }, []); // Adicione dependências relevantes aqui
 
-  //   // const criaTabela = async()=>{
-  //   //   // await EstadoApp.createTable();
-  //   // }
-  //   // if (criouTabela == false){
-  //   //   // criaTabela();
-  //   //   console.log("TABELA CRIADA!");
-  //   //   setCriouTabela(true);
-  //   // }
-  // });
+  // useEffect(() => {
+  //   const atualizaBanco = async () => {
+  //     try {
+  //       let response = await fetch(
+  //         `${serverConfig.urlRootNode}api/rabbit/consumirInfo/cadastroUsuario/${currentUser}`,
+  //       );
+  //       if (!response.ok) {
+  //         throw new Error('Falha na requisição');
+  //       }
+  //       const data = await response.json().then(async responseData => {
+  //         try {
+  //           const response = await fetch(
+  //             serverConfig.urlRootNode + 'cadastrarUsuario',
+  //             {
+  //               method: 'POST',
+  //               headers: {
+  //                 Accept: 'application/json',
+  //                 'Content-type': 'application/json',
+  //               },
+  //               body: JSON.stringify({
+  //                 id: responseData.data.id,
+  //                 nome: responseData.data.nome,
+  //                 CPF: responseData.data.CPF,
+  //                 data_nasc: responseData.data.data_nasc,
+  //                 num_cel: responseData.data.num_cel,
+  //                 universidade: responseData.data.universidade,
+  //                 email: responseData.data.email,
+  //                 placa_veiculo: responseData.data.placa_veiculo,
+  //                 ano_veiculo: responseData.data.ano_veiculo,
+  //                 cor_veiculo: responseData.data.cor_veiculo,
+  //                 nome_veiculo: responseData.data.nome_veiculo,
+  //                 motorista: responseData.data.motorista,
+  //               }),
+  //             },
+  //           );
+  //           if (response.ok) {
+  //             const resultado = await response.text();
+  //             console.log('Inseriu com sucesso:', resultado);
+  //             navigation.navigate('ModoPassageiro', {userID: userID});
+  //           } else {
+  //             console.error('Erro ao inserir:', response.statusText);
+  //           }
+  //         } catch (error) {
+  //           console.error('Erro inesperado:', error);
+  //         }
+  //       });
+  //     } catch (error) {
+  //       console.error('Erro ao receber dados:', error);
+  //     }
+  //   };
+  // }, []);
 
   return (
     <SafeAreaView>

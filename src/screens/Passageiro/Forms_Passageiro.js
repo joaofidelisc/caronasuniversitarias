@@ -86,8 +86,8 @@ function Forms_Passageiro({route, navigation}) {
       setModalVisible(true);
     } else {
       try {
-        const response = await fetch(
-          serverConfig.urlRootNode + 'cadastrarUsuario',
+        let reqs = await fetch(
+          `${serverConfig.urlRootNode}api/rabbit/enviarInfo/cadastroUsuario`,
           {
             method: 'POST',
             headers: {
@@ -111,15 +111,21 @@ function Forms_Passageiro({route, navigation}) {
           },
         );
 
-        if (response.ok) {
-          const resultado = await response.text();
-          console.log('Inseriu com sucesso:', resultado);
+        if (reqs.ok) {
+          let res = await reqs.json();
+          console.log('req:', res);
           navigation.navigate('ModoPassageiro', {userID: userID});
         } else {
-          console.error('Erro ao inserir:', response.statusText);
+          console.error(
+            'Erro ao enviar informações de cadastro:',
+            reqs.statusText,
+          );
         }
       } catch (error) {
-        console.error('Erro inesperado:', error);
+        console.error(
+          'Erro inesperado ao enviar informações de cadastro:',
+          error,
+        );
       }
     }
   };

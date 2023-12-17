@@ -77,31 +77,36 @@ router.get('/consumirInfo/cadastroUsuario/:id', async (req, res) => {
   try {
     console.log('consumirInfo/cadastroUsuario/:id');
     const idUsuario = req.params.id;
+    let mensagemEncontrada = false;
 
-    ch.consume(
-      'passageiros',
-      msg => {
-        if (msg) {
-          const mensagem = JSON.parse(msg.content.toString());
-          if (mensagem.id === idUsuario) {
-            ch.ack(msg);
-            res
-              .status(200)
-              .json({
-                status: 'Mensagem consumida com sucesso!',
-                data: mensagem,
-              });
-            return;
-          } else {
-            ch.nack(msg);
-          }
+    const onMessage = msg => {
+      if (msg) {
+        const mensagem = JSON.parse(msg.content.toString());
+        if (mensagem.id === idUsuario) {
+          mensagemEncontrada = true;
+          ch.ack(msg);
+          res.status(200).json({
+            status: 'Mensagem consumida com sucesso!',
+            data: mensagem,
+          });
+        } else {
+          ch.nack(msg);
         }
-      },
-      {noAck: false},
-    );
+      }
+    };
+
+    ch.consume('passageiros', onMessage, {noAck: false});
+
+    setTimeout(() => {
+      if (!mensagemEncontrada) {
+        res.status(404).send({status: 'Mensagem não encontrada.'});
+      }
+    }, 5000); // Espera 5 segundos antes de concluir que a mensagem não foi encontrada
   } catch (error) {
     console.error('Erro ao consumir mensagem:', error);
-    res.status(500).json({status: 'Erro ao consumir mensagem.'});
+    if (!res.headersSent) {
+      res.status(500).json({status: 'Erro ao consumir mensagem.'});
+    }
   }
 });
 
