@@ -23,6 +23,7 @@ import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 
 import config from '../../config';
+import serverConfig from '../../../config/config.json';
 import Geocoder from 'react-native-geocoding';
 import EstadoApp from '../../services/sqlite/EstadoApp';
 
@@ -62,7 +63,6 @@ export default function Buscar({navigation}) {
       .then(console.log('dados removidos!'))
       .catch(console.log('algum erro ocorreu!'));
     console.log('dados inseridos!');
-    // excluiBancoPassageiroMotorista(estado, cidade, currentUser);
 
     const reference = database().ref(
       `${estado}/${cidade}/Passageiros/${currentUser}`,
@@ -197,27 +197,6 @@ export default function Buscar({navigation}) {
     }
   };
 
-  //IGNORAR ESSA FUNÇÃO, CRIEI APENAS PARA TESTAR A TELA Oferecer.js
-  const insereBanco = async () => {
-    const reference = database().ref(
-      `SP/Matão/Passageiros/sqmtE3QOReXfNemiKDZWup00HYo1`,
-    );
-    try {
-      reference.set({
-        latitudePassageiro: -21.59371,
-        longitudePassageiro: -21.4835263,
-        latitudeDestino: -21.60082,
-        longitudeDestino: -48.35736,
-        nomeDestino: 'Tenda Atacado',
-        ativo: true,
-        ofertasCaronas: '',
-        caronasAceitas: '',
-      });
-    } catch (error) {
-      console.log('atualizaEstado, ERRO:', error.code);
-    }
-  };
-
   useEffect(() => {
     const recuperaEstadoApp = async () => {
       console.log('rodando recuperaEstadoApp...');
@@ -269,27 +248,19 @@ export default function Buscar({navigation}) {
   }, []);
 
   useEffect(() => {
-    // const netInfo = useNetInfo();
     if (netInfo.isConnected == false) {
       Alert.alert(
         'Sem conexão',
         'Para continuar a utilizar o aplicativo, conecte-se à internet!',
-        [
-          // { text: "OKs", onPress: () => verificarConexao()}
-        ],
+        [{text: 'OK'}],
       );
     }
-    // console.log('netInfo:', netInfo);
-    // console.log('conectado:', netInfo.isConnected);
   });
 
   useEffect(() => {
-    // if (netInfo.isConnected == true){
     console.log('TELA: Buscar');
     Geocoder.init(config.googleAPI, {language: 'pt-BR'});
     ligarLocalizacao();
-    // excluiBancoPassageiroMotorista();
-    // }
   }, []);
 
   useEffect(() => {
@@ -338,59 +309,7 @@ export default function Buscar({navigation}) {
       }
     };
     atualizaBanco();
-  }, []); // Adicione dependências relevantes aqui
-
-  // useEffect(() => {
-  //   const atualizaBanco = async () => {
-  //     try {
-  //       let response = await fetch(
-  //         `${serverConfig.urlRootNode}api/rabbit/consumirInfo/cadastroUsuario/${currentUser}`,
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error('Falha na requisição');
-  //       }
-  //       const data = await response.json().then(async responseData => {
-  //         try {
-  //           const response = await fetch(
-  //             serverConfig.urlRootNode + 'cadastrarUsuario',
-  //             {
-  //               method: 'POST',
-  //               headers: {
-  //                 Accept: 'application/json',
-  //                 'Content-type': 'application/json',
-  //               },
-  //               body: JSON.stringify({
-  //                 id: responseData.data.id,
-  //                 nome: responseData.data.nome,
-  //                 CPF: responseData.data.CPF,
-  //                 data_nasc: responseData.data.data_nasc,
-  //                 num_cel: responseData.data.num_cel,
-  //                 universidade: responseData.data.universidade,
-  //                 email: responseData.data.email,
-  //                 placa_veiculo: responseData.data.placa_veiculo,
-  //                 ano_veiculo: responseData.data.ano_veiculo,
-  //                 cor_veiculo: responseData.data.cor_veiculo,
-  //                 nome_veiculo: responseData.data.nome_veiculo,
-  //                 motorista: responseData.data.motorista,
-  //               }),
-  //             },
-  //           );
-  //           if (response.ok) {
-  //             const resultado = await response.text();
-  //             console.log('Inseriu com sucesso:', resultado);
-  //             navigation.navigate('ModoPassageiro', {userID: userID});
-  //           } else {
-  //             console.error('Erro ao inserir:', response.statusText);
-  //           }
-  //         } catch (error) {
-  //           console.error('Erro inesperado:', error);
-  //         }
-  //       });
-  //     } catch (error) {
-  //       console.error('Erro ao receber dados:', error);
-  //     }
-  //   };
-  // }, []);
+  }, []);
 
   return (
     <SafeAreaView>
