@@ -20,9 +20,6 @@ import firestore from '@react-native-firebase/firestore';
 
 import dominios from '../../dominios/dominios.json';
 
-// incluir aqui dominios permitidos (válido para email e autenticação com Google)
-// const dominios_permitidos = ["estudante.ufscar.br"];
-
 GoogleSignin.configure({
   webClientId:
     '97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com',
@@ -156,8 +153,6 @@ function Login({navigation}) {
     }
   };
 
-  //https://blog.logrocket.com/email-authentication-react-native-react-navigation-firebase/
-  //tratar e-mails e contexto
   const SignInWithEmail = async () => {
     if (email == '' && password == '') {
       setWarning('Preencha os campos de e-mail e senha!');
