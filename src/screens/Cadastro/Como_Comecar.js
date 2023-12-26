@@ -12,6 +12,7 @@ import {
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import Lottie from 'lottie-react-native';
+import serverConfig from '../../../config/config.json';
 
 const {height, width} = Dimensions.get('screen');
 
