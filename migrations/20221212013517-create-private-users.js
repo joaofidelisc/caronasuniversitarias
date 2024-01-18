@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('User', {
+    await queryInterface.createTable('Private_users', {
       id: {
         allowNull: false,
         autoIncrement:false,
@@ -37,9 +37,6 @@ module.exports = {
       fotoPerfil: {
         type: Sequelize.STRING
       },
-      motorista: {
-        type: Sequelize.BOOLEAN
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -51,6 +48,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('User');
+    await queryInterface.dropTable('Private_users');
   }
 };

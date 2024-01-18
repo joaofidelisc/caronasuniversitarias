@@ -42,7 +42,7 @@ function Login({navigation}) {
 
   const buscarPorEmail = async email => {
     let reqs = await fetch(
-      serverConfig.urlRootNode + `buscarPorEmail/${email}`,
+      serverConfig.urlRootNode + `buscarPorEmailUsuarioPublico/${email}`,
       {
         method: 'GET',
         mode: 'cors',

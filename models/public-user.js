@@ -5,7 +5,7 @@ const {
 
 
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class PublicUser extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,26 +13,22 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      User.hasMany(models.Veiculo, {foreignKey: 'userId'});
-      User.hasMany(models.PassageiroViagem, {foreignKey: 'userId'});
+      PublicUser.hasMany(models.Veiculo, {foreignKey: 'userId'});
+      PublicUser.hasMany(models.PassageiroViagem, {foreignKey: 'userId'});
     }
   }
-  User.init({
+  PublicUser.init({
     // id: DataTypes.STRING(50),
     nome: DataTypes.STRING(100),
-    CPF: DataTypes.STRING(14),
-    dataNasc: DataTypes.DATE,
     email: DataTypes.STRING(100),
-    numCel: DataTypes.STRING(18),
-    token: DataTypes.STRING,
     universidade: DataTypes.STRING(100),
     classificacao: DataTypes.FLOAT,
     fotoPerfil: DataTypes.STRING,
     motorista: DataTypes.BOOLEAN
   }, {
     sequelize,
-    modelName: 'User',
-    tableName: 'user'
+    modelName: 'PublicUser',
+    tableName: 'public_users'
   });
-  return User;
+  return PublicUser;
 };

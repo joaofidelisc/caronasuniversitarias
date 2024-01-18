@@ -6,9 +6,33 @@ const model = require('../../../../models');
 
     Cadastrar um usuário, sendo esse passageiro ou motorista.
     */
-async function cadastrarUsuario(req, res) {
+async function cadastrarUsuarioPublico(req, res) {
   try {
-    let reqs = await model.User.create({
+    let reqs = await model.PublicUser.create({
+      id: req.body.id,
+      nome: req.body.nome,
+      email: req.body.email,
+      universidade: req.body.universidade,
+      classificacao: req.body.classificacao,
+      fotoPerfil: req.body.fotoPerfil,
+      motorista: req.body.motorista,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    if (reqs) {
+      res.status(200).send(JSON.stringify('Usuário cadastrado com sucesso!'));
+    } else {
+      res.status(500).send(JSON.stringify('Falha ao cadastrar o usuário.'));
+    }
+  } catch (error) {
+    console.error('Erro ao cadastrar usuário:', error);
+    res.status(500).send(JSON.stringify('Erro interno ao cadastrar o usuário.'));
+  }
+}
+
+async function cadastrarUsuarioPrivado(req, res) {
+  try {
+    let reqs = await model.PrivateUser.create({
       id: req.body.id,
       nome: req.body.nome,
       CPF: req.body.CPF,
@@ -19,7 +43,6 @@ async function cadastrarUsuario(req, res) {
       universidade: req.body.universidade,
       classificacao: req.body.classificacao,
       fotoPerfil: req.body.fotoPerfil,
-      motorista: req.body.motorista,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -45,8 +68,8 @@ async function cadastrarUsuario(req, res) {
     
     Busca um usuário com base em sua chave primária (id) e retorna todas as informações de usuário.
     */
-async function buscarUsuario(req, res) {
-  let reqs = await model.User.findByPk(req.params.id);
+async function buscarUsuarioPublico(req, res) {
+  let reqs = await model.PublicUser.findByPk(req.params.id);
   if (reqs) {
     res.send(JSON.stringify(reqs));
   } else {
@@ -55,8 +78,35 @@ async function buscarUsuario(req, res) {
   }
 }
 
-async function buscarPorEmail(req, res) {
-  let reqs = await model.User.findAll({
+async function buscarUsuarioPrivado(req, res) {
+  let reqs = await model.PrivateUser.findByPk(req.params.id);
+  if (reqs) {
+    res.send(JSON.stringify(reqs));
+  } else {
+    //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
+    res.send(JSON.stringify('Falha'));
+  }
+}
+
+async function buscarPorEmailUsuarioPublico(req, res) {
+  let reqs = await model.PublicUser.findAll({
+    where: {
+      email: req.params.email,
+    },
+  });
+  if (reqs) {
+    if (JSON.stringify(reqs).length == 2) {
+      res.send(JSON.stringify('Não encontrou'));
+    } else {
+      res.send(JSON.stringify(reqs));
+    }
+  } else {
+    res.send(JSON.stringify('Falha'));
+  }
+}
+
+async function buscarPorEmailUsuarioPrivado(req, res) {
+  let reqs = await model.PrivateUser.findAll({
     where: {
       email: req.params.email,
     },
@@ -78,8 +128,8 @@ async function buscarPorEmail(req, res) {
     
     Atualiza o modo de atuação no aplicativo com base no uid recebido.
     */
-async function atualizarModoApp(req, res) {
-  let reqs = await model.User.update(
+async function atualizarModoAppUsuarioPublico(req, res) {
+  let reqs = await model.PublicUser.update(
     {
       motorista: req.body.motorista,
     },
@@ -94,8 +144,24 @@ async function atualizarModoApp(req, res) {
   }
 }
 
-async function atualizarToken(req, res) {
-  let reqs = await model.User.update(
+async function atualizarModoAppUsuarioPrivado(req, res) {
+  let reqs = await model.PrivateUser.update(
+    {
+      motorista: req.body.motorista,
+    },
+    {
+      where: {id: req.body.id},
+    },
+  );
+  if (reqs) {
+    res.send(JSON.stringify('Modo atualizado!'));
+  } else {
+    res.send(JSON.stringify('Falha'));
+  }
+}
+
+async function atualizarTokenUsuarioPublico(req, res) {
+  let reqs = await model.PublicUser.update(
     {
       token: req.body.token,
     },
@@ -110,8 +176,40 @@ async function atualizarToken(req, res) {
   }
 }
 
-async function atualizarClassificacao(req, res) {
-  let reqs = await model.User.update(
+async function atualizarTokenUsuarioPrivado(req, res) {
+  let reqs = await model.PrivateUser.update(
+    {
+      token: req.body.token,
+    },
+    {
+      where: {id: req.body.id},
+    },
+  );
+  if (reqs) {
+    res.send(JSON.stringify('Token atualizado!'));
+  } else {
+    res.send(JSON.stringify('Falha'));
+  }
+}
+
+async function atualizarClassificacaoUsuarioPublico(req, res) {
+  let reqs = await model.PublicUser.update(
+    {
+      classificacao: req.body.classificacao,
+    },
+    {
+      where: {id: req.body.id},
+    },
+  );
+  if (reqs) {
+    res.send(JSON.stringify('Classificação atualizada!'));
+  } else {
+    res.send(JSON.stringify('Falha'));
+  }
+}
+
+async function atualizarClassificacaoUsuarioPrivado(req, res) {
+  let reqs = await model.PrivateUser.update(
     {
       classificacao: req.body.classificacao,
     },
@@ -127,12 +225,18 @@ async function atualizarClassificacao(req, res) {
 }
 
 module.exports = {
-  cadastrarUsuario,
-  buscarUsuario,
-  buscarPorEmail,
-  atualizarModoApp,
-  atualizarToken,
-  atualizarClassificacao,
+  cadastrarUsuarioPublico,
+  cadastrarUsuarioPrivado,
+  buscarUsuarioPublico,
+  buscarUsuarioPrivado,
+  buscarPorEmailUsuarioPublico,
+  buscarPorEmailUsuarioPrivado,
+  atualizarModoAppUsuarioPublico,
+  atualizarModoAppUsuarioPrivado,
+  atualizarTokenUsuarioPublico,
+  atualizarTokenUsuarioPrivado,
+  atualizarClassificacaoUsuarioPublico,
+  atualizarClassificacaoUsuarioPrivado,
 };
 
 //UserRepository;

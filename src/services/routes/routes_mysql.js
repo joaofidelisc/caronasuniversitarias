@@ -13,12 +13,18 @@ routes.get("/", (req, res)=>{
 
 
 //Rotas do usuário (motorista ou passageiro)
-routes.post("/cadastrarUsuario", userFunctions.cadastrarUsuario);
-routes.get("/buscarUsuario/:id", userFunctions.buscarUsuario);
-routes.get("/buscarPorEmail/:email", userFunctions.buscarPorEmail);
-routes.put("/atualizarModoApp", userFunctions.atualizarModoApp);
-routes.put("/atualizarToken", userFunctions.atualizarToken);
-routes.put("/atualizarClassificacao", userFunctions.atualizarClassificacao);
+routes.post("/cadastrarUsuarioPublico", userFunctions.cadastrarUsuarioPublico);
+routes.post("/cadastrarUsuarioPrivado", userFunctions.cadastrarUsuarioPrivado);
+routes.get("/buscarUsuarioPublico/:id", userFunctions.buscarUsuarioPublico);
+routes.get("/buscarUsuarioPrivado/:id", userFunctions.buscarUsuarioPrivado);
+routes.get("/buscarPorEmailUsuarioPublico/:email", userFunctions.buscarPorEmailUsuarioPublico);
+routes.get("/buscarPorEmailUsuarioPrivado/:email", userFunctions.buscarPorEmailUsuarioPrivado);
+routes.put("/atualizarModoAppUsuarioPublico", userFunctions.atualizarModoAppUsuarioPrivado);
+routes.put("/atualizarModoAppUsuarioPrivado", userFunctions.atualizarModoAppUsuarioPrivado);
+routes.put("/atualizarTokenUsuarioPublico", userFunctions.atualizarTokenUsuarioPublico);
+routes.put("/atualizarTokenUsuarioPrivado", userFunctions.atualizarTokenUsuarioPrivado);
+routes.put("/atualizarClassificacaoUsuarioPublico", userFunctions.atualizarClassificacaoUsuarioPublico);
+routes.put("/atualizarClassificacaoUsuarioPrivado", userFunctions.atualizarClassificacaoUsuarioPrivado);
 
 
 //Rotas do veículo

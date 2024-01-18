@@ -87,8 +87,26 @@ function Forms_Passageiro({route, navigation}) {
       setModalVisible(true);
     } else {
       try {
-        const response = await fetch(
-          serverConfig.urlRootNode + 'cadastrarUsuario',
+        const responsePublicUser = await fetch(
+          serverConfig.urlRootNode + 'cadastrarUsuarioPublico',
+          {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-type': 'application/json',
+            },
+            body: JSON.stringify({
+              id: userID,
+              nome: nome,
+              universidade: universidade,
+              email: route.params?.email,
+              motorista: false,
+            }),
+          },
+        );
+
+        const responsePrivateUser = await fetch(
+          serverConfig.urlRootNode + 'cadastrarUsuarioPrivado',
           {
             method: 'POST',
             headers: {
@@ -103,18 +121,11 @@ function Forms_Passageiro({route, navigation}) {
               num_cel: num_cel,
               universidade: universidade,
               email: route.params?.email,
-              placa_veiculo: '',
-              ano_veiculo: '',
-              cor_veiculo: '',
-              nome_veiculo: '',
-              motorista: false,
             }),
           },
         );
 
-        if (response.ok) {
-          const resultado = await response.text();
-          console.log('Inseriu com sucesso:', resultado);
+        if (responsePublicUser.ok && responsePrivateUser.ok) {
           navigation.navigate('ModoPassageiro', {userID: userID});
         } else {
           console.error('Erro ao inserir:', response.statusText);

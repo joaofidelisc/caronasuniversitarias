@@ -13,7 +13,7 @@ module.exports = {
       userId: {
         type: Sequelize.STRING(50),
         references:{
-          model: 'user',
+          model: 'public_users',
           key:'id'
         },
         onUpdate: 'NO ACTION',
