@@ -15,7 +15,7 @@ module.exports = {
         // primaryKey: true,
         autoIncrement: false,
         references:{
-          model:'user',
+          model:'public_users',
           key:'id'
         },
         onUpdate: 'NO ACTION',

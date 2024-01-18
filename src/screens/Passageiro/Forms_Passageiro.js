@@ -112,11 +112,9 @@ function Forms_Passageiro({route, navigation}) {
         );
 
         if (reqs.ok) {
-          await reqs.json().then((response)=>{
-            console.log('req:', response);
-            navigation.navigate('MenuTeste', {userID: userID});
-            // navigation.navigate('ModoPassageiro', {userID: userID});
-          })
+          await reqs.json().then(response => {
+            navigation.navigate('ModoPassageiro', {userID: userID});
+          });
         } else {
           console.error(
             'Erro ao enviar informações de cadastro:',

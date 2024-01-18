@@ -1,46 +1,63 @@
-    const model = require('../../../models');
+const model = require('../../../../models');
 
-
-    /*
-    Dúvidas:
-
-    ATUALIZAR NÚMERO DE VIAGENS REALIZADAS;
-        - contar o número de linhas encontradas  ou criar uma coluna em user?
-    */
-
-
-    /*
+/*
     A função abaixo, cumpre os seguintes requisitos:
     - CADASTRAR USUÁRIO (PASSAGEIRO OU MOTORISTA).
 
     Cadastrar um usuário, sendo esse passageiro ou motorista.
     */
-    async function cadastrarUsuario(req, res){
-        let reqs = await model.User.create({
-            'id': req.body.id,
-            'nome': req.body.nome,
-            'CPF': req.body.CPF,
-            'dataNasc': req.body.dataNasc,
-            'email': req.body.email,
-            'numCel': req.body.numCel,
-            'token': req.body.token,
-            'universidade': req.body.universidade,
-            'classificacao': req.body.classificacao,
-            'fotoPerfil': req.body.fotoPerfil,
-            'motorista': req.body.motorista,
-            'createdAt': new Date(),
-            'updatedAt': new Date(),
-        });
-        if (reqs){
-            res.send(JSON.stringify('Usuário cadastrado com sucesso!'));
-        }else{
-            //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
-            res.send(JSON.stringify('Falha'));
-        }
+async function cadastrarUsuarioPublico(req, res) {
+  try {
+    let reqs = await model.PublicUser.create({
+      id: req.body.id,
+      nome: req.body.nome,
+      email: req.body.email,
+      universidade: req.body.universidade,
+      classificacao: req.body.classificacao,
+      fotoPerfil: req.body.fotoPerfil,
+      motorista: req.body.motorista,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    if (reqs) {
+      res.status(200).send(JSON.stringify('Usuário cadastrado com sucesso!'));
+    } else {
+      res.status(500).send(JSON.stringify('Falha ao cadastrar o usuário.'));
     }
-    
-    
-    /*
+  } catch (error) {
+    console.error('Erro ao cadastrar usuário:', error);
+    res.status(500).send(JSON.stringify('Erro interno ao cadastrar o usuário.'));
+  }
+}
+
+async function cadastrarUsuarioPrivado(req, res) {
+  try {
+    let reqs = await model.PrivateUser.create({
+      id: req.body.id,
+      nome: req.body.nome,
+      CPF: req.body.CPF,
+      dataNasc: req.body.dataNasc,
+      email: req.body.email,
+      numCel: req.body.numCel,
+      token: req.body.token,
+      universidade: req.body.universidade,
+      classificacao: req.body.classificacao,
+      fotoPerfil: req.body.fotoPerfil,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    if (reqs) {
+      res.status(200).send(JSON.stringify('Usuário cadastrado com sucesso!'));
+    } else {
+      res.status(500).send(JSON.stringify('Falha ao cadastrar o usuário.'));
+    }
+  } catch (error) {
+    console.error('Erro ao cadastrar usuário:', error);
+    res.status(500).send(JSON.stringify('Erro interno ao cadastrar o usuário.'));
+  }
+}
+
+/*
     A função abaixo, cumpre os seguintes requisitos:
     - LER MODO DO APP; 
     - LER NOME DO MOTORISTA;
@@ -51,103 +68,182 @@
     
     Busca um usuário com base em sua chave primária (id) e retorna todas as informações de usuário.
     */
-    async function buscarUsuario(req, res){
-        let reqs = await model.User.findByPk(req.params.id);
-        if (reqs){
-            res.send(JSON.stringify(reqs));
-        }else{
-            //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
-            res.send(JSON.stringify('Falha'));
-        }
-    }
-    
-    
-    async function buscarPorEmail(req, res){
-        let reqs = await model.User.findAll({
-            where:{
-                'email': req.params.email
-            }
-        })
-        if (reqs){
-            if (JSON.stringify(reqs).length == 2){
-                res.send(JSON.stringify('Não encontrou'));
-            }else{
-                res.send(JSON.stringify(reqs));
-            }
-            // res.send(JSON.stringify(reqs));
-            // console.log('reqs:', JSON.stringify(reqs).length);
-            // console.log('reqs:', JSON.stringify(reqs));
-        }else{
-            //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
-            res.send(JSON.stringify('Falha na busca'));
-        }
-    }
+async function buscarUsuarioPublico(req, res) {
+  let reqs = await model.PublicUser.findByPk(req.params.id);
+  if (reqs) {
+    res.send(JSON.stringify(reqs));
+  } else {
+    //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
+    res.send(JSON.stringify('Falha'));
+  }
+}
 
+async function buscarUsuarioPrivado(req, res) {
+  let reqs = await model.PrivateUser.findByPk(req.params.id);
+  if (reqs) {
+    res.send(JSON.stringify(reqs));
+  } else {
+    //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
+    res.send(JSON.stringify('Falha'));
+  }
+}
 
-    /*
+async function buscarPorEmailUsuarioPublico(req, res) {
+  let reqs = await model.PublicUser.findAll({
+    where: {
+      email: req.params.email,
+    },
+  });
+  if (reqs) {
+    if (JSON.stringify(reqs).length == 2) {
+      res.send(JSON.stringify('Não encontrou'));
+    } else {
+      res.send(JSON.stringify(reqs));
+    }
+  } else {
+    res.send(JSON.stringify('Falha'));
+  }
+}
+
+async function buscarPorEmailUsuarioPrivado(req, res) {
+  let reqs = await model.PrivateUser.findAll({
+    where: {
+      email: req.params.email,
+    },
+  });
+  if (reqs) {
+    if (JSON.stringify(reqs).length == 2) {
+      res.send(JSON.stringify('Não encontrou'));
+    } else {
+      res.send(JSON.stringify(reqs));
+    }
+  } else {
+    res.send(JSON.stringify('Falha'));
+  }
+}
+
+/*
     A função abaixo, cumpre os seguintes requisitos:
     - ATUALIZAR MODO APP (motorista:true ou false);
     
     Atualiza o modo de atuação no aplicativo com base no uid recebido.
     */
-   async function atualizarModoApp(req, res){
-        let reqs = await model.User.update({
-            'motorista': req.body.motorista,
-        },{
-            where: {'id': req.body.id}
-        });
-        if (reqs){
-            res.send(JSON.stringify('Modo atualizado!'));
-        }else{
-            //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
-            res.send(JSON.stringify('Falha'));
-        }
-    }
-    
-    
-    
-    async function atualizarToken(req, res){
-        let reqs = await model.User.update({
-            'token': req.body.token,
-        },{
-            where: {'id': req.body.id}
-        });
-        if (reqs){
-            res.send(JSON.stringify('Token atualizado!'));
-        }else{
-            //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
-            res.send(JSON.stringify('Falha'));
-        }
-    }
-    
-    async function atualizarClassificacao(req, res){
-        let reqs = await model.User.update({
-            'classificacao': req.body.classificacao,
-        },{
-            where: {'id': req.body.id}
-        });
-        if (reqs){
-            res.send(JSON.stringify('Classificação atualizada!'));
-        }else{
-            //RESPOSTA AO FRONT-END AQUI CASO DÊ ERRADO!
-            res.send(JSON.stringify('Falha'));
-        }
-    }
+async function atualizarModoAppUsuarioPublico(req, res) {
+  let reqs = await model.PublicUser.update(
+    {
+      motorista: req.body.motorista,
+    },
+    {
+      where: {id: req.body.id},
+    },
+  );
+  if (reqs) {
+    res.send(JSON.stringify('Modo atualizado!'));
+  } else {
+    res.send(JSON.stringify('Falha'));
+  }
+}
 
-    module.exports = {
-        cadastrarUsuario,
-        buscarUsuario,
-        buscarPorEmail,
-        atualizarModoApp,
-        atualizarToken,
-        atualizarClassificacao
-    }
+async function atualizarModoAppUsuarioPrivado(req, res) {
+  let reqs = await model.PrivateUser.update(
+    {
+      motorista: req.body.motorista,
+    },
+    {
+      where: {id: req.body.id},
+    },
+  );
+  if (reqs) {
+    res.send(JSON.stringify('Modo atualizado!'));
+  } else {
+    res.send(JSON.stringify('Falha'));
+  }
+}
 
-    //UserRepository;
+async function atualizarTokenUsuarioPublico(req, res) {
+  let reqs = await model.PublicUser.update(
+    {
+      token: req.body.token,
+    },
+    {
+      where: {id: req.body.id},
+    },
+  );
+  if (reqs) {
+    res.send(JSON.stringify('Token atualizado!'));
+  } else {
+    res.send(JSON.stringify('Falha'));
+  }
+}
 
-    //controler->validar dados de entrada;
-    //repositório->
-    /*
+async function atualizarTokenUsuarioPrivado(req, res) {
+  let reqs = await model.PrivateUser.update(
+    {
+      token: req.body.token,
+    },
+    {
+      where: {id: req.body.id},
+    },
+  );
+  if (reqs) {
+    res.send(JSON.stringify('Token atualizado!'));
+  } else {
+    res.send(JSON.stringify('Falha'));
+  }
+}
+
+async function atualizarClassificacaoUsuarioPublico(req, res) {
+  let reqs = await model.PublicUser.update(
+    {
+      classificacao: req.body.classificacao,
+    },
+    {
+      where: {id: req.body.id},
+    },
+  );
+  if (reqs) {
+    res.send(JSON.stringify('Classificação atualizada!'));
+  } else {
+    res.send(JSON.stringify('Falha'));
+  }
+}
+
+async function atualizarClassificacaoUsuarioPrivado(req, res) {
+  let reqs = await model.PrivateUser.update(
+    {
+      classificacao: req.body.classificacao,
+    },
+    {
+      where: {id: req.body.id},
+    },
+  );
+  if (reqs) {
+    res.send(JSON.stringify('Classificação atualizada!'));
+  } else {
+    res.send(JSON.stringify('Falha'));
+  }
+}
+
+module.exports = {
+  cadastrarUsuarioPublico,
+  cadastrarUsuarioPrivado,
+  buscarUsuarioPublico,
+  buscarUsuarioPrivado,
+  buscarPorEmailUsuarioPublico,
+  buscarPorEmailUsuarioPrivado,
+  atualizarModoAppUsuarioPublico,
+  atualizarModoAppUsuarioPrivado,
+  atualizarTokenUsuarioPublico,
+  atualizarTokenUsuarioPrivado,
+  atualizarClassificacaoUsuarioPublico,
+  atualizarClassificacaoUsuarioPrivado,
+};
+
+//UserRepository;
+
+//controler->validar dados de entrada;
+//repositório->
+/*
         ex.: 
         let reqs = await model.User.update({
             'classificacao': req.body.classificacao,
@@ -155,8 +251,7 @@
             where: {'id': req.body.id}
         });
     */
-    //pesquisar código de erros
-    // http response status codes
+//pesquisar código de erros
+// http response status codes
 
-    //distribuição automática das funcionalidades;
-    
+//distribuição automática das funcionalidades;
