@@ -36,7 +36,7 @@ function Cadastro_Inicio({navigation}) {
   const redirecionamentoLogin = async emailGoogle => {
     await AsyncStorage.setItem('email', emailGoogle);
     firestore()
-      .collection('Users')
+      .collection('private-users')
       .where('email', '==', emailGoogle)
       .get()
       .then(querySnapshot => {

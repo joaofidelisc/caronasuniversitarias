@@ -71,7 +71,7 @@ function ClassificarPassageiro({route, navigation}) {
     let numViagens = 0;
     let classificacaoAtual = 0;
     const reference_passageiro = firestore()
-      .collection('Users')
+      .collection('public-users')
       .doc(uidPassageiro);
     try {
       reference_passageiro.get().then(reference => {

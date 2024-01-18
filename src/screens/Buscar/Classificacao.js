@@ -94,7 +94,7 @@ function Classificacao({navigation, route}) {
     let numViagens = 0;
     let classificacaoAtual = 0;
     const reference_motorista = firestore()
-      .collection('Users')
+      .collection('public-users')
       .doc(uidMotorista);
     try {
       reference_motorista.get().then(reference => {

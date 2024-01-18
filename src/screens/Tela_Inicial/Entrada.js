@@ -23,7 +23,7 @@ function Entrada({navigation}) {
   const redirecionamentoLogin = async email => {
     try {
       firestore()
-        .collection('Users')
+        .collection('public-users')
         .where('email', '==', email)
         .get()
         .then(querySnapshot => {

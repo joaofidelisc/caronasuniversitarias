@@ -56,7 +56,7 @@ export default function Mensagens({route, navigation}) {
   async function getNomeStorage(userUID1, userUID2) {
     const userUID = userUID1 == currentUser ? userUID2 : userUID1;
     let nomeUsuario = '';
-    let docRef = firestore().collection('Users').doc(userUID);
+    let docRef = firestore().collection('public-users').doc(userUID);
     return docRef.get().then(doc => {
       if (doc.exists) {
         nomeUsuario = doc.data().nome;

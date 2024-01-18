@@ -142,7 +142,7 @@ function BuscandoCarona({navigation, route}) {
   };
 
   const armazenaToken = async () => {
-    let docRef = firestore().collection('Users').doc(currentUser);
+    let docRef = firestore().collection('private-users').doc(currentUser);
     try {
       docRef.get().then(doc => {
         if (doc.exists) {

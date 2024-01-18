@@ -87,14 +87,19 @@ function Forms_Passageiro({route, navigation}) {
       setModalVisible(true);
     } else {
       try {
+        await firestore().collection('private-users').doc(userID).set({
+          nome: nome,
+          CPF: CPF,
+          data_nasc: data_nasc,
+          num_cel: num_cel,
+          universidade: universidade,
+          email: route.params?.email,
+        });
         await firestore()
-          .collection('Users')
+          .collection('public-users')
           .doc(userID)
           .set({
             nome: nome,
-            CPF: CPF,
-            data_nasc: data_nasc,
-            num_cel: num_cel,
             universidade: universidade,
             email: route.params?.email,
             placa_veiculo: '',

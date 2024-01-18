@@ -145,7 +145,7 @@ function Options({navigation, route}) {
   //Função responsável por get o nome do motorista e atualizar no vetor;
   async function getNomeMotorista(motoristaUID) {
     let nomeMotorista = '';
-    let docRef = firestore().collection('Users').doc(motoristaUID);
+    let docRef = firestore().collection('public-users').doc(motoristaUID);
     return docRef.get().then(doc => {
       if (doc.exists) {
         nomeMotorista = doc.data().nome;
@@ -159,7 +159,7 @@ function Options({navigation, route}) {
   //Função responsável por get o nome do carro do motorista
   async function getNomeCarroMotorista(motoristaUID) {
     let nomeCarroMotorista = '';
-    let docRef = firestore().collection('Users').doc(motoristaUID);
+    let docRef = firestore().collection('public-users').doc(motoristaUID);
     return docRef.get().then(doc => {
       if (doc.exists) {
         nomeCarroMotorista = doc.data().nome_veiculo;
@@ -173,7 +173,7 @@ function Options({navigation, route}) {
   //Função responsável por get a placa do carro do motorista
   async function getPlacaCarroMotorista(motoristaUID) {
     let placaCarroMotorista = '';
-    let docRef = firestore().collection('Users').doc(motoristaUID);
+    let docRef = firestore().collection('public-users').doc(motoristaUID);
     return docRef.get().then(doc => {
       if (doc.exists) {
         placaCarroMotorista = doc.data().placa_veiculo;
@@ -187,7 +187,7 @@ function Options({navigation, route}) {
   const getClassificacaoMotorista = async motoristaUID => {
     let classificacaoAtual = 0;
     const reference_motorista = firestore()
-      .collection('Users')
+      .collection('public-users')
       .doc(motoristaUID);
     try {
       await reference_motorista.get().then(reference => {

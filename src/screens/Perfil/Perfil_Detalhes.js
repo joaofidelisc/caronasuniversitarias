@@ -28,7 +28,7 @@ function Perfil_Detalhes({navigation, route}) {
   const recuperarDados = async () => {
     const userID = auth().currentUser.uid;
     firestore()
-      .collection('Users')
+      .collection('private-users')
       .doc(userID)
       .get()
       .then(doc => {

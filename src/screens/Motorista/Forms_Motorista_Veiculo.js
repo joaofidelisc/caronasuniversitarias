@@ -74,13 +74,24 @@ function Forms_Motorista_Veiculo({navigation, route}) {
         trocaDeModo == ''
       ) {
         await firestore()
-          .collection('Users')
+          .collection('private-users')
           .doc(userID)
           .set({
             nome: nome,
             CPF: CPF,
             data_nasc: data_nasc,
             num_cel: num_cel,
+            universidade: universidade,
+            email: email,           
+          })
+          .then(() => {
+            enviarFotoStorage(imagemPlaca);
+          });
+        await firestore()
+          .collection('public-users')
+          .doc(userID)
+          .set({
+            nome: nome,
             universidade: universidade,
             email: email,
             placa_veiculo: placa_veiculo,
@@ -89,12 +100,9 @@ function Forms_Motorista_Veiculo({navigation, route}) {
             nome_veiculo: nome_veiculo,
             motorista: true,
           })
-          .then(() => {
-            enviarFotoStorage(imagemPlaca);
-          });
       } else {
         await firestore()
-          .collection('Users')
+          .collection('public-users')
           .doc(userID)
           .update({
             placa_veiculo: placa_veiculo,
@@ -131,7 +139,7 @@ function Forms_Motorista_Veiculo({navigation, route}) {
   const modoPassageiro = async () => {
     const userID = auth().currentUser.uid;
     try {
-      await firestore().collection('Users').doc(userID).update({
+      await firestore().collection('private-users').doc(userID).update({
         motorista: false,
       });
     } catch (error) {

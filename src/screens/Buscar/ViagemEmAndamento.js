@@ -211,7 +211,7 @@ function ViagemEmAndamento({navigation, route}) {
   const escreveHistoricoViagem = async () => {
     const data = await dataAtualFormatada();
     const reference_passageiro = firestore()
-      .collection('Users')
+      .collection('private-users')
       .doc(currentUser);
     try {
       reference_passageiro.update({

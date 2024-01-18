@@ -309,7 +309,7 @@ function Oferecer({route, navigation}) {
     console.log('getNomeCaronista\n');
     try {
       await firestore()
-        .collection('Users')
+        .collection('public-users')
         .doc(userUID)
         .get()
         .then(doc => {
@@ -348,7 +348,7 @@ function Oferecer({route, navigation}) {
     let classificacaoAtual = 0;
     let classificacaoAtualizada = 0;
     const reference_caronista = firestore()
-      .collection('Users')
+      .collection('public-users')
       .doc(caronistaUID);
     try {
       await reference_caronista.get().then(reference => {
@@ -723,7 +723,7 @@ function Oferecer({route, navigation}) {
     tituloNotificacao,
     mensagemNotificacao,
   ) => {
-    let docRef = firestore().collection('Users').doc(uidPassageiro);
+    let docRef = firestore().collection('private-users').doc(uidPassageiro);
     try {
       docRef.get().then(doc => {
         if (doc.exists) {
@@ -748,7 +748,7 @@ function Oferecer({route, navigation}) {
     Dúvida: devemos enviar notificação para o motorista?
    */
   const armazenaToken = async () => {
-    let docRef = firestore().collection('Users').doc(currentUser);
+    let docRef = firestore().collection('private-users').doc(currentUser);
     try {
       docRef.get().then(doc => {
         if (doc.exists) {

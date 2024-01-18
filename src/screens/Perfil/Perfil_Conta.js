@@ -39,7 +39,7 @@ function Perfil_Conta({navigation}) {
   const modoAtuacao = async () => {
     const userID = auth().currentUser.uid;
     firestore()
-      .collection('Users')
+      .collection('private-users')
       .doc(userID)
       .get()
       .then(doc => {

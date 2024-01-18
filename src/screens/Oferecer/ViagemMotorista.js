@@ -138,7 +138,7 @@ function ViagemMotorista({route, navigation}) {
 
   const getNomePassageiro = async uidPassageiro => {
     let nomePassageiro = '';
-    let docRef = firestore().collection('Users').doc(uidPassageiro);
+    let docRef = firestore().collection('public-users').doc(uidPassageiro);
     return docRef.get().then(doc => {
       if (doc.exists) {
         nomePassageiro = doc.data().nome;
@@ -183,7 +183,7 @@ function ViagemMotorista({route, navigation}) {
   const getClassificacaoPassageiro = async uidPassageiro => {
     let classificacaoAtual = 0;
     const reference_passageiro = firestore()
-      .collection('Users')
+      .collection('public-users')
       .doc(uidPassageiro);
     try {
       await reference_passageiro.get().then(reference => {
@@ -219,7 +219,7 @@ function ViagemMotorista({route, navigation}) {
   ) => {
     const data = await dataAtualFormatada();
     const reference_passageiro = firestore()
-      .collection('Users')
+      .collection('private-users')
       .doc(currentUser);
     try {
       reference_passageiro.update({

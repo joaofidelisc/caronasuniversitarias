@@ -46,7 +46,7 @@ function Login({navigation}) {
     if (email == '') {
       await AsyncStorage.setItem('email', emailGoogle);
       firestore()
-        .collection('Users')
+        .collection('public-users')
         .where('email', '==', emailGoogle)
         .get()
         .then(querySnapshot => {
@@ -67,7 +67,7 @@ function Login({navigation}) {
       await AsyncStorage.setItem('email', email);
       await AsyncStorage.setItem('password', password);
       firestore()
-        .collection('Users')
+        .collection('public-users')
         .where('email', '==', email)
         .get()
         .then(querySnapshot => {

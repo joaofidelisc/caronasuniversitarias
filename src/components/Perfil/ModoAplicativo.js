@@ -59,7 +59,7 @@ function ModoAplicativo() {
 
   const modoAtuacao = async () => {
     firestore()
-      .collection('Users')
+      .collection('public-users')
       .doc(userID)
       .get()
       .then(doc => {
@@ -83,7 +83,7 @@ function ModoAplicativo() {
     if (trocaLiberada) {
       console.log('pode trocar!');
       try {
-        await firestore().collection('Users').doc(userID).update({
+        await firestore().collection('public-users').doc(userID).update({
           motorista: false,
         });
         setModalVisible(!modalVisible);
@@ -104,7 +104,7 @@ function ModoAplicativo() {
     console.log('troca liberada?', trocaLiberada);
     if (trocaLiberada) {
       try {
-        await firestore().collection('Users').doc(userID).update({
+        await firestore().collection('public-users').doc(userID).update({
           motorista: true,
         });
         setModalVisible(!modalVisible);
