@@ -41,7 +41,6 @@ function Forms_Passageiro({route, navigation}) {
   };
 
   useEffect(() => {
-    console.log(userID);
     const backAction = () => {
       Alert.alert(
         'Descartar informações',
