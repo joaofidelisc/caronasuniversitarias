@@ -1,4 +1,4 @@
-const model = require('../../../../models');
+const model = require('../../../models');
 
 /*
     A função abaixo, cumpre os seguintes requisitos:
