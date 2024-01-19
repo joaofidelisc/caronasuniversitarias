@@ -17,7 +17,7 @@ import serverConfig from '../../../config/config.json';
 const {height, width} = Dimensions.get('screen');
 
 function Como_Comecar({navigation, route}) {
-  const [carregando, setCarregando] = useState(true);
+  const [carregando, setCarregando] = useState(false);
 
   const email = route.params?.email;
   const senha = route.params?.senha;
@@ -38,7 +38,6 @@ function Como_Comecar({navigation, route}) {
   };
 
   useEffect(() => {
-    console.log('email:', email);
     // navigation.navigate('ModoPassageiro', {userID: userID});
     // navigation.navigate('MenuTeste');
 
@@ -68,52 +67,52 @@ function Como_Comecar({navigation, route}) {
 
   useEffect(() => {
     const currentUser = auth().currentUser.uid;
-    const atualizaBanco = async () => {
-      try {
-        let response = await fetch(
-          `${serverConfig.urlRootNode}api/rabbit/consumirInfo/cadastroUsuario/${currentUser}`,
-        );
-        if (!response.ok) {
-          throw new Error('Falha na requisição');
-        }
-        const responseData = await response.json();
-        const postResponse = await fetch(
-          serverConfig.urlRootNode + 'cadastrarUsuario',
-          {
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'Content-type': 'application/json',
-            },
-            body: JSON.stringify({
-              id: responseData.data.id,
-              nome: responseData.data.nome,
-              CPF: responseData.data.CPF,
-              data_nasc: responseData.data.data_nasc,
-              num_cel: responseData.data.num_cel,
-              universidade: responseData.data.universidade,
-              email: responseData.data.email,
-              placa_veiculo: responseData.data.placa_veiculo,
-              ano_veiculo: responseData.data.ano_veiculo,
-              cor_veiculo: responseData.data.cor_veiculo,
-              nome_veiculo: responseData.data.nome_veiculo,
-              motorista: responseData.data.motorista,
-            }),
-          },
-        );
-        if (postResponse.ok) {
-          const resultado = await postResponse.json(); // Ou .text(), dependendo do que você espera receber
-          console.log('Inseriu com sucesso:', resultado);
-          navigation.navigate('ModoPassageiro', {userID: userID});
-        } else {
-          console.error('Erro ao inserir:', postResponse.statusText);
-        }
-      } catch (error) {
-        console.error('Erro ao receber ou enviar dados:', error);
-      }
-      setCarregando(false);
-    };
-    atualizaBanco();
+    // const atualizaBanco = async () => {
+    //   try {
+    //     let response = await fetch(
+    //       `${serverConfig.urlRootNode}api/rabbit/consumirInfo/cadastroUsuario/${currentUser}`,
+    //     );
+    //     if (!response.ok) {
+    //       throw new Error('Falha na requisição');
+    //     }
+    //     const responseData = await response.json();
+    //     const postResponse = await fetch(
+    //       serverConfig.urlRootNode + 'cadastrarUsuario',
+    //       {
+    //         method: 'POST',
+    //         headers: {
+    //           Accept: 'application/json',
+    //           'Content-type': 'application/json',
+    //         },
+    //         body: JSON.stringify({
+    //           id: responseData.data.id,
+    //           nome: responseData.data.nome,
+    //           CPF: responseData.data.CPF,
+    //           data_nasc: responseData.data.data_nasc,
+    //           num_cel: responseData.data.num_cel,
+    //           universidade: responseData.data.universidade,
+    //           email: responseData.data.email,
+    //           placa_veiculo: responseData.data.placa_veiculo,
+    //           ano_veiculo: responseData.data.ano_veiculo,
+    //           cor_veiculo: responseData.data.cor_veiculo,
+    //           nome_veiculo: responseData.data.nome_veiculo,
+    //           motorista: responseData.data.motorista,
+    //         }),
+    //       },
+    //     );
+    //     if (postResponse.ok) {
+    //       const resultado = await postResponse.json(); // Ou .text(), dependendo do que você espera receber
+    //       console.log('Inseriu com sucesso:', resultado);
+    //       navigation.navigate('ModoPassageiro', {userID: userID});
+    //     } else {
+    //       console.error('Erro ao inserir:', postResponse.statusText);
+    //     }
+    //   } catch (error) {
+    //     console.error('Erro ao receber ou enviar dados:', error);
+    //   }
+    //   setCarregando(false);
+    // };
+    // atualizaBanco();
   }, []);
 
   if (!carregando) {

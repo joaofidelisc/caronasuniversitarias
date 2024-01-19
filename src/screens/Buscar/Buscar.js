@@ -274,8 +274,26 @@ export default function Buscar({navigation}) {
           throw new Error('Falha na requisição');
         }
         const responseData = await response.json();
-        const postResponse = await fetch(
-          serverConfig.urlRootNode + 'cadastrarUsuario',
+        const responsePublicUser = await fetch(
+          serverConfig.urlRootNode + 'cadastrarUsuarioPublico',
+          {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-type': 'application/json',
+            },
+            body: JSON.stringify({
+              id: responseData.data.id,
+              nome: responseData.data.nome,
+              universidade: responseData.data.universidade,
+              email: responseData.data.email,
+              motorista: responseData.data.motorista,
+            }),
+          },
+        );
+
+        const responsePrivateUser = await fetch(
+          serverConfig.urlRootNode + 'cadastrarUsuarioPrivado',
           {
             method: 'POST',
             headers: {
@@ -290,19 +308,14 @@ export default function Buscar({navigation}) {
               num_cel: responseData.data.num_cel,
               universidade: responseData.data.universidade,
               email: responseData.data.email,
-              placa_veiculo: responseData.data.placa_veiculo,
-              ano_veiculo: responseData.data.ano_veiculo,
-              cor_veiculo: responseData.data.cor_veiculo,
-              nome_veiculo: responseData.data.nome_veiculo,
-              motorista: responseData.data.motorista,
             }),
           },
         );
-        if (postResponse.ok) {
-          const resultado = await postResponse.json(); // Ou .text(), dependendo do que você espera receber
+
+        if (responsePublicUser.ok && responsePrivateUser.ok) {
           console.log('Inseriu com sucesso:', resultado);
         } else {
-          console.error('Erro ao inserir:', postResponse.statusText);
+          console.error('Erro ao inserir');
         }
       } catch (error) {
         console.error('Erro ao receber ou enviar dados:', error);

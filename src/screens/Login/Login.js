@@ -48,9 +48,8 @@ function Login({navigation}) {
   });
 
   const buscarEmail = async email => {
-    console.log('Buscar Email');
     let reqs = await fetch(
-      serverConfig.urlRootNode + `buscarPorEmail/${email}`,
+      serverConfig.urlRootNode + `buscarPorEmailUsuarioPublico/${email}`,
       {
         method: 'GET',
         mode: 'cors',
@@ -71,7 +70,6 @@ function Login({navigation}) {
   };
 
   const redirecionamentoLogin = async emailGoogle => {
-    console.log('entrando em redirecionamento login');
     if (email == '') {
       await AsyncStorage.setItem('email', emailGoogle);
       const objUsuario = await buscarEmail(emailGoogle);
