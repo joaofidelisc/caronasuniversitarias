@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -9,23 +9,22 @@ import {
   Modal,
   StyleSheet,
   Alert,
-  BackHandler,
   Image,
   Dimensions,
 } from 'react-native';
 
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import dominios from '../../dominios/dominios.json';
 import Icon from 'react-native-vector-icons/FontAwesome';
+//import validateEmail from '../../distribuicao/ValidadeEmail_FetchFunctions'
 
 GoogleSignin.configure({
   webClientId:
     '97527742455-7gie5tgugbocjpr1m0ob9sdua49au1al.apps.googleusercontent.com',
 });
 
-function Cadastro_Email({navigation}) {
+function Cadastro_Email({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -33,87 +32,155 @@ function Cadastro_Email({navigation}) {
   const [emailCadastro, setEmailCadastro] = useState('randomRandomrandomRR');
   const [tokenEmailEnviado, setTokenEmailEnviado] = useState(false);
   const [senhaVisivel, setSenhaVisivel] = useState(true);
+  const [secondEmail, setSecondEmail] = useState('');
 
-  //Falta implementar o reenvio de código de verificação.
-  const VerificationCode = async () => {
-    if (email == '') {
-      setWarning('O campo e-mail \nnão pode estar vazio!');
-      setModalVisible(true);
-    } else {
-      await auth()
-        .currentUser.sendEmailVerification()
-        .then(() => {
-          setWarning('Um novo código de verificação foi enviado para');
-          setModalVisible(true);
-        })
-        .catch(error => {
-          console.log(error.code);
-        });
+  // const validateEmail = (email) => {
+  //   const emailRegex = /^[^\s@]+@(estudante\.ufscar\.br|gmail\.com)$/;
+
+  //   if (!email) {
+  //     return { isValid: false, errorMessage: 'Por favor, insira um email.' };
+  //   } else if (email.length > 100) {
+  //     return {
+  //       isValid: false,
+  //       errorMessage:
+  //         'O email inserido é muito longo. Por favor, insira um email mais curto.',
+  //     };
+  //   } else if (!emailRegex.test(email)) {
+  //     return {
+  //       isValid: false,
+  //       errorMessage:
+  //         'Email inválido! Por favor, insira um email válido @estudante.ufscar.br ou @gmail.com.',
+  //     };
+  //   }
+
+  //   return { isValid: true };
+  // };
+  
+
+  // const InsertUserWithEmail = async () => {
+  //   if (email == '' && password == '') {
+  //     setWarning('Os campos de e-mail e senha\n não podem estar vazios!');
+  //     setModalVisible(true);
+  //   } else if (email == '') {
+  //     setWarning('O campo e-mail \nnão pode estar vazio!');
+  //     setModalVisible(true);
+  //   } else if (password == '') {
+  //     setWarning('O campo senha \nnão pode estar vazio!');
+  //     setModalVisible(true);
+  //   } else {
+  //     if (tokenEmailEnviado == false) {
+  //       const dominio = email.split('@');
+  //       if (dominios.dominios_permitidos.includes(dominio[1]) == false) {
+  //         setWarning(
+  //           'Você pode se cadastrar\n apenas com e-mails institucionais!',
+  //         );
+  //         setModalVisible(true);
+  //       } else {
+  //         auth()
+  //           .createUserWithEmailAndPassword(email, password)
+  //           .then(result => {
+  //             setEmailCadastro(email);
+  //             result.user.sendEmailVerification();
+  //             setTokenEmailEnviado(true);
+  //             setWarning(
+  //               'Foi enviado um link de confirmação de cadastro para o seu e-mail.\n\nVerifique para prosseguir.',
+  //             );
+  //             setModalVisible(true);
+  //           })
+  //           .catch(error => {
+  //             if (error.code === 'auth/email-already-in-use') {
+  //               setWarning('Este email já está em uso, escolha outro!');
+  //               setModalVisible(true);
+  //             }
+  //             if (error.code === 'auth/invalid-email') {
+  //               setWarning('E-mail inválido!');
+  //               setModalVisible(true);
+  //             }
+  //           });
+  //       }
+  //     } else {
+  //       if (auth().currentUser.emailVerified == false) {
+  //         setWarning(
+  //           'Link de verificação enviado.\n\nVerifique e faça login para continuar.',
+  //         );
+  //         setModalVisible(true);
+  //       }
+  //     }
+  //   }
+  // };
+   
+
+  async function validateEmail(email) {
+    console.log('Chegou na validateEmail antes do fetch');
+
+    try {
+      const response = await fetch('http://192.168.0.121:3001/validateEmail?email=' + email);
+        console.log('Depois do fetch');
+
+        const { result } = await response.json();
+        return result;
+    } catch (error) {
+        console.log('Erro que deu: ' + error);
+        throw error;
     }
-  };
+}
 
-  const InsertUserWithEmail = async () => {
-    if (email == '' && password == '') {
-      setWarning('Os campos de e-mail e senha\n não podem estar vazios!');
+const InsertUserWithEmail = async () => {
+    // Validação do email
+    console.log("Entrou na função de cadastro e validacao")
+    const validation = await validateEmail(email);
+    console.log(JSON.stringify(validation) + " VALIDACAO ")
+    if (!validation.isValid) {
+      Alert.alert(validation.errorMessage);
+      return;
+    }
+
+    // Validação do campo de senha
+    if (password === '') {
+      setWarning('O campo senha não pode estar vazio!');
       setModalVisible(true);
-    } else if (email == '') {
-      setWarning('O campo e-mail \nnão pode estar vazio!');
+      return;
+    }
+
+    try {
+      // Criação do usuário com email e senha
+      const result = await auth().createUserWithEmailAndPassword(email, password);
+      
+      // Envio do email de verificação
+      setEmailCadastro(email);
+      await result.user.sendEmailVerification();
+      setTokenEmailEnviado(true);
+      setWarning(
+        'Foi enviado um link de confirmação de cadastro para o seu e-mail.\n\nVerifique para prosseguir.',
+      );
+      console.log('Foi enviado um link de confirmação de cadastro para o seu e-mail. Verifique para prosseguir.')
       setModalVisible(true);
-    } else if (password == '') {
-      setWarning('O campo senha \nnão pode estar vazio!');
-      setModalVisible(true);
-    } else {
-      if (tokenEmailEnviado == false) {
-        const dominio = email.split('@');
-        if (dominios.dominios_permitidos.includes(dominio[1]) == false) {
-          setWarning(
-            'Você pode se cadastrar\n apenas com e-mails institucionais!',
-          );
-          setModalVisible(true);
-        } else {
-          auth()
-            .createUserWithEmailAndPassword(email, password)
-            .then(result => {
-              setEmailCadastro(email);
-              result.user.sendEmailVerification();
-              setTokenEmailEnviado(true);
-              setWarning(
-                'Foi enviado um link de confirmação de cadastro para o seu e-mail.\n\nVerifique para prosseguir.',
-              );
-              setModalVisible(true);
-            })
-            .catch(error => {
-              if (error.code === 'auth/email-already-in-use') {
-                setWarning('Este email já está em uso, escolha outro!');
-                setModalVisible(true);
-              }
-              if (error.code === 'auth/invalid-email') {
-                setWarning('E-mail inválido!');
-                setModalVisible(true);
-              }
-            });
-        }
+    } catch (error) {
+     // Tratamento de erros de autenticação
+      if (error.code === 'auth/email-already-in-use') {
+        setWarning('Este email já está em uso, escolha outro!');
+        setModalVisible(true);
+      } else if (error.code === 'auth/invalid-email') {
+        setWarning('E-mail inválido!');
+        setModalVisible(true);
       } else {
-        if (auth().currentUser.emailVerified == false) {
-          setWarning(
-            'Link de verificação enviado.\n\nVerifique e faça login para continuar.',
-          );
-          setModalVisible(true);
-        }
+        console.log('Erro desconhecido:', error);
       }
     }
-  };
-  const {height, width} = Dimensions.get('screen');
+};
+
+
+  const { height, width } = Dimensions.get('screen');
   return (
     <SafeAreaView>
       <StatusBar barStyle={'light-content'} />
-      <View style={{backgroundColor: '#FFF', height: '100%'}}>
+      <View style={{ backgroundColor: '#FFF', height: '100%' }}>
         <TouchableOpacity
           style={styles.btnFechar}
           onPress={() => navigation.navigate('Entrada')}>
           <Image
             source={require('../../assets/icons/close.png')}
-            style={{height: '80%', width: '100%'}}
+            style={{ height: '80%', width: '100%' }}
           />
         </TouchableOpacity>
         <Text
@@ -144,7 +211,7 @@ function Cadastro_Email({navigation}) {
           placeholderTextColor="black"
           placeholder="Digite aqui o e-mail"
           keyboardType="email-address"
-          onChangeText={email => setEmail(email)}
+          onChangeText={setEmail}
         />
         <TextInput
           style={{
@@ -162,10 +229,10 @@ function Cadastro_Email({navigation}) {
           placeholderTextColor="black"
           placeholder="Digite aqui a senha"
           secureTextEntry={senhaVisivel}
-          onChangeText={password => setPassword(password)}
+          onChangeText={setPassword}
         />
         <TouchableOpacity
-          style={{top: height * 0.32, left: width * 0.76, position: 'absolute'}}
+          style={{ top: height * 0.32, left: width * 0.76, position: 'absolute' }}
           onPress={() => {
             setSenhaVisivel(!senhaVisivel);
           }}>
@@ -198,17 +265,6 @@ function Cadastro_Email({navigation}) {
             Continuar
           </Text>
         </TouchableOpacity>
-        <Text
-          style={{
-            color: '#FF5F55',
-            top: height * 0.25,
-            alignSelf: 'center',
-            fontWeight: '600',
-            fontSize: height * 0.017,
-            marginTop: height * 0.04,
-          }}>
-          Perdeu o código de autenticação?
-        </Text>
         <Modal
           animationType="fade"
           transparent={true}
@@ -228,7 +284,7 @@ function Cadastro_Email({navigation}) {
             }}>
             <View style={styles.modalView}>
               <Text
-                style={{color: 'black', textAlign: 'center', marginBottom: 15}}>
+                style={{ color: 'black', textAlign: 'center', marginBottom: 15 }}>
                 {warning}
               </Text>
               <TouchableOpacity
@@ -277,13 +333,6 @@ const styles = StyleSheet.create({
     height: 29,
     left: 22,
     top: 20,
-  },
-  txtBtnFechar: {
-    fontWeight: '600',
-    fontSize: 24,
-    lineHeight: 29,
-    alignItems: 'center',
-    color: '#FF5F55',
   },
 });
 
